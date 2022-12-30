@@ -11,7 +11,7 @@ def allocate_attributes(character):
 
     for x in ["strength", "intelligence", "dexterity"]:
         if character.get("allocate")>0:
-            print("\nHow many points do you wish to add to your " + x + "?")
+            print("\nHow many points do you wish to add to your " + x + "? ", end="")
             data=""
             while data=="":
                 try:
@@ -24,7 +24,7 @@ def allocate_attributes(character):
                     character["allocate"]=character["allocate"]-value
                     data="not empty"
                 else:
-                    print("\n** How many points do you wish to add to your " + x + "?")
+                    print("\n** How many points do you wish to add to your " + x + "? ", end="")
             
 
 
@@ -48,7 +48,7 @@ def select_race(character):
         print("You may be an Elf, Dwarf, Man, or Hobbit")
 
         try:
-            print("\nYour Choice? ")
+            print("\nYour Choice? ", end="")
             choice=input()[0].lower()
         except:
             pass
@@ -76,7 +76,7 @@ def select_sex(character):
     choice=""
     while(sex.lower()==""):
         try:
-            print("\nWhich sex do you prefer? ")
+            print("\nWhich sex do you prefer? ", end="")
             choice=input()[0].lower()
         except:
             pass
