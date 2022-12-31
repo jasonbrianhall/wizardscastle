@@ -1,5 +1,6 @@
 #!/usr/bin/env
 import re
+import json
 
 def init_character():
     
@@ -14,6 +15,8 @@ def init_character():
     character["sex"]              = ""
     character["jewels"]           = []
     character["friendlyvendors"]  = True
+    character["weapons"]          = "Nothing"
+    character["armor"]            = "Nothing"
     return character
 
 def buy_equipment(character):
@@ -21,10 +24,12 @@ def buy_equipment(character):
     armory={
         "armor":   {
             "regex": "[pcln]",
+            "selection": {"p": "Plate", "c": "Chainmail", "l": "Leather", "n": "Nothing"}, 
             "equipment": {"Plate":  30, "Chainmail": 20, "Leather": 10, "Nothing": 0},
             },
         "weapons": {
             "regex": "[smdn]",
+            "selection": {"s": "Sword", "m": "Mace", "d": "Dagger", "n": "Nothing"}, 
             "equipment": {"Sword":  30, "Mace":      20, "Dagger":  10, "Nothing": 0}
             }
         }
@@ -52,8 +57,10 @@ def buy_equipment(character):
                     choice=""
                 if re.match(regex, choice):
                     data="data"
+                    character[arms]=armory.get(arms).get("selection").get(choice)
+                    character["gold"]=character.get("gold")-armory.get(arms).get("equipment").get(character.get(arms))
                 else:
-                    print("** Is your IQ really " + str(character.get("intelligence")) + " ?\n")
+                    print("\n\n** Is your IQ really " + str(character.get("intelligence")) + " ?\n\n")
                     print("These are the types of " + arms + " you can buy.")
                     counter=0
                     for arm in armory.get(arms).get("equipment"):
@@ -189,6 +196,8 @@ def main():
     character=select_sex(character) 
     character=allocate_attributes(character)
     character=buy_equipment(character)
+
+    print(json.dumps(character, indent=4))
 
 main()
 
