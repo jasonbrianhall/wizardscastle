@@ -17,6 +17,7 @@ def init_character():
     character["friendlyvendors"]  = True
     character["weapons"]          = "Nothing"
     character["armor"]            = "Nothing"
+    character["lamp"]             = True
     return character
 
 def buy_equipment(character):
@@ -60,7 +61,7 @@ def buy_equipment(character):
                     character[arms]=armory.get(arms).get("selection").get(choice)
                     character["gold"]=character.get("gold")-armory.get(arms).get("equipment").get(character.get(arms))
                 else:
-                    print("\n\n** Is your IQ really " + str(character.get("intelligence")) + " ?\n\n")
+                    print("\n** Is your IQ really " + str(character.get("intelligence")) + " ?\n")
                     print("These are the types of " + arms + " you can buy.")
                     counter=0
                     for arm in armory.get(arms).get("equipment"):
@@ -69,7 +70,24 @@ def buy_equipment(character):
                             counter=1
                         else:
                             print(" " + arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
-                 
+    if character.get("gold")>=20:
+        regex=re.compile("[yn]")
+        data=False
+        while data==False:
+            print("Do you want to buy a lamp for 20 GP's? ", end="")
+            try:
+                choice=input()[0].lower()
+            except:
+                choice=""
+                pass
+            if re.match(regex, choice):
+                character["lamp"]=True
+                character["gold"]=character.get("gold")-20
+                data=True
+            else:
+                print("\n\n** Please answer Yes or NO\n")
+                
+            
 
 
     return character
