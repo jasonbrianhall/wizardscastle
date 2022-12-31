@@ -41,6 +41,7 @@ def init_character():
     character["x"]                = 1
     character["y"]                = 4
     character["z"]                = 1
+    character["turns"]            = 0
     
     return character
 
@@ -232,7 +233,7 @@ def print_intro():
 
     buffer=buffer+"\n"*2
     buffer=buffer+"""Many cycles ago, in the kindom of N'Dic, the gnomic
-wizard zot forged his great *Orb of Power*. He soon
+wizard Zot forged his great *Orb of Power*. He soon
 vanished, leaving behind his vast subterranean castle
 filled with esurrient monsters, fabulous treasures, and
 the incredible *Orb of Zot*. From that time hence, many
@@ -241,9 +242,9 @@ of now, *NONE* has ever emerged victoriously! Beware!!\n"""
 
     print(buffer)
 
-def castle_help():
+def castle_help(game):
 
-    buffer=""""*** WIZARD'S CASTLE COMMAND AND INFORMATION SUMMARY ***
+    print(""""*** WIZARD'S CASTLE COMMAND AND INFORMATION SUMMARY ***
 
 The following commands are available :
 
@@ -266,51 +267,175 @@ Green gem - avoid forgetting  Opal eye - cures blindness
 Blue flame - dissolves books  Norn stone - no benefit
 Palantir - no benefit         Silmaril - no benefit
 
-Press return when ready to resume"""
-
-    print(buffer)
+Press return when ready to resume""")
 
     input()
-
-def enter_castle(character, castle):
-
-    print("Ok, " + character.get("race") + ", you are now entering the castle!\n")
     
-    print("You are at ( " + str(character.get("x")) + ", " + str(character.get("y")) + " ) Level " + str(character.get("z")) + "\n")
-    print("Strength = " + str(character.get("strength")), end="")
-    print("  Intelligence = " + str(character.get("intelligence")), end="")
-    print("  Dexterity = " + str(character.get("dexterity")))
-    print("Treasures = " + str(len(character.get("treasures"))), end="")
-    print(" Flares = " + str(character.get("flares")), end="")
-    print(" Gold pieces = " + str(character.get("gold")))
-    if not character.get("weapons")=="nothing":
-        print("Weapon = " + character.get("weapons"), end="")
+    return game
+
+def go_north(game):
+    return game
+
+def go_south(game):
+    return game
+
+def go_east(game):
+    return game
+
+def go_west(game):
+    return game
+
+def go_up(game):
+    return game
+
+def go_down(game):
+    return game
+    
+def go_drink(game):
+    return game
+    
+def go_map(game):
+    return game
+
+def go_flare(game):
+    return game
+
+def go_lamp(game):
+    return game
+    
+def go_open(game):
+    return game
+
+def go_gaze(game):
+    return game
+
+def go_teleport(game):
+    return game
+
+def action_room(game):
+    return game
+
+
+def enter_castle(character):
+
+    castle=gen_castle()
+    game={"character": character, "castle": castle}
+
+
+    regex=re.compile('[hnsewudmflogtq]|dr')
+    yesnoregex=re.compile('[y]')
+    # Calling functions from dictionaries (better then if then else)
+    choicedict={
+        "h":  castle_help,
+        "n":  go_north, 
+        "s":  go_south,
+        "e":  go_east,
+        "w":  go_west,
+        "u":  go_up,
+        "d":  go_down,
+        "dr": go_drink,
+        "m":  go_map,
+        "f":  go_flare,
+        "l":  go_lamp,
+        "o":  go_open,
+        "g":  go_gaze,
+        "t":  go_teleport
+    }
+
+    print("\nOk, " + game.get("character").get("race") + ", you are now entering the castle!\n")
+    
+    print("You are at ( " + str(game.get("character").get("x")) + ", " + str(game.get("character").get("y")) + " ) Level " + str(game.get("character").get("z")) + "\n")
+    print("Strength = " + str(game.get("character").get("strength")), end="")
+    print("  Intelligence = " + str(game.get("character").get("intelligence")), end="")
+    print("  Dexterity = " + str(game.get("character").get("dexterity")))
+    print("Treasures = " + str(len(game.get("character").get("treasures"))), end="")
+    print(" Flares = " + str(game.get("character").get("flares")), end="")
+    print(" Gold pieces = " + str(game.get("character").get("gold")))
+    if not game.get("character").get("weapons")=="nothing":
+        print("Weapon = " + game.get("character").get("weapons"), end="")
     else:
         print("Weapon = No weapon", end="")
-    if not character.get("armor")=="nothing":
-        print("  Armor = " + character.get("armor"))
+    if not game.get("character").get("armor")=="nothing":
+        print("  Armor = " + game.get("character").get("armor"))
     else:
-        print("  Armor = No armor", end="")
+        print("  Armor = No armor")
    
-    castle_help()
+    exittheloop=False
+
+    while exittheloop==False:
+
+        game=action_room(game)
+
+        print("\nEnter your command : ", end="")
+        try:
+            choice=input().lower()
+            if len(choice)>=2: 
+                choice=choice[:2]
+            else:
+                choice=choice[:1]
+        except:
+            choice=""
+        game["character"]["turns"]=game["character"]["turns"]+1
+        if re.match(regex, choice):
+            if choice=="q":
+                
+                print("Do you really want to quit now? ", end="")
+                try:
+                    newchoice=input()[:1].lower()
+                except:
+                    newchoice=""
+                if re.match(yesnoregex, newchoice):
+                   print("\n\nA less than awe-inspiring defeat.")
+                   print("When you left the castle, you had :\nYour miserable life!")
+                   print(game.get("character").get("weapons") + " and " + game.get("character").get("armor"))
+                   print("You also had " + str(game.get("character").get("flares")) + " and " + str(game.get("character").get("gold")) + " gold pieces")
+                   print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
+                   exittheloop=True 
+                
+            else:
+                game=choicedict.get(choice)(game)
+        else:
+            print("\n** Silly " + character.get("race") + ", that wasn't a valid command!")
+            
+        
     
     
-    return character
+    return game.get("character")
 
 
 def main():
 
-    character=init_character()    
-    castle=gen_castle()
-    
+    regex=re.compile("[yn]")
     print_intro()
- 
-    character=select_race(character)
-    character=select_sex(character) 
-    character=allocate_attributes(character)
-    character=buy_equipment(character)
-    character=enter_castle(character, castle)
+    exittheloop=False
+    while exittheloop==False:
+        character=init_character()    
     
+        character=select_race(character)
+        character=select_sex(character) 
+        character=allocate_attributes(character)
+        character=buy_equipment(character)
+        character=enter_castle(character)
+
+        exitloop2=False
+        while exitloop2==False:
+            print("Are you foolish enough to want to play again? ", end="")
+            try:
+                choices=input()[:1]
+            except:
+                choices=""
+            if re.match(regex, choices):
+
+                exitloop2=True
+
+                if choices=="n":
+                    print("Maybe dumb " + character.get("race") + " is not so dumb after all!")
+                    exittheloop=True
+                else:
+                    print("\n")
+            else:
+                print("** Please answer yes or no")
+        
     print(json.dumps(character, indent=4))
 
 main()
