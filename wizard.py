@@ -481,7 +481,7 @@ def enter_castle(character):
 
 
     regex=re.compile('[hnsewudmflogtq]|dr')
-    yesnoregex=re.compile('[y]')
+    yesnoregex=re.compile('[yn]')
     # Calling functions from dictionaries (better then if then else)
     choicedict={
         "h":  castle_help,
@@ -537,18 +537,25 @@ def enter_castle(character):
         if re.match(regex, choice):
             if choice=="q":
                 
-                print("Do you really want to quit now? ", end="")
-                try:
-                    newchoice=input()[:1].lower()
-                except:
-                    newchoice=""
-                if re.match(yesnoregex, newchoice):
-                   print("\n\nA less than awe-inspiring defeat.")
-                   print("When you left the castle, you had :\nYour miserable life!")
-                   print(game.get("character").get("weapons") + " and " + game.get("character").get("armor"))
-                   print("You also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces")
-                   print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
-                   exittheloop=True 
+                quitloop=False
+                while quitloop==False:
+                    print("Do you really want to quit now? ", end="")
+                    try:
+                        newchoice=input()[:1].lower()
+                    except:
+                        newchoice=""
+                    if re.match(yesnoregex, newchoice) and newchoice=="y":
+                       print("\n\nA less than awe-inspiring defeat.")
+                       print("When you left the castle, you had :\nYour miserable life!")
+                       print(game.get("character").get("weapons") + " and " + game.get("character").get("armor"))
+                       print("You also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces")
+                       print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
+                       exittheloop=True 
+                       quitloop=True
+                    elif re.match(yesnoregex, newchoice) and newchoice=="n":
+                        quitloop=True
+                    else:
+                        print("** Please enter yes or no.\n")
                 
             else:
                 game=choicedict.get(choice)(game)
