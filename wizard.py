@@ -1,6 +1,73 @@
 #!/usr/bin/env
 import re
 
+def init_character():
+    
+    character={}
+    character["race"]             = ""
+    character["strength"]         = 0
+    character["dexterity"]        = 0
+    character["intelligence"]     = 0
+    character["allocate"]         = 0
+    character["gold"]             = 0
+    character["bookstucktohand"]  = False
+    character["sex"]              = ""
+    character["jewels"]           = []
+    character["friendlyvendors"]  = True
+    return character
+
+def buy_equipment(character):
+
+    armory={
+        "armor":   {
+            "regex": "[pcln]",
+            "equipment": {"Plate":  30, "Chainmail": 20, "Leather": 10, "Nothing": 0},
+            },
+        "weapons": {
+            "regex": "[smdn]",
+            "equipment": {"Sword":  30, "Mace":      20, "Dagger":  10, "Nothing": 0}
+            }
+        }
+
+    print("Ok, " + character.get("race") + ", you have " + str(character.get("gold")) + " gold pieces (GP\'s).\n")
+
+    for arms in armory:
+        regex=re.compile(armory.get(arms).get("regex"))
+
+        if character.get("gold")>0:
+            print("These are the types of " + arms + " you can buy.")
+            counter=0
+            for arm in armory.get(arms).get("equipment"):
+                if counter==0:
+                    print(arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
+                    counter=1
+                else:
+                    print(" " + arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
+            print("\n\nYour choice? ", end="")
+            data=""
+            while data=="":
+                try:
+                    choice=input()[0].lower()
+                except:
+                    choice=""
+                if re.match(regex, choice):
+                    data="data"
+                else:
+                    print("** Is your IQ really " + str(character.get("intelligence")) + " ?\n")
+                    print("These are the types of " + arms + " you can buy.")
+                    counter=0
+                    for arm in armory.get(arms).get("equipment"):
+                        if counter==0:
+                            print(arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
+                            counter=1
+                        else:
+                            print(" " + arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
+                 
+
+
+    return character
+
+
 def allocate_attributes(character):
 
     regex=re.compile("[0-9]+")
@@ -25,18 +92,17 @@ def allocate_attributes(character):
                     data="not empty"
                 else:
                     print("\n** How many points do you wish to add to your " + x + "? ", end="")
-            
+    return character
 
 
 def select_race(character):
     
-
     regex=re.compile("[edmh]")
     datamapper={
-        "e": {"strength":  6, "intelligence": 8, "dexterity": 10, "name": "Elf",    "allocate": 8},
-        "d": {"strength": 10, "intelligence": 8, "dexterity":  6, "name": "Dwarf",  "allocate": 8},
-        "m": {"strength":  8, "intelligence": 8, "dexterity":  8, "name": "Man",    "allocate": 8},
-        "h": {"strength":  4, "intelligence": 8, "dexterity": 12, "name": "Hobbit", "allocate": 4}
+        "e": {"strength":  6, "intelligence": 8, "dexterity": 10, "name": "Elf",    "allocate": 8, "gold": 60},
+        "d": {"strength": 10, "intelligence": 8, "dexterity":  6, "name": "Dwarf",  "allocate": 8, "gold": 60},
+        "m": {"strength":  8, "intelligence": 8, "dexterity":  8, "name": "Human",    "allocate": 8, "gold": 60},
+        "h": {"strength":  4, "intelligence": 8, "dexterity": 12, "name": "Hobbit", "allocate": 4, "gold": 60}
         }
 
     print("All right, bold one.")
@@ -57,11 +123,12 @@ def select_race(character):
         else:
             print("** That was incorrect. Please type E, D, M, or H.")
 
-    character["race"]         =datamapper.get(race).get("name")
-    character["strength"]     =datamapper.get(race).get("strength")
-    character["dexterity"]    =datamapper.get(race).get("dexterity")
-    character["intelligence"] =datamapper.get(race).get("intelligence")
-    character["allocate"]     =datamapper.get(race).get("allocate")
+    character["race"]         = datamapper.get(race).get("name")
+    character["strength"]     = datamapper.get(race).get("strength")
+    character["dexterity"]    = datamapper.get(race).get("dexterity")
+    character["intelligence"] = datamapper.get(race).get("intelligence")
+    character["allocate"]     = datamapper.get(race).get("allocate")
+    character["gold"]         = datamapper.get(race).get("gold")
 
     return character
 
@@ -89,7 +156,7 @@ def select_sex(character):
     return character
 
 def print_intro():
-        # Print Intro
+    # Print Intro
 
     buffer=""
     buffer=buffer+"*"*64
@@ -114,13 +181,14 @@ of now, *NONE* has ever emerged victoriously! Beware!!\n"""
 
 def main():
 
-    character={}    
+    character=init_character()    
     
     print_intro()
  
     character=select_race(character)
     character=select_sex(character) 
     character=allocate_attributes(character)
+    character=buy_equipment(character)
 
 main()
 
