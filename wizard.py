@@ -1,6 +1,7 @@
 #!/usr/bin/env
 import re
 import json
+import random
 
 castlesize=8
 entrancelocation="1/4/1"
@@ -312,8 +313,165 @@ def go_gaze(game):
 def go_teleport(game):
     return game
 
+def ambience():
+    print("\nYou ", end="")
+
+    data={
+        "0": {
+            "init": "stepped on a",
+            "random": [
+                " frog!",
+                " toad!",
+                " fairie!",
+                " brownie!",
+                " a chicken egg!"
+            ],
+            "post": [
+                " You wipe it off your boots.",
+                "",
+                "",
+                " You are reminded to buy new boots if you live."
+                ]
+        },
+        "1": {
+            "init": "hear",
+            "random": [
+                " a scream!",
+                " footsteps!",
+                " a wumpus!",
+                " thunder!",
+                " a scream!  You think someone is being tortured!"
+                ],
+            "post": [
+                " Your heart starts racing.",
+                "",
+                "",
+                "",
+                "",
+                " You want to go home."
+                ]
+            },
+        "2": {
+            "init": "sneezed!",
+            "random": [
+                " You think a monster heard you!",
+                " Now you have to pee!",
+                "",
+                "",
+                ""
+                ],
+            "post": [
+                " You think about trying to make less noise.",
+                "",
+                "",
+                "",
+                "",
+                " Now you farted."
+                ]
+            },
+        "3": {
+            "init": "see a bat fly by!",
+            "random": [
+                " Pray it's not a vampire bat.",
+                ""
+                ],
+            "post": [
+                " It flies a little too close for comfort.",
+                "",
+                "",
+                ""
+                ]
+            },
+        "4": {
+            "init": "smell",
+            "random": [
+                " a kobold",
+                " an orc",
+                " a wolf",
+                " a goblin",
+                " an ogre",
+                " a troll",
+                " a bear",
+                " a minotaur",
+                " a gargoyle",
+                " a chimera",
+                " a dragon",
+                ],
+            "post": [
+                " frying!!!",
+                " roasting!!!",
+                " cooking!!!",
+                "\'s entrails!",
+                "\'s stool!",
+                "\'s breathe nearby!"
+                ]
+            },
+        "5": {
+            "init": "feel like you are being watched!",
+            "random": [
+                " You see glowing eyes!",
+                " You think you hear someone talking."
+                ],
+            "post": [
+                " You realize it's only in your head.",
+                " You swallow your fear."
+                "",
+                "",
+                "",
+                ""
+                ]
+            },
+        "6": {
+            "init": "hear faint rustling noises!",
+            "random": [
+                " They are getting closer!",
+                ""
+                ],
+            "post": [
+                " Now they are getting further away.",
+                "",
+                "",
+                ""
+                ]
+            },
+        "7": {
+            "init": "feel like you are being watched!",
+            "random": [
+                " You see glowing eyes!",
+                " You think you hear someone talking.",
+                "",
+                "",
+                "",
+                "",
+                ""
+                ],
+            "post": [
+                " You think you are going insane",
+                ""
+                ""
+                ""
+                ]
+            },
+        }
+    
+
+
+
+    randata=random.randint(0,10)
+    if randata>7:
+        randata=4
+
+    ranstring=str(randata)
+    mylist=data.get(ranstring).get("random")
+    postlist=data.get(ranstring).get("post")
+    
+    print(data.get(ranstring).get("init") + random.choice(mylist) + random.choice(postlist))
+
 def action_room(game):
+    ambience()
+            
     return game
+
 
 
 def enter_castle(character):
@@ -388,7 +546,7 @@ def enter_castle(character):
                    print("\n\nA less than awe-inspiring defeat.")
                    print("When you left the castle, you had :\nYour miserable life!")
                    print(game.get("character").get("weapons") + " and " + game.get("character").get("armor"))
-                   print("You also had " + str(game.get("character").get("flares")) + " and " + str(game.get("character").get("gold")) + " gold pieces")
+                   print("You also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces")
                    print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
                    exittheloop=True 
                 
