@@ -18,6 +18,7 @@ def init_character():
     character["weapons"]          = "Nothing"
     character["armor"]            = "Nothing"
     character["lamp"]             = True
+    character["flares"]           = 0
     return character
 
 def buy_equipment(character):
@@ -85,9 +86,23 @@ def buy_equipment(character):
                 character["gold"]=character.get("gold")-20
                 data=True
             else:
-                print("\n\n** Please answer Yes or NO\n")
-                
-            
+                print("\n** Please answer Yes or No\n")
+ 
+    if character.get("gold")>0:
+        regex=re.compile("[0-9]+")
+        print("Ok, " + character.get("race") + ", you have " + str(character.get("gold")) + " gold pieces left.\n")
+        data=False
+        while data==False:
+            print("Flares cost 1 GP each.  How many do you want? ", end="")
+            choice=input()
+            if re.match(regex, choice):
+                if int(choice)>character.get("gold"):
+                    print("\n** You can only afford " + str(character.get("gold")))
+                else:
+                    character["flares"]=character["flares"]+int(choice)
+                    data=True
+            else:
+                print("\n** If you don't want any, just type 0 (zero)\n")
 
 
     return character
@@ -104,8 +119,8 @@ def allocate_attributes(character):
     for x in ["strength", "intelligence", "dexterity"]:
         if character.get("allocate")>0:
             print("\nHow many points do you wish to add to your " + x + "? ", end="")
-            data=""
-            while data=="":
+            data=False
+            while data==False:
                 try:
                     choice=input()[0]
                 except:
@@ -114,7 +129,7 @@ def allocate_attributes(character):
                     value=int(choice)
                     character[x]=character[x]+value
                     character["allocate"]=character["allocate"]-value
-                    data="not empty"
+                    data=True
                 else:
                     print("\n** How many points do you wish to add to your " + x + "? ", end="")
     return character
