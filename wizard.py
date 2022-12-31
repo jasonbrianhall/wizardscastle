@@ -2,6 +2,25 @@
 import re
 import json
 
+castlesize=8
+entrancelocation="1/4/1"
+
+def gen_castle():
+    castle={}
+
+    for x in range(1, castlesize):
+        X=str(x)
+        for y in range(1, castlesize):
+            Y=str(y)
+            for z in range(1, castlesize):
+                Z=str(z)
+                castle[X+"/"+Y+"/"+Z]={"contents": "empty", "explored": False}
+               
+               
+    castle[entrancelocation]["contents"]="entrance"
+    
+        
+
 def init_character():
     
     character={}
@@ -13,12 +32,16 @@ def init_character():
     character["gold"]             = 0
     character["bookstucktohand"]  = False
     character["sex"]              = ""
-    character["jewels"]           = []
+    character["treasures"]        = []
     character["friendlyvendors"]  = True
     character["weapons"]          = "Nothing"
     character["armor"]            = "Nothing"
     character["lamp"]             = True
     character["flares"]           = 0
+    character["x"]                = 1
+    character["y"]                = 4
+    character["z"]                = 1
+    
     return character
 
 def buy_equipment(character):
@@ -218,10 +241,67 @@ of now, *NONE* has ever emerged victoriously! Beware!!\n"""
 
     print(buffer)
 
+def castle_help():
+
+    buffer=""""*** WIZARD'S CASTLE COMMAND AND INFORMATION SUMMARY ***
+
+The following commands are available :
+
+H/elp     N/orth    S/outh    E/ast     W/est     U/p
+D/own     DR/ink    M/ap      F/lare    L/amp     O/pen
+G/aze     T/eleport Q/uit
+
+the contents of rooms are as follows :"
+
+. = empty room      b = book            c = chest
+d = stairs down     e = entrance/exit   f = flares
+g = gold pieces     m = monster         o = crystal orb
+p = magic pool      s = sinkhole        t = treasure
+u = stairs up       v = vendor          w = warp/orb
+
+The benefits of having treasures are :
+
+Ruby red - avoid lethargy     Pale pearl - avoid leech
+Green gem - avoid forgetting  Opal eye - cures blindness
+Blue flame - dissolves books  Norn stone - no benefit
+Palantir - no benefit         Silmaril - no benefit
+
+Press return when ready to resume"""
+
+    print(buffer)
+
+    input()
+
+def enter_castle(character, castle):
+
+    print("Ok, " + character.get("race") + ", you are now entering the castle!\n")
+    
+    print("You are at ( " + str(character.get("x")) + ", " + str(character.get("y")) + " ) Level " + str(character.get("z")) + "\n")
+    print("Strength = " + str(character.get("strength")), end="")
+    print("  Intelligence = " + str(character.get("intelligence")), end="")
+    print("  Dexterity = " + str(character.get("dexterity")))
+    print("Treasures = " + str(len(character.get("treasures"))), end="")
+    print(" Flares = " + str(character.get("flares")), end="")
+    print(" Gold pieces = " + str(character.get("gold")))
+    if not character.get("weapons")=="nothing":
+        print("Weapon = " + character.get("weapons"), end="")
+    else:
+        print("Weapon = No weapon", end="")
+    if not character.get("armor")=="nothing":
+        print("  Armor = " + character.get("armor"))
+    else:
+        print("  Armor = No armor", end="")
+   
+    castle_help()
+    
+    
+    return character
+
 
 def main():
 
     character=init_character()    
+    castle=gen_castle()
     
     print_intro()
  
@@ -229,7 +309,8 @@ def main():
     character=select_sex(character) 
     character=allocate_attributes(character)
     character=buy_equipment(character)
-
+    character=enter_castle(character, castle)
+    
     print(json.dumps(character, indent=4))
 
 main()
