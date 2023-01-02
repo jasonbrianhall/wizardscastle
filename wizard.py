@@ -207,9 +207,7 @@ def gen_castle():
 
 
 	castle["1"]["4"]["1"]["contents"]={"entrance": 1}
-	
-	
-		
+	return castle
 
 def init_character():
 	
@@ -501,23 +499,23 @@ Press return when ready to resume""")
 	
 	return game
 
-def go_north(game):
+def go_south(game):
 	game["character"]["y"]=game.get("character").get("y")-1
 	if game.get("character").get("y")<1:
 		game["character"]["y"]=8
 	game["character"]["moved"]=True
 	return game
 
-def go_south(game):
+def go_north(game):
 	game["character"]["y"]=game.get("character").get("y")+1
-	if game.character.get("y")>8:
+	if game.get("character").get("y")>8:
 		game["character"]["y"]=1
 	game["character"]["moved"]=True
 	return game
 
 def go_east(game):
 	game["character"]["x"]=game.get("character").get("x")+1
-	if game.character.get("x")>8:
+	if game.get("character").get("x")>8:
 		game["character"]["x"]=1
 	game["character"]["moved"]=True
 	return game
@@ -809,7 +807,28 @@ def enter_castle(character):
 						print("** Please enter yes or no.\n")
 				
 			else:
-				game=choicedict.get(choice)(game)
+				if choice=="n":
+					currentx=str(game.get("character").get("x"))
+					currenty=str(game.get("character").get("y"))
+					currentz=str(game.get("character").get("x"))
+					for contents in game.get("castle").get(currentx).get(currenty).get(currentz).get("contents"):
+						if contents=="entrance":
+							quitloop=False
+							while quitloop==False:
+								print("This is the exit; are you sure you want to leave? ", end="")
+								choiceexit=input()[:1]
+								if re.match(yesnoregex, choiceexit)==True:
+									if choiceexit=="y":
+										exittheloop=True
+										quittheloop=True
+									else:
+										quittheloop=True
+								else:
+									print("\n** Invalid choice stupid " + game.get("character").get("race") + "; try y or n.\n")
+						else:
+							game=choicedict.get(choice)(game)									
+				else:			
+					game=choicedict.get(choice)(game)
 		else:
 			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!")
 			
