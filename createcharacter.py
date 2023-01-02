@@ -199,6 +199,8 @@ def buy_equipment(character):
 						else:
 							print(" " + arm + "<" + str(armory.get(arms).get("equipment").get(arm).get("cost")) + ">", end="")
 	if character.get("gold")>=20:
+		print("You have " + str(character.get("gold")) + " gold pieces.\n")
+		 
 		regex=re.compile("[yn]")
 		data=False
 		while data==False:
@@ -218,16 +220,17 @@ def buy_equipment(character):
 	if character.get("gold")>0:
 		regex=re.compile("[0-9]+")
 		print("Ok, " + character.get("race") + ", you have " + str(character.get("gold")) + " gold pieces left.\n")
-		data=False
-		while data==False:
+		exitloop=False
+		while exitloop==False:
 			print("Flares cost 1 GP each.  How many do you want? ", end="")
 			choice=input()
 			if re.match(regex, choice):
 				if int(choice)>character.get("gold"):
 					print("\n** You can only afford " + str(character.get("gold")))
 				else:
-					character["flares"]=character["flares"]+int(choice)
-					data=True
+					character["flares"]=character.get("flares")+int(choice)
+					character["gold"]=character.get("gold")-int(choice)
+					exitloop=True
 			else:
 				print("\n** If you don't want any, just type 0 (zero)\n")
 
