@@ -99,7 +99,7 @@ def allocate_attributes(character):
 			data=False
 			while data==False:
 				try:
-					choice=input()[0]
+					choice=input()
 				except:
 					choice=""
 				if re.match(regex, choice) and int(choice)>=0 and int(choice)<=character.get("allocate"):

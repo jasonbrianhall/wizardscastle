@@ -6,7 +6,7 @@ entrancelocation="1/4/1"
 
 warpran=8
 sinkholeran=8
-monsterran=5
+monsterran=4
 chestran=6
 vendorran=16
 poolran=9
@@ -216,5 +216,6 @@ def gen_castle():
 
 
 	castle["1"]["4"]["1"]["contents"]={"entrance": 1}
+	castle["1"]["4"]["1"]["explored"]=True
 	return castle
 
