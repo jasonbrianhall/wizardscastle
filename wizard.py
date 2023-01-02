@@ -20,6 +20,7 @@ def gen_castle():
 	monsters={
 		"kobold": 
 			{
+				"name": "kobold",
 				"modifier": 3,
 				"strength": 5,
 				"intelligence": 4,
@@ -32,6 +33,7 @@ def gen_castle():
 			},
 		"orc":
 			{
+				"name": "orc",
 				"modifier": 3,
 				"strength": 16,
 				"intelligence": 2,
@@ -42,6 +44,7 @@ def gen_castle():
 			},
 		"wolf":
 			{
+				"name": "wolf",
 				"modifier": 3,
 				"strength": 10,
 				"intelligence": 14,
@@ -52,6 +55,7 @@ def gen_castle():
 			},
 		"goblin":
 			{
+				"name": "goblin",
 				"modifier": 3,
 				"strength": 5,
 				"intelligence": 3,
@@ -62,6 +66,7 @@ def gen_castle():
 			},
 		"ogre":
 			{
+				"name": "ogre",
 				"modifier": 3,
 				"strength": 20,
 				"intelligence": 3,
@@ -72,6 +77,7 @@ def gen_castle():
 			},
 		"troll":
 			{
+				"name": "troll",
 				"modifier": 3,
 				"strength": 7,
 				"intelligence": 7,
@@ -83,6 +89,7 @@ def gen_castle():
 			},
 		"bear":
 			{
+				"name": "bear",
 				"modifier": 3,
 				"strength": 15,
 				"intelligence": 4,
@@ -94,6 +101,7 @@ def gen_castle():
 			},
 		"minotaur":
 			{
+				"name": "minotaur",
 				"modifier": 3,
 				"strength": 11,
 				"intelligence": 15,
@@ -105,6 +113,7 @@ def gen_castle():
 			},
 		"gargoyle":
 			{
+				"name": "gargoyle",
 				"modifier": 3,
 				"strength": 13,
 				"intelligence": 4,
@@ -117,6 +126,7 @@ def gen_castle():
 			},
 		"chimera":
 			{
+				"name": "chimera",
 				"modifier": 3,
 				"strength": 32,
 				"intelligence": 14,
@@ -128,6 +138,7 @@ def gen_castle():
 			},
 		"dragon":
 			{
+				"name": "dragon",
 				"modifier": 10,
 				"strength": 40,
 				"intelligence": 18,
@@ -140,6 +151,7 @@ def gen_castle():
 			},
 		"wizard's pet penguin":
 			{
+				"name": "wizard's pet penguin",
 				"strength": 18,
 				"intelligence": 18,
 				"dexterity": 3,
@@ -150,6 +162,7 @@ def gen_castle():
 			},
 		"giant spider":
 			{
+				"name": "giant spider",
 				"strength": 18,
 				"intelligence": 18,
 				"dexterity": 13,
@@ -165,13 +178,13 @@ def gen_castle():
 			monsterlist.append(x)
 	
 
-	for z in range(1, castlesize):
+	for z in range(1, castlesize+1):
 		level=str(z)
 		castle[level]={}
-		for y in range(1, castlesize):
+		for y in range(1, castlesize+1):
 			Y=str(y)
 			castle[level][Y]={}
-			for x in range(1, castlesize):
+			for x in range(1, castlesize+1):
 				X=str(x)
 				castle[level][Y][X]={"contents": {}, "explored": False}
 				warp=random.randint(0,warpran)
@@ -500,30 +513,30 @@ Press return when ready to resume""")
 	
 	return game
 
-def go_south(game):
-	game["character"]["y"]=game.get("character").get("y")-1
-	if game.get("character").get("y")<1:
-		game["character"]["y"]=8
-	game["character"]["moved"]=True
-	return game
-
 def go_north(game):
-	game["character"]["y"]=game.get("character").get("y")+1
-	if game.get("character").get("y")>8:
-		game["character"]["y"]=1
+	game["character"]["x"]=game.get("character").get("x")-1
+	if game.get("character").get("x")<1:
+		game["character"]["x"]=8
 	game["character"]["moved"]=True
 	return game
 
-def go_east(game):
+def go_south(game):
 	game["character"]["x"]=game.get("character").get("x")+1
 	if game.get("character").get("x")>8:
 		game["character"]["x"]=1
 	game["character"]["moved"]=True
 	return game
 
+def go_east(game):
+	game["character"]["y"]=game.get("character").get("y")+1
+	if game.get("character").get("y")>8:
+		game["character"]["y"]=1
+	game["character"]["moved"]=True
+	return game
+
 def go_west(game):
-	game["character"]["x"]=game.get("character").get("x")-1
-	if game.get("character").get("x")<1:
+	game["character"]["y"]=game.get("character").get("y")-1
+	if game.get("character").get("y")<1:
 		game["character"]["y"]=8
 	game["character"]["moved"]=True
 	return game
@@ -713,7 +726,9 @@ def action_room(game):
 	if game.get("character").get("moved")==True:
 		print("Your current position is: " + str(game.get("character").get("x"))+"/"+str(game.get("character").get("y"))+"/"+str(game.get("character").get("z")))
 		game["character"]["moved"]=False
-		ambience()
+		randint=random.randint(0,3)
+		if randint==0:
+			ambience()
 			
 	return game
 
@@ -788,9 +803,11 @@ def enter_castle(character):
 								
 					currentx=str(game.get("character").get("x"))
 					currenty=str(game.get("character").get("y"))
-					currentz=str(game.get("character").get("x"))
+					currentz=str(game.get("character").get("z"))
+					found=False
 					for contents in game.get("castle").get(currentx).get(currenty).get(currentz).get("contents"):
 						if contents=="entrance":
+							found=True
 							quitloop=False
 							while quitloop==False:
 								print("This is the exit; are you sure you want to leave? ", end="")
@@ -805,8 +822,8 @@ def enter_castle(character):
 										quitloop=True
 								else:
 									print("\n** Invalid choice stupid " + game.get("character").get("race") + "; try y or n.\n")
-						else:
-							game=choicedict.get(choice)(game)									
+					if found==False:
+						game=choicedict.get(choice)(game)									
 				else:
 					quitloop=False
 					while quitloop==False:
@@ -842,9 +859,6 @@ def enter_castle(character):
 				game=choicedict.get(choice)(game)
 		else:
 			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!")
-			
-		
-	
 	
 	return game.get("character")
 
