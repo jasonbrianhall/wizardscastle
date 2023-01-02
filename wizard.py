@@ -231,7 +231,8 @@ def init_character():
 	character["z"]                = 1
 	character["turns"]            = 0
 	character["moved"]            = False
-	character["victory"]          = False
+	character["orbofzot"]         = False
+	character["runestaff"]        = False
 	return character
 
 def buy_equipment(character):
@@ -781,33 +782,10 @@ def enter_castle(character):
 			choice=""
 		game["character"]["turns"]=game["character"]["turns"]+1
 		if re.match(regex, choice):
-			if choice=="q":
-				
-				quitloop=False
-				while quitloop==False:
-					print("Do you really want to quit now? ", end="")
-					try:
-						newchoice=input()[:1].lower()
-					except:
-						newchoice=""
-					if re.match(yesnoregex, newchoice) and newchoice=="y":
-						if game.get("character").get("victory")==False:
-							print("\n\nA less than awe-inspiring defeat.\n")
-						else:
-							print("An incredibly glorious victory!!\n")
-						print("When you left the castle, you had :\n\nYour miserable life!")
-						print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
-						print("\nYou also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces")
-						print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
-						exittheloop=True 
-						quitloop=True
-					elif re.match(yesnoregex, newchoice) and newchoice=="n":
-						quitloop=True
-					else:
-						print("** Please enter yes or no.\n")
-				
-			else:
+			if choice=="q" or choice=="n":
 				if choice=="n":
+					quitloop=False
+								
 					currentx=str(game.get("character").get("x"))
 					currenty=str(game.get("character").get("y"))
 					currentz=str(game.get("character").get("x"))
@@ -816,19 +794,52 @@ def enter_castle(character):
 							quitloop=False
 							while quitloop==False:
 								print("This is the exit; are you sure you want to leave? ", end="")
-								choiceexit=input()[:1]
-								if re.match(yesnoregex, choiceexit)==True:
-									if choiceexit=="y":
+								newchoice=input()[:1].lower()
+								if re.match(yesnoregex, newchoice):
+									if newchoice=="y":
+										if game.get("character").get("orbofzot")==False:
+											print("\nYou left the castle without the Orb of Zot.")
 										exittheloop=True
-										quittheloop=True
+										quitloop=True
 									else:
-										quittheloop=True
+										quitloop=True
 								else:
 									print("\n** Invalid choice stupid " + game.get("character").get("race") + "; try y or n.\n")
 						else:
 							game=choicedict.get(choice)(game)									
-				else:			
-					game=choicedict.get(choice)(game)
+				else:
+					quitloop=False
+					while quitloop==False:
+						print("Do you really want to quit now? ", end="")
+						try:
+							newchoice=input()[:1].lower()
+						except:
+							newchoice=""
+						if re.match(yesnoregex, newchoice) and newchoice=="y":								
+							exittheloop=True 
+							quitloop=True
+						elif re.match(yesnoregex, newchoice) and newchoice=="n":
+							quitloop=True
+						else:
+							print("** Please enter yes or no.\n")
+				
+				if exittheloop==True:
+					if game.get("character").get("orbofzot")==True and choice=="n":
+						print("An incredibly glorious victory!!\n")
+					else:
+						print("\nA less than awe-inspiring defeat.\n")
+
+					print("When you left the castle, you had :\n\nYour miserable life!")
+					print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
+					print("\nYou also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces", end="")
+					if game.get("character").get("runestaff")==True:
+						print(" and the runestaff", end="")
+			
+					print("\n\nAnd it took you " + str(game.get("character").get("turns")) + " turns!\n")
+
+				
+			else:
+				game=choicedict.get(choice)(game)
 		else:
 			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!")
 			
@@ -854,7 +865,7 @@ def main():
 
 		exitloop2=False
 		while exitloop2==False:
-			print("Are you foolish enough to want to play again? ", end="")
+			print("\nAre you foolish enough to want to play again? ", end="")
 			try:
 				choices=input()[:1]
 			except:
