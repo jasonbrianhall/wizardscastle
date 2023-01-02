@@ -1,5 +1,116 @@
 import random
 
+def look_northeast(game):
+	temp= game.get("character").get("x")-1
+	temp2=game.get("character").get("y")-1
+	castlesize=game.get("castle").get("size")
+	if temp<1:
+		temp=castlesize
+	if temp2<1:
+		temp2=castlesize
+	game["character"]["moved"]=True
+	X=str(temp)
+	Y=str(temp2)
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+def look_northwest(game):
+	temp= game.get("character").get("x")-1
+	temp2=game.get("character").get("y")+1
+	castlesize=game.get("castle").get("size")
+	if temp<1:
+		temp=castlesize
+	if temp2>castlesize:
+		temp2=1
+	game["character"]["moved"]=True
+	X=str(temp)
+	Y=str(temp2)
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+def look_southeast(game):
+	temp= game.get("character").get("x")+1
+	temp2=game.get("character").get("y")-1
+	castlesize=game.get("castle").get("size")
+	if temp>castlesize:
+		temp=1
+	if temp2<1:
+		temp2=castlesize
+	game["character"]["moved"]=True
+	X=str(temp)
+	Y=str(temp2)
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+def look_southwest(game):
+	temp= game.get("character").get("x")+1
+	temp2=game.get("character").get("y")+1
+	castlesize=game.get("castle").get("size")
+	if temp>castlesize:
+		temp=1
+	if temp2>castlesize:
+		temp2=1
+	game["character"]["moved"]=True
+	X=str(temp)
+	Y=str(temp2)
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+
+
+def look_north(game):
+	temp=game.get("character").get("x")-1
+	castlesize=game.get("castle").get("size")
+	if temp<1:
+		temp=castlesize
+	game["character"]["moved"]=True
+	X=str(temp)
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+def look_south(game):
+	temp=game.get("character").get("x")+1
+	castlesize=game.get("castle").get("size")
+	if temp>castlesize:
+		temp=1
+	game["character"]["moved"]=True
+	X=str(temp)
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+	
+def look_east(game):
+	temp=game.get("character").get("y")+1
+	castlesize=game.get("castle").get("size")
+	if temp>castlesize:
+		temp=1
+	game["character"]["moved"]=True
+	X=str(game.get("character").get("x"))
+	Y=str(temp)
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+def look_west(game):
+	temp=game.get("character").get("y")-1
+	castlesize=game.get("castle").get("size")
+	if temp<1:
+		temp=castlesize
+	game["character"]["moved"]=True
+	X=str(game.get("character").get("x"))
+	Y=str(temp)
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+	return game
+
+
 def go_north(game):
 	game["character"]["x"]=game.get("character").get("x")-1
 	castlesize=game.get("castle").get("size")
@@ -51,6 +162,23 @@ def go_west(game):
 
 	return game
 
+def go_sinkhole(game):
+
+	print("You found a sinkhole!!\n")
+
+	game["character"]["z"]=game.get("character").get("z")-1
+	castlesize=game.get("castle").get("size")
+	if game.get("character").get("z")<1:
+		game["character"]["z"]=castlesize
+	game["character"]["moved"]=True
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	game["castle"][X][Y][Z]["explored"]=True	
+
+	return game
+
+
 def go_up(game):
 	return game
 
@@ -64,7 +192,7 @@ def go_map(game):
 
 	print("\n")
 	castlesize=game.get("castle").get("size")
-	multiplier=(castlesize*12)+1
+	multiplier=(castlesize*13)+1
 	level=str(game.get("character").get("z"))
 	for x in range(1,castlesize+1):
 		X=str(x)
@@ -75,19 +203,25 @@ def go_map(game):
 		for y in range(1,castlesize+1):
 			print("|", end="")
 			Y=str(y)
-			if game.get("castle").get(X).get(Y).get(level).get("explored")==True:
-				if game.get("castle").get(X).get(Y).get(level).get("contents")=={}:
-					print(" "*11, end="")
-				else:
-					for contents in game.get("castle").get(X).get(Y).get(level).get("contents"):
-						length=len(contents)
-						filler=10-length
-						print(" " + contents, end="")
-						print(" "*filler, end="")
-						
-						break
+			
+			tempx=str(game.get("character").get("x"))
+			tempy=str(game.get("character").get("y"))
+			if tempx==X and tempy==Y:
+				print("You are here", end="")
 			else:
-				print(" " + "?"*9+" ", end='')
+				if game.get("castle").get(X).get(Y).get(level).get("explored")==True:
+					if game.get("castle").get(X).get(Y).get(level).get("contents")=={}:
+						print(" "*12, end="")
+					else:
+						for contents in game.get("castle").get(X).get(Y).get(level).get("contents"):
+							length=len(contents)
+							filler=11-length
+							print(" " + contents, end="")
+							print(" "*filler, end="")
+							
+							break
+				else:
+					print(" " + "?"*10+" ", end='')
 				
 	print("|\n" + "*"*multiplier + "\n")
 				
@@ -97,6 +231,15 @@ def go_map(game):
 	return game
 
 def go_flare(game):
+	game=look_north(game)
+	game=look_south(game)
+	game=look_east(game)
+	game=look_west(game)
+	game=look_northeast(game)
+	game=look_southeast(game)
+	game=look_northwest(game)
+	game=look_southwest(game)
+
 	return game
 
 def go_lamp(game):
@@ -138,7 +281,8 @@ def ambience():
 				" footsteps!",
 				" a wumpus!",
 				" thunder!",
-				" a scream!	 You think someone is being tortured!"
+				" a scream!  You think someone is being tortured!",
+				" a rat!"
 				],
 			"post": [
 				" Your heart starts racing.",
@@ -269,24 +413,32 @@ def go_warp(game):
 	
 	print("\nYou found a warp!!\n")
 	castlesize=game.get("castle").get("size")
-	X=random.randint(1,castlesize+1)
-	Y=random.randint(1,castlesize+1)
-	Z=random.randint(1,castlesize+1)
+	X=str(random.randint(1,castlesize))
+	Y=str(random.randint(1,castlesize))
+	Z=str(random.randint(1,castlesize))
+	
 	print("You are warping to " + X +"/"+Y+"/"+Z)
 	game["character"]["x"]=X
 	game["character"]["y"]=Y
 	game["character"]["z"]=Z
-	game["castle"][X][Y][Z]["explored"]=True		
+	game["castle"][str(X)][str(Y)][str(Z)]["explored"]=True		
 	
+	return game
+
+def go_monster(game):
+	print("\nYou found a monster!!\n")
+	return game
+
+def do_nothing(game):
 	return game
 
 def action_room(game):
 	actiondict={
-		"warp":  go_warp
+		"warp":  go_warp,
+		"monster": go_monster,
+		"sinkhole": go_sinkhole,
+		"entrance": do_nothing
 	}
-
-
-
 
 	if game.get("character").get("moved")==True:
 		X=str(game.get("character").get("x"))
