@@ -1,4 +1,5 @@
 import random
+import re
 
 def look_northeast(game):
 	temp= game.get("character").get("x")-1
@@ -248,6 +249,24 @@ def go_flare(game):
 	return game
 
 def go_lamp(game):
+	regex=re.compile("[nsew]")
+	exitloop=False
+	if game.get("character").get("lamp")==True:
+		print("Where do you want to shine the lamp (N,S,E,W)? ", end="")
+		choice=input()[:1].lower()
+		if re.match(regex, choice):
+			if choice=="n":
+				game=look_north(game)
+			elif choice=="s":
+				game=look_south(game)
+			elif choice=="e":
+				game=look_east(game)
+			elif choice=="w":
+				game=look_west(game)
+		else:
+			print("** That's not a direction, " + game.get("character").get("race") + "!")
+	else:
+		print("** You don't hae a lamp, " + game.get("character").get("race") + "!")
 	return game
 	
 def go_open(game):

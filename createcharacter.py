@@ -15,7 +15,7 @@ def init_character():
 	character["friendlyvendors"]  = True
 	character["weapons"]          = {}
 	character["armor"]            = {}
-	character["lamp"]             = True
+	character["lamp"]             = False
 	character["flares"]           = 0
 	character["x"]                = 1
 	character["y"]                = 4
