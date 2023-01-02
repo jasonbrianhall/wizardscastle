@@ -1,5 +1,6 @@
 import random
 import re
+import createcharacter
 
 def look_northeast(game):
 	temp= game.get("character").get("x")-1
@@ -176,7 +177,6 @@ def go_sinkhole(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-
 	return game
 
 
@@ -190,8 +190,51 @@ def go_drink(game):
 	X=str(game.get("character").get("x"))
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
-	if game.get("castle").get(X).get(Y).get(Z).get("pool")==True:
-		print("You drink from the pool.")
+	if game.get("castle").get(X).get(Y).get(Z).get("contents").get("pool")==True:
+		print("You drink from the pool and ", end="")
+		drink=random.randint(1,9)
+		if drink<7:
+			print("feel ", end="")
+			change=random.randint(1,3)
+			if drink==1:
+				print("smarter")
+				game["character"]["intelligence"]=game["character"]["intelligence"]+change
+			if drink==2:
+				print("nimbler")
+				game["character"]["dexterity"]=game["character"]["dexterity"]+change
+			if drink==3:
+				print("stronger")
+				game["character"]["strength"]=game["character"]["strength"]+change
+			if drink==4:
+				print("dumber")
+				game["character"]["intelligence"]=game["character"]["intelligence"]-change
+			if drink==5:
+				print("clumsier")
+				game["character"]["intelligence"]=game["character"]["dexterity"]-change
+			if drink==6:
+				print("weaker")
+				game["character"]["strength"]=game["character"]["strength"]-change
+		else:
+			if drink==7:
+				print("become a ", end="")
+				if game.get("character").get("sex")=="m":
+					print("girl")
+					game["character"]["sex"]="f"
+				else:
+					print("boy.")
+					game["character"]["sex"]="m"
+				
+			if drink==8:
+				temp=createcharacter.races
+				list=[]
+				for x in temp:
+					list.append(temp.get(x).get("name"))
+				race=random.choice(list)
+				print("turn into a " + race)
+				game["character"]["race"]=race
+			if drink==9:
+				print("nothing happens.")
+				
 	else:
 		print("** If you want to drink, find a pool")
 	return game
