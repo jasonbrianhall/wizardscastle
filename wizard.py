@@ -30,6 +30,24 @@ of now, *NONE* has ever emerged victoriously! Beware!!\n"""
 
 	print(buffer)
 
+def summary(game):
+	print("You are at ( " + str(game.get("character").get("x")) + ", " + str(game.get("character").get("y")) + " ) Level " + str(game.get("character").get("z")) + "\n")
+	print("Strength = " + str(game.get("character").get("strength")), end="")
+	print("	 Intelligence = " + str(game.get("character").get("intelligence")), end="")
+	print("	 Dexterity = " + str(game.get("character").get("dexterity")))
+	print("Treasures = " + str(len(game.get("character").get("treasures"))), end="")
+	print(" Flares = " + str(game.get("character").get("flares")), end="")
+	print(" Gold pieces = " + str(game.get("character").get("gold")))
+	if not game.get("character").get("weapons").get("name")=="nothing":
+		print("Weapon = " + game.get("character").get("weapons").get("name"), end="")
+	else:
+		print("Weapon = No weapon", end="")
+	if not game.get("character").get("armor")=="nothing":
+		print("	 Armor = " + game.get("character").get("armor").get("name"))
+	else:
+		print("	 Armor = No armor")
+
+
 def enter_castle(character):
 
 	castledata=castle.gen_castle()
@@ -58,21 +76,8 @@ def enter_castle(character):
 
 	print("\nOk, " + game.get("character").get("race") + ", you are now entering the castle!\n")
 	
-	print("You are at ( " + str(game.get("character").get("x")) + ", " + str(game.get("character").get("y")) + " ) Level " + str(game.get("character").get("z")) + "\n")
-	print("Strength = " + str(game.get("character").get("strength")), end="")
-	print("	 Intelligence = " + str(game.get("character").get("intelligence")), end="")
-	print("	 Dexterity = " + str(game.get("character").get("dexterity")))
-	print("Treasures = " + str(len(game.get("character").get("treasures"))), end="")
-	print(" Flares = " + str(game.get("character").get("flares")), end="")
-	print(" Gold pieces = " + str(game.get("character").get("gold")))
-	if not game.get("character").get("weapons").get("name")=="nothing":
-		print("Weapon = " + game.get("character").get("weapons").get("name"), end="")
-	else:
-		print("Weapon = No weapon", end="")
-	if not game.get("character").get("armor")=="nothing":
-		print("	 Armor = " + game.get("character").get("armor").get("name"))
-	else:
-		print("	 Armor = No armor")
+	summary(game)
+		
    
 	exittheloop=False
 
@@ -154,7 +159,8 @@ def enter_castle(character):
 			else:
 				game=choicedict.get(choice)(game)
 		else:
-			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!")
+			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!\n")
+			summary(game)
 	
 	return game.get("character")
 

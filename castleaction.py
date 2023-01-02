@@ -231,15 +231,20 @@ def go_map(game):
 	return game
 
 def go_flare(game):
-	game=look_north(game)
-	game=look_south(game)
-	game=look_east(game)
-	game=look_west(game)
-	game=look_northeast(game)
-	game=look_southeast(game)
-	game=look_northwest(game)
-	game=look_southwest(game)
-
+	flares=game.get("character").get("flares")
+	if flares>0:
+		game=look_north(game)
+		game=look_south(game)
+		game=look_east(game)
+		game=look_west(game)
+		game=look_northeast(game)
+		game=look_southeast(game)
+		game=look_northwest(game)
+		game=look_southwest(game)
+		go_map(game)
+		game["character"]["flares"]=game.get("chracter").get("flares")-1
+	else:
+		print("** Hey, bright one, you're out of flares!\n")
 	return game
 
 def go_lamp(game):
