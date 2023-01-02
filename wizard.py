@@ -233,7 +233,7 @@ def init_character():
 	character["z"]                = 1
 	character["turns"]            = 0
 	character["moved"]            = False
-	
+	character["victory"]          = False
 	return character
 
 def buy_equipment(character):
@@ -773,13 +773,16 @@ def enter_castle(character):
 					except:
 						newchoice=""
 					if re.match(yesnoregex, newchoice) and newchoice=="y":
-					   print("\n\nA less than awe-inspiring defeat.")
-					   print("When you left the castle, you had :\nYour miserable life!")
-					   print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
-					   print("You also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces")
-					   print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
-					   exittheloop=True 
-					   quitloop=True
+						if game.get("character").get("victory")==False:
+							print("\n\nA less than awe-inspiring defeat.\n")
+						else:
+							print("An incredibly glorious victory!!\n")
+						print("When you left the castle, you had :\n\nYour miserable life!")
+						print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
+						print("\nYou also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces")
+						print("\nAnd it took you " + str(game.get("character").get("turns")) + " turns!")
+						exittheloop=True 
+						quitloop=True
 					elif re.match(yesnoregex, newchoice) and newchoice=="n":
 						quitloop=True
 					else:
