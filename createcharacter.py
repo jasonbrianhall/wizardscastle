@@ -1,5 +1,13 @@
 import re
 
+races={
+	"e": {"strength":  6, "intelligence": 8, "dexterity": 10, "name": "Elf",    "allocate": 8, "gold": 60},
+	"d": {"strength": 10, "intelligence": 8, "dexterity":  6, "name": "Dwarf",  "allocate": 8, "gold": 60},
+	"m": {"strength":  8, "intelligence": 8, "dexterity":  8, "name": "Human",  "allocate": 8, "gold": 60},
+	"h": {"strength":  4, "intelligence": 8, "dexterity": 12, "name": "Hobbit", "allocate": 4, "gold": 60}
+	}
+
+
 def init_character():
 	
 	character={}
@@ -29,12 +37,6 @@ def init_character():
 def select_race(character):
 	
 	regex=re.compile("[edmh]")
-	datamapper={
-		"e": {"strength":  6, "intelligence": 8, "dexterity": 10, "name": "Elf",    "allocate": 8, "gold": 60},
-		"d": {"strength": 10, "intelligence": 8, "dexterity":  6, "name": "Dwarf",  "allocate": 8, "gold": 60},
-		"m": {"strength":  8, "intelligence": 8, "dexterity":  8, "name": "Human",  "allocate": 8, "gold": 60},
-		"h": {"strength":  4, "intelligence": 8, "dexterity": 12, "name": "Hobbit", "allocate": 4, "gold": 60}
-		}
 
 	print("All right, bold one.")
 
@@ -54,12 +56,12 @@ def select_race(character):
 		else:
 			print("** That was incorrect. Please type E, D, M, or H.")
 
-	character["race"]         = datamapper.get(race).get("name")
-	character["strength"]     = datamapper.get(race).get("strength")
-	character["dexterity"]	  = datamapper.get(race).get("dexterity")
-	character["intelligence"] = datamapper.get(race).get("intelligence")
-	character["allocate"]	  = datamapper.get(race).get("allocate")
-	character["gold"]         = datamapper.get(race).get("gold")
+	character["race"]         = races.get(race).get("name")
+	character["strength"]     = races.get(race).get("strength")
+	character["dexterity"]	  = races.get(race).get("dexterity")
+	character["intelligence"] = races.get(race).get("intelligence")
+	character["allocate"]	  = races.get(race).get("allocate")
+	character["gold"]         = races.get(race).get("gold")
 
 	return character
 

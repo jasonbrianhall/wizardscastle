@@ -1,5 +1,5 @@
 import random
-
+import createcharacter
 
 castlesize=8
 entrancelocation="1/4/1"
@@ -7,9 +7,12 @@ entrancelocation="1/4/1"
 warpran=8
 sinkholeran=8
 monsterran=4
-chestran=6
+chestran=3
+bookran=3
 vendorran=16
 poolran=9
+orbran=8
+vendorran=9
 
 def gen_castle():
 	castle={}
@@ -182,7 +185,7 @@ def gen_castle():
 			castle[X][Y]={}
 			for z in range(1, castlesize+1):
 				level=str(z)
-				castle[X][Y][level]={"contents": {}, "explored": False}
+				castle[X][Y][level]={"contents": {}, "explored": True}
 				warp=random.randint(0,warpran)
 				if warp==0:
 					castle[X][Y][level]["contents"]["warp"]={}
@@ -198,11 +201,19 @@ def gen_castle():
 					if monster==0:
 						currentmonster=random.choice(monsterlist)
 						castle[X][Y][level]["contents"]["monster"]=monsters[currentmonster]
+					else:
+						vendor=random.randint(0,vendorran)
+						if vendor==0:
+							castle[X][Y][level]["contents"]["vendor"]={}
+
 						
-						
-						chest=random.randint(0,chestran)
-						if chest==0:
-							castle[X][Y][level]["contents"]["chest"]={}
+					chest=random.randint(0,chestran)
+					if chest==0:
+						castle[X][Y][level]["contents"]["chest"]={}
+						explodes=random.randint(0,5)
+						if explodes==0:
+							castle[X][Y][level]["contents"]["chest"]["explodes"]=True
+						else:
 							gold=random.randint(0,2)
 							if gold==0:
 								castle[X][Y][level]["contents"]["chest"]["gold"]=random.randint(1,1000)
@@ -212,7 +223,50 @@ def gen_castle():
 							orb=random.randint(0,3)
 							if orb==0:
 								castle[X][Y][level]["contents"]["chest"]["orb"]=True
+							flare=random.randint(0,3)
+							if flare==0:
+								castle[X][Y][level]["contents"]["chest"]["flare"]=random.randint(1,20)
 
+					book=random.randint(0,bookran)
+					if book==0:
+						castle[X][Y][level]["contents"]["book"]={}
+						sticks=random.randint(0,5)
+						if sticks==0:
+							castle[X][Y][level]["contents"]["book"]["sticks"]=True
+						else:
+							content=random.randint(0,9)
+							if content==0:
+								castle[X][Y][level]["contents"]["book"]["content"]="strength"
+							elif content==1:
+								castle[X][Y][level]["contents"]["book"]["content"]="dexterity"
+							elif content==2:
+								castle[X][Y][level]["contents"]["book"]["content"]="intelligence"
+							elif content==3:
+								castle[X][Y][level]["contents"]["book"]["content"]="blind"
+							elif content==4:
+								castle[X][Y][level]["contents"]["book"]["content"]="It'S another volume of Zot'S Poetry! - Yech!!"
+							elif content==5:
+								castle[X][Y][level]["contents"]["book"]["content"]="It'S in a foreign language; you can't read it!"
+							elif content==6:
+								castle[X][Y][level]["contents"]["book"]["content"]="It's an old dictionary!"
+							elif content==7:
+								castle[X][Y][level]["contents"]["book"]["content"]="It'S too boring to read!"
+							elif content>=8:
+								temp=createcharacter.races
+								list=[]
+								for x in temp:
+									list.append(temp.get(x).get("name"))
+								castle[X][Y][level]["contents"]["book"]["content"]="It'S an old copy of play " + random.choice(list)
+
+					pool=random.randint(0,poolran)
+					if pool==0:
+						castle[X][Y][level]["contents"]["pool"]=True
+							
+					orb=random.randint(0,orbran)
+					if pool==0:
+						castle[X][Y][level]["contents"]["orb"]=True
+							
+								
 
 
 	castle["1"]["4"]["1"]["contents"]={"entrance": 1}

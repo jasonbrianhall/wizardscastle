@@ -187,6 +187,13 @@ def go_down(game):
 	return game
 	
 def go_drink(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	if game.get("castle").get(X).get(Y).get(Z).get("pool")==True:
+		print("You drink from the pool.")
+	else:
+		print("** If you want to drink, find a pool")
 	return game
 	
 def go_map(game):
@@ -266,7 +273,7 @@ def go_lamp(game):
 		else:
 			print("** That's not a direction, " + game.get("character").get("race") + "!")
 	else:
-		print("** You don't hae a lamp, " + game.get("character").get("race") + "!")
+		print("** You don't have a lamp, " + game.get("character").get("race") + "!")
 	return game
 	
 def go_open(game):
@@ -437,11 +444,11 @@ def go_warp(game):
 	
 	print("\nYou found a warp!!\n")
 	castlesize=game.get("castle").get("size")
-	X=str(random.randint(1,castlesize))
-	Y=str(random.randint(1,castlesize))
-	Z=str(random.randint(1,castlesize))
+	X=random.randint(1,castlesize)
+	Y=random.randint(1,castlesize)
+	Z=random.randint(1,castlesize)
 	
-	print("You are warping to " + X +"/"+Y+"/"+Z)
+	print("You are warping to " + str(X) +"/"+str(Y)+"/"+str(Z))
 	game["character"]["x"]=X
 	game["character"]["y"]=Y
 	game["character"]["z"]=Z
@@ -453,6 +460,26 @@ def go_monster(game):
 	print("\nYou found a monster!!\n")
 	return game
 
+def go_vendor(game):
+	print("\nYou found a vendor!!\n")
+	return game
+	
+def go_chest(game):
+	print("You found a chest.  You may open it or leave it.")
+	return game
+
+def go_pool(game):
+	print("You are in a room with a pool.")
+	return game
+
+def go_book(game):
+	print("You found a book.  You may open it or leave it.")
+	return game
+
+def go_orb(game):
+	print("You found an orb. Gaze at your own peril")
+	return game
+
 def do_nothing(game):
 	return game
 
@@ -461,7 +488,12 @@ def action_room(game):
 		"warp":  go_warp,
 		"monster": go_monster,
 		"sinkhole": go_sinkhole,
-		"entrance": do_nothing
+		"entrance": do_nothing,
+		"vendor": go_vendor,
+		"chest": go_chest,
+		"pool": go_pool,
+		"book": go_book,
+		"orb": go_orb
 	}
 
 	if game.get("character").get("moved")==True:
@@ -472,10 +504,9 @@ def action_room(game):
 		game["character"]["moved"]=False
 
 		for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
-			print("contents is", contents)
+			print("contents is ", contents)
 			if not contents=={}:
 				game=actiondict.get(contents)(game)
-			break
 				
 		
 
