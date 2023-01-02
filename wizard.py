@@ -505,24 +505,28 @@ def go_north(game):
 	game["character"]["y"]=game.get("character").get("y")-1
 	if game.get("character").get("y")<1:
 		game["character"]["y"]=8
+	game["character"]["moved"]=True
 	return game
 
 def go_south(game):
 	game["character"]["y"]=game.get("character").get("y")+1
 	if game.character.get("y")>8:
 		game["character"]["y"]=1
+	game["character"]["moved"]=True
 	return game
 
 def go_east(game):
 	game["character"]["x"]=game.get("character").get("x")+1
 	if game.character.get("x")>8:
 		game["character"]["x"]=1
+	game["character"]["moved"]=True
 	return game
 
 def go_west(game):
 	game["character"]["x"]=game.get("character").get("x")-1
 	if game.get("character").get("x")<1:
 		game["character"]["y"]=8
+	game["character"]["moved"]=True
 	return game
 
 def go_up(game):
@@ -708,6 +712,7 @@ def ambience():
 
 def action_room(game):
 	if game.get("character").get("moved")==True:
+		print("Your current position is" + game.get("character").get("x")+"/"+game.get("character").get("y")+"/"+game.get("character").get("z"))
 		ambience()
 			
 	return game
