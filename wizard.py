@@ -229,9 +229,10 @@ def init_character():
 	character["lamp"]             = True
 	character["flares"]           = 0
 	character["x"]                = 1
-	character["y"]				  = 4
-	character["z"]				  = 1
-	character["turns"]			  = 0
+	character["y"]                = 4
+	character["z"]                = 1
+	character["turns"]            = 0
+	character["moved"]            = False
 	
 	return character
 
@@ -694,7 +695,8 @@ def ambience():
 	print(data.get(ranstring).get("init") + random.choice(mylist) + random.choice(postlist))
 
 def action_room(game):
-	ambience()
+	if game.get("character").get("moved")==True:
+		ambience()
 			
 	return game
 
