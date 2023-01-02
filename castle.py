@@ -263,7 +263,7 @@ def gen_castle():
 						castle[X][Y][level]["contents"]["pool"]=True
 							
 					orb=random.randint(0,orbran)
-					if pool==0:
+					if orb==0:
 						castle[X][Y][level]["contents"]["orb"]=True
 							
 								
