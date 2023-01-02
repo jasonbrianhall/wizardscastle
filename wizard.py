@@ -319,10 +319,10 @@ def buy_equipment(character):
 					counter=0
 					for arm in armory.get(arms).get("equipment"):
 						if counter==0:
-							print(arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
+							print(arm + "<" + str(armory.get(arms).get("equipment").get(arm).get("cost")) + ">", end="")
 							counter=1
 						else:
-							print(" " + arm + "<" + str(armory.get(arms).get("equipment").get(arm)) + ">", end="")
+							print(" " + arm + "<" + str(armory.get(arms).get("equipment").get(arm).get("cost")) + ">", end="")
 	if character.get("gold")>=20:
 		regex=re.compile("[yn]")
 		data=False
@@ -769,6 +769,8 @@ def enter_castle(character):
 			choice=input().lower()
 			if len(choice)>=2: 
 				choice=choice[:2]
+				if not choice=="dr":
+					choice=choice[:1]
 			else:
 				choice=choice[:1]
 		except:
