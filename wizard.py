@@ -442,7 +442,7 @@ def select_sex(character):
 		if re.match(regex, choice):
 			sex=datamapper.get(choice)
 		else:
-			print("** Cute", character["race"], "real cute.	 Try M or F.")
+			print("** Cute", character["race"] +" real cute.  Try M or F.")
 
 	character["sex"]=sex
 	return character
@@ -712,7 +712,8 @@ def ambience():
 
 def action_room(game):
 	if game.get("character").get("moved")==True:
-		print("Your current position is" + game.get("character").get("x")+"/"+game.get("character").get("y")+"/"+game.get("character").get("z"))
+		print("Your current position is: " + str(game.get("character").get("x"))+"/"+str(game.get("character").get("y"))+"/"+str(game.get("character").get("z")))
+		game["character"]["moved"]=False
 		ambience()
 			
 	return game
