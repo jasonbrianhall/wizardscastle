@@ -1,4 +1,5 @@
-#!/usr/bin/env
+#!/usr/bin/env python
+
 import re
 import json
 import random
