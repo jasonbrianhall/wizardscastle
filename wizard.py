@@ -4,33 +4,7 @@ import re
 import json
 import random
 import castle
-
-
-def init_character():
-	
-	character={}
-	character["race"]             = ""
-	character["strength"]         = 0
-	character["dexterity"]        = 0
-	character["intelligence"]     = 0
-	character["allocate"]         = 0
-	character["gold"]             = 0
-	character["bookstucktohand"]  = False
-	character["sex"]              = ""
-	character["treasures"]        = []
-	character["friendlyvendors"]  = True
-	character["weapons"]          = {}
-	character["armor"]            = {}
-	character["lamp"]             = True
-	character["flares"]           = 0
-	character["x"]                = 1
-	character["y"]                = 4
-	character["z"]                = 1
-	character["turns"]            = 0
-	character["moved"]            = False
-	character["orbofzot"]         = False
-	character["runestaff"]        = False
-	return character
+import createcharacter
 
 def buy_equipment(character):
 
@@ -180,66 +154,6 @@ def allocate_attributes(character):
 					data=True
 				else:
 					print("\n** How many points do you wish to add to your " + x + "? ", end="")
-	return character
-
-
-def select_race(character):
-	
-	regex=re.compile("[edmh]")
-	datamapper={
-		"e": {"strength":  6, "intelligence": 8, "dexterity": 10, "name": "Elf",    "allocate": 8, "gold": 60},
-		"d": {"strength": 10, "intelligence": 8, "dexterity":  6, "name": "Dwarf",  "allocate": 8, "gold": 60},
-		"m": {"strength":  8, "intelligence": 8, "dexterity":  8, "name": "Human",  "allocate": 8, "gold": 60},
-		"h": {"strength":  4, "intelligence": 8, "dexterity": 12, "name": "Hobbit", "allocate": 4, "gold": 60}
-		}
-
-	print("All right, bold one.")
-
-	choice=""
-	race=""
-
-	while(race.lower()==""):
-		print("You may be an Elf, Dwarf, Man, or Hobbit")
-
-		try:
-			print("\nYour Choice? ", end="")
-			choice=input()[0].lower()
-		except:
-			pass
-		if	re.match(regex, choice):
-			race=choice
-		else:
-			print("** That was incorrect. Please type E, D, M, or H.")
-
-	character["race"]         = datamapper.get(race).get("name")
-	character["strength"]     = datamapper.get(race).get("strength")
-	character["dexterity"]	  = datamapper.get(race).get("dexterity")
-	character["intelligence"] = datamapper.get(race).get("intelligence")
-	character["allocate"]	  = datamapper.get(race).get("allocate")
-	character["gold"]         = datamapper.get(race).get("gold")
-
-	return character
-
-def select_sex(character):
-	
-	sex=""
-
-	datamapper={"m": "Male", "f": "Female"}
-	regex=re.compile("[mf]")
-
-	choice=""
-	while(sex.lower()==""):
-		try:
-			print("\nWhich sex do you prefer? ", end="")
-			choice=input()[0].lower()
-		except:
-			pass
-		if re.match(regex, choice):
-			sex=datamapper.get(choice)
-		else:
-			print("** Cute", character["race"] +" real cute.  Try M or F.")
-
-	character["sex"]=sex
 	return character
 
 def print_intro():
@@ -681,12 +595,12 @@ def main():
 	print_intro()
 	exittheloop=False
 	while exittheloop==False:
-		character=init_character()	  
+		character=createcharacter.init_character()	  
 	
-		character=select_race(character)
-		character=select_sex(character) 
-		character=allocate_attributes(character)
-		character=buy_equipment(character)
+		character=createcharacter.select_race(character)
+		character=createcharacter.select_sex(character) 
+		character=createcharacter.allocate_attributes(character)
+		character=createcharacter.buy_equipment(character)
 		character=enter_castle(character)
 
 		exitloop2=False
