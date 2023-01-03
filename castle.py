@@ -276,11 +276,6 @@ def gen_castle():
 	castle["1"]["4"]["1"]["explored"]=True
 
 	# calculate downstairs after entrance
-
-	
-	for x in range(1,castlesize+1):
-		print(x)
-
 	for x in range(1, castlesize+1):
 		X=str(x)
 		for y in range(1, castlesize+1):
