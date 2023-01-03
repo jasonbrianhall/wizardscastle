@@ -287,7 +287,6 @@ def gen_castle():
 			Y=str(y)
 			for z in range(1, castlesize+1):
 				level=str(z)
-				print(X, Y, level, castle.get(X).get(Y).get(level).get("contents").get("upstairs"))
 				if castle.get(X).get(Y).get(level).get("contents").get("upstairs"):
 					temp=z+1
 					if temp>castlesize:
@@ -296,10 +295,8 @@ def gen_castle():
 
 					if castle.get(X).get(Y).get(temp).get("contents").get("sinkhole") or castle.get(X).get(Y).get(temp).get("contents").get("warp"):
 						del castle[X][Y][level]["contents"]["upstairs"]
-						print("Deleting Upstairs " + X + "/"+Y+"/"+temp)
 					else:
 						castle[X][Y][temp]["contents"]["downstairs"]=True
-						print("Adding downstairs " + X + "/"+Y+"/"+temp)
 					
 
 	return castle

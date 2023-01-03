@@ -166,7 +166,7 @@ def go_west(game):
 
 def go_sinkhole(game):
 
-	print("You found a sinkhole!!\n")
+	print("; you fall to the next level!\n")
 
 	game["character"]["z"]=game.get("character").get("z")-1
 	castlesize=game.get("castle").get("size")
@@ -365,11 +365,11 @@ def go_down(game):
 	
 	
 def go_upstairs(game):
-	print("You found up stairs")
+	print("; they go up")
 	return game
 
 def go_downstairs(game):
-	print("You found down stairs")
+	print("; they go down")
 	return game
 	
 
@@ -530,7 +530,7 @@ def ambience():
 
 def go_warp(game):
 	
-	print("\nYou found a warp!!\n")
+	print("; you are being warped to a random location!!\n")
 	castlesize=game.get("castle").get("size")
 	X=random.randint(1,castlesize)
 	Y=random.randint(1,castlesize)
@@ -545,31 +545,36 @@ def go_warp(game):
 	return game
 
 def go_monster(game):
+	# Add logic to fight monster
 	print("\nYou found a monster!!\n")
 	return game
 
 def go_vendor(game):
+	# Add logic to interact with vendor
 	print("\nYou found a vendor!!\n")
 	return game
 	
 def go_chest(game):
-	print("You found a chest.  You may open it or leave it.")
+	print("; you may open it or leave it.  It may contain gold, books, or it might be boobie trapped.")
 	return game
 
 def go_pool(game):
-	print("You are in a room with a pool.")
+	print("; you may drink from the water.")
 	return game
 
 def go_book(game):
-	print("You found a book.  You may open it or leave it.")
+	print("; You may open it or leave it.")
 	return game
 
 def go_orb(game):
-	print("You found an orb. Gaze at your own peril")
+	print("; gaze at your own peril")
 	return game
 
 def do_nothing(game):
 	return game
+	
+def go_entrance(game):
+	print("; go north to leave the game")
 
 def action_room(game):
 	actiondict={
@@ -593,13 +598,13 @@ def action_room(game):
 		print("Your current position is: " + X +"/"+Y+"/"+Z)
 		game["character"]["moved"]=False
 
-		for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
-			print("contents is ", contents)
-			if not contents=={}:
+		if not game.get("castle").get(X).get(Y).get(Z).get("contents")=={}:
+			print("\nIn this room, you find:")
+			for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
+				print("\t"+contents.capitalize(), end="")
 				game=actiondict.get(contents)(game)
-				
-		
-
+		else:
+			print("\tNothing.  The room is empty.")
 		randint=random.randint(0,3)
 		if randint==0:
 			ambience()
