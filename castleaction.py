@@ -329,7 +329,7 @@ def go_up(game):
 	
 	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("upstairs")==None:
 	
-		game["character"]["y"]=game.get("character").get("z")+1
+		game["character"]["z"]=game.get("character").get("z")+1
 		castlesize=game.get("castle").get("size")
 		if game.get("character").get("z")>castlesize:
 			game["character"]["z"]=1
@@ -349,7 +349,7 @@ def go_down(game):
 	Z=str(game.get("character").get("z"))
 	
 	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("downstairs")==None:
-		game["character"]["y"]=game.get("character").get("z")-11
+		game["character"]["z"]=game.get("character").get("z")-1
 		castlesize=game.get("castle").get("size")
 		if game.get("character").get("z")<1:
 			game["character"]["z"]=castlesize

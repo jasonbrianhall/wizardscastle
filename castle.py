@@ -276,28 +276,30 @@ def gen_castle():
 	castle["1"]["4"]["1"]["explored"]=True
 
 	# calculate downstairs after entrance
-	print("Castlesize", castlesize)
-	for x in range(1, castlesize):
+
+	
+	for x in range(1,castlesize+1):
+		print(x)
+
+	for x in range(1, castlesize+1):
 		X=str(x)
-		print(X)
-		for y in range(1, castlesize):
-			Y=str(x)
-			for z in range(1, castlesize):
+		for y in range(1, castlesize+1):
+			Y=str(y)
+			for z in range(1, castlesize+1):
 				level=str(z)
+				print(X, Y, level, castle.get(X).get(Y).get(level).get("contents").get("upstairs"))
 				if castle.get(X).get(Y).get(level).get("contents").get("upstairs"):
 					temp=z+1
-					if z>castlesize:
+					if temp>castlesize:
 						temp=1
 					temp=str(temp)
-					# going downstairs into a warp or sinkhole doesn't make sense.
-					
-					#print(castle.get(X).get(Y).get(temp))
-					#print(castle.get(X).get(Y).get(temp).get("contents"))
+
 					if castle.get(X).get(Y).get(temp).get("contents").get("sinkhole") or castle.get(X).get(Y).get(temp).get("contents").get("warp"):
 						del castle[X][Y][level]["contents"]["upstairs"]
+						print("Deleting Upstairs " + X + "/"+Y+"/"+temp)
 					else:
 						castle[X][Y][temp]["contents"]["downstairs"]=True
-						print("Adding downstairs" + X + "/"+Y+"/"+temp)						
+						print("Adding downstairs " + X + "/"+Y+"/"+temp)
 					
 
 	return castle
