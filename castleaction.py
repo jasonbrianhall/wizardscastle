@@ -348,7 +348,7 @@ def go_down(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	
-	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("upstairs")==None:
+	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("downstairs")==None:
 		game["character"]["y"]=game.get("character").get("z")-11
 		castlesize=game.get("castle").get("size")
 		if game.get("character").get("z")<1:

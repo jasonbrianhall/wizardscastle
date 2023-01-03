@@ -13,7 +13,7 @@ vendorran=16
 poolran=9
 orbran=8
 vendorran=9
-upran=1
+upran=7
 
 def gen_castle():
 	castle={}
@@ -276,8 +276,10 @@ def gen_castle():
 	castle["1"]["4"]["1"]["explored"]=True
 
 	# calculate downstairs after entrance
+	print("Castlesize", castlesize)
 	for x in range(1, castlesize):
 		X=str(x)
+		print(X)
 		for y in range(1, castlesize):
 			Y=str(x)
 			for z in range(1, castlesize):
@@ -292,11 +294,10 @@ def gen_castle():
 					#print(castle.get(X).get(Y).get(temp))
 					#print(castle.get(X).get(Y).get(temp).get("contents"))
 					if castle.get(X).get(Y).get(temp).get("contents").get("sinkhole") or castle.get(X).get(Y).get(temp).get("contents").get("warp"):
-						print("Deleting stairs")
 						del castle[X][Y][level]["contents"]["upstairs"]
 					else:
 						castle[X][Y][temp]["contents"]["downstairs"]=True
-						
+						print("Adding downstairs" + X + "/"+Y+"/"+temp)						
 					
 
 	return castle
