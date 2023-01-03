@@ -13,6 +13,7 @@ vendorran=16
 poolran=9
 orbran=8
 vendorran=9
+upran=1
 
 def gen_castle():
 	castle={}
@@ -202,11 +203,15 @@ def gen_castle():
 						currentmonster=random.choice(monsterlist)
 						castle[X][Y][level]["contents"]["monster"]=monsters[currentmonster]
 					else:
+						# vendors don't hang out with monsters
 						vendor=random.randint(0,vendorran)
 						if vendor==0:
 							castle[X][Y][level]["contents"]["vendor"]={}
 
-						
+					upstairs=random.randint(0,upran)
+					if upstairs==0:
+						castle[X][Y][level]["contents"]["upstairs"]=True
+
 					chest=random.randint(0,chestran)
 					if chest==0:
 						castle[X][Y][level]["contents"]["chest"]={}
@@ -264,12 +269,35 @@ def gen_castle():
 							
 					orb=random.randint(0,orbran)
 					if orb==0:
-						castle[X][Y][level]["contents"]["orb"]=True
-							
-								
+						castle[X][Y][level]["contents"]["orb"]=True							
 
 
 	castle["1"]["4"]["1"]["contents"]={"entrance": 1}
 	castle["1"]["4"]["1"]["explored"]=True
+
+	# calculate downstairs after entrance
+	for x in range(1, castlesize):
+		X=str(x)
+		for y in range(1, castlesize):
+			Y=str(x)
+			for z in range(1, castlesize):
+				level=str(z)
+				if castle.get(X).get(Y).get(level).get("contents").get("upstairs"):
+					temp=z+1
+					if z>castlesize:
+						temp=1
+					temp=str(temp)
+					# going downstairs into a warp or sinkhole doesn't make sense.
+					
+					#print(castle.get(X).get(Y).get(temp))
+					#print(castle.get(X).get(Y).get(temp).get("contents"))
+					if castle.get(X).get(Y).get(temp).get("contents").get("sinkhole") or castle.get(X).get(Y).get(temp).get("contents").get("warp"):
+						print("Deleting stairs")
+						del castle[X][Y][level]["contents"]["upstairs"]
+					else:
+						castle[X][Y][temp]["contents"]["downstairs"]=True
+						
+					
+
 	return castle
 

@@ -178,13 +178,6 @@ def go_sinkhole(game):
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
 	return game
-
-
-def go_up(game):
-	return game
-
-def go_down(game):
-	return game
 	
 def go_drink(game):
 	X=str(game.get("character").get("x"))
@@ -327,6 +320,22 @@ def go_gaze(game):
 
 def go_teleport(game):
 	return game
+	
+def go_up(game):
+	return game
+
+def go_down(game):
+	return game
+	
+	
+def go_upstairs(game):
+	print("You found up stairs")
+	return game
+
+def go_downstairs(game):
+	print("You found down stairs")
+	return game
+	
 
 def ambience():
 	print("\nYou ", end="")
@@ -536,7 +545,9 @@ def action_room(game):
 		"chest": go_chest,
 		"pool": go_pool,
 		"book": go_book,
-		"orb": go_orb
+		"orb": go_orb,
+		"upstairs": go_upstairs,
+		"downstairs": go_downstairs
 	}
 
 	if game.get("character").get("moved")==True:
