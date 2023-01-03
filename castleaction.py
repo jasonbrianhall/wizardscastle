@@ -322,9 +322,45 @@ def go_teleport(game):
 	return game
 	
 def go_up(game):
+
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	
+	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("upstairs")==None:
+	
+		game["character"]["y"]=game.get("character").get("z")+1
+		castlesize=game.get("castle").get("size")
+		if game.get("character").get("z")>castlesize:
+			game["character"]["z"]=1
+		game["character"]["moved"]=True
+		X=str(game.get("character").get("x"))
+		Y=str(game.get("character").get("y"))
+		Z=str(game.get("character").get("z"))
+		game["castle"][X][Y][Z]["explored"]=True
+	else:
+		print("** There are no stairs going Up from here!")
+
 	return game
 
 def go_down(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	
+	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("upstairs")==None:
+		game["character"]["y"]=game.get("character").get("z")-11
+		castlesize=game.get("castle").get("size")
+		if game.get("character").get("z")<1:
+			game["character"]["z"]=castlesize
+		game["character"]["moved"]=True
+		X=str(game.get("character").get("x"))
+		Y=str(game.get("character").get("y"))
+		Z=str(game.get("character").get("z"))
+		game["castle"][X][Y][Z]["explored"]=True
+	else:
+		print("** There are no stairs going Down from here!")
+
 	return game
 	
 	
