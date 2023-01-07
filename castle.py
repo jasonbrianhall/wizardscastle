@@ -211,7 +211,15 @@ def gen_castle():
 					upstairs=random.randint(0,upran)
 					if upstairs==0:
 						castle[X][Y][level]["contents"]["upstairs"]=True
-
+					gold=random.randint(0,9)
+					if gold==0:
+						# No less then 5 gold is allowed if gold is found
+						goldamount=random.randint(5,1000)
+						castle[X][Y][level]["contents"]["gold"]=goldamount
+					flares=random.randint(0,9)
+					if gold==1:
+						flaresamount=random.randint(1,20)
+						castle[X][Y][level]["contents"]["flares"]=flaresamount
 					chest=random.randint(0,chestran)
 					if chest==0:
 						castle[X][Y][level]["contents"]["chest"]={}

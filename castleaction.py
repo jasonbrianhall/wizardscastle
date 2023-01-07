@@ -237,7 +237,8 @@ def go_map(game):
 	print("\n")
 	castlesize=game.get("castle").get("size")
 	multiplier=(castlesize*13)+1
-	level=str(game.get("character").get("z"))
+	level=str(game.get("character").get("z"))					
+
 	for x in range(1,castlesize+1):
 		X=str(x)
 		if x==1:
@@ -639,20 +640,53 @@ def do_nothing(game):
 	
 def go_entrance(game):
 	print("; go north to leave the game")
+	return game
 
+def go_gold(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	
+	goldamount=game.get("castle").get(X).get(Y).get(Z).get("contents").get("gold")
+	if goldamount>0:
+		print("\nYou found " + str(goldamount) + " gold pieces\n")
+		game["character"]["gold"]=game["character"]["gold"]+goldamount
+
+		#Can't delete during iteration so just setting to zero; deleting if you use map
+		game["castle"][X][Y][Z]["contents"]["gold"]=0
+	return game
+
+def go_flares(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	flaresamount=game.get("castle").get(X).get(Y).get(Z).get("contents").get("flares")
+
+	if flaresamount>0:
+		print("You found " + str(flaresamount) + " flares")
+		game["character"]["gold"]=game["character"]["flares"]+flaresamount
+
+		#Can't delete during iteration so just setting to zero; deleting if you use map
+		game["castle"][X][Y][Z]["contents"]["flares"]=0
+		
+	return game
+
+	
 def action_room(game):
 	actiondict={
 		"warp":  go_warp,
 		"monster": go_monster,
 		"sinkhole": go_sinkhole,
-		"entrance": do_nothing,
+		"entrance": go_entrance,
 		"vendor": go_vendor,
 		"chest": go_chest,
 		"pool": go_pool,
 		"book": go_book,
 		"orb": go_orb,
 		"upstairs": go_upstairs,
-		"downstairs": go_downstairs
+		"downstairs": go_downstairs,
+		"gold": go_gold,
+		"flares": go_flares
 	}
 
 	if game.get("character").get("moved")==True:
