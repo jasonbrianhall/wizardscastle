@@ -32,6 +32,7 @@ def init_character():
 	character["moved"]            = False
 	character["orbofzot"]         = False
 	character["runestaff"]        = False
+	character["blind"]            = False  
 	return character
 	
 def select_race(character):

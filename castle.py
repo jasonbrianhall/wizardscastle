@@ -235,9 +235,9 @@ def gen_castle():
 					book=random.randint(0,bookran)
 					if book==0:
 						castle[X][Y][level]["contents"]["book"]={}
-						sticks=random.randint(0,5)
+						sticks=random.randint(0,9)
 						if sticks==0:
-							castle[X][Y][level]["contents"]["book"]["sticks"]=True
+							castle[X][Y][level]["contents"]["book"]["content"]="sticks"
 						else:
 							content=random.randint(0,9)
 							if content==0:
