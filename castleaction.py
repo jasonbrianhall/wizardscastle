@@ -312,7 +312,38 @@ def go_lamp(game):
 		print("** You don't have a lamp, " + game.get("character").get("race") + "!")
 	return game
 	
+def go_open_chest(game):
+	return game
+
+def go_open_book(game):
+	return game
+
+	
 def go_open(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	
+	roomcontents=game.get("castle").get(X).get(Y).get(Z).get("contents")
+	
+	if roomcontents.get("chest") or roomcontents.get("book"):
+		if roomcontents.get("chest") and roomcontents.get("book"):
+			regex=re.compile("[bc]")
+			print("You found a book and a chest, which one do you want to open?  ", end="")
+			choice=input().lower()[0]
+			if re.match("choice"):
+				if choice=="b":
+					game=go_open_book(game)
+				else:
+					game=go_open_chest(game)
+			else:
+				print("** Your choices were a book or chest and you didn't select either.")
+		if roomcontents.get("book"):
+			game=go_open_book(game)
+		else:
+			game=go_open_chest(game)
+	else:
+		print("** Hey Genius, their is nothing to open!!")	
 	return game
 
 def go_gaze(game):
@@ -623,11 +654,11 @@ G/aze	  T/eleport Q/uit
 
 the contents of rooms are as follows :"
 
-. = empty room		b = book			c = chest
-d = stairs down		e = entrance/exit	f = flares
-g = gold pieces		m = monster			o = crystal orb
-p = magic pool		s = sinkhole		t = treasure
-u = stairs up		v = vendor			w = warp/orb
+""          = empty room       book     = book               chest    = chest
+downstairs  = stairs down      entrance = entrance/exit      flares   = flares
+gold        = gold pieces      monster  = monster            orb      = crystal orb
+pool        = magic pool       sinkhole = sinkhole           treasure = treasure
+upstairs    = stairs up	       vendor   = vendor             warp     = warp/orb
 
 The benefits of having treasures are :
 

@@ -255,7 +255,22 @@ def gen_castle():
 							elif content==6:
 								castle[X][Y][level]["contents"]["book"]["content"]="It's an old dictionary!"
 							elif content==7:
-								castle[X][Y][level]["contents"]["book"]["content"]="It'S too boring to read!"
+								famousbooks={
+									"0": "Lord of the Rings",
+									"1": "The Hobbit",
+									"2": "Lord of the Flies",
+									"3": "Moby Dick",
+									"4": "Pinocchio",
+									"5": "Grimm Tales",
+									"6": "the rules to Magic the Gathering",
+									"7": "the rules to Dungeons and Dragons",
+									"8": "Dune",
+									"9": "King Arthur's biography",
+									"10": "the LIttle Mermaid"
+									}
+								test=random.randint(0,10)
+								castle[X][Y][level]["contents"]["book"]["content"]="It'S a copy of " + famousbooks[str(test)]+ "!"
+	
 							elif content>=8:
 								temp=createcharacter.races
 								list=[]
