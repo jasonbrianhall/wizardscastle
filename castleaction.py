@@ -262,13 +262,13 @@ def go_map(game):
 						for contents in game.get("castle").get(X).get(Y).get(level).get("contents"):
 							tempcontents=contents
 
-							# Don't display gold if their aren't any (deleting off the map causes a runtime exception so it's just easier to check if their is no gold)
+							# Don't display gold if their aren't any (this case should never happen)
 							if tempcontents=="gold":
 								if game.get("castle").get(X).get(Y).get(level).get("contents").get("gold")==0:
 									tempcontents=""
 							# Same with flares
 							elif tempcontents=="flares":
-								if game.get("castle").get(X).get(Y).get(level).get("contents").get("tempcontents")==0:
+								if game.get("castle").get(X).get(Y).get(level).get("contents").get("flares")==0:
 									tempcontents=""
 							if not tempcontents=="":
 								firstitem=tempcontents
@@ -328,6 +328,48 @@ def go_lamp(game):
 	return game
 	
 def go_open_chest(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("chest")
+	
+	print("contents of chest: ", contents)
+	
+	regex=re.compile("[yn]")
+	if contents.get("opened")==False:
+		if contents.get("book"):
+
+			exittheloop=False
+			while exittheloop==False:
+				print("You found a book in the chest; do you want to open it?  ", end="")
+				choice=input()
+				if re.match(regex, choice):
+					if choice=="y":
+						tempcontents=contents.get("book")
+						if contents=="strength":
+							print("You found a manual of strength!!")
+							character["strength"]=character["strength"]+18
+						elif contents=="dexterity":
+							print("You found a manual of dexterity!!")
+							character["dexterity"]=character["dexterity"]+18
+						elif contents=="intelligent":
+							print("You found a manual of intelligence!!")
+							character["dexterity"]=character["intelligence"]+18
+						elif contents=="blind":
+							print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
+							character["blind"]=True
+						elif contents=="stick":
+							# Thought about saying you can't open a book with a book on your hand but that just seems awkward
+							print("The book sticks to your hand, you are now unable to draw your weapon")
+							character["bookstucktohand"]=True
+						else:
+							print(contents.get("book"))
+						del game["castle"][X][Y][Z]["contents"]["chest"]["book"]
+						exittheloop=True
+					else:
+						exittheloop=True
+				else:
+					print("** Invalid choice, yes or no")
 	return game
 
 def go_open_book(game):
@@ -337,32 +379,26 @@ def go_open_book(game):
 	
 	if game.get("character").get("blind")==False:	
 		#contents=roomcontents=game.get("castle").get(X).get(Y).get(Z).get("content").get("book")
-		try:
-			contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book")
-			if contents=="strength":
-				print("You found a manual of strength!!")
-				character["strength"]=character["strength"]+18
-			elif contents=="dexterity":
-				print("You found a manual of dexterity!!")
-				character["dexterity"]=character["dexterity"]+18
-			elif contents=="intelligent":
-				print("You found a manual of intelligence!!")
-				character["dexterity"]=character["intelligence"]+18
-			elif contents=="blind":
-				print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
-				character["blind"]=True
-			elif contents=="stick":
-				# Thought about saying you can't open a book with a book on your hand but that just seems awkward
-				print("The book sticks to your hand, you are now unable to draw your weapon")
-				character["bookstucktohand"]=True
-			else:
-				print(contents.get("content"))
-			del game["castle"][X][Y][Z]["contents"]["book"]
-	
-		except:
-			# It should never get here
-			print("** No book to open")
-			pass
+		contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book")
+		if contents=="strength":
+			print("You found a manual of strength!!")
+			character["strength"]=character["strength"]+18
+		elif contents=="dexterity":
+			print("You found a manual of dexterity!!")
+			character["dexterity"]=character["dexterity"]+18
+		elif contents=="intelligent":
+			print("You found a manual of intelligence!!")
+			character["dexterity"]=character["intelligence"]+18
+		elif contents=="blind":
+			print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
+			character["blind"]=True
+		elif contents=="stick":
+			# Thought about saying you can't open a book with a book on your hand but that just seems awkward
+			print("The book sticks to your hand, you are now unable to draw your weapon")
+			character["bookstucktohand"]=True
+		else:
+			print(contents)
+		del game["castle"][X][Y][Z]["contents"]["book"]
 	else:
 		print("Blind " + game.get("character").get("race") + " can't read books!!")
 	return game
@@ -373,19 +409,26 @@ def go_open(game):
 	Z=str(game.get("character").get("z"))
 	
 	roomcontents=game.get("castle").get(X).get(Y).get(Z).get("contents")
+
+	regex=re.compile("[bc]")
 	
 	if roomcontents.get("chest") or roomcontents.get("book"):
 		if roomcontents.get("chest") and roomcontents.get("book"):
 			regex=re.compile("[bc]")
-			print("You found a book and a chest, which one do you want to open?  ", end="")
-			choice=input().lower()[0]
-			if re.match("choice"):
-				if choice=="b":
-					game=go_open_book(game)
+			
+			exittheloop=True
+			while exittheloop==False:
+				print("You found a book and a chest, which one do you want to open?  ", end="")
+				choice=input().lower()[0]
+			
+				if re.match(choice):
+					if choice=="b":
+						game=go_open_book(game)
+					else:
+						game=go_open_chest(game)
+					exittheloop=True
 				else:
-					game=go_open_chest(game)
-			else:
-				print("** Your choices were to open a book or chest and you didn't select either.")
+					print("\n** Your choices were to open a book or chest and you didn't select either.\n\n")
 		if roomcontents.get("book"):
 			game=go_open_book(game)
 		else:
@@ -663,11 +706,15 @@ def go_gold(game):
 	
 	goldamount=game.get("castle").get(X).get(Y).get(Z).get("contents").get("gold")
 	if goldamount>0:
-		print("\nYou found " + str(goldamount) + " gold pieces\n")
+		if goldamount>1:
+			print("\n\nYou found " + str(goldamount) + " gold pieces; they are now yours.\n")
+		else:
+			print("\nnYou found a miserly single gold piece\n")
 		game["character"]["gold"]=game["character"]["gold"]+goldamount
 
 		#Can't delete during iteration so just setting to zero; deleting if you use map
-		game["castle"][X][Y][Z]["contents"]["gold"]=0
+		#game["castle"][X][Y][Z]["contents"]["gold"]=0
+		del game["castle"][X][Y][Z]["contents"]["gold"]
 	return game
 
 def go_flares(game):
@@ -677,11 +724,14 @@ def go_flares(game):
 	flaresamount=game.get("castle").get(X).get(Y).get(Z).get("contents").get("flares")
 
 	if flaresamount>0:
-		print("You found " + str(flaresamount) + " flares")
+		if flaresamount>1:
+			print("\n\nYou found " + str(flaresamount) + " flares; they are now yours.\n")
+		else:
+			print("\n\nYou found a flare.  It is now yours.\n")
+			
 		game["character"]["gold"]=game["character"]["flares"]+flaresamount
 
-		#Can't delete during iteration so just setting to zero; deleting if you use map
-		game["castle"][X][Y][Z]["contents"]["flares"]=0
+		del game["castle"][X][Y][Z]["contents"]["flares"]
 		
 	return game
 
@@ -712,9 +762,15 @@ def action_room(game):
 
 		if not game.get("castle").get(X).get(Y).get(Z).get("contents")=={}:
 			print("\nIn this room, you find:")
-			for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
-				print("\t"+contents.capitalize(), end="")
-				game=actiondict.get(contents)(game)
+			try:
+				for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
+					print("\t"+contents.capitalize(), end="")
+					game=actiondict.get(contents)(game)
+			except:
+				for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
+					print("\t"+contents.capitalize(), end="")
+					game=actiondict.get(contents)(game)
+				pass		
 		else:
 			print("\tNothing.  The room is empty.")
 		randint=random.randint(0,3)

@@ -224,6 +224,7 @@ def gen_castle():
 					if chest==0:
 						castle[X][Y][level]["contents"]["chest"]={}
 						explodes=random.randint(0,5)
+						castle[X][Y][level]["contents"]["chest"]["opened"]=False
 						if explodes==0:
 							castle[X][Y][level]["contents"]["chest"]["explodes"]=True
 						else:
@@ -232,59 +233,17 @@ def gen_castle():
 								castle[X][Y][level]["contents"]["chest"]["gold"]=random.randint(1,1000)
 							book=random.randint(0,5)
 							if book==0:
-								castle[X][Y][level]["contents"]["chest"]["book"]=True
-							orb=random.randint(0,3)
+								castle[X][Y][level]["contents"]["chest"]["book"]=genbook()
+							orb=random.randint(0,5)
 							if orb==0:
 								castle[X][Y][level]["contents"]["chest"]["orb"]=True
-							flare=random.randint(0,3)
+							flare=random.randint(0,5)
 							if flare==0:
 								castle[X][Y][level]["contents"]["chest"]["flare"]=random.randint(1,20)
 
 					book=random.randint(0,bookran)
 					if book==0:
-						castle[X][Y][level]["contents"]["book"]={}
-						sticks=random.randint(0,9)
-						if sticks==0:
-							castle[X][Y][level]["contents"]["book"]["content"]="sticks"
-						else:
-							content=random.randint(0,9)
-							if content==0:
-								castle[X][Y][level]["contents"]["book"]["content"]="strength"
-							elif content==1:
-								castle[X][Y][level]["contents"]["book"]["content"]="dexterity"
-							elif content==2:
-								castle[X][Y][level]["contents"]["book"]["content"]="intelligence"
-							elif content==3:
-								castle[X][Y][level]["contents"]["book"]["content"]="blind"
-							elif content==4:
-								castle[X][Y][level]["contents"]["book"]["content"]="It'S another volume of Zot'S Poetry! - Yech!!"
-							elif content==5:
-								castle[X][Y][level]["contents"]["book"]["content"]="It'S in a foreign language; you can't read it!"
-							elif content==6:
-								castle[X][Y][level]["contents"]["book"]["content"]="It's an old dictionary!"
-							elif content==7:
-								famousbooks={
-									"0": "Lord of the Rings",
-									"1": "The Hobbit",
-									"2": "Lord of the Flies",
-									"3": "Moby Dick",
-									"4": "Pinocchio",
-									"5": "Grimm Tales",
-									"6": "the rules to Magic the Gathering",
-									"7": "the rules to Dungeons and Dragons",
-									"8": "Dune",
-									"9": "King Arthur's biography",
-									"10": "the LIttle Mermaid"
-									}
-								test=random.randint(0,10)
-								castle[X][Y][level]["contents"]["book"]["content"]="It'S a copy of " + famousbooks[str(test)]+ "!"
-	
-							elif content>=8:
-								temp=createcharacter.races
-								list=[]
-								for x in temp:
-									list.append(temp.get(x).get("name"))
-								castle[X][Y][level]["contents"]["book"]["content"]="It'S an old copy of play " + random.choice(list)
+						castle[X][Y][level]["contents"]["book"]=genbook()
 
 					pool=random.randint(0,poolran)
 					if pool==0:
@@ -318,4 +277,50 @@ def gen_castle():
 					
 
 	return castle
+
+def genbook():
+	sticks=random.randint(0,9)
+
+	if sticks==0:
+		return "sticks"
+	else:
+		content=random.randint(0,9)
+		if content==0:
+			return"strength"
+		elif content==1:
+			return "dexterity"
+		elif content==2:
+			return "intelligence"
+		elif content==3:
+			return "blind"
+		elif content==4:
+			return "It'S another volume of Zot'S Poetry! - Yech!!"
+		elif content==5:
+			return "It'S in a foreign language; you can't read it!"
+		elif content==6:
+			return "It's an old dictionary!"
+		elif content==7:
+			famousbooks={
+				"0": "Lord of the Rings",
+				"1": "The Hobbit",
+				"2": "Lord of the Flies",
+				"3": "Moby Dick",
+				"4": "Pinocchio",
+				"5": "Grimm Tales",
+				"6": "the rules to Magic the Gathering",
+				"7": "the rules to Dungeons and Dragons",
+				"8": "Dune",
+				"9": "King Arthur's biography",
+				"10": "the LIttle Mermaid"
+				}
+			test=random.randint(0,10)
+			return "It'S a copy of " + famousbooks[str(test)]+ "!"
+
+		elif content>=8:
+			temp=createcharacter.races
+			list=[]
+			for x in temp:
+				list.append(temp.get(x).get("name"))
+			return "It'S an old copy of play " + random.choice(list)
+
 
