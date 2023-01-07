@@ -322,32 +322,32 @@ def go_open_book(game):
 	
 	if game.get("character").get("blind")==False:	
 		#contents=roomcontents=game.get("castle").get(X).get(Y).get(Z).get("content").get("book")
-		contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book")
-		print(contents)
-		if contents=="strength":
-			print("You found a manual of strength!!")
-			character["strength"]=character["strength"]+18
-		elif contents=="dexterity":
-			print("You found a manual of dexterity!!")
-			character["dexterity"]=character["dexterity"]+18
-		elif contents=="intelligent":
-			print("You found a manual of intelligence!!")
-			character["dexterity"]=character["intelligence"]+18
-		elif contents=="blind":
-			print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
-			character["blind"]=True
-		elif contents=="stick":
-			# Thought about saying you can't open a book with a book on your hand but that just seems awkward
-			print("The book sticks to your hand, you are now unable to draw your weapon")
-			character["bookstucktohand"]=True
-		else:
-			print(contents.get("content"))
-		del game["castle"][X][Y][Z]["contents"]["book"]
+		try:
+			contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book")
+			if contents=="strength":
+				print("You found a manual of strength!!")
+				character["strength"]=character["strength"]+18
+			elif contents=="dexterity":
+				print("You found a manual of dexterity!!")
+				character["dexterity"]=character["dexterity"]+18
+			elif contents=="intelligent":
+				print("You found a manual of intelligence!!")
+				character["dexterity"]=character["intelligence"]+18
+			elif contents=="blind":
+				print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
+				character["blind"]=True
+			elif contents=="stick":
+				# Thought about saying you can't open a book with a book on your hand but that just seems awkward
+				print("The book sticks to your hand, you are now unable to draw your weapon")
+				character["bookstucktohand"]=True
+			else:
+				print(contents.get("content"))
+			del game["castle"][X][Y][Z]["contents"]["book"]
 	
-		'''except:
+		except:
 			# It should never get here
 			print("** No book to open")
-			pass'''
+			pass
 	else:
 		print("Blind " + game.get("character").get("race") + " can't read books!!")
 	return game
