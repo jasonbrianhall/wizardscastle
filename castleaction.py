@@ -258,13 +258,27 @@ def go_map(game):
 					if game.get("castle").get(X).get(Y).get(level).get("contents")=={}:
 						print(" "*12, end="")
 					else:
+						firstitem=""
 						for contents in game.get("castle").get(X).get(Y).get(level).get("contents"):
-							length=len(contents)
-							filler=11-length
-							print(" " + contents, end="")
-							print(" "*filler, end="")
+							tempcontents=contents
+
+							# Don't display gold if their aren't any (deleting off the map causes a runtime exception so it's just easier to check if their is no gold)
+							if tempcontents=="gold":
+								if game.get("castle").get(X).get(Y).get(level).get("contents").get("gold")==0:
+									tempcontents=""
+							# Same with flares
+							elif tempcontents=="flares":
+								if game.get("castle").get(X).get(Y).get(level).get("contents").get("tempcontents")==0:
+									tempcontents=""
+							if not tempcontents=="":
+								firstitem=tempcontents
+								break
+								
+						length=len(firstitem)
+						filler=11-length
+						print(" " + firstitem, end="")
+						print(" "*filler, end="")
 							
-							break
 				else:
 					print(" " + "?"*10+" ", end='')
 				
