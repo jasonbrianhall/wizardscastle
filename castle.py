@@ -274,7 +274,52 @@ def gen_castle():
 						del castle[X][Y][level]["contents"]["upstairs"]
 					else:
 						castle[X][Y][temp]["contents"]["downstairs"]=True
-					
+	monsterlist.clear()
+
+	# Put Runestaff in one of the rooms
+	for x in range(1, castlesize+1):
+		X=str(x)
+		for y in range(1, castlesize+1):
+			Y=str(y)
+			for z in range(1, castlesize+1):
+				Z=str(z)
+				if castle.get(X).get(Y).get(Z).get("contents").get("monster"):
+					monstertemp={"X": X, "Y": Y, "Z": Z}
+					monsterlist.append(monstertemp)
+
+	length=len(monsterlist)
+	
+	runestaffmonster=random.randint(0,length-1)
+	X=monsterlist[runestaffmonster].get("X")
+	Y=monsterlist[runestaffmonster].get("Y")
+	Z=monsterlist[runestaffmonster].get("Z")
+	
+	castle[X][Y][Z]["contents"]["monster"]["runestaff"]=True
+	
+	warplist=[]
+
+	# Put Orb of Zot in one of the warps
+	for x in range(1, castlesize+1):
+		X=str(x)
+		for y in range(1, castlesize+1):
+			Y=str(y)
+			for z in range(1, castlesize+1):
+				Z=str(z)
+				print(castle.get(X).get(Y).get(Z).get("contents").get("warp"))
+				if castle.get(X).get(Y).get(Z).get("contents").get("warp")=={}:
+					warptemp={"X": X, "Y": Y, "Z": Z}
+					warplist.append(warptemp)
+
+	length=len(warplist)
+
+	runestaffmonster=random.randint(0,length-1)
+	X=warplist[runestaffmonster].get("X")
+	Y=warplist[runestaffmonster].get("Y")
+	Z=warplist[runestaffmonster].get("Z")
+	
+	castle[X][Y][Z]["contents"]["warp"]["orbofzot"]=True
+	
+	
 
 	return castle
 
