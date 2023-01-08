@@ -202,6 +202,14 @@ def gen_castle():
 					if monster==0:
 						currentmonster=random.choice(monsterlist)
 						castle[X][Y][level]["contents"]["monster"]=monsters[currentmonster]
+						modifier=castle[X][Y][level]["contents"]["monster"]["modifier"]
+						strength=random.randint(-1*modifier, modifier)
+						intelligence=random.randint(-1*modifier, modifier)
+						dexterity=random.randint(-1*modifier, modifier)
+						castle[X][Y][level]["contents"]["monster"]["strength"]=castle[X][Y][level]["contents"]["monster"]["strength"]+strength
+						castle[X][Y][level]["contents"]["monster"]["intelligence"]=castle[X][Y][level]["contents"]["monster"]["strength"]+intelligence
+						castle[X][Y][level]["contents"]["monster"]["dexterity"]=castle[X][Y][level]["contents"]["monster"]["strength"]+dexterity
+
 					else:
 						# vendors don't hang out with monsters
 						vendor=random.randint(0,vendorran)
@@ -305,7 +313,6 @@ def gen_castle():
 			Y=str(y)
 			for z in range(1, castlesize+1):
 				Z=str(z)
-				print(castle.get(X).get(Y).get(Z).get("contents").get("warp"))
 				if castle.get(X).get(Y).get(Z).get("contents").get("warp")=={}:
 					warptemp={"X": X, "Y": Y, "Z": Z}
 					warplist.append(warptemp)
@@ -318,9 +325,7 @@ def gen_castle():
 	Z=warplist[runestaffmonster].get("Z")
 	
 	castle[X][Y][Z]["contents"]["warp"]["orbofzot"]=True
-	
-	
-
+		
 	return castle
 
 def genbook():
