@@ -202,13 +202,17 @@ def gen_castle():
 					if monster==0:
 						currentmonster=random.choice(monsterlist)
 						castle[X][Y][level]["contents"]["monster"]=monsters[currentmonster]
-						modifier=castle[X][Y][level]["contents"]["monster"]["modifier"]
-						strength=random.randint(-1*modifier, modifier)
-						intelligence=random.randint(-1*modifier, modifier)
-						dexterity=random.randint(-1*modifier, modifier)
-						castle[X][Y][level]["contents"]["monster"]["strength"]=castle[X][Y][level]["contents"]["monster"]["strength"]+strength
-						castle[X][Y][level]["contents"]["monster"]["intelligence"]=castle[X][Y][level]["contents"]["monster"]["strength"]+intelligence
-						castle[X][Y][level]["contents"]["monster"]["dexterity"]=castle[X][Y][level]["contents"]["monster"]["strength"]+dexterity
+						try:
+							modifier=castle[X][Y][level]["contents"]["monster"]["modifier"]
+							strength=random.randint(-1*modifier, modifier)
+							intelligence=random.randint(-1*modifier, modifier)
+							dexterity=random.randint(-1*modifier, modifier)
+							castle[X][Y][level]["contents"]["monster"]["strength"]=castle[X][Y][level]["contents"]["monster"]["strength"]+strength
+							castle[X][Y][level]["contents"]["monster"]["intelligence"]=castle[X][Y][level]["contents"]["monster"]["strength"]+intelligence
+							castle[X][Y][level]["contents"]["monster"]["dexterity"]=castle[X][Y][level]["contents"]["monster"]["strength"]+dexterity
+						# No modifier defined; just don't modify the monster
+						except:
+							pass
 
 					else:
 						# vendors don't hang out with monsters
@@ -325,6 +329,51 @@ def gen_castle():
 	Z=warplist[runestaffmonster].get("Z")
 	
 	castle[X][Y][Z]["contents"]["warp"]["orbofzot"]=True
+	
+
+	# Distribute Treasure	
+	treasures=["Ruby red", "Pale pearl", "Green gem", "Opal eye", "Blue flame", "Norn stone", "Palantir", "Silmaril"]
+	
+	roomlist=[]
+	# Put Orb of Zot in one of the warps
+	for x in range(1, castlesize+1):
+		X=str(x)
+		for y in range(1, castlesize+1):
+			Y=str(y)
+			for z in range(1, castlesize+1):
+				Z=str(z)
+				roomvalid=True
+				for content in castle.get(X).get(Y).get(Z).get("contents"):
+					if content=="warp" or content=="sinkhole" or content=="entrance":
+						roomvalid=False
+				if roomvalid==True:
+					special=False
+					for content in castle.get(X).get(Y).get(Z).get("contents"):
+						if content=="monster" or content=="vendor" or content=="chest":
+							roomtemp={"X": X, "Y": Y, "Z": Z, "special": content}
+							roomlist.append(roomtemp)
+							special=True
+					if special==False:
+						roomtemp={"X": X, "Y": Y, "Z": Z, "special": None}
+						roomlist.append(roomtemp)
+			
+			
+	for treasures in range(0, len(treasures)-1):
+		roomlength=len(roomlist)
+		randomnumber=random.randint(0,roomlength-1)
+		X=roomlist[randomnumber].get("X")
+		Y=roomlist[randomnumber].get("Y")
+		Z=roomlist[randomnumber].get("Z")
+		print(X, Y, Z)
+		if roomlist[randomnumber].get("special")==None:
+			castle[X][Y][Z]["contents"]["treasure"]=treasures
+		else:
+			content=roomlist[randomnumber].get("special")
+			castle[X][Y][Z]["contents"][content]["treasure"]=treasures
+			
+		
+
+	
 		
 	return castle
 

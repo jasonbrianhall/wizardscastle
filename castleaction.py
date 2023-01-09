@@ -283,9 +283,6 @@ def go_map(game):
 					print(" " + "?"*10+" ", end='')
 				
 	print("|\n" + "*"*multiplier + "\n")
-				
-				
-				
 	
 	return game
 
@@ -799,10 +796,10 @@ upstairs    = stairs up	       vendor   = vendor             warp     = warp/orb
 
 The benefits of having treasures are :
 
-Ruby red - avoid lethargy	  Pale pearl - avoid leech
+Ruby red - avoid lethargy     Pale pearl - avoid leech
 Green gem - avoid forgetting  Opal eye - cures blindness
 Blue flame - dissolves books  Norn stone - no benefit
-Palantir - no benefit		  Silmaril - no benefit
+Palantir - no benefit	      Silmaril - no benefit
 
 Press return when ready to resume""")
 
