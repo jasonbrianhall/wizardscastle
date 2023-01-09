@@ -376,16 +376,16 @@ def go_open_book(game):
 	
 	if game.get("character").get("blind")==False:	
 		#contents=roomcontents=game.get("castle").get(X).get(Y).get(Z).get("content").get("book")
-		contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book")
+		contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("title")
 		if contents=="strength":
 			print("You found a manual of strength!!")
-			character["strength"]=character["strength"]+18
+			game["character"]["strength"]=game["character"]["strength"]+18
 		elif contents=="dexterity":
 			print("You found a manual of dexterity!!")
-			character["dexterity"]=character["dexterity"]+18
-		elif contents=="intelligent":
+			game["character"]["dexterity"]=game["character"]["dexterity"]+18
+		elif contents=="intelligence":
 			print("You found a manual of intelligence!!")
-			character["dexterity"]=character["intelligence"]+18
+			game["character"]["intelligence"]=game["character"]["strength"]+18
 		elif contents=="blind":
 			print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
 			character["blind"]=True
@@ -682,7 +682,23 @@ def go_pool(game):
 	return game
 
 def go_book(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+
 	print("; You may open it or leave it.")
+	
+	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("treasure")==None:
+		if len(game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("treasure"))==1:
+			print("\nTheir is a jewel on the book; you pry it off and find it's treasure.")
+		else:
+			# I doubt this ever happens but it could
+			print("\nTheir are jewels on the book; you pry them off and find treasure.")
+		for treasure in game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("treasure"):
+			print("\tYou found: " + treasure + "it's now yours.")
+			game["character"]["treasure"].append(treasure)
+		del game["castle"][X][Y][Z]["contents"]["book"]["treasure"]
+	
 	return game
 
 def go_orb(game):

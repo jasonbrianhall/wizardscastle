@@ -1,5 +1,6 @@
 import random
 import createcharacter
+import sys
 
 castlesize=8
 entrancelocation="1/4/1"
@@ -245,7 +246,8 @@ def gen_castle():
 								castle[X][Y][level]["contents"]["chest"]["gold"]=random.randint(1,1000)
 							book=random.randint(0,5)
 							if book==0:
-								castle[X][Y][level]["contents"]["chest"]["book"]=genbook()
+								castle[X][Y][level]["contents"]["chest"]["book"]={}
+								castle[X][Y][level]["contents"]["chest"]["book"]["title"]=genbook()
 							orb=random.randint(0,5)
 							if orb==0:
 								castle[X][Y][level]["contents"]["chest"]["orb"]=True
@@ -255,7 +257,8 @@ def gen_castle():
 
 					book=random.randint(0,bookran)
 					if book==0:
-						castle[X][Y][level]["contents"]["book"]=genbook()
+						castle[X][Y][level]["contents"]["book"]={}
+						castle[X][Y][level]["contents"]["book"]["title"]=genbook()
 
 					pool=random.randint(0,poolran)
 					if pool==0:
@@ -349,7 +352,7 @@ def gen_castle():
 				if roomvalid==True:
 					special=False
 					for content in castle.get(X).get(Y).get(Z).get("contents"):
-						if content=="monster" or content=="vendor" or content=="chest":
+						if content=="monster" or content=="vendor" or content=="chest" or content=="book":
 							roomtemp={"X": X, "Y": Y, "Z": Z, "special": content}
 							roomlist.append(roomtemp)
 							special=True
@@ -373,13 +376,16 @@ def gen_castle():
 
 		else:
 			content=roomlist[randomnumber].get("special")
-			if castle.get(X).get(Y).get(Z).get("contents").get(content).get("treasure")==None:
-				castle[X][Y][Z]["contents"][content]["treasure"]=[]
-				castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])
-			else:
-				castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])	
-		
-
+			try:
+				if castle.get(X).get(Y).get(Z).get("contents").get(content).get("treasure")==None:
+					castle[X][Y][Z]["contents"][content]["treasure"]=[]
+					castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])
+				else:
+					castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])	
+			except:
+				print(content + " not found")
+				print(castle[X][Y][Z]["contents"][content])
+				sys.exit(1)
 	
 		
 	return castle
