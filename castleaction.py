@@ -378,26 +378,26 @@ def go_open_book(game):
 		#contents=roomcontents=game.get("castle").get(X).get(Y).get(Z).get("content").get("book")
 		contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("title")
 		if contents=="strength":
-			print("You found a manual of strength!!")
+			print("\tYou found a manual of strength!!")
 			game["character"]["strength"]=game["character"]["strength"]+18
 		elif contents=="dexterity":
-			print("You found a manual of dexterity!!")
+			print("\tYou found a manual of dexterity!!")
 			game["character"]["dexterity"]=game["character"]["dexterity"]+18
 		elif contents=="intelligence":
-			print("You found a manual of intelligence!!")
+			print("\tYou found a manual of intelligence!!")
 			game["character"]["intelligence"]=game["character"]["strength"]+18
 		elif contents=="blind":
-			print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
+			print("\tA flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
 			character["blind"]=True
 		elif contents=="stick":
 			# Thought about saying you can't open a book with a book on your hand but that just seems awkward
-			print("The book sticks to your hand, you are now unable to draw your weapon")
+			print("\tThe book sticks to your hand, you are now unable to draw your weapon")
 			character["bookstucktohand"]=True
 		else:
-			print(contents)
+			print("\t"+contents)
 		del game["castle"][X][Y][Z]["contents"]["book"]
 	else:
-		print("Blind " + game.get("character").get("race") + " can't read books!!")
+		print("** Blind " + game.get("character").get("race") + " can't read books!!")
 	return game
 	
 def go_open(game):
@@ -435,6 +435,10 @@ def go_open(game):
 	return game
 
 def go_gaze(game):
+	if game.get("character").get("blind")==True:
+		print("** Stupid " + game.get("character").get("race") + ", you are blind and can't gaze.")
+	else:
+		print("Add logic for gazing here")
 	return game
 
 def go_teleport(game):
@@ -689,6 +693,9 @@ def go_book(game):
 	print("; You may open it or leave it.")
 	
 	if not game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("treasure")==None:
+		if game.get("character").get("blind")==True:
+			print("You rub your hands on the book.")	
+			
 		if len(game.get("castle").get(X).get(Y).get(Z).get("contents").get("book").get("treasure"))==1:
 			print("\nTheir is a jewel on the book; you pry it off and find it's treasure.")
 		else:
@@ -702,7 +709,10 @@ def go_book(game):
 	return game
 
 def go_orb(game):
-	print("; gaze at your own peril")
+	if game.get("character").get("blind")==True:
+		print("; you are blind and can't gaze; you must find or buy the opal eye before you are able to gaze.")	
+	else:
+		print("; gaze at your own peril")
 	return game
 
 def do_nothing(game):
