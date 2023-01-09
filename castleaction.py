@@ -507,7 +507,8 @@ def ambience():
 				" toad!",
 				" fairie!",
 				" brownie!",
-				" a chicken egg!"
+				" a chicken egg!",
+				" poop!"
 			],
 			"post": [
 				" You wipe it off your boots.",
