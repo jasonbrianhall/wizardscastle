@@ -731,7 +731,17 @@ def go_flares(game):
 		del game["castle"][X][Y][Z]["contents"]["flares"]
 		
 	return game
-
+	
+def go_treasure(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	print("\n\nYou found treasure: ")
+	for treasure in game.get("castle").get(X).get(Y).get(Z).get("contents").get("treasure"):
+		print("\tThe treasure " + treasure + " was added to your inventory")
+		game["character"]["treasure"].append(treasure)
+	del game["castle"][X][Y][Z]["contents"]["treasure"]
+	return game
 	
 def action_room(game):
 	actiondict={
@@ -747,7 +757,8 @@ def action_room(game):
 		"upstairs": go_upstairs,
 		"downstairs": go_downstairs,
 		"gold": go_gold,
-		"flares": go_flares
+		"flares": go_flares,
+		"treasure": go_treasure
 	}
 
 	if game.get("character").get("moved")==True:
@@ -759,15 +770,13 @@ def action_room(game):
 
 		if not game.get("castle").get(X).get(Y).get(Z).get("contents")=={}:
 			print("\nIn this room, you find:")
-			try:
-				for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
-					print("\t"+contents.capitalize(), end="")
-					game=actiondict.get(contents)(game)
-			except:
-				for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
-					print("\t"+contents.capitalize(), end="")
-					game=actiondict.get(contents)(game)
-				pass		
+			datacontents=[]
+			for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
+				datacontents.append(contents)
+				
+			for contents in datacontents:
+				print("\t"+contents.capitalize(), end="")
+				game=actiondict.get(contents)(game)
 		else:
 			print("\tNothing.  The room is empty.")
 		randint=random.randint(0,3)

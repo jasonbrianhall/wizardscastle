@@ -47,6 +47,15 @@ def summary(game):
 	else:
 		print("	 Armor = No armor")
 
+	if game.get("character").get("treasures")==[]:
+		print("\nYou have no treasures")
+	else:
+		print("\nYou have the following treasures:")
+		for treasure in game.get("character").get("treasures"):
+			print(treasure)
+	print("\n")
+
+
 
 def enter_castle(character):
 
@@ -161,6 +170,9 @@ def enter_castle(character):
 		else:
 			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!\n")
 			summary(game)
+			game["character"]["moved"]=True  
+			game=castleaction.action_room(game)
+
 	
 	return game.get("character")
 

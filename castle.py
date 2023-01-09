@@ -358,19 +358,26 @@ def gen_castle():
 						roomlist.append(roomtemp)
 			
 			
-	for treasures in range(0, len(treasures)-1):
+	for treasure in range(0, len(treasures)-1):
 		roomlength=len(roomlist)
 		randomnumber=random.randint(0,roomlength-1)
 		X=roomlist[randomnumber].get("X")
 		Y=roomlist[randomnumber].get("Y")
 		Z=roomlist[randomnumber].get("Z")
-		print(X, Y, Z)
 		if roomlist[randomnumber].get("special")==None:
-			castle[X][Y][Z]["contents"]["treasure"]=treasures
+			if castle.get(X).get(Y).get(Z).get("contents").get("treasure")==None:
+				castle[X][Y][Z]["contents"]["treasure"]=[]
+				castle[X][Y][Z]["contents"]["treasure"].append(treasures[treasure])
+			else:
+				castle[X][Y][Z]["contents"]["treasure"].append(treasures[treasure])
+
 		else:
 			content=roomlist[randomnumber].get("special")
-			castle[X][Y][Z]["contents"][content]["treasure"]=treasures
-			
+			if castle.get(X).get(Y).get(Z).get("contents").get(content).get("treasure")==None:
+				castle[X][Y][Z]["contents"][content]["treasure"]=[]
+				castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])
+			else:
+				castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])	
 		
 
 	
