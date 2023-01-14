@@ -950,20 +950,20 @@ def gen_castle():
 		Y=roomlist[randomnumber].get("Y")
 		Z=roomlist[randomnumber].get("Z")
 		if roomlist[randomnumber].get("special")==None:
-			if castle.get(X).get(Y).get(Z).get("contents").get("treasure")==None:
-				castle[X][Y][Z]["contents"]["treasure"]=[]
-				castle[X][Y][Z]["contents"]["treasure"].append(treasures[treasure])
+			if castle.get(X).get(Y).get(Z).get("contents").get("treasures")==None:
+				castle[X][Y][Z]["contents"]["treasures"]=[]
+				castle[X][Y][Z]["contents"]["treasures"].append(treasures[treasure])
 			else:
-				castle[X][Y][Z]["contents"]["treasure"].append(treasures[treasure])
+				castle[X][Y][Z]["contents"]["treasures"].append(treasures[treasure])
 
 		else:
 			content=roomlist[randomnumber].get("special")
 			try:
-				if castle.get(X).get(Y).get(Z).get("contents").get(content).get("treasure")==None:
-					castle[X][Y][Z]["contents"][content]["treasure"]=[]
-					castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])
+				if castle.get(X).get(Y).get(Z).get("contents").get(content).get("treasures")==None:
+					castle[X][Y][Z]["contents"][content]["treasures"]=[]
+					castle[X][Y][Z]["contents"][content]["treasures"].append(treasures[treasure])
 				else:
-					castle[X][Y][Z]["contents"][content]["treasure"].append(treasures[treasure])	
+					castle[X][Y][Z]["contents"][content]["treasures"].append(treasures[treasure])	
 			except:
 				print(content + " not found")
 				print(castle[X][Y][Z]["contents"][content])

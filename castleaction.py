@@ -334,44 +334,49 @@ def go_open_chest(game):
 	
 	regex=re.compile("[yn]")
 	if contents.get("opened")==False:
-		if not contents.get("chest").get("explodes")==None:
-			damage=random.randint(0,3)
-			print("You open the chest and it explodes!!  You take " + str(damage) + "!!")
-			game["character"]["strength"]=game["character"]["strength"]-danger
-			del game["castle"][X][Y][Z]["contents"]["chest"]
-		elif contents.get("book"):
+		if len(contents)>1:
+			for content in contents:
+				if content=="explodes":
+					damage=random.randint(0,3)
+					print("You open the chest and it explodes!!  You take " + str(damage) + " damage!!")
+					game["character"]["strength"]=game["character"]["strength"]-damage
+					del game["castle"][X][Y][Z]["contents"]["chest"]
+					foundcontents=1
+				elif contents=="book":
 
-			exittheloop=False
-			while exittheloop==False:
-				print("You found a book in the chest; do you want to open it?  ", end="")
-				choice=input()
-				if re.match(regex, choice):
-					if choice=="y":
-						tempcontents=contents.get("book")
-						if contents=="strength":
-							print("You found a manual of strength!!")
-							character["strength"]=character["strength"]+18
-						elif contents=="dexterity":
-							print("You found a manual of dexterity!!")
-							character["dexterity"]=character["dexterity"]+18
-						elif contents=="intelligent":
-							print("You found a manual of intelligence!!")
-							character["dexterity"]=character["intelligence"]+18
-						elif contents=="blind":
-							print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
-							character["blind"]=True
-						elif contents=="stick":
-							# Thought about saying you can't open a book with a book on your hand but that just seems awkward
-							print("The book sticks to your hand, you are now unable to draw your weapon")
-							character["bookstucktohand"]=True
+					exittheloop=False
+					while exittheloop==False:
+						print("You found a book in the chest; do you want to open it?  ", end="")
+						choice=input()
+						if re.match(regex, choice):
+							if choice=="y":
+								tempcontents=contents.get("book")
+								if contents=="strength":
+									print("You found a manual of strength!!")
+									character["strength"]=character["strength"]+18
+								elif contents=="dexterity":
+									print("You found a manual of dexterity!!")
+									character["dexterity"]=character["dexterity"]+18
+								elif contents=="intelligent":
+									print("You found a manual of intelligence!!")
+									character["dexterity"]=character["intelligence"]+18
+								elif contents=="blind":
+									print("A flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
+									character["blind"]=True
+								elif contents=="stick":
+									# Thought about saying you can't open a book with a book on your hand but that just seems awkward
+									print("The book sticks to your hand, you are now unable to draw your weapon")
+									character["bookstucktohand"]=True
+								else:
+									print(contents.get("book"))
+								del game["castle"][X][Y][Z]["contents"]["chest"]["book"]
+								exittheloop=True
+							else:
+								exittheloop=True
 						else:
-							print(contents.get("book"))
-						del game["castle"][X][Y][Z]["contents"]["chest"]["book"]
-						exittheloop=True
-					else:
-						exittheloop=True
-				else:
-					print("** Invalid choice, yes or no")
+							print("** Invalid choice, yes or no")
+		else:
+			print("You opened the chest and ... it's empty")
 	return game
 
 def go_open_book(game):
@@ -780,16 +785,35 @@ def go_monster(game):
 									choice=input()[0].lower()
 									if re.match(regex, choice):
 										if choice=="y":
-											print("Take away gem and give to monster")
+											monsterbribed=True
 										exittheloop3=True
-										monsterbribed=True
 									else:
 										print("** Valid choices are yes or no!!")
-									if monsterbribed==False:
-										print("monster not bribed; add logic for gold")										
+							if monsterbribed==False:
+								randdomdata=random.randint(100, 2000)
+								if randomdata>=game.get("character").get("gold"):
+									exittheloop3=False
+									while exittheloop==True:
+										print("Give me " + str(randomdata) + " gold pieces and I'll let you live")
+										regex="[yn]"
+										print("Do you agree: ", end="")
+										choice=input()[0].lower()
+										if re.match(regex, choice):
+											if choice=="y":
+												monsterbribed=True
+												game["character"]["weapon"]["gold"]=game["character"]["weapon"]["gold"]-randomdata
+												game["castle"][X][Y][Z]["contents"]["monster"]["horde"]=game["castle"][X][Y][Z]["contents"]["monster"]["horde"]+randomdata
+											exittheloop3=True
+										else:
+											print("** Valid choices are yes or no!!")
+									
+								else:
+									print("** The only thing you I want is your life!!!")
+									game["castle"][X][Y][Z]["contents"]["monster"]["bribe"]=False
+									bribe=False																	
 												
 						elif choice=="a":
-							print("Attacking monster")
+							print("\nAttacking monster!!\n")
 							if weaponeffect==0:
 								print("** What are you going to do?  Beat it with your hands?")
 							elif  game.get("character").get("bookstucktohand")==True:
@@ -992,10 +1016,10 @@ def go_treasure(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	print("\n\nYou found treasure: ")
-	for treasure in game.get("castle").get(X).get(Y).get(Z).get("contents").get("treasure"):
+	for treasure in game.get("castle").get(X).get(Y).get(Z).get("contents").get("treasures"):
 		print("\tThe treasure " + treasure + " was added to your inventory")
-		game["character"]["treasure"].append(treasure)
-	del game["castle"][X][Y][Z]["contents"]["treasure"]
+		game["character"]["treasures"].append(treasure)
+	del game["castle"][X][Y][Z]["contents"]["treasures"]
 	return game
 	
 def action_room(game):
@@ -1013,7 +1037,7 @@ def action_room(game):
 		"downstairs": go_downstairs,
 		"gold": go_gold,
 		"flares": go_flares,
-		"treasure": go_treasure
+		"treasures": go_treasure
 	}
 
 	if game.get("character").get("moved")==True:
