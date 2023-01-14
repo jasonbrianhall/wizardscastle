@@ -669,9 +669,28 @@ def go_warp(game):
 	return game
 
 def go_monster(game):
-	# Add logic to fight monster
-	print("\nYou found a monster!!\n")
-	return game
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	
+	
+	#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
+	if game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster")==None:
+		return game
+	else:
+		#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
+		asciiart=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("asciiart")
+		monstername=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("name")
+		print("You are at ( " + X + ", " + Y + " ) Level " + Z + "\n")
+		print("Strength = " + str(game.get("character").get("strength")), end="")
+		print("	 Intelligence = " + str(game.get("character").get("intelligence")), end="")
+		print("	 Dexterity = " + str(game.get("character").get("dexterity")))
+		print("Treasures = " + str(len(game.get("character").get("treasures"))), end="")
+		print(" Gold pieces = " + str(game.get("character").get("gold")))
+		print("You are fighting a " + monstername)
+		print(asciiart)
+				
+		return game
 
 def go_vendor(game):
 	# Add logic to interact with vendor
@@ -796,14 +815,21 @@ def action_room(game):
 		game["character"]["moved"]=False
 
 		if not game.get("castle").get(X).get(Y).get(Z).get("contents")=={}:
-			print("\nIn this room, you find:")
 			datacontents=[]
 			for contents in game.get("castle").get(X).get(Y).get(Z).get("contents"):
 				datacontents.append(contents)
-				
+			counter=0	
 			for contents in datacontents:
-				print("\t"+contents.capitalize(), end="")
+				if contents=="monster":
+					counter=counter+1
+				else:
+					if counter==0:
+						print("\nIn this room, you find:")
+					print("\t"+contents.capitalize(), end="")
+					counter=counter+1
 				game=actiondict.get(contents)(game)
+				if contents=="monster":
+					break
 		else:
 			print("\tNothing.  The room is empty.")
 		randint=random.randint(0,3)
