@@ -253,7 +253,7 @@ def gen_castle():
 			{
 				"name": "ogre",
 				"modifier": 3,
-				"strength": 20,
+				"strength": 10,
 				"intelligence": 3,
 				"dexterity": 4,
 				"frequency": 6,
@@ -360,7 +360,7 @@ def gen_castle():
 			{
 				"name": "bear",
 				"modifier": 3,
-				"strength": 15,
+				"strength": 12,
 				"intelligence": 4,
 				"dexterity": 5,
 				"frequency": 6,
@@ -473,9 +473,9 @@ def gen_castle():
 			{
 				"name": "gargoyle",
 				"modifier": 3,
-				"strength": 13,
+				"strength": 11,
 				"intelligence": 4,
-				"dexterity": 6,
+				"dexterity": 3,
 				"frequency": 8,
 				# Stone breaks armor
 				"attack": 2,
@@ -528,9 +528,9 @@ def gen_castle():
 			{
 				"name": "chimera",
 				"modifier": 3,
-				"strength": 32,
+				"strength": 10,
 				"intelligence": 14,
-				"dexterity": 18,
+				"dexterity": 10,
 				"frequency": 8,
 				"attack": 8,
 				"defense": 3,
@@ -630,7 +630,7 @@ def gen_castle():
 				"strength": 18,
 				"intelligence": 18,
 				"dexterity": 3,
-				"frequency": 1,
+				"frequency": 2,
 				"attack": 3,
 				"defense": 3,
 				"break": False,
@@ -738,7 +738,7 @@ def gen_castle():
 	for x in monsters:
 		for frequency in range(1, monsters.get(x).get("frequency")):
 			monsterlist.append(x)
-	
+			
 	for x in range(1, castlesize+1):
 		X=str(x)
 		castle[X]={}
@@ -762,19 +762,22 @@ def gen_castle():
 					monster=random.randint(0,monsterran)
 					if monster==0:
 						currentmonster=random.choice(monsterlist)
-						castle[X][Y][level]["contents"]["monster"]=monsters[currentmonster]
-						try:
-							modifier=castle[X][Y][level]["contents"]["monster"]["modifier"]
-							strength=random.randint(-1*modifier, modifier)
-							intelligence=random.randint(-1*modifier, modifier)
-							dexterity=random.randint(-1*modifier, modifier)
-							castle[X][Y][level]["contents"]["monster"]["strength"]=castle[X][Y][level]["contents"]["monster"]["strength"]+strength
-							castle[X][Y][level]["contents"]["monster"]["intelligence"]=castle[X][Y][level]["contents"]["monster"]["strength"]+intelligence
-							castle[X][Y][level]["contents"]["monster"]["dexterity"]=castle[X][Y][level]["contents"]["monster"]["strength"]+dexterity
-						# No modifier defined; just don't modify the monster
-						except:
-							pass
+						castle[X][Y][level]["contents"]["monster"]=monsters[currentmonster].copy()  # Found out that if I didn't copy, it edited the original
 
+						#print("Current monster", monsters[currentmonster])
+
+						if castle.get(X).get(Y).get(level).get("contents").get("monster").get("modifier")==None:
+							modifier=0
+						else:
+							modifier=castle.get(X).get(Y).get(level).get("contents").get("monster").get("modifier")
+
+						strength=random.randint(-1*modifier, modifier)
+						intelligence=random.randint(-1*modifier, modifier)
+						dexterity=random.randint(-1*modifier, modifier)
+						#print("Picked", strength, intelligence, dexterity)
+						castle[X][Y][level]["contents"]["monster"]["strength"]=castle[X][Y][level]["contents"]["monster"]["strength"]+strength
+						castle[X][Y][level]["contents"]["monster"]["intelligence"]=castle[X][Y][level]["contents"]["monster"]["intelligence"]+intelligence
+						castle[X][Y][level]["contents"]["monster"]["dexterity"]=castle[X][Y][level]["contents"]["monster"]["dexterity"]+dexterity						
 					else:
 						# vendors don't hang out with monsters
 						vendor=random.randint(0,vendorran)

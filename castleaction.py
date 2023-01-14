@@ -708,6 +708,9 @@ def go_monster(game):
 		vowel=monstername[0].lower()
 		print(asciiart)
 		firststrike=False
+		
+		print("Using your keen eyes, you can see the monster has a strength of " + str(monsterstrength)  + " IQ of " + str(monsterintelligence) + " and Dexterity of " + str(monsterdexterity))
+		
 		for x in game.get("character").get("treasures"):
 			if x=="Ruby red":
 				firststrike=True
@@ -786,7 +789,7 @@ def go_monster(game):
 									defense=random.randint(1,monsterdefense)
 									if damage>defense:
 										danger=str(damage-defense)
-										print("You did " + danger + " damange to the monster")
+										print("You did " + danger + " damage to the monster")
 										game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage
 									else:
 										print("You did no damage to the monster")
@@ -804,6 +807,7 @@ def go_monster(game):
 						firststrike=True
 					else:
 						print("** Invalid choice; try again")
+			monsterdead=0
 			if game["castle"][X][Y][Z]["contents"]["monster"]["strength"]<=0:
 				print("Monster died from lack of Strength")
 				monsterdead=1
@@ -815,14 +819,15 @@ def go_monster(game):
 				monsterdead=1
 			if monsterdead==1:
 				del game["castle"][X][Y][Z]["contents"]["monster"]
-				exittheloop1==True
+				exittheloop1=True
+				break
 				
 			firststrike=True
 				
 					
 			
 	
-		return game
+	return game
 
 def go_vendor(game):
 	# Add logic to interact with vendor
