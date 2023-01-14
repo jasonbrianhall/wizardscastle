@@ -89,92 +89,117 @@ def enter_castle(character):
 		
    
 	exittheloop=False
+	characterdead=False
 
 	while exittheloop==False:
-
+		
 		game=castleaction.action_room(game)
+		if game["character"]["strength"]<=0 or game["character"]["dexterity"]<=0 or game["character"]["intelligence"]<=0:
+			 characterdead=True
+			 exittheloop=True
+			 
 
-		print("\nEnter your command : ", end="")
-		try:
-			choice=input().lower()
-			if len(choice)>=2: 
-				choice=choice[:2]
-				if not choice=="dr":
-					choice=choice[:1]
-			else:
-				choice=choice[:1]
-		except:
-			choice=""
-		game["character"]["turns"]=game["character"]["turns"]+1
-		if re.match(regex, choice):
-			if choice=="q" or choice=="n":
-				if choice=="n":
-					quitloop=False
-								
-					currentx=str(game.get("character").get("x"))
-					currenty=str(game.get("character").get("y"))
-					currentz=str(game.get("character").get("z"))
-					found=False
-					for contents in game.get("castle").get(currentx).get(currenty).get(currentz).get("contents"):
-						if contents=="entrance":
-							found=True
-							quitloop=False
-							while quitloop==False:
-								print("This is the exit; are you sure you want to leave? ", end="")
-								newchoice=input()[:1].lower()
-								if re.match(yesnoregex, newchoice):
-									if newchoice=="y":
-										if game.get("character").get("orbofzot")==False:
-											print("\nYou left the castle without the Orb of Zot.")
-										exittheloop=True
-										quitloop=True
-									else:
-										quitloop=True
-								else:
-									print("\n** Invalid choice stupid " + game.get("character").get("race") + "; try y or n.\n")
-					if found==False:
-						game=choicedict.get(choice)(game)									
+		if characterdead==False:
+			print("\nEnter your command : ", end="")
+			try:
+				choice=input().lower()
+				if len(choice)>=2: 
+					choice=choice[:2]
+					if not choice=="dr":
+						choice=choice[:1]
 				else:
-					quitloop=False
-					while quitloop==False:
-						print("Do you really want to quit now? ", end="")
-						try:
-							newchoice=input()[:1].lower()
-						except:
-							newchoice=""
-						if re.match(yesnoregex, newchoice) and newchoice=="y":								
-							exittheloop=True 
-							quitloop=True
-						elif re.match(yesnoregex, newchoice) and newchoice=="n":
-							quitloop=True
-						else:
-							print("** Please enter yes or no.\n")
-				
-				if exittheloop==True:
-					if game.get("character").get("orbofzot")==True and choice=="n":
-						print("An incredibly glorious victory!!\n")
+					choice=choice[:1]
+			except:
+				choice=""
+			game["character"]["turns"]=game["character"]["turns"]+1
+			if re.match(regex, choice):
+				if choice=="q" or choice=="n":
+					if choice=="n":
+						quitloop=False
+									
+						currentx=str(game.get("character").get("x"))
+						currenty=str(game.get("character").get("y"))
+						currentz=str(game.get("character").get("z"))
+						found=False
+						for contents in game.get("castle").get(currentx).get(currenty).get(currentz).get("contents"):
+							if contents=="entrance":
+								found=True
+								quitloop=False
+								while quitloop==False:
+									print("This is the exit; are you sure you want to leave? ", end="")
+									newchoice=input()[:1].lower()
+									if re.match(yesnoregex, newchoice):
+										if newchoice=="y":
+											if game.get("character").get("orbofzot")==False:
+												print("\nYou left the castle without the Orb of Zot.")
+											exittheloop=True
+											quitloop=True
+										else:
+											quitloop=True
+									else:
+										print("\n** Invalid choice stupid " + game.get("character").get("race") + "; try y or n.\n")
+						if found==False:
+							game=choicedict.get(choice)(game)									
 					else:
-						print("\nA less than awe-inspiring defeat.\n")
+						quitloop=False
+						while quitloop==False:
+							print("Do you really want to quit now? ", end="")
+							try:
+								newchoice=input()[:1].lower()
+							except:
+								newchoice=""
+							if re.match(yesnoregex, newchoice) and newchoice=="y":								
+								exittheloop=True 
+								quitloop=True
+							elif re.match(yesnoregex, newchoice) and newchoice=="n":
+								quitloop=True
+							else:
+								print("** Please enter yes or no.\n")
+					
+					if exittheloop==True:
+						leftthecastle(game)
 
-					print("When you left the castle, you had :\n\nYour miserable life!")
-					print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
-					print("\nYou also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces", end="")
-					if game.get("character").get("runestaff")==True:
-						print(" and the runestaff", end="")
-			
-					print("\n\nAnd it took you " + str(game.get("character").get("turns")) + " turns!\n")
 
-				
+					
+				else:
+					game=choicedict.get(choice)(game)
 			else:
-				game=choicedict.get(choice)(game)
-		else:
-			print("\n** Silly " + character.get("race") + ", that wasn't a valid command!\n")
-			summary(game)
-			game["character"]["moved"]=True  
-			game=castleaction.action_room(game)
+				print("\n** Silly " + character.get("race") + ", that wasn't a valid command!\n")
+				summary(game)
+				game["character"]["moved"]=True  
+				game=castleaction.action_room(game)
 
 	
 	return game.get("character")
+
+
+def leftthecastle(game):
+	
+	characterdead=False
+	if game.get("character").get("strength")<=0:
+		print("You died from lack of strength!!")
+		characterdead=True
+	elif game.get("character").get("intelligence")<=0:
+		print("You died from stupidity!!")
+		characterdead=True
+
+	elif game.get("character").get("dexterity")<=0:
+		print("You died because you could no longer move")
+		characterdead=True
+		
+	
+	if game.get("character").get("orbofzot")==True and characterdead==False:
+		print("An incredibly glorious victory!!\n")
+	else:
+		print("\nA less than awe-inspiring defeat.\n")
+	
+	print("When you left the castle, you had :\n\nYour miserable life!")
+	print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
+	print("\nYou also had " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces", end="")
+	if game.get("character").get("runestaff")==True:
+		print(" and the runestaff", end="")
+
+	print("\n\nAnd it took you " + str(game.get("character").get("turns")) + " turns!\n")
 
 
 def main():

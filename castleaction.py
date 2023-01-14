@@ -380,7 +380,10 @@ def go_open_chest(game):
 					print("You found gold!!!")
 					gold=contents.get("gold")
 					game["character"]["gold"]=game["character"]["gold"]+gold
-					
+				elif contents=="orb":
+					print("You found an orb!!")
+					game["castle"][X][Y][Z]["contents"]["orb"]=True
+					del game["castle"][X][Y][Z]["contents"]["chest"]["orb"]	
 		else:
 			print("You opened the chest and ... it's empty")
 			del game["castle"][X][Y][Z]["contents"]["chest"]
@@ -461,6 +464,39 @@ def go_gaze(game):
 	return game
 
 def go_teleport(game):
+	regex="[0-9]+/[0-9]+/[0-9]"
+	if game.get("character").get("runestaff")==True:
+		print("Where do you want to teleport to (format is X/Y/Level, e.g. 1/3/5): ", end="")
+		choice=input()
+		if re.match(regex, choice):
+			print("Choice was ", choice)
+			data=choice.split("/")
+			X=int(data[0])
+			Y=int(data[1])
+			Z=int(data[2])
+			castlesize=game.get("castle").get("size")
+			valid=True
+			if X<1 or X>castlesize:
+				print("X value is invalid")
+				valid=False
+			elif Y<1 or Y>castlesize:
+				print("Y value is invalid")
+				valid=False
+			elif Z<1 or Z>castlesize:
+				print("Level value is invalid")
+				valid=False
+			if valid==True:
+				game["character"]["x"]=X
+				game["character"]["y"]=Y
+				game["character"]["z"]=Z
+				game["castle"][str(X)][str(Y)][str(Z)]["explored"]=True
+								
+		else:
+			print("** Invalid format; if you want to teleport; use the right format")
+			
+
+	else:
+		print("** You can't teleport without the runestaff!")
 	return game
 	
 def go_up(game):
@@ -703,6 +739,8 @@ def go_monster(game):
 		monsterstrength=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("strength")
 		monsterintelligence=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("intelligence")
 		monsterdexterity=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("dexterity")
+		if monsterdexterity<=0:
+			monsterdexterity=1
 		monsterattack=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("attack")
 		monsterdefense=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("defense")
 		monsterbreak=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("break")
@@ -720,7 +758,7 @@ def go_monster(game):
 		armoreffect=game.get("character").get("armor").get("effect")
 
 		
-		print("You are at ( " + X + ", " + Y + " ) Level " + Z + "\n")
+		#print("You are at ( " + X + ", " + Y + " ) Level " + Z + "\n")
 		print("Strength = " + str(strength), end="")
 		print("	 Intelligence = " + str(intelligence), end="")
 		print("	 Dexterity = " + str(dexterity))
@@ -751,7 +789,6 @@ def go_monster(game):
 		exittheloop1=False
 
 		# Attack, retreat, bribe, or spell
-		choices="[arbs]"
 		monsterbribed=False
 		retreated=False
 		while exittheloop1==False:
@@ -794,6 +831,8 @@ def go_monster(game):
 									choice=input()[0].lower()
 									if re.match(regex, choice):
 										if choice=="y":
+											game["character"]["treasures"].remove(treasure)
+											castle[X][Y][Z]["contents"][content]["treasures"].append(treasure)
 											monsterbribed=True
 										exittheloop3=True
 									else:
@@ -829,7 +868,7 @@ def go_monster(game):
 								print("** You have a book stuck to your hand.  What are you going to do?  Beat it with a book?")
 							else:	
 								role=dexterity+monsterdexterity
-								tester=random.randint(1, role)- int(intelligence/8) - int(strength/8)
+								tester=random.randint(1, role)- int(intelligence/4) - int(strength/4)
 								if tester<=dexterity:
 									maxhits=int(dexterity/monsterdexterity)
 									if maxhits<=1:
@@ -857,7 +896,7 @@ def go_monster(game):
 									if monsterbreak==True and hits>0:
 										diditbreak=random.randint(0, monsterbreaklie)
 										if diditbreak==0:
-											print("** Oh no, your " + game["character"]["weapon"]["name"] + " broke!!")
+											print("** Oh no, your " + game["character"]["weapons"]["name"] + " broke!!")
 											game["character"]["weapon"]["name"]="Nothing"
 											game["character"]["weapon"]["effect"]=0
 
@@ -893,23 +932,28 @@ def go_monster(game):
 				horde=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("horde")
 				print("You find the monsters horde of " + str(horde) + " gold coins; they are now yours")
 				game["character"]["gold"]=game["character"]["gold"]+horde
+				if castle[X][Y][Z]["contents"]["monster"]["runestaff"]==True:
+					game["character"]["runestaff"]=True
+					print("Great Zot!  You found the Rune Staff!")
 				del game["castle"][X][Y][Z]["contents"]["monster"]
 				exittheloop1=True
 				break
 			if monsterdead==0 and monsterbribed==False and retreated==False:
 				role=dexterity+monsterdexterity
-				tester=random.randint(1, role)- int(intelligence/8) - int(strength/8)
+				tester=random.randint(1, role)- int(monsterintelligence/4) - int(monsterstrength/4)
 				if tester<=monsterdexterity:
-					maxhits=int(dexterity/monsterdexterity)
+					maxhits=int(monsterdexterity/dexterity)
 					
 					if maxhits<=1:
 						hits=1
 					else:
 						hits=random.randint(1, maxhits)
-					print("Monster did " + str(hits) + " hits!!")
+					print("\nDefending again monster;\nMonster did " + str(hits) + " hits!!")
 					for hit in range(0, hits):
 						damage=random.randint(0,monsterattack)
 						defense=random.randint(0,armoreffect)
+						print("monsterattack", monsterattack, damage, defense)
+
 						if damage>defense:
 							danger=damage-defense
 							print("\tThe monster did " + str(danger) + " damage.")
@@ -925,6 +969,10 @@ def go_monster(game):
 
 				else:
 					print("** The monster missed you")
+
+			if game.get("character").get("strength")<=0 or game.get("character").get("dexterity")<=0 or game.get("character").get("intelligence")<=0:
+				#Character is dead
+				exittheloop1=True
 
 				
 			firststrike=True
@@ -1064,17 +1112,18 @@ def action_room(game):
 			for contents in datacontents:
 				if contents=="monster":
 					counter=counter+1
+					game=actiondict.get(contents)(game)
+					break
 				else:
 					if counter==0:
 						print("\nIn this room, you find:")
 					print("\t"+contents.capitalize(), end="")
+					game=actiondict.get(contents)(game)
 					counter=counter+1
-				game=actiondict.get(contents)(game)
-				if contents=="monster":
-					break
 		else:
 			print("\tNothing.  The room is empty.")
 		randint=random.randint(0,3)
+		
 		if randint==0:
 			ambience()
 			

@@ -30,8 +30,8 @@ def init_character():
 	character["z"]                = 1
 	character["turns"]            = 0
 	character["moved"]            = False
-	character["orbofzot"]         = False
-	character["runestaff"]        = False
+	character["orbofzot"]         = True
+	character["runestaff"]        = True
 	character["blind"]            = False  
 	return character
 	
