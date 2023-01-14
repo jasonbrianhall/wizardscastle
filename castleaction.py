@@ -674,23 +674,53 @@ def go_monster(game):
 	Z=str(game.get("character").get("z"))
 	
 	
-	#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
+	# For some fluke of nature; this should never get called
 	if game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster")==None:
 		return game
 	else:
 		#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
 		asciiart=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("asciiart")
 		monstername=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("name")
+		monsterstrength=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("strength")
+		monsterintelligence=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("intelligence")
+		monsterdexterity=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("dexterity")
+		
+		intelligence=game.get("character").get("intelligence")
+		strength=game.get("character").get("strength")
+		dexterity=game.get("character").get("dexterity")
 		print("You are at ( " + X + ", " + Y + " ) Level " + Z + "\n")
-		print("Strength = " + str(game.get("character").get("strength")), end="")
-		print("	 Intelligence = " + str(game.get("character").get("intelligence")), end="")
-		print("	 Dexterity = " + str(game.get("character").get("dexterity")))
+		print("Strength = " + str(strength), end="")
+		print("	 Intelligence = " + str(intelligence), end="")
+		print("	 Dexterity = " + str(dexterity))
 		print("Treasures = " + str(len(game.get("character").get("treasures"))), end="")
 		print(" Gold pieces = " + str(game.get("character").get("gold")))
 		print("Weapons: " + str(game.get("character").get("weapons").get("name")) + "\tarmor: " + str(game.get("character").get("armor").get("name")))
-		print("\nYou are fighting a " + monstername)
+		vowel=monstername[0].lower()
 		print(asciiart)
+		firststrike=False
+		for x in game.get("character").get("treasures"):
+			if x=="Ruby red":
+				firststrike=True
+		if firststrike==False:
+			role=dexterity+monsterdexterity
+			tester=random.randint(1, role)
+			if tester<=role:
+				firststrike=True
+				
+		exittheloop=False
 
+		# Attack, retreat, bribe, or spell
+		choices="[arbs]"
+		while exittheloop==False:
+			if vowel=="a" or vowel=="e" or vowel=="i" or vowel=="o" or vowel=="u":
+				print("\nYou are fighting an " + monstername)
+			else:
+				print("\nYou are fighting a " + monstername)
+			if firststrike==True:
+				if intelligence >=15:
+					print("You may attack, retreat, bribe, or cast spell")
+					
+			
 	
 		return game
 
@@ -864,6 +894,12 @@ Ruby red - avoid lethargy     Pale pearl - avoid leech
 Green gem - avoid forgetting  Opal eye - cures blindness
 Blue flame - dissolves books  Norn stone - no benefit
 Palantir - no benefit	      Silmaril - no benefit
+
+Additionally:  
+
+	The Ruby Red Gem gives you first strike or losing Dexterity from pools or gazing
+	The Green Gem prevents you from your IQ decreasing from pools and gazing
+	The Pale Pearl prevents you from losing strength from pools and gazing
 
 Press return when ready to resume""")
 
