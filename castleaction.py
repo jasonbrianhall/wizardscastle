@@ -687,9 +687,11 @@ def go_monster(game):
 		print("	 Dexterity = " + str(game.get("character").get("dexterity")))
 		print("Treasures = " + str(len(game.get("character").get("treasures"))), end="")
 		print(" Gold pieces = " + str(game.get("character").get("gold")))
-		print("You are fighting a " + monstername)
+		print("Weapons: " + str(game.get("character").get("weapons").get("name")) + "\tarmor: " + str(game.get("character").get("armor").get("name")))
+		print("\nYou are fighting a " + monstername)
 		print(asciiart)
-				
+
+	
 		return game
 
 def go_vendor(game):
