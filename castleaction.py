@@ -684,10 +684,20 @@ def go_monster(game):
 		monsterstrength=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("strength")
 		monsterintelligence=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("intelligence")
 		monsterdexterity=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("dexterity")
-		
+		monsterattack=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("attack")
+		monsterdefense=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("defense")
+
+		bribe=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("bribe")
 		intelligence=game.get("character").get("intelligence")
 		strength=game.get("character").get("strength")
 		dexterity=game.get("character").get("dexterity")
+		treasures=game.get("character").get("treasures")
+		weapon=game.get("character").get("weapons").get("name")
+		weaponeffect=game.get("character").get("weapons").get("effect")
+		armor=game.get("character").get("armor").get("name")
+		armoreffect=game.get("character").get("armor").get("effect")
+
+		
 		print("You are at ( " + X + ", " + Y + " ) Level " + Z + "\n")
 		print("Strength = " + str(strength), end="")
 		print("	 Intelligence = " + str(intelligence), end="")
@@ -704,21 +714,111 @@ def go_monster(game):
 		if firststrike==False:
 			role=dexterity+monsterdexterity
 			tester=random.randint(1, role)
-			if tester<=role:
+			if tester<=dexterity:
 				firststrike=True
 				
-		exittheloop=False
+		exittheloop1=False
 
 		# Attack, retreat, bribe, or spell
 		choices="[arbs]"
-		while exittheloop==False:
+		monsterbribed=False
+		while exittheloop1==False:
 			if vowel=="a" or vowel=="e" or vowel=="i" or vowel=="o" or vowel=="u":
 				print("\nYou are fighting an " + monstername)
 			else:
 				print("\nYou are fighting a " + monstername)
 			if firststrike==True:
-				if intelligence >=15:
-					print("You may attack, retreat, bribe, or cast spell")
+				exittheloop2=False
+				while exittheloop2==False:
+					if intelligence >=15:
+						if bribe==True:
+							print("You may attack, retreat, bribe the monster, or cast spell")
+							choices="[arbs]"
+						else:
+							print("You may attack, retreat, or cast spell")
+							choices="[ars]"
+					else:
+						if bribe==True:
+							print("You may attack, retreat, or bribe the monster")
+							choices="[arb]"
+						else:
+							print("You may attack, or retreat")
+							choices="[ar]"
+					choices=re.compile(choices)
+					print("What is your choice:  ", end="")
+					choice=input().lower()[0]
+					if re.match(choices, choice):
+						if choice=="b":
+							treasure=None
+							if len(treasures)>0:
+								randomdata=random.randint(0, treasures-1)
+								treasure=treasures[randomdata]
+							if not treasure==None:
+								regex="[yn]"
+								exittheloop3=False
+								while exittheloop3==False:	
+									print("The monster says give me the treasure " + treasure + " and I'll let you go")
+									print("Do you agree: ", end="")
+									choice=input()[0].lower()
+									if re.match(regex, choice):
+										if choice=="y":
+											print("Take away gem and give to monster")
+										exittheloop3=True
+										monsterbribed=True
+									else:
+										print("** Valid choices are yes or no!!")
+									if monsterbribed==False:
+										print("monster not bribed; add logic for gold")										
+												
+						elif choice=="a":
+							print("Attacking monster")
+							role=dexterity+monsterdexterity
+							tester=random.randint(1, role)
+							if tester<=dexterity:
+								maxhits=int(dexterity/monsterdexterity)
+								if maxhits<=1:
+									hits=1
+								else:
+									hits=random.randint(1, maxhits)
+								print("You did " + str(hits) + " hits!!")
+								for hit in range(0, hits):
+									damage=random.randint(1,weaponeffect)
+									defense=random.randint(1,monsterdefense)
+									if damage>defense:
+										danger=str(damage-defense)
+										print("You did " + danger + " damange to the monster")
+										game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage
+									else:
+										print("You did no damage to the monster")
+
+							else:
+								print("** You missed the monster **")
+								
+								
+
+						elif choice=="r":
+							print("Retreating")
+						elif choice=="s":
+							print("Casting Spell")
+						exittheloop2=True
+						firststrike=True
+					else:
+						print("** Invalid choice; try again")
+			if game["castle"][X][Y][Z]["contents"]["monster"]["strength"]<=0:
+				print("Monster died from lack of Strength")
+				monsterdead=1
+			elif game["castle"][X][Y][Z]["contents"]["monster"]["intelligence"]<=0:
+				print("Monster died from stupidity")
+				monsterdead=1
+			elif game["castle"][X][Y][Z]["contents"]["monster"]["dexterity"]<=0:
+				print("Monster stopped moving (died from lack of dexterity)")
+				monsterdead=1
+			if monsterdead==1:
+				del game["castle"][X][Y][Z]["contents"]["monster"]
+				exittheloop1==True
+				
+			firststrike=True
+				
 					
 			
 	
