@@ -778,7 +778,7 @@ def go_monster(game):
 							choices="[ar]"
 					choices=re.compile(choices)
 					print("What is your choice:  ", end="")
-					choice=input().lower()[0]
+					choice=input()
 					if re.match(choices, choice):
 						if choice=="b":
 							treasure=None
@@ -799,10 +799,10 @@ def go_monster(game):
 									else:
 										print("** Valid choices are yes or no!!")
 							if monsterbribed==False:
-								randdomdata=random.randint(100, 2000)
+								randomdata=random.randint(100, 2000)
 								if randomdata>=game.get("character").get("gold"):
 									exittheloop3=False
-									while exittheloop==True:
+									while exittheloop3==True:
 										print("Give me " + str(randomdata) + " gold pieces and I'll let you live")
 										regex="[yn]"
 										print("Do you agree: ", end="")
