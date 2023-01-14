@@ -214,9 +214,10 @@ def buy_equipment(character):
 				choice=""
 				pass
 			if re.match(regex, choice):
-				character["lamp"]=True
-				character["gold"]=character.get("gold")-20
-				data=True
+				if choice=="y":
+					character["lamp"]=True
+					character["gold"]=character.get("gold")-20
+					data=True
 			else:
 				print("\n** Please answer Yes or No\n")
  

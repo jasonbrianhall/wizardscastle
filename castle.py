@@ -595,7 +595,7 @@ def gen_castle():
 				"attack": 4,
 				"defense": 6,
 				"break": True,
-				"breaklikelie": 10,
+				"breaklie": 10,
 				"spells": None,
 				"bribe": True,	
 				"horde": 5000,	

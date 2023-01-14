@@ -334,7 +334,12 @@ def go_open_chest(game):
 	
 	regex=re.compile("[yn]")
 	if contents.get("opened")==False:
-		if contents.get("book"):
+		if not contents.get("chest").get("explodes")==None:
+			damage=random.randint(0,3)
+			print("You open the chest and it explodes!!  You take " + str(damage) + "!!")
+			game["character"]["strength"]=game["character"]["strength"]-danger
+			del game["castle"][X][Y][Z]["contents"]["chest"]
+		elif contents.get("book"):
 
 			exittheloop=False
 			while exittheloop==False:
@@ -734,6 +739,7 @@ def go_monster(game):
 		# Attack, retreat, bribe, or spell
 		choices="[arbs]"
 		monsterbribed=False
+		retreated=False
 		while exittheloop1==False:
 			if vowel=="a" or vowel=="e" or vowel=="i" or vowel=="o" or vowel=="u":
 				print("\nYou are fighting an " + monstername)
@@ -784,42 +790,56 @@ def go_monster(game):
 												
 						elif choice=="a":
 							print("Attacking monster")
-							role=dexterity+monsterdexterity
-							tester=random.randint(1, role)- int(intelligence/8) - int(strength/8)
-							if tester<=dexterity:
-								maxhits=int(dexterity/monsterdexterity)
-								if maxhits<=1:
-									hits=1
-								else:
-									hits=random.randint(1, maxhits)
-									
-								print("You did " + str(hits) + " hits!!")
-								for hit in range(0, hits):
-									damage=random.randint(1,weaponeffect)
-									defense=random.randint(1,monsterdefense)
-									critical=random.randint(0,5)
-									if critical==0:
-										print("You did a critical hit; critical hits ignore armor and does twice the damge")
-										print("\tYou did " + str(damage*2) + " damage to the monster")
-										game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage*2
+							if weaponeffect==0:
+								print("** What are you going to do?  Beat it with your hands?")
+							elif  game.get("character").get("bookstucktohand")==True:
+								print("** You have a book stuck to your hand.  What are you going to do?  Beat it with a book?")
+							else:	
+								role=dexterity+monsterdexterity
+								tester=random.randint(1, role)- int(intelligence/8) - int(strength/8)
+								if tester<=dexterity:
+									maxhits=int(dexterity/monsterdexterity)
+									if maxhits<=1:
+										hits=1
 									else:
-										if damage>defense:
-											danger=damage-defense
-
-											print("\tYou did " + str(danger) + " damage to the monster")
-											game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - danger
+										hits=random.randint(1, maxhits)
+										
+									print("You did " + str(hits) + " hits!!")
+									for hit in range(0, hits):
+										damage=random.randint(1,weaponeffect)
+										defense=random.randint(1,monsterdefense)
+										critical=random.randint(0,12)
+										if critical==0:
+											print("You did a critical hit; critical hits ignore armor and does twice the damge")
+											print("\tYou did " + str(damage*2) + " damage to the monster")
+											game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage*2
 										else:
-											print("\tYou did no damage to the monster")
-								if monsterbreak==True:
-									diditbreak=random.randint(0, breaklie)
-									if diditbreak==0:
-										game["character"]["weapon"]["name"]="Nothing"
-										game["character"]["weapon"]["effect"]=0
+											if damage>defense:
+												danger=damage-defense
 
-							else:
-								print("** You missed the monster **")
+												print("\tYou did " + str(danger) + " damage to the monster")
+												game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - danger
+											else:
+												print("\tYou did no damage to the monster")
+									if monsterbreak==True and hits>0:
+										diditbreak=random.randint(0, monsterbreaklie)
+										if diditbreak==0:
+											print("** Oh no, your " + game["character"]["weapon"]["name"] + " broke!!")
+											game["character"]["weapon"]["name"]="Nothing"
+											game["character"]["weapon"]["effect"]=0
+
+								else:
+									print("** You missed the monster **")
 						elif choice=="r":
-							print("Retreating")
+							role=dexterity+monsterdexterity
+							tester=random.randint(1, role)
+							if tester<=dexterity:
+								print("You ran for your life!!")
+								exittheloop1=True
+								retreated=True
+							else:
+								print("You can't get away")
+
 						elif choice=="s":
 							print("Casting Spell")
 						exittheloop2=True
@@ -828,13 +848,13 @@ def go_monster(game):
 						print("** Invalid choice; try again")
 			monsterdead=0
 			if game["castle"][X][Y][Z]["contents"]["monster"]["strength"]<=0:
-				print("Monster died from lack of Strength")
+				print("\nMonster died from lack of Strength")
 				monsterdead=1
 			elif game["castle"][X][Y][Z]["contents"]["monster"]["intelligence"]<=0:
-				print("Monster died from stupidity")
+				print("\nMonster died from stupidity")
 				monsterdead=1
 			elif game["castle"][X][Y][Z]["contents"]["monster"]["dexterity"]<=0:
-				print("Monster stopped moving (died from lack of dexterity)")
+				print("\nMonster stopped moving (died from lack of dexterity)")
 				monsterdead=1
 			if monsterdead==1:
 				horde=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("horde")
@@ -843,8 +863,36 @@ def go_monster(game):
 				del game["castle"][X][Y][Z]["contents"]["monster"]
 				exittheloop1=True
 				break
-			if monsterdead==0 and monsterbribed==False:
-				True
+			if monsterdead==0 and monsterbribed==False and retreated==False:
+				role=dexterity+monsterdexterity
+				tester=random.randint(1, role)- int(intelligence/8) - int(strength/8)
+				if tester<=monsterdexterity:
+					maxhits=int(dexterity/monsterdexterity)
+					
+					if maxhits<=1:
+						hits=1
+					else:
+						hits=random.randint(1, maxhits)
+					print("Monster did " + str(hits) + " hits!!")
+					for hit in range(0, hits):
+						damage=random.randint(0,monsterattack)
+						defense=random.randint(0,armoreffect)
+						if damage>defense:
+							danger=damage-defense
+							print("\tThe monster did " + str(danger) + " damage.")
+							game["character"]["strength"]=game["character"]["strength"]-danger
+						else:
+							print("\tThe monster did no damage")
+					if monsterbreak==True and hits>0:
+						diditbreak=random.randint(0, monsterbreaklie)
+						if diditbreak==0:
+							print("** Oh no, the monster broke your " + game["character"]["armor"]["name"])
+							game["character"]["armor"]["name"]="Nothing"
+							game["character"]["armor"]["effect"]=0
+
+				else:
+					print("** The monster missed you")
+
 				
 			firststrike=True
 				
@@ -1026,7 +1074,7 @@ Palantir - no benefit	      Silmaril - no benefit
 
 Additionally:  
 
-	The Ruby Red Gem gives you first strike or losing Dexterity from pools or gazing
+	The Ruby Red Gem gives you first strike and prevents losing Dexterity from pools or gazing
 	The Green Gem prevents you from your IQ decreasing from pools and gazing
 	The Pale Pearl prevents you from losing strength from pools and gazing
 
