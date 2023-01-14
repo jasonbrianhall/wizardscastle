@@ -686,6 +686,9 @@ def go_monster(game):
 		monsterdexterity=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("dexterity")
 		monsterattack=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("attack")
 		monsterdefense=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("defense")
+		monsterbreak=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("break")
+		monsterbreaklie=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("breaklie")
+
 
 		bribe=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("bribe")
 		intelligence=game.get("character").get("intelligence")
@@ -710,6 +713,12 @@ def go_monster(game):
 		firststrike=False
 		
 		print("Using your keen eyes, you can see the monster has a strength of " + str(monsterstrength)  + " IQ of " + str(monsterintelligence) + " and Dexterity of " + str(monsterdexterity))
+		print("Monster has an attack of " + str(monsterattack) + " and defense of " + str(monsterdefense))
+
+		if monsterbreak==True:
+			print("You can also see that the monster has wicked armor; your weapons and armor could break")
+			
+		
 		
 		for x in game.get("character").get("treasures"):
 			if x=="Ruby red":
@@ -776,29 +785,39 @@ def go_monster(game):
 						elif choice=="a":
 							print("Attacking monster")
 							role=dexterity+monsterdexterity
-							tester=random.randint(1, role)
+							tester=random.randint(1, role)- int(intelligence/8) - int(strength/8)
 							if tester<=dexterity:
 								maxhits=int(dexterity/monsterdexterity)
 								if maxhits<=1:
 									hits=1
 								else:
 									hits=random.randint(1, maxhits)
+									
 								print("You did " + str(hits) + " hits!!")
 								for hit in range(0, hits):
 									damage=random.randint(1,weaponeffect)
 									defense=random.randint(1,monsterdefense)
-									if damage>defense:
-										danger=str(damage-defense)
-										print("You did " + danger + " damage to the monster")
-										game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage
+									critical=random.randint(0,5)
+									if critical==0:
+										print("You did a critical hit; critical hits ignore armor and does twice the damge")
+										print("\tYou did " + str(damage*2) + " damage to the monster")
+										game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage*2
 									else:
-										print("You did no damage to the monster")
+										if damage>defense:
+											danger=damage-defense
+
+											print("\tYou did " + str(danger) + " damage to the monster")
+											game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - danger
+										else:
+											print("\tYou did no damage to the monster")
+								if monsterbreak==True:
+									diditbreak=random.randint(0, breaklie)
+									if diditbreak==0:
+										game["character"]["weapon"]["name"]="Nothing"
+										game["character"]["weapon"]["effect"]=0
 
 							else:
 								print("** You missed the monster **")
-								
-								
-
 						elif choice=="r":
 							print("Retreating")
 						elif choice=="s":
@@ -818,9 +837,14 @@ def go_monster(game):
 				print("Monster stopped moving (died from lack of dexterity)")
 				monsterdead=1
 			if monsterdead==1:
+				horde=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("horde")
+				print("You find the monsters horde of " + str(horde) + " gold coins; they are now yours")
+				game["character"]["gold"]=game["character"]["gold"]+horde
 				del game["castle"][X][Y][Z]["contents"]["monster"]
 				exittheloop1=True
 				break
+			if monsterdead==0 and monsterbribed==False:
+				True
 				
 			firststrike=True
 				
