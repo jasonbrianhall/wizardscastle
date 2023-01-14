@@ -457,10 +457,88 @@ def go_open(game):
 	return game
 
 def go_gaze(game):
+	X=str(game.get("character").get("x"))
+	Y=str(game.get("character").get("y"))
+	Z=str(game.get("character").get("z"))
+	castlesize=game.get("castle").get("size")
+
 	if game.get("character").get("blind")==True:
 		print("** Stupid " + game.get("character").get("race") + ", you are blind and can't gaze.")
 	else:
-		print("Add logic for gazing here")
+		if game.get("castle").get(X).get(Y).get(Z).get("contents").get("orb")==True:
+			print("You stare at the orb and see ", end="")
+			randomdata=random.randint(0,9)
+			if randomdata==0:
+				# Find orb of zot
+				for x in range(1, castlesize+1):
+					A=str(x)
+					for y in range(1, castlesize+1):
+						B=str(y)
+						for z in range(1,castlesize+1):
+							C=str(z)
+							if not game.get("castle").get(A).get(B).get(C).get("contents").get("warp")==None:
+								if game.get("castle").get(A).get(B).get(C).get("contents").get("warp").get("orbofzot"):
+									print("the orb of zot at location " + A +"/" + B + "/" + C)
+			# Random Warp Stating Orb of Zot
+			elif randomdata>=1 and randomdata<=4:
+				datalist=[]
+				for x in range(1, castlesize+1):
+					A=str(x)
+					for y in range(1, castlesize+1):
+						B=str(y)
+						for z in range(1,castlesize+1):
+							C=str(z)
+							if not game.get("castle").get(A).get(B).get(C).get("contents").get("warp")==None:
+								datalist.append(A + "/" + B + "/" + C)
+				print("the orb of zot at location " + random.choice(datalist))
+			elif randomdata==5:
+				print("a soap opera rerun")
+			elif randomdata==6:
+				print("yourself in a bloody heap")
+				game["character"]["strength"]=game["character"]["strength"]-random.randint(1,3)
+			elif randomdata==7:
+				datalist=[]
+				for x in range(1, castlesize+1):
+					A=str(x)
+					for y in range(1, castlesize+1):
+						B=str(y)
+						for z in range(1,castlesize+1):
+							C=str(z)
+							if not game.get("castle").get(A).get(B).get(C).get("contents").get("monster")==None:
+								datalist.append(game.get("castle").get(A).get(B).get(C).get("contents").get("monster").get("name"))
+				if datalist==[]:
+					# Should only be the case if all monsters are dead
+					print("nothing out of the ordinary but you feel like you are being watched")				
+				else:
+					choice=random.choice(datalist)
+					if choice[0]=="a" or choice[0]=="e" or choice[0]=="i" or choice[0]=="o" or choice[0]=="u":
+						print("an " + random.choice(datalist) + " staring back at you.")
+					else:
+						print("a " + random.choice(datalist) + " staring back at you.")
+			elif randomdata==8:
+				print("the world series playing")
+			elif randomdata==9:
+				print("your self ", end="")
+				newdata=random.randint(0,1)
+				if newdata==0:
+					print("becoming a ", end="")
+					if game.get("character").get("sex")=="m":
+						print("girl", end="")
+						game["character"]["sex"]="f"
+					else:
+						print("boy", end="")
+						game["character"]["sex"]="m"
+				else:				
+					temp=createcharacter.races
+					list=[]
+					for x in temp:
+						list.append(temp.get(x).get("name"))
+					race=random.choice(list)
+					print("turn into a " + race, end="")
+					game["character"]["race"]=race
+				print("; What kind of sorcery is this!!")
+		else:
+			print("** Their is no orb")
 	return game
 
 def go_teleport(game):
@@ -932,7 +1010,7 @@ def go_monster(game):
 				horde=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("horde")
 				print("You find the monsters horde of " + str(horde) + " gold coins; they are now yours")
 				game["character"]["gold"]=game["character"]["gold"]+horde
-				if castle[X][Y][Z]["contents"]["monster"]["runestaff"]==True:
+				if game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("runestaff")==True:
 					game["character"]["runestaff"]=True
 					print("Great Zot!  You found the Rune Staff!")
 				del game["castle"][X][Y][Z]["contents"]["monster"]

@@ -914,9 +914,9 @@ def gen_castle():
 	X=warplist[runestaffmonster].get("X")
 	Y=warplist[runestaffmonster].get("Y")
 	Z=warplist[runestaffmonster].get("Z")
-	
+	print("Putting of Zot in ", X,Y,Z)
 	castle[X][Y][Z]["contents"]["warp"]["orbofzot"]=True
-	
+	print(castle[X][Y][Z]["contents"]["warp"])
 
 	# Distribute Treasure	
 	treasures=["Ruby red", "Pale pearl", "Green gem", "Opal eye", "Blue flame", "Norn stone", "Palantir", "Silmaril"]
