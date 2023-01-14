@@ -342,6 +342,7 @@ def go_open_chest(game):
 					game["character"]["strength"]=game["character"]["strength"]-damage
 					del game["castle"][X][Y][Z]["contents"]["chest"]
 					foundcontents=1
+					break
 				elif contents=="book":
 
 					exittheloop=False
@@ -375,8 +376,15 @@ def go_open_chest(game):
 								exittheloop=True
 						else:
 							print("** Invalid choice, yes or no")
+				elif contents=="gold":
+					print("You found gold!!!")
+					gold=contents.get("gold")
+					game["character"]["gold"]=game["character"]["gold"]+gold
+					
 		else:
 			print("You opened the chest and ... it's empty")
+			del game["castle"][X][Y][Z]["contents"]["chest"]
+			
 	return game
 
 def go_open_book(game):
@@ -399,7 +407,7 @@ def go_open_book(game):
 		elif contents=="blind":
 			print("\tA flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
 			character["blind"]=True
-		elif contents=="stick":
+		elif contents=="sticks":
 			# Thought about saying you can't open a book with a book on your hand but that just seems awkward
 			print("\tThe book sticks to your hand, you are now unable to draw your weapon")
 			character["bookstucktohand"]=True
@@ -418,6 +426,7 @@ def go_open(game):
 	roomcontents=game.get("castle").get(X).get(Y).get(Z).get("contents")
 
 	regex=re.compile("[bc]")
+	
 	
 	if roomcontents.get("chest") or roomcontents.get("book"):
 		if roomcontents.get("chest") and roomcontents.get("book"):
@@ -801,7 +810,7 @@ def go_monster(game):
 										if re.match(regex, choice):
 											if choice=="y":
 												monsterbribed=True
-												game["character"]["weapon"]["gold"]=game["character"]["weapon"]["gold"]-randomdata
+												game["character"]["gold"]=game["character"]["gold"]-randomdata
 												game["castle"][X][Y][Z]["contents"]["monster"]["horde"]=game["castle"][X][Y][Z]["contents"]["monster"]["horde"]+randomdata
 											exittheloop3=True
 										else:
