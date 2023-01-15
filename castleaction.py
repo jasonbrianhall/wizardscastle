@@ -568,7 +568,18 @@ def go_teleport(game):
 				game["character"]["y"]=Y
 				game["character"]["z"]=Z
 				game["castle"][str(X)][str(Y)][str(Z)]["explored"]=True
-								
+				if not game.get("castle").get(str(X)).get(str(Y)).get(str(Z)).get("contents").get("warp")==None:
+					if game.get("castle").get(str(X)).get(str(Y)).get(str(Z)).get("contents").get("warp").get("orbofzot"):
+						print("You just found ***THE ORB OF ZOT***!  The Rune Staff Disappeared")
+						game["character"]["runestaff"] = False
+						game["character"]["orbofzot"]  = True
+						game["castle"][str(X)][str(Y)][str(Z)]["contents"]["warp"]["monster"]
+						game["castle"][str(X)][str(Y)][str(Z)]["contents"]["monster"]=game["castle"][str(X)][str(Y)][str(Z)]["contents"]["warp"]["monster"]
+						del game["castle"][str(X)][str(Y)][str(Z)]["contents"]["warp"]
+						game=go_monster(game)
+				
+				
+
 		else:
 			print("** Invalid format; if you want to teleport; use the right format")
 			
@@ -1030,7 +1041,7 @@ def go_monster(game):
 					for hit in range(0, hits):
 						damage=random.randint(0,monsterattack)
 						defense=random.randint(0,armoreffect)
-						print("monsterattack", monsterattack, damage, defense)
+						#print("monsterattack", monsterattack, damage, defense)
 
 						if damage>defense:
 							danger=damage-defense
