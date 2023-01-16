@@ -1109,96 +1109,97 @@ def go_vendor(game):
 			if choice=="a":
 				print("Attacking Vendor")
 			elif choice=="t":
-				armorregex=""
-				buffer=""
-				if game.get("character").get("armor")=="Chainmail" and game.get("character").get("gold")>=2000:
-					buffer="Nothing<0> Plate<2000>"
-					armorregex="[np]"
-				elif game.get("character").get("armor")=="Leather" and game.get("character").get("gold")>=1500:
-					buffer="Nothing<0> Chainmail<1500>"
-					armorregex="[nc]"
-					if buffer>=2000:
-						buffer=buffer+" Plate<2000>"
-						armorregex="[ncp]"
-
-				elif game.get("character").get("gold")>=1250:
-					buffer="Nothing<0> Leather<1250>"
-					armorregex="[nl]"
-					if game.get("character").get("gold")>=1500:
-						buffer=buffer+" Chainmail<1500>"
-						armorregex="[nlc]"
-					if game.get("character").get("gold")>=2000:
-						buffer=buffer+" Plate<2000>"
-						armorregex="[nlcp]"
-
+				armorregex="[nlcp]"
+				buffer="Nothing<0>  Leather<1250>  Chainmail<1500>  Plate<2000>"
 				exittheloop2=False
-				if not buffer=="":
-					while exittheloop2==False:
-						print(buffer)
-						print("Choice: ", end="")
-						choice2=input()[0].lower()
-						if re.match(armorregex, choice2):
-							if choice=="n":
-								exittheloop2=True
-							elif choice=="l":
-								game["character"]["gold"]=game["character"]["gold"]-1250
-								game["character"]["armor"]["name"]="Leather"
-								game["character"]["armor"]["effect"]=2
-							elif choice=="c":
-								game["character"]["gold"]=game["character"]["gold"]-1500
-								game["character"]["armor"]["name"]="Chainmail"
-								game["character"]["armor"]["effect"]=4
-							elif choice=="p":
-								game["character"]["gold"]=game["character"]["gold"]-2000
-								game["character"]["armor"]["name"]="Plate"
-								game["character"]["armor"]["effect"]=6
+				while exittheloop2==False:
+					print(buffer)
+					print("Choice: ", end="")
+					choice2=input()[0].lower()
+					if re.match(armorregex, choice2):
+						if choice=="n":
 							exittheloop2=True
-						else:
-							print("** Invalid choice")							
-				weaponregex=""
-				buffer=""
-				if game.get("character").get("weapon")=="Mace" and game.get("character").get("gold")>=2000:
-					buffer="Nothing<0> Sword<2000>"
-					weaponregex="[ns]"
-				elif game.get("character").get("weapon")=="Dagger" and game.get("character").get("gold")>=1500:
-					buffer="Nothing<0> Mace<1500>"
-					weaponregex="[nm]"
-					if buffer>=2000:
-						buffer=buffer+" Sword<2000>"
-						weaponregex="[nms]"
-
-				elif game.get("character").get("gold")>=1250:
-					buffer="Nothing<0> Dagger<1250>"
-					weaponregex="[nd]"
-					if game.get("character").get("gold")>=1500:
-						buffer=buffer+" Mace<1500>"
-						weaponregex="[ndm]"
-					if game.get("character").get("gold")>=2000:
-						buffer=buffer+" Sword<2000>"
-						weaponregex="[ndms]"
-					exittheloop2=False
-				if not buffer=="":
-					while exittheloop2==False:
-						print("Choice: ", end="")
-						choice2=input()[0].lower()
-						if re.match(weaponregex, choice2):
-							if choice=="n":
-								exittheloop2=True
-							elif choice=="l":
-								game["character"]["gold"]=game["character"]["gold"]-1250
-								game["character"]["weapon"]["name"]="Dagger"
-								game["character"]["armor"]["effect"]=2
-							elif choice=="c":
-								game["character"]["gold"]=game["character"]["gold"]-1500
-								game["character"]["armor"]["name"]="Mace"
-								game["character"]["armor"]["effect"]=4
-							elif choice=="p":
-								game["character"]["gold"]=game["character"]["gold"]-2000
-								game["character"]["armor"]["name"]="Shield"
-								game["character"]["armor"]["effect"]=6
+						elif choice=="l":
+							if game["character"]["gold"]>=1250:
+								if game["character"]["armor"]["effect"]<2:
+									game["character"]["gold"]=game["character"]["gold"]-1250
+									game["character"]["armor"]["name"]="Leather"
+									game["character"]["armor"]["effect"]=2
+									exittheloop2=True
+								else:
+									print("** Your current armor is better")
+							else:
+								print("** You cant' afford that")
+						elif choice=="c":
+							if game["character"]["gold"]>=1500:
+								if game["character"]["armor"]["effect"]<4:
+									game["character"]["gold"]=game["character"]["gold"]-1500
+									game["character"]["armor"]["name"]="Chainmail"
+									game["character"]["armor"]["effect"]=4
+									exittheloop2=True
+								else:
+									print("** Your current armor is better")
+							else:
+								print("** You can't afford that")
+								
+						elif choice=="p":
+							if game["character"]["gold"]>=2000:
+								if game["character"]["armor"]["effect"]<6:
+									game["character"]["gold"]=game["character"]["gold"]-2000
+									game["character"]["armor"]["name"]="Plate"
+									game["character"]["armor"]["effect"]=6
+									exittheloop2=True
+								else:
+									print("** Your current armor is better")
+							else:
+								print("** You can't affort that")
+					else:
+						print("** Invalid choice")							
+				weaponregex="[ndms]"
+				buffer="Nothing<0>  Dagger<1250>  Mace<1500>  Sword<2000>"
+				exittheloop2=False
+				while exittheloop2==False:
+					print("Choice: ", end="")
+					choice2=input()[0].lower()
+					if re.match(weaponregex, choice2):
+						if choice=="n":
 							exittheloop2=True
-						else:
-							print("** Invalid choice")							
+						elif choice=="l":
+							if game["character"]["gold"]>=1250:
+								if game["character"]["weapon"]["effect"]<2:
+									game["character"]["gold"]=game["character"]["gold"]-1250
+									game["character"]["weapon"]["name"]="Dagger"
+									game["character"]["weapon"]["effect"]=2
+									exittheloop2=True
+								else:
+									print("** Your current armor is better")
+							else:
+								print("** You can't affort that")
+						elif choice=="c":
+							if game["character"]["gold"]>=1500:
+								if game["character"]["weapon"]["effect"]<4:
+									game["character"]["gold"]=game["character"]["gold"]-1500
+									game["character"]["weapon"]["name"]="Mace"
+									game["character"]["weapon"]["effect"]=4
+									exittheloop2=True
+								else:
+									print("** Your current armor is better")
+							else:
+								print("** You can't affort that")
+						elif choice=="p":
+							if game["character"]["gold"]>=2000:
+								if game["character"]["weapon"]["effect"]<6:
+									game["character"]["gold"]=game["character"]["gold"]-2000
+									game["character"]["weapon"]["name"]="Sword"
+									game["character"]["weapon"]["effect"]=6
+									exittheloop2=True
+								else:
+									print("** Your current armor is better")
+							else:
+								print("** You can't affort that")
+						exittheloop2=True
+					else:
+						print("** Invalid choice")							
 				if game.get("character").get("gold")>=1000:
 					exiththeloop2=False
 					regex="[yn]"
