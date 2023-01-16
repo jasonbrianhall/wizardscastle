@@ -20,7 +20,6 @@ def gen_castle():
 	castle={}
 	castle["size"]=castlesize
 	monsters={
-	monsters={
 		"balrog": 
 			{
 				"name": "balrog",
@@ -399,8 +398,7 @@ def gen_castle():
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠘⢸⣿⠉⢹⣧⡄⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣾⠇⠀⠀⠀⢸⡿⠀⢸⣿⡇⠀⠀⢠⣻⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣟⣀⣀⣀⣴⣿⠇⠀⠘⣿⣗⣂⣐⣀⣻⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀								
-"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠃⠀⠀⠀⠀⠀⠀⠀"""
 			},
 		"bear":
 			{
@@ -1048,7 +1046,7 @@ def genbook():
 				"7": "the rules to Dungeons and Dragons",
 				"8": "Dune",
 				"9": "King Arthur's biography",
-				"10": "the LIttle Mermaid"
+				"10": "the Little Mermaid"
 				}
 			test=random.randint(0,10)
 			return "It'S a copy of " + famousbooks[str(test)]+ "!"

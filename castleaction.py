@@ -968,13 +968,23 @@ def go_monster(game):
 									print("You did " + str(hits) + " hits!!")
 									for hit in range(0, hits):
 										damage=random.randint(1,weaponeffect)
-										defense=random.randint(1,monsterdefense)
-										critical=random.randint(0,12)
+										#defense=random.randint(1,monsterdefense)
+										# 22 sided die; roll 0 for critical
+										critical=random.randint(0,21)
 										if critical==0:
 											print("You did a critical hit; critical hits ignore armor and does twice the damge")
 											print("\tYou did " + str(damage*2) + " damage to the monster")
 											game["castle"][X][Y][Z]["contents"]["monster"]["strength"]=game["castle"][X][Y][Z]["contents"]["monster"]["strength"] - damage*2
 										else:
+											'''monsterroles=[]
+											for x in range(1, len(monsterdefense)):
+												monsterroles.append(random.randint(1,6))
+											humanroles=[]
+											for x in range(1, len(weaponeffect)):
+												humanroles.append(random.randint(1,6))
+											for monsterrole, humanrole in mosteroles.sorted(), humanroles().sorted():'''
+											
+
 											if damage>defense:
 												danger=damage-defense
 
@@ -1074,6 +1084,147 @@ def go_monster(game):
 def go_vendor(game):
 	# Add logic to interact with vendor
 	print("\nYou found a vendor!!\n")
+	regex="[tai]"
+	exittheloop=False
+	while exittheloop==False:
+		print(game.get("character").get("weapons").get("name") + " and " + game.get("character").get("armor").get("name"))
+		print("\nYou also have " + str(game.get("character").get("flares")) + " flares and " + str(game.get("character").get("gold")) + " gold pieces", end="")
+		if len(game.get("character").get("treasures"))>0:
+			print("Treasures:")
+			for x in game.get("character").get("treasures"):
+				print("\tx")
+
+		print("You May Trade With, Attack, Or Ignore the Vendor: ", end="")
+		choice=input()[0].lower()
+		if re.match(regex, choice):
+			if choice=="a":
+				print("Attacking Vendor")
+			elif choice=="t":
+				armorregex=""
+				buffer=""
+				if game.get("character").get("armor")=="Chainmail" and game.get("character").get("gold")>=2000:
+					buffer="Nothing<0> Plate<2000>"
+					armorregex="[np]"
+				elif game.get("character").get("armor")=="Leather" and game.get("character").get("gold")>=1500:
+					buffer="Nothing<0> Chainmail<1500>"
+					armorregex="[nc]"
+					if buffer>=2000:
+						buffer=buffer+" Plate<2000>"
+						armorregex="[ncp]"
+
+				elif game.get("character").get("gold")>=1250:
+					buffer="Nothing<0> Leather<1250>"
+					armorregex="[nl]"
+					if game.get("character").get("gold")>=1500:
+						buffer=buffer+" Chainmail<1500>"
+						armorregex="[nlc]"
+					if game.get("character").get("gold")>=2000:
+						buffer=buffer+" Plate<2000>"
+						armorregex="[nlcp]"
+
+				exittheloop2=False
+				if not buffer=="":
+					while exittheloop2==False:
+						print(buffer)
+						print("Choice: ", end="")
+						choice2=input()[0].lower()
+						if re.match(armorregex, choice2):
+							if choice=="n":
+								exittheloop2=True
+							elif choice=="l":
+								game["characer"]["gold"]=game["character"]["gold"]-1250
+								game["character"]["armor"]["name"]="Leather"
+								game["character"]["armor"]["effect"]=2
+							elif choice=="c":
+								game["characer"]["gold"]=game["character"]["gold"]-1500
+								game["character"]["armor"]["name"]="Chainmail"
+								game["character"]["armor"]["effect"]=4
+							elif choice=="p":
+								game["characer"]["gold"]=game["character"]["gold"]-2000
+								game["character"]["armor"]["name"]="Plate"
+								game["character"]["armor"]["effect"]=6
+							exittheloop2=True
+						else:
+							print("** Invalid choice")							
+				weaponregex=""
+				buffer=""
+				if game.get("character").get("weapon")=="Mace" and game.get("character").get("gold")>=2000:
+					buffer="Nothing<0> Sword<2000>"
+					weaponregex="[ns]"
+				elif game.get("character").get("weapon")=="Dagger" and game.get("character").get("gold")>=1500:
+					buffer="Nothing<0> Mace<1500>"
+					weaponregex="[nm]"
+					if buffer>=2000:
+						buffer=buffer+" Sword<2000>"
+						weaponregex="[nms]"
+
+				elif game.get("character").get("gold")>=1250:
+					buffer="Nothing<0> Dagger<1250>"
+					weaponregex="[nd]"
+					if game.get("character").get("gold")>=1500:
+						buffer=buffer+" Mace<1500>"
+						weaponregex="[ndm]"
+					if game.get("character").get("gold")>=2000:
+						buffer=buffer+" Sword<2000>"
+						weaponregex="[ndms]"
+					exittheloop2=False
+				if not buffer=="":
+					while exittheloop2==False:
+						print("Choice: ", end="")
+						choice2=input()[0].lower()
+						if re.match(weaponregex, choice2):
+							if choice=="n":
+								exittheloop2=True
+							elif choice=="l":
+								game["characer"]["gold"]=game["character"]["gold"]-1250
+								game["character"]["weapon"]["name"]="Dagger"
+								game["character"]["armor"]["effect"]=2
+							elif choice=="c":
+								game["characer"]["gold"]=game["character"]["gold"]-1500
+								game["character"]["armor"]["name"]="Mace"
+								game["character"]["armor"]["effect"]=4
+							elif choice=="p":
+								game["characer"]["gold"]=game["character"]["gold"]-2000
+								game["character"]["armor"]["name"]="Shield"
+								game["character"]["armor"]["effect"]=6
+							exittheloop2=True
+						else:
+							print("** Invalid choice")							
+				if game.get("character").get("gold")>=1000 and game["character"]["lamp"]==False:
+					print("Do you want to buy a lamp for 1000 gps:  ", end="")
+					exiththeloop2=False
+					lampregex="[yn]"
+					while exittheloop2==False:
+						choice=input()[0]
+						if choice=="n":
+							exittheloop2=True
+						else:
+							game["character"]["lamp"]=True
+							game["characer"]["gold"]=game["character"]["gold"]-1000
+							exittheloop2=True
+				if game.get("character").get("gold")>=20:
+					exittheloop2=False
+					while exittheloop2==False:
+						print("Ok, " + game.get("character").get("race") + ", you may buy flares for 20 gps each; how many do you want?  ", end="")
+						flareregex="[0-9]+"
+						choice=input()
+						if re.match(flareregex, choice):
+							flares=int(choice)
+							price=flares*20
+							if price>game["character"]["gold"]:
+								print("** You can only afford " + str(game["character"]["gold"]/20) + " flares!!")
+							else:
+								if not flares==0:
+									game["character"]["gold"]=game["character"]["gold"]-price
+									game["character"]["flares"]=game["character"]["flares"]+flares
+								exittheloop2=True
+								
+						else:
+							print("** Invalid Choice")						
+				
+			else: 
+				exittheloop=1
+
 	return game
 	
 def go_chest(game):
