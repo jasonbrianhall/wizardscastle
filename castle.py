@@ -28,7 +28,7 @@ def gen_castle():
 				"intelligence": 6,
 				"dexterity": 8,
 				"frequency": 8,
-				"attack": 8,
+				"attack": 6,
 				"defense": 8,
 				"break": False,
 				"spells": None,
@@ -131,7 +131,7 @@ def gen_castle():
 				"intelligence": 7,
 				"dexterity": 7,
 				"frequency": 6,
-				"attack": 7,
+				"attack": 6,
 				"defense": 3,				
 				"break": False,
 				"spells": None,
@@ -461,7 +461,7 @@ def gen_castle():
 				"intelligence": 15,
 				"dexterity": 13,
 				"frequency": 4,
-				"attack": 8,
+				"attack": 4,
 				"defense": 5,
 				"break": False,
 				"spells": None,
@@ -802,7 +802,7 @@ def gen_castle():
 			castle[X][Y]={}
 			for z in range(1, castlesize+1):
 				level=str(z)
-				castle[X][Y][level]={"contents": {}, "explored": False}
+				castle[X][Y][level]={"contents": {}, "explored": True}
 				warp=random.randint(0,warpran)
 				if warp==0:
 					castle[X][Y][level]["contents"]["warp"]={}
