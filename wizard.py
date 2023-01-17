@@ -93,7 +93,7 @@ def enter_castle(character):
 
 	while exittheloop==False:
 		
-		game=castleaction.action_room(game)
+		castleaction.action_room(game)
 		if game["character"]["strength"]<=0 or game["character"]["dexterity"]<=0 or game["character"]["intelligence"]<=0:
 			 characterdead=True
 			 exittheloop=True
@@ -139,7 +139,7 @@ def enter_castle(character):
 									else:
 										print("\n** Invalid choice stupid " + game.get("character").get("race") + "; try y or n.\n")
 						if found==False:
-							game=choicedict.get(choice)(game)									
+							choicedict.get(choice)(game)									
 					else:
 						quitloop=False
 						while quitloop==False:
@@ -162,12 +162,12 @@ def enter_castle(character):
 
 					
 				else:
-					game=choicedict.get(choice)(game)
+					choicedict.get(choice)(game)
 			else:
 				print("\n** Silly " + character.get("race") + ", that wasn't a valid command!\n")
 				summary(game)
 				game["character"]["moved"]=True  
-				game=castleaction.action_room(game)
+				castleaction.action_room(game)
 
 	
 	return game.get("character")

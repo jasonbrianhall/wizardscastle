@@ -15,7 +15,6 @@ def look_northeast(game):
 	Y=str(temp2)
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
 
 def look_northwest(game):
 	temp= game.get("character").get("x")-1
@@ -30,7 +29,6 @@ def look_northwest(game):
 	Y=str(temp2)
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
 
 def look_southeast(game):
 	temp= game.get("character").get("x")+1
@@ -45,7 +43,6 @@ def look_southeast(game):
 	Y=str(temp2)
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
 
 def look_southwest(game):
 	temp= game.get("character").get("x")+1
@@ -60,9 +57,6 @@ def look_southwest(game):
 	Y=str(temp2)
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
-
-
 
 def look_north(game):
 	temp=game.get("character").get("x")-1
@@ -74,7 +68,6 @@ def look_north(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
 
 def look_south(game):
 	temp=game.get("character").get("x")+1
@@ -86,7 +79,6 @@ def look_south(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
 	
 def look_east(game):
 	temp=game.get("character").get("y")+1
@@ -98,7 +90,6 @@ def look_east(game):
 	Y=str(temp)
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
 
 def look_west(game):
 	temp=game.get("character").get("y")-1
@@ -110,7 +101,7 @@ def look_west(game):
 	Y=str(temp)
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
+	
 
 
 def go_north(game):
@@ -123,7 +114,7 @@ def go_north(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
+	
 
 def go_south(game):
 	game["character"]["x"]=game.get("character").get("x")+1
@@ -136,7 +127,7 @@ def go_south(game):
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
 
-	return game
+	
 
 def go_east(game):
 	game["character"]["y"]=game.get("character").get("y")+1
@@ -149,7 +140,7 @@ def go_east(game):
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
 
-	return game
+	
 
 def go_west(game):
 	game["character"]["y"]=game.get("character").get("y")-1
@@ -162,7 +153,7 @@ def go_west(game):
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
 
-	return game
+	
 
 def go_sinkhole(game):
 
@@ -177,7 +168,7 @@ def go_sinkhole(game):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	game["castle"][X][Y][Z]["explored"]=True	
-	return game
+	
 	
 def go_drink(game):
 	X=str(game.get("character").get("x"))
@@ -230,7 +221,7 @@ def go_drink(game):
 				
 	else:
 		print("** If you want to drink, find a pool")
-	return game
+	
 	
 def go_map(game):
 
@@ -284,24 +275,24 @@ def go_map(game):
 				
 	print("|\n" + "*"*multiplier + "\n")
 	
-	return game
+	
 
 def go_flare(game):
 	flares=game.get("character").get("flares")
 	if flares>0:
-		game=look_north(game)
-		game=look_south(game)
-		game=look_east(game)
-		game=look_west(game)
-		game=look_northeast(game)
-		game=look_southeast(game)
-		game=look_northwest(game)
-		game=look_southwest(game)
+		look_north(game)
+		look_south(game)
+		look_east(game)
+		look_west(game)
+		look_northeast(game)
+		look_southeast(game)
+		look_northwest(game)
+		look_southwest(game)
 		go_map(game)
 		game["character"]["flares"]=game.get("chracter").get("flares")-1
 	else:
 		print("** Hey, bright one, you're out of flares!\n")
-	return game
+	
 
 def go_lamp(game):
 	regex=re.compile("[nsew]")
@@ -311,18 +302,18 @@ def go_lamp(game):
 		choice=input()[:1].lower()
 		if re.match(regex, choice):
 			if choice=="n":
-				game=look_north(game)
+				look_north(game)
 			elif choice=="s":
-				game=look_south(game)
+				look_south(game)
 			elif choice=="e":
-				game=look_east(game)
+				look_east(game)
 			elif choice=="w":
-				game=look_west(game)
+				look_west(game)
 		else:
 			print("** That's not a direction, " + game.get("character").get("race") + "!")
 	else:
 		print("** You don't have a lamp, " + game.get("character").get("race") + "!")
-	return game
+	
 	
 def go_open_chest(game):
 	X=str(game.get("character").get("x"))
@@ -388,7 +379,7 @@ def go_open_chest(game):
 			print("You opened the chest and ... it's empty")
 			del game["castle"][X][Y][Z]["contents"]["chest"]
 			
-	return game
+	
 
 def go_open_book(game):
 	X=str(game.get("character").get("x"))
@@ -419,7 +410,7 @@ def go_open_book(game):
 		del game["castle"][X][Y][Z]["contents"]["book"]
 	else:
 		print("** Blind " + game.get("character").get("race") + " can't read books!!")
-	return game
+	
 	
 def go_open(game):
 	X=str(game.get("character").get("x"))
@@ -442,19 +433,19 @@ def go_open(game):
 			
 				if re.match(choice):
 					if choice=="b":
-						game=go_open_book(game)
+						go_open_book(game)
 					else:
-						game=go_open_chest(game)
+						go_open_chest(game)
 					exittheloop=True
 				else:
 					print("\n** Your choices were to open a book or chest and you didn't select either.\n\n")
 		if roomcontents.get("book"):
-			game=go_open_book(game)
+			go_open_book(game)
 		else:
-			game=go_open_chest(game)
+			go_open_chest(game)
 	else:
 		print("** Hey Genius, their is nothing to open!!")	
-	return game
+	
 
 def go_gaze(game):
 	X=str(game.get("character").get("x"))
@@ -539,7 +530,7 @@ def go_gaze(game):
 				print("; What kind of sorcery is this!!")
 		else:
 			print("** Their is no orb")
-	return game
+	
 
 def go_teleport(game):
 	regex="[0-9]+/[0-9]+/[0-9]"
@@ -576,7 +567,7 @@ def go_teleport(game):
 						game["castle"][str(X)][str(Y)][str(Z)]["contents"]["warp"]["monster"]
 						game["castle"][str(X)][str(Y)][str(Z)]["contents"]["monster"]=game["castle"][str(X)][str(Y)][str(Z)]["contents"]["warp"]["monster"]
 						del game["castle"][str(X)][str(Y)][str(Z)]["contents"]["warp"]
-						game=go_monster(game)
+						go_monster(game)
 				
 				
 
@@ -586,7 +577,7 @@ def go_teleport(game):
 
 	else:
 		print("** You can't teleport without the runestaff!")
-	return game
+	
 	
 def go_up(game):
 
@@ -608,7 +599,7 @@ def go_up(game):
 	else:
 		print("** There are no stairs going Up from here!")
 
-	return game
+	
 
 def go_down(game):
 	X=str(game.get("character").get("x"))
@@ -628,16 +619,16 @@ def go_down(game):
 	else:
 		print("** There are no stairs going Down from here!")
 
-	return game
+	
 	
 	
 def go_upstairs(game):
 	print("; they go up")
-	return game
+	
 
 def go_downstairs(game):
 	print("; they go down")
-	return game
+	
 	
 
 def ambience():
@@ -810,7 +801,7 @@ def go_warp(game):
 	game["character"]["z"]=Z
 	game["castle"][str(X)][str(Y)][str(Z)]["explored"]=True		
 	
-	return game
+	
 
 def go_monster(game):
 	X=str(game.get("character").get("x"))
@@ -820,7 +811,7 @@ def go_monster(game):
 	
 	# For some fluke of nature; this should never get called
 	if game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster")==None:
-		return game
+		return
 	else:
 		#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
 		asciiart=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("asciiart")
@@ -1081,7 +1072,7 @@ def go_monster(game):
 					
 			
 	
-	return game
+	
 
 def go_vendor(game):
 	# Add logic to interact with vendor
@@ -1286,15 +1277,15 @@ def go_vendor(game):
 			else: 
 				exittheloop=1
 
-	return game
+	
 	
 def go_chest(game):
 	print("; you may open it or leave it.  It may contain gold, books, or it might be boobie trapped.")
-	return game
+	
 
 def go_pool(game):
 	print("; you may drink from the water.")
-	return game
+	
 
 def go_book(game):
 	X=str(game.get("character").get("x"))
@@ -1317,21 +1308,21 @@ def go_book(game):
 			game["character"]["treasure"].append(treasure)
 		del game["castle"][X][Y][Z]["contents"]["book"]["treasure"]
 	
-	return game
+	
 
 def go_orb(game):
 	if game.get("character").get("blind")==True:
 		print("; you are blind and can't gaze; you must find or buy the opal eye before you are able to gaze.")	
 	else:
 		print("; gaze at your own peril")
-	return game
+	
 
 def do_nothing(game):
-	return game
+	return
 	
 def go_entrance(game):
 	print("; go north to leave the game")
-	return game
+	
 
 def go_gold(game):
 	X=str(game.get("character").get("x"))
@@ -1349,7 +1340,7 @@ def go_gold(game):
 		#Can't delete during iteration so just setting to zero; deleting if you use map
 		#game["castle"][X][Y][Z]["contents"]["gold"]=0
 		del game["castle"][X][Y][Z]["contents"]["gold"]
-	return game
+	
 
 def go_flares(game):
 	X=str(game.get("character").get("x"))
@@ -1367,7 +1358,7 @@ def go_flares(game):
 
 		del game["castle"][X][Y][Z]["contents"]["flares"]
 		
-	return game
+	
 	
 def go_treasure(game):
 	X=str(game.get("character").get("x"))
@@ -1378,7 +1369,7 @@ def go_treasure(game):
 		print("\tThe treasure " + treasure + " was added to your inventory")
 		game["character"]["treasures"].append(treasure)
 	del game["castle"][X][Y][Z]["contents"]["treasures"]
-	return game
+	
 	
 def action_room(game):
 	actiondict={
@@ -1413,13 +1404,13 @@ def action_room(game):
 			for contents in datacontents:
 				if contents=="monster":
 					counter=counter+1
-					game=actiondict.get(contents)(game)
+					actiondict.get(contents)(game)
 					break
 				else:
 					if counter==0:
 						print("\nIn this room, you find:")
 					print("\t"+contents.capitalize(), end="")
-					game=actiondict.get(contents)(game)
+					actiondict.get(contents)(game)
 					counter=counter+1
 		else:
 			print("\tNothing.  The room is empty.")
@@ -1428,7 +1419,7 @@ def action_room(game):
 		if randint==0:
 			ambience()
 			
-	return game
+	
 
 def castle_help(game):
 
@@ -1465,5 +1456,5 @@ Press return when ready to resume""")
 
 	input()
 	
-	return game
+	
 
