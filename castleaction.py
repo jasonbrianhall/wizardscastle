@@ -807,16 +807,16 @@ def go_monster(game, vendor=False):
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
 	
+	if vendor==True:
+		datatype="vendor"
+	else:
+		datatype="monster"
 	
 	# For some fluke of nature; this should never get called
-	if game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster")==None:
+	if game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype)==None:
 		return
 	else:
 		#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
-		if vendor==True:
-			datatype="vendor"
-		else:
-			datatype="monster"
 		asciiart=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("asciiart")
 		monstername=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("name")
 		monsterstrength=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("strength")
