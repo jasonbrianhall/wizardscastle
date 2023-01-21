@@ -535,7 +535,7 @@ def go_teleport(game):
 	regex="[0-9]+/[0-9]+/[0-9]"
 	if game.get("character").get("runestaff")==True:
 		print("Where do you want to teleport to (format is X/Y/Level, e.g. 1/3/5): ", end="")
-		choice=input()
+		choice=input().strip()
 		if re.match(regex, choice):
 			print("Choice was ", choice)
 			data=choice.split("/")
@@ -898,7 +898,7 @@ def go_monster(game, vendor=False):
 							choices="[ar]"
 					choices=re.compile(choices)
 					print("What is your choice:  ", end="")
-					choice=input()
+					choice=input().lower().strip()[0]
 					if re.match(choices, choice):
 						if choice=="b":
 							chance_of_success = intelligence / (intelligence + monsterintelligence)
