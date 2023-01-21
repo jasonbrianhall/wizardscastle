@@ -321,7 +321,7 @@ def go_open_chest(game):
 	Z=str(game.get("character").get("z"))
 	contents=game.get("castle").get(X).get(Y).get(Z).get("contents").get("chest")
 	
-	print("contents of chest: ", contents)
+	#print("contents of chest: ", contents)
 	
 	regex=re.compile("[yn]")
 	if contents.get("opened")==False:
@@ -400,7 +400,7 @@ def go_open_book(game):
 			game["character"]["intelligence"]=game["character"]["strength"]+18
 		elif contents=="blind":
 			print("\tA flash of light comes out of the book!!  Oh no, you are a blind" + game.get("character").get("race") + "!")
-			character["blind"]=True
+			game["character"]["blind"]=True
 		elif contents=="sticks":
 			# Thought about saying you can't open a book with a book on your hand but that just seems awkward
 			print("\tThe book sticks to your hand, you are now unable to draw your weapon")
@@ -422,26 +422,25 @@ def go_open(game):
 	regex=re.compile("[bc]")
 	
 	
-	if roomcontents.get("chest") or roomcontents.get("book"):
-		if roomcontents.get("chest") and roomcontents.get("book"):
-			regex=re.compile("[bc]")
-			
-			exittheloop=True
-			while exittheloop==False:
-				print("You found a book and a chest, which one do you want to open?  ", end="")
-				choice=input().lower()[0]
-			
-				if re.match(choice):
-					if choice=="b":
-						go_open_book(game)
-					else:
-						go_open_chest(game)
-					exittheloop=True
+	if roomcontents.get("chest") and roomcontents.get("book"):
+		regex=re.compile("[bc]")
+		
+		exittheloop=True
+		while exittheloop==False:
+			print("You found a book and a chest, which one do you want to open?  ", end="")
+			choice=input().lower().strip()[0]
+		
+			if re.match(choice):
+				if choice=="b":
+					go_open_book(game)
 				else:
-					print("\n** Your choices were to open a book or chest and you didn't select either.\n\n")
-		if roomcontents.get("book"):
+					go_open_chest(game)
+				exittheloop=True
+			else:
+				print("\n** Your choices were to open a book or chest and you didn't select either.\n\n")
+	elif roomcontents.get("book"):
 			go_open_book(game)
-		else:
+	elif roomcontents.get("chest"):
 			go_open_chest(game)
 	else:
 		print("** Hey Genius, their is nothing to open!!")	
@@ -803,7 +802,7 @@ def go_warp(game):
 	
 	
 
-def go_monster(game):
+def go_monster(game, vendor=False):
 	X=str(game.get("character").get("x"))
 	Y=str(game.get("character").get("y"))
 	Z=str(game.get("character").get("z"))
@@ -814,20 +813,24 @@ def go_monster(game):
 		return
 	else:
 		#print(game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster"))
-		asciiart=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("asciiart")
-		monstername=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("name")
-		monsterstrength=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("strength")
-		monsterintelligence=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("intelligence")
-		monsterdexterity=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("dexterity")
+		if vendor==True:
+			datatype="vendor"
+		else:
+			datatype="monster"
+		asciiart=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("asciiart")
+		monstername=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("name")
+		monsterstrength=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("strength")
+		monsterintelligence=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("intelligence")
+		monsterdexterity=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("dexterity")
 		if monsterdexterity<=0:
 			monsterdexterity=1
-		monsterattack=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("attack")
-		monsterdefense=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("defense")
-		monsterbreak=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("break")
-		monsterbreaklie=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("breaklie")
+		monsterattack=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("attack")
+		monsterdefense=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("defense")
+		monsterbreak=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("break")
+		monsterbreaklie=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("breaklie")
 
 
-		bribe=game.get("castle").get(X).get(Y).get(Z).get("contents").get("monster").get("bribe")
+		bribe=game.get("castle").get(X).get(Y).get(Z).get("contents").get(datatype).get("bribe")
 		intelligence=game.get("character").get("intelligence")
 		strength=game.get("character").get("strength")
 		dexterity=game.get("character").get("dexterity")
@@ -898,47 +901,55 @@ def go_monster(game):
 					choice=input()
 					if re.match(choices, choice):
 						if choice=="b":
-							treasure=None
-							if len(treasures)>0:
-								randomdata=random.randint(0, treasures-1)
-								treasure=treasures[randomdata]
-							if not treasure==None:
-								regex="[yn]"
-								exittheloop3=False
-								while exittheloop3==False:	
-									print("The monster says give me the treasure " + treasure + " and I'll let you go")
-									print("Do you agree: ", end="")
-									choice=input()[0].lower()
-									if re.match(regex, choice):
-										if choice=="y":
-											game["character"]["treasures"].remove(treasure)
-											castle[X][Y][Z]["contents"][content]["treasures"].append(treasure)
-											monsterbribed=True
-										exittheloop3=True
-									else:
-										print("** Valid choices are yes or no!!")
-							if monsterbribed==False:
-								randomdata=random.randint(100, 2000)
-								if randomdata>=game.get("character").get("gold"):
+							chance_of_success = intelligence / (intelligence + monsterintelligence)
+							if chance_of_success > random.uniform(0, 1):
+								treasure=None
+								if len(treasures)>0:
+									randomdata=random.randint(0, treasures-1)
+									treasure=treasures[randomdata]
+								if not treasure==None:
+									regex="[yn]"
 									exittheloop3=False
-									while exittheloop3==True:
-										print("Give me " + str(randomdata) + " gold pieces and I'll let you live")
-										regex="[yn]"
-										print("Do you agree: ", end="")
-										choice=input()[0].lower()
-										if re.match(regex, choice):
-											if choice=="y":
-												monsterbribed=True
-												game["character"]["gold"]=game["character"]["gold"]-randomdata
-												game["castle"][X][Y][Z]["contents"]["monster"]["horde"]=game["castle"][X][Y][Z]["contents"]["monster"]["horde"]+randomdata
-											exittheloop3=True
-										else:
-											print("** Valid choices are yes or no!!")
-									
-								else:
-									print("** The only thing you I want is your life!!!")
-									game["castle"][X][Y][Z]["contents"]["monster"]["bribe"]=False
-									bribe=False																	
+									while exittheloop3==False:	
+
+											print("The monster says give me the treasure " + treasure + " and I'll let you go")
+											print("Do you agree: ", end="")
+											choice=input()[0].lower()
+											if re.match(regex, choice):
+												if choice=="y":
+													game["character"]["treasures"].remove(treasure)
+													castle[X][Y][Z]["contents"][content][datatype]["treasures"].append(treasure)
+													monsterbribed=True
+												exittheloop3=True
+											else:
+												print("** Valid choices are yes or no!!")
+										
+								if monsterbribed==False:
+									randomdata=random.randint(100, 2000)
+									if randomdata>=game.get("character").get("gold"):
+										exittheloop3=False
+										while exittheloop3==True:
+											print("Give me " + str(randomdata) + " gold pieces and I'll let you live")
+											regex="[yn]"
+											print("Do you agree: ", end="")
+											choice=input()[0].lower()
+											if re.match(regex, choice):
+												if choice=="y":
+													monsterbribed=True
+													game["character"]["gold"]=game["character"]["gold"]-randomdata
+													game["castle"][X][Y][Z]["contents"][datatype]["horde"]=game["castle"][X][Y][Z]["contents"][datatype]["horde"]+randomdata
+												exittheloop3=True
+											else:
+												print("** Valid choices are yes or no!!")
+										
+									else:
+										print("** The only thing you I want is your life!!!")
+										game["castle"][X][Y][Z]["contents"][datatype]["bribe"]=False
+										bribe=False																	
+							else:
+								print("** The only thing I want is your life!!")
+								exittheloop3=True
+								bribe
 												
 						elif choice=="a":
 							print("\nAttacking monster!!\n")
@@ -1069,11 +1080,6 @@ def go_monster(game):
 				
 			firststrike=True
 				
-					
-			
-	
-	
-
 def go_vendor(game):
 	# Add logic to interact with vendor
 	print("\nYou found a vendor!!\n")
@@ -1095,10 +1101,11 @@ def go_vendor(game):
 			print("You may Attack or ignore the vendor: ", end="")
 			regex="[ai]"
 
-		choice=input()[0].lower()
+		choice=input().strip()[0].lower()
 		if re.match(regex, choice):
 			if choice=="a":
 				print("Attacking Vendor")
+				go_monster(game, vendor=True)
 			elif choice=="t":
 				armorregex="[nlcp]"
 				buffer="Nothing<0>  Leather<1250>  Chainmail<1500>  Plate<2000>"
@@ -1143,7 +1150,7 @@ def go_vendor(game):
 								else:
 									print("** Your current armor is better")
 							else:
-								print("** You can't affort that")
+								print("** You can't afford that")
 					else:
 						print("** Invalid choice")							
 				weaponregex="[ndms]"

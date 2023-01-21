@@ -123,19 +123,24 @@ def buy_equipment(character):
 			"equipment": {
 				"Plate": {
 					"cost": 30,
-					"effect": 6
+					"effect": 8,
+					"mineffect": 4
 				},
 				"Chainmail": {
 					"cost": 20,
-					"effect": 4
+					"effect": 6,
+					"mineffect": 3
 				},	
 				"Leather": {
 					"cost": 10,
-					"effect": 2
+					"effect": 4,
+					"mineffect": 2
+					
 				},
 				"Nothing": {
 					"cost": 0,
-					"effect": 0
+					"effect": 2,
+					"mineffect": 1
 				}
 
 			}
@@ -146,19 +151,23 @@ def buy_equipment(character):
 			"equipment": {
 				"Sword": {
 					"cost": 30,
-					"effect": 6
+					"effect": 8,
+					"mineffect": 4
 				},
 				"Mace": {
 					"cost": 20,
-					"effect": 4
+					"effect": 6,
+					"mineffect": 3
 				},
 				"Dagger": {
 					"cost": 10,
-					"effect": 2
+					"effect": 4,
+					"mineffect": 2
 				},
 				"Nothing": {
 					"cost": 0,
-					"effect": 0
+					"effect": 0,
+					"mineffect": 0
 				}
 			}
 		}
@@ -189,7 +198,7 @@ def buy_equipment(character):
 					exitloop=True
 					character[arms]["name"]=armory.get(arms).get("selection").get(choice)
 					character[arms]["effect"]=armory.get(arms).get("equipment").get(armory.get(arms).get("selection").get(choice)).get("effect")
-					
+					character[arms]["mineffect"]=armory.get(arms).get("equipment").get(armory.get(arms).get("selection").get(choice)).get("mineffect")
 					character["gold"]=character.get("gold")-armory.get(arms).get("equipment").get(armory.get(arms).get("selection").get(choice)).get("cost")
 				else:
 					print("\n** Is your IQ really " + str(character.get("intelligence")) + " ?\n")
