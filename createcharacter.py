@@ -228,8 +228,8 @@ def buy_equipment(character):
 					character["lamp"]=True
 					character["gold"]=character.get("gold")-20
 					data=True
-                else:
-                    data=True
+				else:
+					data=True
 			else:
 				print("\n** Please answer Yes or No\n")
  
