@@ -241,4 +241,4 @@ def main():
 	print(json.dumps(character, indent=4))
 
 main()
-os.system('cls' if os.name == 'nt' else 'reset')
+#os.system('cls' if os.name == 'nt' else 'reset')
