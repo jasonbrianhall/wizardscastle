@@ -3,6 +3,18 @@ import os
 import termios, fcntl
 import select
 
+import termios
+import fcntl
+import sys
+import tty
+import platform
+
+def reset_terminal():
+    system = platform.system()
+    if system == "Windows":
+        os.system('cls')
+    else:  
+        os.system('stty sane')
 
 # Building a better input then input(); datatype can be string on integer
 def input_tab_as_enter(prompt='', max_length=10000, is_integer=False, positive_only=False):
@@ -45,6 +57,11 @@ def input_tab_as_enter(prompt='', max_length=10000, is_integer=False, positive_o
                 sys.stdout.flush()
             if len(user_input)>=max_length:
                 break
+    # reset the terminal
+    # get the terminal attributes
+    #attr = termios.tcgetattr(sys.stdin)
+
+    # make the terminal blocking
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
     return str(user_input) if is_integer else user_input

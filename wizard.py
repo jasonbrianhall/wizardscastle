@@ -9,6 +9,7 @@ import castleaction
 import sys
 import os
 from input_handler import input_tab_as_enter as input 
+from input_handler import reset_terminal
 
 def print_intro():
 	# Print Intro
@@ -239,6 +240,7 @@ def main():
 				print("** Please answer yes or no")
 		
 	print(json.dumps(character, indent=4))
+	reset_terminal()
 
 main()
 #os.system('cls' if os.name == 'nt' else 'reset')
