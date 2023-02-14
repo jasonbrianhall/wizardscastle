@@ -1,6 +1,7 @@
 import random
 import createcharacter
 import sys
+from input_handler import input_tab_as_enter as input
 
 castlesize=8
 entrancelocation="1/4/1"

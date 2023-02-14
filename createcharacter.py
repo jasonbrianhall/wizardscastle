@@ -1,4 +1,5 @@
 import re
+from input_handler import input_tab_as_enter as input
 
 races={
 	"e": {"strength":  6, "intelligence": 8, "dexterity": 10, "name": "Elf",    "allocate": 8, "gold": 60},
