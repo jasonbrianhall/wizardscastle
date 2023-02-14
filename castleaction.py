@@ -954,7 +954,7 @@ def go_monster(game, vendor=False):
 											print("Do you agree: ", end="")
 											choice=input(max_length=1).lower().strip()
 											if len(choice)>0:
-												choice=choice[0]:
+												choice=choice[0]
 											else:
 												choice=""
 											if re.match(regex, choice):
