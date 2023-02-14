@@ -803,7 +803,7 @@ def gen_castle():
 			castle[X][Y]={}
 			for z in range(1, castlesize+1):
 				level=str(z)
-				castle[X][Y][level]={"contents": {}, "explored": True}
+				castle[X][Y][level]={"contents": {}, "explored": False}
 				warp=random.randint(0,warpran)
 				if warp==0:
 					castle[X][Y][level]["contents"]["warp"]={}
