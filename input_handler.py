@@ -57,9 +57,9 @@ def input_tab_as_enter(prompt='', max_length=10000, is_integer=False, positive_o
                 sys.stdout.flush()
             if len(user_input)>=max_length:
                 break
-    # reset the terminal
-    # get the terminal attributes
-    #attr = termios.tcgetattr(sys.stdin)
+    if not (char=='\n' or char=='\t'):
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
     # make the terminal blocking
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
