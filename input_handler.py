@@ -43,6 +43,8 @@ def input_tab_as_enter(prompt='', max_length=10000, is_integer=False, positive_o
                 user_input += char
                 sys.stdout.write(char)
                 sys.stdout.flush()
+            if len(user_input)>=max_length:
+                break
     termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
     return str(user_input) if is_integer else user_input
