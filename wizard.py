@@ -106,7 +106,7 @@ def enter_castle(character):
 		if characterdead==False:
 			print("\nEnter your command : ", end="")
 			try:
-				choice=input().lower()
+				choice=input(max_length=1).lower()
 				if len(choice)>=2: 
 					choice=choice[:2]
 					if not choice=="dr":
@@ -131,7 +131,7 @@ def enter_castle(character):
 								quitloop=False
 								while quitloop==False:
 									print("This is the exit; are you sure you want to leave? ", end="")
-									newchoice=input()[:1].lower()
+									newchoice=input(max_length=1)[:1].lower()
 									if re.match(yesnoregex, newchoice):
 										if newchoice=="y":
 											if game.get("character").get("orbofzot")==False:
@@ -149,7 +149,7 @@ def enter_castle(character):
 						while quitloop==False:
 							print("Do you really want to quit now? ", end="")
 							try:
-								newchoice=input()[:1].lower()
+								newchoice=input(max_length=1)[:1].lower()
 							except:
 								newchoice=""
 							if re.match(yesnoregex, newchoice) and newchoice=="y":								
@@ -224,7 +224,7 @@ def main():
 		while exitloop2==False:
 			print("\nAre you foolish enough to want to play again? ", end="")
 			try:
-				choices=input().strip().lower()[:1]
+				choices=input(max_length=1).strip().lower()[:1]
 			except:
 				choices=""
 			if re.match(regex, choices):
