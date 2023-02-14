@@ -220,7 +220,7 @@ def main():
 		while exitloop2==False:
 			print("\nAre you foolish enough to want to play again? ", end="")
 			try:
-				choices=input()[:1]
+				choices=input.strip().lower()[:1]
 			except:
 				choices=""
 			if re.match(regex, choices):
