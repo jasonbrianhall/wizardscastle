@@ -7,6 +7,7 @@ import castle
 import createcharacter
 import castleaction
 import sys
+from input_handler import input_tab_as_enter as input 
 
 def print_intro():
 	# Print Intro

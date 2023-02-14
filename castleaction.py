@@ -1,6 +1,7 @@
 import random
 import re
 import createcharacter
+from input_handler import input_tab_as_enter as input
 
 def look_northeast(game):
 	temp= game.get("character").get("x")-1
