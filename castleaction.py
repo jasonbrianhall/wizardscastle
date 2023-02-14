@@ -899,7 +899,11 @@ def go_monster(game, vendor=False):
 							choices="[ar]"
 					choices=re.compile(choices)
 					print("What is your choice:  ", end="")
-					choice=input(max_length=1).lower().strip()[0]
+					choice=input(max_length=1).lower().strip()
+					if len(choice)>0:
+						choice=choice[0]
+					else:
+						choice=""
 					if re.match(choices, choice):
 						if choice=="b":
 							chance_of_success = intelligence / (intelligence + monsterintelligence)
