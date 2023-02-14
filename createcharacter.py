@@ -103,7 +103,7 @@ def allocate_attributes(character):
 			data=False
 			while data==False:
 				try:
-					choice=input()
+					choice=input(is_integer=True)
 				except:
 					choice=""
 				if re.match(regex, choice) and int(choice)>=0 and int(choice)<=character.get("allocate"):
@@ -228,6 +228,8 @@ def buy_equipment(character):
 					character["lamp"]=True
 					character["gold"]=character.get("gold")-20
 					data=True
+                else:
+                    data=True
 			else:
 				print("\n** Please answer Yes or No\n")
  
