@@ -6,6 +6,7 @@ import random
 import castle
 import createcharacter
 import castleaction
+import sys
 
 def print_intro():
 	# Print Intro
@@ -220,7 +221,7 @@ def main():
 		while exitloop2==False:
 			print("\nAre you foolish enough to want to play again? ", end="")
 			try:
-				choices=input.strip().lower()[:1]
+				choices=input().strip().lower()[:1]
 			except:
 				choices=""
 			if re.match(regex, choices):
