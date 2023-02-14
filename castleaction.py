@@ -300,7 +300,11 @@ def go_lamp(game):
 	exitloop=False
 	if game.get("character").get("lamp")==True:
 		print("Where do you want to shine the lamp (N,S,E,W)? ", end="")
-		choice=input(max_length=1).lower().strip()[0]
+		choice=input(max_length=1).lower().strip()
+		if len(choice)>0:
+			choice=choice[0]
+		else:
+			choice=""
 		if re.match(regex, choice):
 			if choice=="n":
 				look_north(game)
@@ -340,7 +344,11 @@ def go_open_chest(game):
 					exittheloop=False
 					while exittheloop==False:
 						print("You found a book in the chest; do you want to open it?  ", end="")
-						choice=input(max_length=1).lower().strip()[0]
+						choice=input(max_length=1).lower().strip()
+						if len(choice)>0:
+							choice=choice[0]
+						else:
+							choice=""
 						if re.match(regex, choice):
 							if choice=="y":
 								tempcontents=contents.get("book")
@@ -429,8 +437,11 @@ def go_open(game):
 		exittheloop=True
 		while exittheloop==False:
 			print("You found a book and a chest, which one do you want to open?  ", end="")
-			choice=input(max_length=1).lower().strip()[0]
-		
+			choice=input(max_length=1).lower().strip()
+			if len(choice)>0:
+				choice=choice[0]
+			else:
+				choice=""		
 			if re.match(choice):
 				if choice=="b":
 					go_open_book(game)
@@ -919,7 +930,11 @@ def go_monster(game, vendor=False):
 
 											print("The monster says give me the treasure " + treasure + " and I'll let you go")
 											print("Do you agree: ", end="")
-											choice=input(max_length=1).lower().strip()[0]
+											choice=input(max_length=1).lower().strip()
+											if len(choice)>0:
+												choice=choice[0]
+											else:
+												choice=""
 											if re.match(regex, choice):
 												if choice=="y":
 													game["character"]["treasures"].remove(treasure)
@@ -937,7 +952,11 @@ def go_monster(game, vendor=False):
 											print("Give me " + str(randomdata) + " gold pieces and I'll let you live")
 											regex="[yn]"
 											print("Do you agree: ", end="")
-											choice=input(max_length=1).lower().strip()[0]
+											choice=input(max_length=1).lower().strip()
+											if len(choice)>0:
+												choice=choice[0]:
+											else:
+												choice=""
 											if re.match(regex, choice):
 												if choice=="y":
 													monsterbribed=True
@@ -1106,7 +1125,11 @@ def go_vendor(game):
 			print("You may Attack or ignore the vendor: ", end="")
 			regex="[ai]"
 
-		choice=input(max_length=1).lower().strip()[0]
+		choice=input(max_length=1).lower().strip()
+		if len(choice)>0:
+			choice=choice[0]
+		else:
+			choice=""
 		if re.match(regex, choice):
 			if choice=="a":
 				print("Attacking Vendor")
@@ -1118,7 +1141,11 @@ def go_vendor(game):
 				while exittheloop2==False:
 					print(buffer)
 					print("Choice: ", end="")
-					choice2=input(max_length=1)[0].lower()
+					choice2=input(max_length=1).lower()
+					if len(choice2)>0:
+						choice2=choice2[0]
+					else:
+						choice2=""
 					if re.match(armorregex, choice2):
 						if choice=="n":
 							exittheloop2=True
@@ -1163,7 +1190,11 @@ def go_vendor(game):
 				exittheloop2=False
 				while exittheloop2==False:
 					print("Choice: ", end="")
-					choice2=input(max_length=1)[0].lower()
+					choice2=input(max_length=1).lower()
+					if len(choice2)>0:
+						choice2=choice2[0]
+					else:
+						choice2=""
 					if re.match(weaponregex, choice2):
 						if choice=="n":
 							exittheloop2=True
@@ -1208,7 +1239,11 @@ def go_vendor(game):
 					regex="[yn]"
 					while exittheloop==False:
 						print("Do you want to buy a strength potion for 1000 gps: ")
-						choice=input(max_length=1).lower().strip()[0]
+						choice=input(max_length=1).lower().strip()
+						if len(choice)>0:
+							choice=choice[0]
+						else:
+							choice=""
 						if re.match(regex, choice):
 					 		if choice=="y":
 					 			game["character"]["gold"]=game["character"]["gold"]-1000
@@ -1224,7 +1259,11 @@ def go_vendor(game):
 					regex="[yn]"
 					while exittheloop==False:
 						print("Do you want to buy a dexterity potion for 1000 gps: ")
-						choice=input(max_length=1).lower().strip()[0]
+						choice=input(max_length=1).lower().strip()
+						if len(choice)>0:
+							choice=choice[0]
+						else:
+							choice=""
 						if re.match(regex, choice):
 							if choice=="y":
 								game["character"]["gold"]=game["character"]["gold"]-1000
@@ -1240,7 +1279,11 @@ def go_vendor(game):
 					regex="[yn]"
 					while exittheloop==False:
 						print("Do you want to buy an intelligence potion for 1000 gps: ")
-						choice=input(max_length=1).lower().strip()[0]
+						choice=input(max_length=1).lower().strip()
+						if len(choice)>0:
+							choice=choice[0]
+						else:
+							choice=""
 						if re.match(regex, choice):
 							if choice=="y":
 								game["character"]["gold"]=game["character"]["gold"]-1000
@@ -1259,7 +1302,11 @@ def go_vendor(game):
 					exiththeloop2=False
 					lampregex="[yn]"
 					while exittheloop2==False:
-						choice=input(max_length=1).lower().strip()[0]
+						choice=input(max_length=1).lower().strip()
+						if len(choice)>0:
+							choice=choice[0]
+						else:
+							choice=""
 						if choice=="n":
 							exittheloop2=True
 						else:
@@ -1271,7 +1318,11 @@ def go_vendor(game):
 					while exittheloop2==False:
 						print("Ok, " + game.get("character").get("race") + ", you may buy flares for 20 gps each; how many do you want?  ", end="")
 						flareregex="[0-9]+"
-						choice=input(is_integer=True, positive_only=True).lower().strip()[0]
+						choice=input(is_integer=True, positive_only=True).lower().strip()
+						if len(choice)>0:
+							choice=choice[0]
+						else:
+							choice=""
 						if re.match(flareregex, choice):
 							flares=int(choice)
 							price=flares*20
