@@ -50,7 +50,7 @@ def select_race(character):
 
 		try:
 			print("\nYour Choice? ", end="")
-			choice=input()[0].lower()
+			choice=input(max_length=1)[0].lower()
 		except:
 			pass
 		if	re.match(regex, choice):
@@ -78,7 +78,7 @@ def select_sex(character):
 	while(sex.lower()==""):
 		try:
 			print("\nWhich sex do you prefer? ", end="")
-			choice=input()[0].lower()
+			choice=input(max_length=1)[0].lower()
 		except:
 			pass
 		if re.match(regex, choice):
@@ -103,7 +103,7 @@ def allocate_attributes(character):
 			data=False
 			while data==False:
 				try:
-					choice=input(is_integer=True)
+					choice=input(is_integer=True, positive_only=True)
 				except:
 					choice=""
 				if re.match(regex, choice) and int(choice)>=0 and int(choice)<=character.get("allocate"):
@@ -192,7 +192,7 @@ def buy_equipment(character):
 			exitloop=False
 			while exitloop==False:
 				try:
-					choice=input()[0].lower()
+					choice=input(max_length=1)[0].lower()
 				except:
 					choice=""
 				if re.match(regex, choice):
@@ -219,7 +219,7 @@ def buy_equipment(character):
 		while data==False:
 			print("Do you want to buy a lamp for 20 GP's? ", end="")
 			try:
-				choice=input()[0].lower()
+				choice=input(max_length=1)[0].lower()
 			except:
 				choice=""
 				pass
@@ -239,7 +239,7 @@ def buy_equipment(character):
 		exitloop=False
 		while exitloop==False:
 			print("Flares cost 1 GP each.  How many do you want? ", end="")
-			choice=input()
+			choice=input(is_integer=True, positive_only=True)
 			if re.match(regex, choice):
 				if int(choice)>character.get("gold"):
 					print("\n** You can only afford " + str(character.get("gold")))
