@@ -34,7 +34,8 @@ DECLARE FUNCTION AdjustLargeNumber% (InputNumber%)
 1165 FOR Index = 1 TO 4
 1170 READ Race$(Index)
 1175 NEXT Index
-1180 IF GameNumber > 1 GOTO 1250
+
+IF GameNumber < 2 THEN
 1185 PRINT CHR$(27); "E"
 1190 PrintStars
 1195 PRINT TAB(16); "* * * THE WIZARD'S CASTLE * * *"
@@ -48,6 +49,8 @@ DECLARE FUNCTION AdjustLargeNumber% (InputNumber%)
 1235 PRINT "A BOLD YOUTH HAS VENTURED INTO THE WIZARD'S CASTLE. AS"
 1240 PRINT "OF NOW, *NONE* HAS EVER EMERGED VICTORIOUSLY! BEWARE!!"
 1245 PRINT
+END IF
+
 1250 PlayerX = 1: PlayerY = 4
 1255 LocationMap(CalculateDimension(1)) = 2
 1260 FOR CurrentLevel = 1 TO 7
