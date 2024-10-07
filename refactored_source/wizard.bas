@@ -266,61 +266,64 @@ END IF
 1940 REM   MAIN PROCESSING LOOP
 1945 REM
 1950 TurnCount = TurnCount + 1
-1955 IF RunestaffFlag + OrbFlag > 0 GOTO 2020
-1960 IF CurseEffect(1, 4) > Treasure(1) THEN TurnCount = TurnCount + 1
-1965 IF CurseEffect(2, 4) > Treasure(3) THEN GoldPieces = GoldPieces - RandomNumber(5)
-1970 IF GoldPieces < 0 THEN GoldPieces = 0
-1975 IF CurseEffect(3, 4) <= Treasure(5) GOTO 2020
-1980 TempX = PlayerX: TempY = PlayerY: TempLevel = CurrentLevel
-1985 PlayerX = RandomNumber(8): PlayerY = RandomNumber(8): CurrentLevel = RandomNumber(8)
-1990 LocationMap(CalculateDimension(CurrentLevel)) = AdjustLargeNumber(LocationMap(CalculateDimension(CurrentLevel))) + 100
-1995 PlayerX = TempX: PlayerY = TempY: CurrentLevel = TempLevel
-2000 IF LocationMap(CalculateDimension(CurrentLevel)) <> 1 GOTO 2020
-2005 FOR CurseIndex = 1 TO 3
-2010 CurseEffect(CurseIndex, 4) = -(CurseEffect(CurseIndex, 1) = PlayerX) * (CurseEffect(CurseIndex, 2) = PlayerY) * (CurseEffect(CurseIndex, 3) = CurrentLevel)
-2015 NEXT CurseIndex
-2020 IF RandomNumber(5) > 1 GOTO 2165
-2025 PRINT
-2030 PRINT "YOU ";
-2035 EventType = RandomNumber(7) + BlindnessFlag
-2040 IF EventType > 7 THEN EventType = 4
+IF RunestaffFlag + OrbFlag = 0 THEN
+    IF CurseEffect(1, 4) > Treasure(1) THEN TurnCount = TurnCount + 1
+    IF CurseEffect(2, 4) > Treasure(3) THEN 
+        GoldPieces = GoldPieces - RandomNumber(5)
+        IF GoldPieces < 0 THEN GoldPieces = 0
+    END IF
+    IF CurseEffect(3, 4) > Treasure(5) THEN
+        TempX = PlayerX: TempY = PlayerY: TempLevel = CurrentLevel
+        PlayerX = RandomNumber(8): PlayerY = RandomNumber(8): CurrentLevel = RandomNumber(8)
+        LocationMap(CalculateDimension(CurrentLevel)) = AdjustLargeNumber(LocationMap(CalculateDimension(CurrentLevel))) + 100
+        PlayerX = TempX: PlayerY = TempY: CurrentLevel = TempLevel
+        IF LocationMap(CalculateDimension(CurrentLevel)) = 1 THEN
+            FOR CurseIndex = 1 TO 3
+                CurseEffect(CurseIndex, 4) = -(CurseEffect(CurseIndex, 1) = PlayerX) * (CurseEffect(CurseIndex, 2) = PlayerY) * (CurseEffect(CurseIndex, 3) = CurrentLevel)
+            NEXT CurseIndex
+        END IF
+    END IF
+END IF
 
-SELECT CASE EventType
-    CASE 1
-        PRINT "SEE A BAT FLY BY!"
-    CASE 2
-        PRINT "HEAR ";
-        SoundType = RandomNumber(4)
-        SELECT CASE SoundType
-            CASE 1
-                PRINT "A SCREAM!"
-            CASE 2
-                PRINT "FOOTSTEPS!"
-            CASE 3
-                PRINT "A WUMPUS!"
-            CASE 4
-                PRINT "THUNDER!"
-        END SELECT
-    CASE 3
-        PRINT "SNEEZED!"
-    CASE 4
-        PRINT "STEPPED ON A FROG!"
-    CASE 5
-        PRINT "SMELL "; RoomContents$(12 + RandomNumber(13)); " FRYING!"
-    CASE 6
-        PRINT "FEEL LIKE YOU'RE BEING WATCHED!"
-    CASE 7
-        PRINT "HEAR FAINT RUSTLING NOISES!"
-END SELECT
-2165 IF BlindnessFlag + Treasure(4) <> 2 GOTO 2185
-2170 PRINT
-2175 PRINT RoomContents$(29); " CURES YOUR BLINDNESS!"
-2180 BlindnessFlag = 0
-2185 IF BookFlag + Treasure(6) <> 2 GOTO 2205
-2190 PRINT
-2195 PRINT RoomContents$(31); " DISSOLVES THE BOOK!"
-2200 BookFlag = 0
-2205 PRINT
+IF RandomNumber(5) = 1 THEN
+    PRINT
+    PRINT "YOU ";
+    EventType = RandomNumber(7) + BlindnessFlag
+    IF EventType > 7 THEN EventType = 4
+    SELECT CASE EventType
+        CASE 1
+            PRINT "SEE A BAT FLY BY!"
+        CASE 2
+            PRINT "HEAR ";
+            SoundType = RandomNumber(4)
+            SELECT CASE SoundType
+                CASE 1: PRINT "A SCREAM!"
+                CASE 2: PRINT "FOOTSTEPS!"
+                CASE 3: PRINT "A WUMPUS!"
+                CASE 4: PRINT "THUNDER!"
+            END SELECT
+        CASE 3: PRINT "SNEEZED!"
+        CASE 4: PRINT "STEPPED ON A FROG!"
+        CASE 5: PRINT "SMELL "; RoomContents$(12 + RandomNumber(13)); " FRYING!"
+        CASE 6: PRINT "FEEL LIKE YOU'RE BEING WATCHED!"
+        CASE 7: PRINT "HEAR FAINT RUSTLING NOISES!"
+    END SELECT
+END IF
+
+IF BlindnessFlag + Treasure(4) = 2 THEN
+    PRINT
+    PRINT RoomContents$(29); " CURES YOUR BLINDNESS!"
+    BlindnessFlag = 0
+END IF
+
+IF BookFlag + Treasure(6) = 2 THEN
+    PRINT
+    PRINT RoomContents$(31); " DISSOLVES THE BOOK!"
+    BookFlag = 0
+END IF
+
+PRINT
+
 2210 LINE INPUT "ENTER YOUR COMMAND : "; UserCommand$
 2215 IF LEFT$(UserCommand$, 2) = "DR" GOTO 2870
 2220 UserCommand$ = LEFT$(UserCommand$, 1)
