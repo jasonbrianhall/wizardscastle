@@ -193,19 +193,7 @@ LOOP
 1700 EquipmentType$ = "ARMOR"
 PRINT
 PRINT "THESE ARE THE TYPES OF "; EquipmentType$; " YOU CAN BUY :"
-1710 ArmorValue = 0: WeaponValue = 0: FlareCount = 0: WebCount = 0
-1715 PRINT "PLATE<30> CHAINMAIL<20> LEATHER<10> NOTHING<0>"
-PRINT
-PRINT "YOUR CHOICE";
-INPUT UserInput$
-UserInput$ = LEFT$(UserInput$, 1)
-1725 IF UserInput$ = "N" GOTO 1755
-1730 ArmorValue = -3 * (UserInput$ = "P") - 2 * (UserInput$ = "C") - (UserInput$ = "L")
-1735 IF ArmorValue > 0 GOTO 1755
-1740 PRINT
-1745 PRINT "** ARE YOU A "; Race$(PlayerRace); " OR "; RoomContents$(RandomNumber(12) + 12); "?"
-1750 GOTO 1700
-1755 ArmorHitPoints = ArmorValue * 7: GoldPieces = GoldPieces - ArmorValue * 10
+1710 CALL ChooseArmor(ArmorValue, ArmorHitPoints, GoldPieces, PlayerRace)
 1760 PRINT
 1765 PRINT "OK, BOLD "; Race$(PlayerRace); ", YOU HAVE"; GoldPieces; "GP'S LEFT."
 1770 EquipmentType$ = "WEAPONS"
@@ -233,18 +221,13 @@ UserInput$ = LEFT$(UserInput$, 1)
 1845 IF UserInput$ = "Y" THEN LampFlag = 1: GoldPieces = GoldPieces - 20: GOTO 1855
 1850 IF UserInput$ <> "N" THEN PRINT : PRINT YesNoPrompt$: PRINT : GOTO 1835
 1855 PRINT
-1860 IF GoldPieces < 1 THEN FlareCount = 0: GOTO 1915
+rem 1860 IF GoldPieces < 1 THEN FlareCount = 0: GOTO 1915
+FlareCount = 0
+IF GoldPieces >= 1 THEN 
 1865 PRINT "OK, "; Race$(PlayerRace); ", YOU HAVE"; GoldPieces; "GOLD PIECES LEFT."
 1870 PRINT
-1875 INPUT "FLARES COST 1 GP EACH. HOW MANY DO YOU WANT"; UserInput$
-1880 FlareCount = VAL(UserInput$)
-1885 PRINT
-1890 IF FlareCount > 0 OR ASC(UserInput$) = 48 GOTO 1910
-1895 PRINT "** IF YOU DON'T WANT ANY, JUST TYPE 0 (ZERO)."
-1900 PRINT
-1905 GOTO 1875
-1910 IF FlareCount > GoldPieces THEN PRINT "** YOU CAN ONLY AFFORD"; GoldPieces; ".": PRINT : GOTO 1875
-1915 FlareCount = FlareCount + FlareCount: GoldPieces = GoldPieces - FlareCount
+1875 CALL BuyFlares(FlareCount, GoldPieces)
+END IF
 1920 PlayerX = 1: PlayerY = 4: CurrentLevel = 1
 1925 PRINT "OK, "; Race$(PlayerRace); ", YOU ARE NOW ENTERING THE CASTLE!"
 1930 GOTO 3450
@@ -1136,3 +1119,66 @@ SUB ChooseSex (PlayerSex, PlayerRace)
     PRINT
 END SUB
 
+SUB ChooseArmor (ArmorValue, ArmorHitPoints, GoldPieces, PlayerRace)
+    DIM Race$(4)
+    Race$(1) = "HOBBIT"
+    Race$(2) = "ELF"
+    Race$(3) = "MAN"
+    Race$(4) = "DWARF"
+
+    EquipmentType$ = "ARMOR"
+    ArmorValue = 0
+
+    DO
+        PRINT
+        PRINT "THESE ARE THE TYPES OF "; EquipmentType$; " YOU CAN BUY :"
+        PRINT "PLATE<30> CHAINMAIL<20> LEATHER<10> NOTHING<0>"
+        PRINT
+        PRINT "YOUR CHOICE";
+        INPUT UserInput$
+        UserInput$ = UCASE$(LEFT$(UserInput$, 1))
+
+        SELECT CASE UserInput$
+            CASE "P": ArmorValue = 3
+            CASE "C": ArmorValue = 2
+            CASE "L": ArmorValue = 1
+            CASE "N": ArmorValue = 0
+            CASE ELSE
+                ArmorValue = -1  ' Invalid input
+        END SELECT
+
+        IF ArmorValue >= 0 THEN
+            EXIT DO
+        ELSE
+            PRINT
+            PRINT "** ARE YOU A "; Race$(PlayerRace); INVALID VALUE"?"
+        END IF
+    LOOP
+
+    ArmorHitPoints = ArmorValue * 7
+    GoldPieces = GoldPieces - ArmorValue * 10
+END SUB
+
+SUB BuyFlares (FlareCount, GoldPieces)
+    IF GoldPieces >= 1 THEN
+        DO
+            PRINT "FLARES COST 1 GP EACH. HOW MANY DO YOU WANT";
+            INPUT UserInput$
+            FlareCount = VAL(UserInput$)
+            PRINT
+
+            IF FlareCount > 0 OR ASC(UserInput$) = 48 THEN
+                IF FlareCount <= GoldPieces THEN
+                    EXIT DO
+                ELSE
+                    PRINT "** YOU CAN ONLY AFFORD"; GoldPieces; "."
+                    PRINT
+                END IF
+            ELSE
+                PRINT "** IF YOU DON'T WANT ANY, JUST TYPE 0 (ZERO)."
+                PRINT
+            END IF
+        LOOP
+    END IF 
+    GoldPieces = GoldPieces - FlareCount
+END SUB
