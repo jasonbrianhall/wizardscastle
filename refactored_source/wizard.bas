@@ -36,7 +36,6 @@ DECLARE FUNCTION AdjustLargeNumber% (InputNumber%)
 1175 NEXT Index
 
 IF GameNumber < 2 THEN
-1185 PRINT CHR$(27); "E"
 1190 PrintStars
 1195 PRINT TAB(16); "* * * THE WIZARD'S CASTLE * * *"
 1200 PRINT
@@ -160,38 +159,42 @@ DO
     END IF
 LOOP
 1650 PlayerStrength = PlayerStrength + PointsAllocated
-1655 IF OtherPoints = 0 GOTO 1695
-1660 AttributeName$ = "INTELLIGENCE"
-DO
-    PRINT "HOW MANY POINTS DO YOU WISH TO ADD TO YOUR "; AttributeName$;
-    INPUT UserInput$
-    PRINT
-    PointsAllocated = VAL(UserInput$)
-    IF PointsAllocated = 0 AND ASC(UserInput$) <> 48 THEN PointsAllocated = -1
-    IF PointsAllocated < 0 OR PointsAllocated > OtherPoints OR PointsAllocated <> INT(PointsAllocated) THEN
-        PRINT "** INVALID INPUT. PLEASE TRY AGAIN."
-    ELSE
-        OtherPoints = OtherPoints - PointsAllocated
-        EXIT DO
+IF OtherPoints > 0 THEN
+    AttributeName$ = "INTELLIGENCE"
+    DO
+        PRINT "HOW MANY POINTS DO YOU WISH TO ADD TO YOUR "; AttributeName$;
+        INPUT UserInput$
+        PRINT
+        PointsAllocated = VAL(UserInput$)
+        IF PointsAllocated = 0 AND ASC(UserInput$) <> 48 THEN PointsAllocated = -1
+        IF PointsAllocated < 0 OR PointsAllocated > OtherPoints OR PointsAllocated <> INT(PointsAllocated) THEN
+            PRINT "** INVALID INPUT. PLEASE TRY AGAIN."
+        ELSE
+            OtherPoints = OtherPoints - PointsAllocated
+            EXIT DO
+        END IF
+    LOOP
+    PlayerIntelligence = PlayerIntelligence + PointsAllocated
+
+    IF OtherPoints > 0 THEN
+        AttributeName$ = "DEXTERITY"
+        DO
+            PRINT "HOW MANY POINTS DO YOU WISH TO ADD TO YOUR "; AttributeName$;
+            INPUT UserInput$
+            PRINT
+            PointsAllocated = VAL(UserInput$)
+            IF PointsAllocated = 0 AND ASC(UserInput$) <> 48 THEN PointsAllocated = -1
+            IF PointsAllocated < 0 OR PointsAllocated > OtherPoints OR PointsAllocated <> INT(PointsAllocated) THEN
+                PRINT "** INVALID INPUT. PLEASE TRY AGAIN."
+            ELSE
+                OtherPoints = OtherPoints - PointsAllocated
+                EXIT DO
+            END IF
+        LOOP
+        PlayerDexterity = PlayerDexterity + PointsAllocated
     END IF
-LOOP
-1670 PlayerIntelligence = PlayerIntelligence + PointsAllocated
-1675 IF OtherPoints = 0 GOTO 1695
-1680 AttributeName$ = "DEXTERITY"
-DO
-    PRINT "HOW MANY POINTS DO YOU WISH TO ADD TO YOUR "; AttributeName$;
-    INPUT UserInput$
-    PRINT
-    PointsAllocated = VAL(UserInput$)
-    IF PointsAllocated = 0 AND ASC(UserInput$) <> 48 THEN PointsAllocated = -1
-    IF PointsAllocated < 0 OR PointsAllocated > OtherPoints OR PointsAllocated <> INT(PointsAllocated) THEN
-        PRINT "** INVALID INPUT. PLEASE TRY AGAIN."
-    ELSE
-        OtherPoints = OtherPoints - PointsAllocated
-        EXIT DO
-    END IF
-LOOP
-1690 PlayerDexterity = PlayerDexterity + PointsAllocated
+END IF
+
 1695 PRINT "OK, "; Race$(PlayerRace); ", YOU HAVE 60 GOLD PIECES (GP'S)."
 1700 EquipmentType$ = "ARMOR"
 PRINT
