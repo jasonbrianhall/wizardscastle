@@ -202,32 +202,57 @@ PRINT "THESE ARE THE TYPES OF "; EquipmentType$; " YOU CAN BUY :"
 1710 CALL ChooseArmor(ArmorValue, ArmorHitPoints, GoldPieces, PlayerRace)
 1760 PRINT
 1765 PRINT "OK, BOLD "; Race$(PlayerRace); ", YOU HAVE"; GoldPieces; "GP'S LEFT."
-1770 EquipmentType$ = "WEAPONS"
+EquipmentType$ = "WEAPONS"
+DO
+    PRINT
+    PRINT "THESE ARE THE TYPES OF "; EquipmentType$; " YOU CAN BUY :"
+    PRINT "SWORD<30> MACE<20> DAGGER<10> NOTHING<0>"
+    PRINT
+    PRINT "YOUR CHOICE";
+    INPUT UserInput$
+    UserInput$ = UCASE$(LEFT$(UserInput$, 1))
+
+    IF UserInput$ = "N" THEN
+        WeaponValue = 0
+        EXIT DO
+    ELSE
+        WeaponValue = 3 * (UserInput$ = "S") + 2 * (UserInput$ = "M") + (UserInput$ = "D")
+        IF WeaponValue > 0 THEN
+            EXIT DO
+        ELSE
+            PRINT
+            PRINT "** IS YOUR IQ REALLY"; PlayerIntelligence; "?"
+        END IF
+    END IF
+LOOP
+
+GoldPieces = GoldPieces - WeaponValue * 10
+
+IF GoldPieces >= 20 THEN
+    DO
+        PRINT
+        PRINT "DO YOU WANT TO BUY A LAMP FOR 20 GP'S";
+        PRINT
+        PRINT "YOUR CHOICE";
+        INPUT UserInput$
+        UserInput$ = UCASE$(LEFT$(UserInput$, 1))
+
+        IF UserInput$ = "Y" THEN
+            LampFlag = 1
+            GoldPieces = GoldPieces - 20
+            EXIT DO
+        ELSEIF UserInput$ = "N" THEN
+            EXIT DO
+        ELSE
+            PRINT
+            PRINT YesNoPrompt$
+            PRINT
+        END IF
+    LOOP
+END IF
+
 PRINT
-PRINT "THESE ARE THE TYPES OF "; EquipmentType$; " YOU CAN BUY :"
-1780 PRINT "SWORD<30> MACE<20> DAGGER<10> NOTHING<0>"
-PRINT
-PRINT "YOUR CHOICE";
-INPUT UserInput$
-UserInput$ = LEFT$(UserInput$, 1)
-1790 IF UserInput$ = "N" GOTO 1820
-1795 WeaponValue = -3 * (UserInput$ = "S") - 2 * (UserInput$ = "M") - (UserInput$ = "D")
-1800 IF WeaponValue > 0 GOTO 1820
-1805 PRINT
-1810 PRINT "** IS YOUR IQ REALLY"; PlayerIntelligence; "?"
-1815 GOTO 1770
-1820 GoldPieces = GoldPieces - WeaponValue * 10
-1825 IF GoldPieces < 20 GOTO 1855
-1830 PRINT
-1835 PRINT "DO YOU WANT TO BUY A LAMP FOR 20 GP'S";
-PRINT
-PRINT "YOUR CHOICE";
-INPUT UserInput$
-UserInput$ = LEFT$(UserInput$, 1)
-1845 IF UserInput$ = "Y" THEN LampFlag = 1: GoldPieces = GoldPieces - 20: GOTO 1855
-1850 IF UserInput$ <> "N" THEN PRINT : PRINT YesNoPrompt$: PRINT : GOTO 1835
-1855 PRINT
-rem 1860 IF GoldPieces < 1 THEN FlareCount = 0: GOTO 1915
+
 FlareCount = 0
 IF GoldPieces >= 1 THEN 
 1865 PRINT "OK, "; Race$(PlayerRace); ", YOU HAVE"; GoldPieces; "GOLD PIECES LEFT."
