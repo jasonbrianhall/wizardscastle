@@ -731,8 +731,256 @@ void handle_room_event(Player *player, GameState *game)
 
 void fight_monster(Player *player, GameState *game)
 {
+    int room_content = get_room_content(game, player->x, player->y, player->level);
+    int is_vendor = (room_content == VENDOR);
+    int enemy_strength, enemy_dexterity;
+    int can_bribe = 1;
+    const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
 
+    // Set enemy stats based on room content
+    if (is_vendor) {
+        enemy_strength = 15;
+        enemy_dexterity = 15;
+    } else {
+        enemy_strength = (room_content - MONSTER_START + 1) * 2;
+        enemy_dexterity = room_content - MONSTER_START + 8;
+    }
+
+    while (1) {
+        printf("\nYOU'RE FACING %s!\n\n", enemy_name);
+        printf("YOU MAY ATTACK OR RETREAT.\n");
+        if (can_bribe) {
+            printf("YOU CAN ALSO ATTEMPT A BRIBE.\n");
+        }
+        if (player->intelligence > 14) {
+            printf("YOU CAN ALSO CAST A SPELL.\n");
+        }
+        printf("\n");
+        printf("YOUR STRENGTH IS %d AND YOUR DEXTERITY IS %d.\n", player->strength, player->dexterity);
+
+        char choice = get_user_input();
+
+        switch (choice) {
+            case 'A':
+                if (player->weapon_type == 0) {
+                    printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
+                    continue;
+                }
+                if (player->stickybook_flag) {
+                    printf("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
+                    continue;
+                }
+                if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
+                    printf("\nYOU MISSED, TOO BAD!\n");
+                } else {
+                    printf("\nYOU HIT THE EVIL %s!\n", enemy_name);
+                    enemy_strength -= player->weapon_type;
+                    if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
+                        printf("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
+                        player->weapon_type = 0;
+                    }
+                    if (enemy_strength <= 0) {
+                        handle_combat_victory(player, game, is_vendor, enemy_name);
+                        return;
+                    }
+                }
+                break;
+
+            case 'R':
+                if (random_number(20) + player->dexterity > random_number(20) + enemy_dexterity) {
+                    printf("\nYOU HAVE ESCAPED!\n");
+                    move_player_randomly(player, game);
+                    return;
+                } else {
+                    printf("\nYOU FAILED TO RETREAT!\n");
+                }
+                break;
+
+            case 'B':
+                if (!can_bribe) {
+                    printf("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                    continue;
+                }
+                if (handle_bribe(player, game, enemy_name)) {
+                    return;
+                }
+                can_bribe = 0;
+                break;
+
+            case 'C':
+                if (player->intelligence <= 14) {
+                    printf("\n** YOU CAN'T CAST A SPELL NOW!\n");
+                    continue;
+                }
+                if (handle_spell(player, game, &enemy_strength, enemy_name)) {
+                    return;
+                }
+                break;
+
+            default:
+                printf("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                continue;
+        }
+
+        // Enemy's turn
+        printf("\nTHE %s ATTACKS!\n", enemy_name);
+        if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+            printf("\nOUCH! HE HIT YOU!\n");
+            int damage = (enemy_strength / 2) + 1;
+            damage -= player->armor_points / 7;
+            if (damage < 0) damage = 0;
+            player->strength -= damage;
+            if (player->strength <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+                return;
+            }
+        } else {
+            printf("\nWHAT LUCK, HE MISSED YOU!\n");
+        }
+    }
 }
+
+void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name)
+{
+    printf("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
+    
+    if (random_number(5) == 1) {  // 20% chance of eating
+        printf("\nYOU SPEND AN HOUR EATING %s%s.\n", enemy_name, get_random_body_part());
+    }
+
+    if (is_vendor) {
+        printf("\nYOU GET ALL HIS WARES:\n");
+        printf("PLATE ARMOR\n");
+        player->armor_type = 3;
+        player->armor_points = 21;
+        printf("A SWORD\n");
+        player->weapon_type = 3;
+        printf("A STRENGTH POTION\n");
+        player->strength = min(player->strength + random_number(6), 18);
+        printf("AN INTELLIGENCE POTION\n");
+        player->intelligence = min(player->intelligence + random_number(6), 18);
+        printf("A DEXTERITY POTION\n");
+        player->dexterity = min(player->dexterity + random_number(6), 18);
+        if (!player->lamp_flag) {
+            printf("A LAMP\n");
+            player->lamp_flag = 1;
+        }
+    } else {
+        // Check if this was the room with the Runestaff
+        if (player->x == game->runestaff_location[0] &&
+            player->y == game->runestaff_location[1] &&
+            player->level == game->runestaff_location[2]) {
+            printf("\nGREAT ZOT! YOU'VE FOUND THE RUNESTAFF!\n");
+            player->runestaff_flag = 1;
+            game->runestaff_location[0] = 0;  // Mark as found
+        }
+    }
+
+    int gold_found = random_number(1000);
+    printf("\nYOU NOW GET HIS HOARD OF %d GP'S!\n", gold_found);
+    player->gold += gold_found;
+
+    // Clear the room
+    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+}
+
+int handle_bribe(Player *player, GameState *game, const char *enemy_name)
+{
+    if (player->treasure_count == 0) {
+        printf("\nALL I WANT IS YOUR LIFE!\n");
+        return 0;
+    }
+
+    int treasure_index = random_number(8) - 1;
+    while (!game->treasure[treasure_index]) {
+        treasure_index = random_number(8) - 1;
+    }
+
+    printf("\nI WANT %s. WILL YOU GIVE IT TO ME? ", get_treasure_name(treasure_index));
+    char choice = get_user_input_yn();
+
+    if (choice == 'Y') {
+        game->treasure[treasure_index] = 0;
+        player->treasure_count--;
+        printf("\nOK, JUST DON'T TELL ANYONE ELSE.\n");
+        if (strcmp(enemy_name, "VENDOR") == 0) {
+            game->vendor_attacked = 1;  // Vendor won't trade anymore
+        }
+        return 1;
+    }
+    return 0;
+}
+
+int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
+{
+    printf("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? ");
+    char spell = get_user_input();
+
+    switch (spell) {
+        case 'W':
+            player->strength--;
+            if (player->strength <= 0) {
+                game->game_over = 1;
+                return 1;
+            }
+            printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
+            return 0;
+
+        case 'F':
+            player->strength--;
+            player->intelligence--;
+            if (player->strength <= 0 || player->intelligence <= 0) {
+                game->game_over = 1;
+                return 1;
+            }
+            int damage = random_number(7) + random_number(7);
+            printf("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
+            *enemy_strength -= damage;
+            if (*enemy_strength <= 0) {
+                handle_combat_victory(player, game, 0, enemy_name);
+                return 1;
+            }
+            return 0;
+
+        case 'D':
+            printf("\nDEATH . . . ");
+            if (player->intelligence < random_number(4) + 15) {
+                printf("YOURS!\n");
+                player->intelligence = 0;
+                game->game_over = 1;
+                return 1;
+            } else {
+                printf("HIS!\n");
+                handle_combat_victory(player, game, 0, enemy_name);
+                return 1;
+            }
+
+        default:
+            printf("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+            return 0;
+    }
+}
+
+void move_player_randomly(Player *player, GameState *game) 
+{
+    char directions[] = {'N', 'S', 'E', 'W'};
+    char direction = directions[random_number(4) - 1];
+    move_player(player, game, direction);
+}
+
+const char* get_weapon_name(int weapon_type)
+{
+    const char* weapon_names[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
+    return weapon_names[weapon_type];
+}
+
+const char* get_random_body_part()
+{
+    const char* body_parts[] = {" SANDWICH", " STEW", " SOUP", " BURGER", " ROAST", " FILET", " TACO", " PIE"};
+    return body_parts[random_number(8) - 1];
+}
+
 
 void handle_vendor(Player *player, GameState *game)
 {
@@ -1726,3 +1974,24 @@ void end_game(Player *player, GameState *game)
 
     printStars();
 }
+
+
+const char* get_monster_name(int room_content)
+{
+    switch (room_content) {
+        case KOBOLD: return "KOBOLD";
+        case ORC: return "ORC";
+        case WOLF: return "WOLF";
+        case GOBLIN: return "GOBLIN";
+        case OGRE: return "OGRE";
+        case TROLL: return "TROLL";
+        case BEAR: return "BEAR";
+        case MINOTAUR: return "MINOTAUR";
+        case GARGOYLE: return "GARGOYLE";
+        case CHIMERA: return "CHIMERA";
+        case BALROG: return "BALROG";
+        case DRAGON: return "DRAGON";
+        default: return "UNKNOWN MONSTER";
+    }
+}
+
