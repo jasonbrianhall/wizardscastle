@@ -72,6 +72,7 @@ void initialize_game(GameState *game)
     int content, level, x, y, z;
     game->game_over=0;
     game->victory=0;
+    game->vendor_attacked=0;
     // Seed the random number generator
     srand(time(NULL));
 
@@ -241,7 +242,7 @@ void main_game_loop(Player *player, GameState *game)
             }
             else if (room_content==108)
             {
-                int flares_found = random_number(1000);  // Random amount between 1 and 5
+                int flares_found = random_number(5);  // Random amount between 1 and 5
 
                 player->flares += flares_found;
                 char message[100];
@@ -751,8 +752,8 @@ void trade_with_vendor(Player *player, GameState *game)
         print_message("1. Improve Strength (1000 GP)\n");
         print_message("2. Improve Intelligence (1000 GP)\n");
         print_message("3. Improve Dexterity (1000 GP)\n");
-        print_message("4. Armor upgrade (1000 GP)\n");
-        print_message("5. Weapon upgrade (1000 GP)\n");
+        print_message("4. Armor (1250-2000 GP)\n");
+        print_message("5. Weapon (1250-2000 GP)\n");
         print_message("6. Lamp (1000 GP)\n");
         print_message("7. Nothing more\n");
 
@@ -760,35 +761,46 @@ void trade_with_vendor(Player *player, GameState *game)
         switch(purchase_choice) {
             case '1':
                 player->strength = min(player->strength + random_number(6), 18);
+                player->gold -= 1000;
                 break;
             case '2':
                 player->intelligence = min(player->intelligence + random_number(6), 18);
+                player->gold -= 1000;
                 break;
             case '3':
                 player->dexterity = min(player->dexterity + random_number(6), 18);
+                player->gold -= 1000;
                 break;
             case '4':
-                if (player->armor_type < 3) {
-                    player->armor_type++;
-                    player->armor_points += 7;
-                } else {
-                    print_message("You already have the best armor!\n");
-                    continue;
+                if (player->gold<1250)
+                {
+                    print_message("YOU DO NOT HAVE ENOUGH GOLD TO BUY ARMOR!\n");
+                }
+                else
+                {
+                    buy_armor(player);
                 }
                 break;
             case '5':
-                if (player->weapon_type < 3) {
-                    player->weapon_type++;
-                } else {
-                    print_message("You already have the best weapon!\n");
-                    continue;
+                if (player->gold<1250)
+                {
+                    print_message("YOU DO NOT HAVE ENOUGH GOLD TO BUY WEAPONS!\n");
+                }
+                else
+                {
+                    buy_weapon(player);
                 }
                 break;
             case '6':
-                if (!player->lamp_flag) {
+                if (!player->lamp_flag && player->gold >= 1000) {
                     player->lamp_flag = 1;
-                } else {
+                    player->gold -= 1000;
+                    print_message("You bought a lamp!\n");
+                } else if (player->lamp_flag) {
                     print_message("You already have a lamp!\n");
+                    continue;
+                } else {
+                    print_message("You don't have enough gold for a lamp.\n");
                     continue;
                 }
                 break;
@@ -799,7 +811,6 @@ void trade_with_vendor(Player *player, GameState *game)
                 continue;
         }
 
-        player->gold -= 1000;
         print_message("Purchase successful!\n");
     }
 
@@ -865,6 +876,101 @@ void attack_vendor(Player *player, GameState *game)
     }
 
     print_message("The vendor disappears in a puff of smoke!\n");
+}
+
+void buy_armor(Player *player)
+{
+    print_message("\nArmor Options:\n");
+    print_message("1. Leather (1250 GP)\n");
+    print_message("2. Chainmail (1500 GP)\n");
+    print_message("3. Plate (2000 GP)\n");
+    print_message("4. Nothing\n");
+
+    char armor_choice = get_user_input();
+    switch(armor_choice) {
+        case '1':
+            if (player->gold >= 1250) {
+                player->armor_type = 1;
+                player->armor_points = 7;
+                player->gold -= 1250;
+            } else {
+                print_message("Not enough gold for Leather Armor.\n");
+                return;
+            }
+            break;
+        case '2':
+            if (player->gold >= 1500) {
+                player->armor_type = 2;
+                player->armor_points = 14;
+                player->gold -= 1500;
+            } else {
+                print_message("Not enough gold for Chainmail.\n");
+                return;
+            }
+            break;
+        case '3':
+            if (player->gold >= 2000) {
+                player->armor_type = 3;
+                player->armor_points = 21;
+                player->gold -= 2000;
+            } else {
+                print_message("Not enough gold for Plate Armor.\n");
+                return;
+            }
+            break;
+        case '4':
+            return;
+        default:
+            print_message("Invalid choice. No armor purchased.\n");
+            return;
+    }
+    print_message("Armor purchased successfully!\n");
+}
+
+void buy_weapon(Player *player)
+{
+    print_message("\nWeapon Options:\n");
+    print_message("1. Dagger (1250 GP)\n");
+    print_message("2. Mace (1500 GP)\n");
+    print_message("3. Sword (2000 GP)\n");
+    print_message("4. Nothing\n");
+
+    char weapon_choice = get_user_input();
+    switch(weapon_choice) {
+        case '1':
+            if (player->gold >= 1250) {
+                player->weapon_type = 1;
+                player->gold -= 1250;
+            } else {
+                print_message("Not enough gold for a Dagger.\n");
+                return;
+            }
+            break;
+        case '2':
+            if (player->gold >= 1500) {
+                player->weapon_type = 2;
+                player->gold -= 1500;
+            } else {
+                print_message("Not enough gold for a Mace.\n");
+                return;
+            }
+            break;
+        case '3':
+            if (player->gold >= 2000) {
+                player->weapon_type = 3;
+                player->gold -= 2000;
+            } else {
+                print_message("Not enough gold for a Sword.\n");
+                return;
+            }
+            break;
+        case '4':
+            return;
+        default:
+            print_message("Invalid choice. No weapon purchased.\n");
+            return;
+    }
+    print_message("Weapon purchased successfully!\n");
 }
 
 // Helper function to get treasure names

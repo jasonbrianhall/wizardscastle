@@ -42,7 +42,7 @@ typedef struct {
     int monster_count;
     int game_over;
     int victory;
-    
+    int vendor_attacked;
 
 } GameState;
 
@@ -73,6 +73,8 @@ void trade_with_vendor(Player *player, GameState *game);
 void attack_vendor(Player *player, GameState *game);
 const char* get_treasure_name(int index);
 int min(int a, int b);
+void buy_armor(Player *player);
+void buy_weapon(Player *player);
 
 
 // Item and treasure functions
