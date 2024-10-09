@@ -227,7 +227,7 @@ void main_game_loop(Player *player, GameState *game)
             char message[100];
             snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
             print_message(message);
-        } else if (room_content >= 101 && room_content <= 125) {
+        } else if (room_content >= 101 && room_content <= 133) {
             char message[100];
             snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - 101]);
             print_message(message);
@@ -250,6 +250,22 @@ void main_game_loop(Player *player, GameState *game)
                 print_message(message);
                 set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
            }
+           // Monsters
+           else if (room_content>=113 && room_content <=124)
+           {
+               fight_monster(player, game);
+           }
+           // Vendors
+           else if (room_content==125)
+           {
+               handle_vendor(player, game);
+           }
+           // Treasure
+           else if (room_content>=126 && room_content<=133)
+           {
+                printf("Fix me, Get Treasure"); 
+           }
+           
         } else {
             print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
             printf("%i\n", room_content);
@@ -263,6 +279,10 @@ void main_game_loop(Player *player, GameState *game)
             case 'U':
                 if (room_content == 103) {  // Stairs going up
                     player->level--;
+                    if (player->level<1)
+                    {
+                        player->level=8;
+                    }
                     print_message("YOU CLIMB UP THE STAIRS.\n");
                 } else {
                     print_message("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
@@ -271,6 +291,10 @@ void main_game_loop(Player *player, GameState *game)
             case 'D':
                 if (room_content == 104) {  // Stairs going down
                     player->level++;
+                    if (player->level>8)
+                    {
+                        player->level=1;
+                    }
                     print_message("YOU DESCEND THE STAIRS.\n");
                 } else {
                     print_message("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
