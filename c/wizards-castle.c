@@ -57,7 +57,7 @@ void initialize_player(Player *player)
 	player->runestaff_flag = 0;
 	player->orb_flag = 0;
 
-	    // Additional variables from BASIC that might be needed
+	// Additional variables from BASIC that might be needed
 	player->book_flag = 0;
 	player->blindness_flag = 0;
 	player->stickybook_flag = 0;
@@ -311,7 +311,93 @@ void allocate_attributes(Player *player)
 // Map and room functions
 void generate_castle(GameState *game)
 {
+    int x, y, z, q, q1;
+    
+    // Seed the random number generator
+    srand(time(NULL));
 
+    // Initialize all rooms to empty (101)
+    for (q = 0; q < MAP_SIZE; q++) {
+        game->location_map[q] = 101;
+    }
+
+    // Set the entrance
+    x = 1; y = 4; z = 1;
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 2;
+
+    // Place stairs
+    for (z = 1; z <= 7; z++) {
+        for (q1 = 1; q1 <= 2; q1++) {
+            do {
+                x = RANDOM_INT(8);
+                y = RANDOM_INT(8);
+            } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 103;  // Stairs down
+            game->location_map[CALCULATE_ROOM_INDEX(z+1, x, y)] = 104;  // Stairs up
+        }
+    }
+
+    // Place other elements
+    for (z = 1; z <= 8; z++) {
+        // Place monsters, treasures, etc.
+        for (q = 113; q <= 124; q++) {
+            do {
+                x = RANDOM_INT(8);
+                y = RANDOM_INT(8);
+            } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
+        }
+
+        // Place pools, chests, and gold
+        for (q1 = 1; q1 <= 3; q1++) {
+            for (q = 105; q <= 112; q++) {
+                do {
+                    x = RANDOM_INT(8);
+                    y = RANDOM_INT(8);
+                } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+                game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
+            }
+            
+            // Place vendor
+            do {
+                x = RANDOM_INT(8);
+                y = RANDOM_INT(8);
+            } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 125;
+        }
+    }
+
+    // Place special items (crystal orb, ruby red, etc.)
+    for (q = 126; q <= 133; q++) {
+        do {
+            z = RANDOM_INT(8);
+            x = RANDOM_INT(8);
+            y = RANDOM_INT(8);
+        } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+        game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
+    }
+
+    // Place the Runestaff
+    do {
+        z = RANDOM_INT(8);
+        x = RANDOM_INT(8);
+        y = RANDOM_INT(8);
+    } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 112 + RANDOM_INT(12);
+    game->runestaff_location[0] = x;
+    game->runestaff_location[1] = y;
+    game->runestaff_location[2] = z;
+
+    // Place the Orb of Zot
+    do {
+        z = RANDOM_INT(8);
+        x = RANDOM_INT(8);
+        y = RANDOM_INT(8);
+    } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 109;
+    game->orb_location[0] = x;
+    game->orb_location[1] = y;
+    game->orb_location[2] = z;
 }
 
 int get_room_content(GameState *game, int x, int y, int level)
