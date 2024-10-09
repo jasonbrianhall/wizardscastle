@@ -39,6 +39,9 @@ typedef struct {
     int runestaff_location[3];
     int turn_count;
     int monster_count;
+    int game_over;
+    int victory;
+
 } GameState;
 
 // Main game functions

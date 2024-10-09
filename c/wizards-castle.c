@@ -70,7 +70,8 @@ void initialize_player(Player *player)
 void initialize_game(GameState *game)
 {
     int content, level, x, y, z;
-    
+    game->game_over=0;
+    game->victory=0;
     // Seed the random number generator
     srand(time(NULL));
 
@@ -564,7 +565,88 @@ void set_room_content(GameState *game, int x, int y, int level, int content)
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction)
 {
+    int current_room = get_room_content(game, player->x, player->y, player->level);
+    
+    // Check if player is at the entrance and moving north
+    if (current_room == 102 && direction == 'N') {
+        if (player->orb_flag) {
+            print_message("Congratulations! You've escaped the castle with the Orb of Zot!\n");
+            // Set a flag or call a function to end the game with victory
+            game->game_over = 1;
+            game->victory = 1;
+            return;
+        } else {
+            print_message("You're at the entrance. Are you sure you want to leave without the Orb of Zot? (Y/N) ");
+            char choice = get_user_input();
+            if (choice == 'Y') {
+                print_message("You leave the castle empty-handed. Game over!\n");
+                // Set a flag or call a function to end the game
+                game->game_over = 1;
+                return;
+            } else {
+                print_message("You decide to stay in the castle.\n");
+                return;
+            }
+        }
+    }
 
+    int new_x = player->x;
+    int new_y = player->y;
+
+    switch(direction) {
+        case 'N':
+            new_x--;
+            break;
+        case 'S':
+            new_x++;
+            break;
+        case 'W':
+            new_y--;
+            break;
+        case 'E':
+            new_y++;
+            break;
+        default:
+            print_message("Invalid direction!\n");
+            return;
+    }
+
+    // Handle wrapping around the castle edges
+    new_x = (new_x - 1 + 8) % 8 + 1;  // Wrap x between 1 and 8
+    new_y = (new_y - 1 + 8) % 8 + 1;  // Wrap y between 1 and 8
+
+    // Update player position
+    player->x = new_x;
+    player->y = new_y;
+
+    // Print movement message
+    char message[100];
+    snprintf(message, sizeof(message), "You move %s to (%d, %d) on level %d.\n", 
+             direction == 'N' ? "North" :
+             direction == 'S' ? "South" :
+             direction == 'W' ? "West" : "East",
+             player->x, player->y, player->level);
+    print_message(message);
+
+    // Check for special room events (like warp or sinkhole)
+    int room_content = get_room_content(game, player->x, player->y, player->level);
+    
+    if (room_content == 109) {  // Warp
+        player->x = 1 + rand() % 8;
+        player->y = 1 + rand() % 8;
+        player->level = 1 + rand() % 8;
+        print_message("You've been warped to a random location!\n");
+    } else if (room_content == 110) {  // Sinkhole
+        if (player->level < 8) {
+            player->level++;
+            print_message("You've fallen through a sinkhole to the level below!\n");
+        } else {
+            print_message("You've fallen through a sinkhole, but you're already at the bottom level!\n");
+        }
+    }
+
+    // Print the new room description
+    handle_room_event(player, game);
 }
 
 void handle_room_event(Player *player, GameState *game)
