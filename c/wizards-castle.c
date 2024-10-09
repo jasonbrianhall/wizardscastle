@@ -764,13 +764,9 @@ void fight_monster(Player *player, GameState *game)
             case 'A':
                 if (player->weapon_type == 0) {
                     printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
-                    continue;
-                }
-                if (player->stickybook_flag) {
+                } else if (player->stickybook_flag) {
                     printf("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
-                    continue;
-                }
-                if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
+                } else if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
                     printf("\nYOU MISSED, TOO BAD!\n");
                 } else {
                     printf("\nYOU HIT THE EVIL %s!\n", enemy_name);
@@ -822,21 +818,23 @@ void fight_monster(Player *player, GameState *game)
                 continue;
         }
 
-        // Enemy's turn
-        printf("\nTHE %s ATTACKS!\n", enemy_name);
-        if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
-            printf("\nOUCH! HE HIT YOU!\n");
-            int damage = (enemy_strength / 2) + 1;
-            damage -= player->armor_points / 7;
-            if (damage < 0) damage = 0;
-            player->strength -= damage;
-            if (player->strength <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
-                game->game_over = 1;
-                return;
+        // Enemy's turn - always occurs unless player successfully retreated
+        if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
+            printf("\nTHE %s ATTACKS!\n", enemy_name);
+            if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+                printf("\nOUCH! HE HIT YOU!\n");
+                int damage = (enemy_strength / 2) + 1;
+                damage -= player->armor_points / 7;
+                if (damage < 0) damage = 0;
+                player->strength -= damage;
+                if (player->strength <= 0) {
+                    printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                    game->game_over = 1;
+                    return;
+                }
+            } else {
+                printf("\nWHAT LUCK, HE MISSED YOU!\n");
             }
-        } else {
-            printf("\nWHAT LUCK, HE MISSED YOU!\n");
         }
     }
 }
@@ -1109,60 +1107,8 @@ void attack_vendor(Player *player, GameState *game)
     print_message("You attack the vendor!\n");
     game->vendor_attacked = 1;
 
-    // The vendor has high stats and good equipment
-    int vendor_strength = 15;
-    int vendor_dexterity = 15;
-    int vendor_armor = 3;
-    int vendor_weapon = 3;
-
-    // Simple combat resolution
-    if (random_number(20) + player->dexterity > random_number(20) + vendor_dexterity) {
-        int damage = random_number(player->weapon_type * 2 + 2) - vendor_armor;
-        if (damage > 0) {
-            print_message("You hit the vendor!\n");
-            vendor_strength -= damage;
-            if (vendor_strength <= 0) {
-                print_message("You've defeated the vendor!\n");
-                // Give player vendor's inventory
-                player->gold += 2000;
-                player->armor_type = 3;
-                player->armor_points = 21;
-                player->weapon_type = 3;
-                if (!player->lamp_flag) {
-                    player->lamp_flag = 1;
-                    print_message("You found a lamp!\n");
-                }
-                player->strength = min(player->strength + random_number(6), 18);
-                player->intelligence = min(player->intelligence + random_number(6), 18);
-                player->dexterity = min(player->dexterity + random_number(6), 18);
-                return;
-            }
-        } else {
-            print_message("Your attack was ineffective.\n");
-        }
-    } else {
-        print_message("You missed the vendor!\n");
-    }
-
-    // Vendor's counterattack
-    if (random_number(20) + vendor_dexterity > random_number(20) + player->dexterity) {
-        int damage = random_number(vendor_weapon * 2 + 2) - player->armor_points / 7;
-        if (damage > 0) {
-            print_message("The vendor hits you!\n");
-            player->strength -= damage;
-            if (player->strength <= 0) {
-                print_message("The vendor has defeated you!\n");
-                game->game_over = 1;
-                return;
-            }
-        } else {
-            print_message("The vendor's attack was ineffective.\n");
-        }
-    } else {
-        print_message("The vendor missed you!\n");
-    }
-
-    print_message("The vendor disappears in a puff of smoke!\n");
+    // Call fight_monster to handle the combat
+    fight_monster(player, game);
 }
 
 void buy_armor(Player *player)
