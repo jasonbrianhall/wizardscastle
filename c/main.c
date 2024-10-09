@@ -7,6 +7,7 @@ int main(void)
 	Player player;
 	GameState game;
         initialize_player(&player);
+	initialize_game(&game);
 
 	print_introduction();
 	choose_race(&player);

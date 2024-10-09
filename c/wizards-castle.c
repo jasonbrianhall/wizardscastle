@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define RANDOM_INT(max) (1 + rand() % (max))
+#define WRAP_COORDINATE(coord) ((coord) + 8 * ((coord) == 9) - 8 * ((coord) == 0))
+#define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
+#define ENSURE_VALID_CONTENT(content) ((content) + 100 * ((content) > 99))
 
 void print_introduction(void)
 {
@@ -60,12 +67,95 @@ void initialize_player(Player *player)
 
 }
 
-// Main game functions
 void initialize_game(GameState *game)
 {
+    int content, level, x, y;
+    
+    // Seed the random number generator
+    srand(time(NULL));
 
+    // Initialize the castle map
+    for (int i = 0; i < MAP_SIZE; i++) {
+        game->location_map[i] = 101;  // Empty room
+    }
+
+    // Set the entrance
+    x = 1; y = 4; level = 1;
+    game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 2;  // Entrance
+
+    // Place stairs
+    for (level = 1; level <= 7; level++) {
+        for (int i = 1; i <= 2; i++) {
+            do {
+                x = RANDOM_INT(8); y = RANDOM_INT(8);
+            } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+            game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 103;  // Stairs going down
+            game->location_map[CALCULATE_ROOM_INDEX(level + 1, x, y)] = 104;  // Stairs going up
+        }
+    }
+
+    // Place other elements
+    for (level = 1; level <= 8; level++) {
+        // Place monsters, treasures, etc.
+        for (content = 113; content <= 124; content++) {
+            do {
+                x = RANDOM_INT(8); y = RANDOM_INT(8);
+            } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+            game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = content;
+        }
+
+        // Place pools, chests, and gold
+        for (int i = 1; i <= 3; i++) {
+            for (content = 105; content <= 112; content++) {
+                do {
+                    x = RANDOM_INT(8); y = RANDOM_INT(8);
+                } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+                game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = content;
+            }
+            
+            // Place vendor
+            do {
+                x = RANDOM_INT(8); y = RANDOM_INT(8);
+            } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+            game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 125;
+        }
+    }
+
+    // Place special items (crystal orb, ruby red, etc.)
+    for (content = 126; content <= 133; content++) {
+        do {
+            x = RANDOM_INT(8); y = RANDOM_INT(8); level = RANDOM_INT(8);
+        } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+        game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = content;
+    }
+
+    // Place the Runestaff
+    do {
+        x = RANDOM_INT(8); y = RANDOM_INT(8); level = RANDOM_INT(8);
+    } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+    game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 112 + RANDOM_INT(12);
+    game->runestaff_location[0] = x;
+    game->runestaff_location[1] = y;
+    game->runestaff_location[2] = level;
+
+    // Place the Orb of Zot
+    do {
+        x = RANDOM_INT(8); y = RANDOM_INT(8); level = RANDOM_INT(8);
+    } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
+    game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 109;
+    game->orb_location[0] = x;
+    game->orb_location[1] = y;
+    game->orb_location[2] = level;
+
+    // Initialize other game state variables
+    game->turn_count = 1;
+    game->monster_count = 0;  // You might want to count monsters while placing them
+
+    // Initialize treasures (all not found at start)
+    for (int i = 0; i < TREASURE_COUNT; i++) {
+        game->treasure[i] = 0;
+    }
 }
-
 void main_game_loop(Player *player, GameState *game)
 {
 
