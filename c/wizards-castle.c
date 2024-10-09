@@ -756,7 +756,7 @@ void fight_monster(Player *player, GameState *game)
             printf("YOU CAN ALSO CAST A SPELL.\n");
         }
         printf("\n");
-        printf("YOUR STRENGTH IS %d AND YOUR DEXTERITY IS %d.\n", player->strength, player->dexterity);
+        printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %D.\n", player->strength, player->dexterity, player->intelligence);
 
         char choice = get_user_input();
 
@@ -819,23 +819,40 @@ void fight_monster(Player *player, GameState *game)
         }
 
         // Enemy's turn - always occurs unless player successfully retreated
-        if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
-            printf("\nTHE %s ATTACKS!\n", enemy_name);
-            if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
-                printf("\nOUCH! HE HIT YOU!\n");
-                int damage = (enemy_strength / 2) + 1;
-                damage -= player->armor_points / 7;
-                if (damage < 0) damage = 0;
-                player->strength -= damage;
-                if (player->strength <= 0) {
-                    printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
-                    game->game_over = 1;
-                    return;
+   if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
+        printf("\nTHE %s ATTACKS!\n", enemy_name);
+        if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+            printf("\nOUCH! HE HIT YOU!\n");
+            int damage = (enemy_strength / 2) + 1;
+            int original_damage = damage;
+            
+            // Apply armor reduction
+            if (player->armor_type != 0) {
+                damage -= player->armor_type;
+                player->armor_points -= player->armor_type;
+                if (damage < 0) {
+                    player->armor_points -= damage;  // Absorb excess damage
+                    damage = 0;
                 }
-            } else {
-                printf("\nWHAT LUCK, HE MISSED YOU!\n");
+                if (player->armor_points < 0) {
+                    player->armor_points = 0;
+                    player->armor_type = 0;
+                    printf("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
+                }
             }
+            
+            player->strength -= damage;
+            printf("YOU TAKE %d DAMAGE!\n", damage);
+            
+            if (player->strength <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+                return;
+            }
+        } else {
+            printf("\nWHAT LUCK, HE MISSED YOU!\n");
         }
+    }
     }
 }
 
