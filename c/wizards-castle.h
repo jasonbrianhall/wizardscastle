@@ -84,7 +84,7 @@ void display_map(GameState *game, int current_level);
 void print_help();
 
 // Game ending functions
-int check_game_over(Player *player, GameState *game);
+int check_game_over(Player *player);
 void end_game(Player *player, GameState *game);
 
 // Input/Output functions
@@ -93,4 +93,6 @@ void print_message(const char *message);
 void printStars(void);
 
 void open_book(Player *player, GameState *game);
+
+const char* get_race_name(int race);
 #endif 

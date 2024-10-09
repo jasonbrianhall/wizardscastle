@@ -210,12 +210,17 @@ void main_game_loop(Player *player, GameState *game)
         print_status(player);
         
         int room_content = get_room_content(game, player->x, player->y, player->level);
-        if (room_content >= 101 && room_content <= 125) {
-            printf("HERE YOU FIND %s.\n", room_contents[room_content - 101]);
+        if (room_content == 102) {  // The Entrance
+            char message[100];
+            snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
+            print_message(message);
+        } else if (room_content >= 101 && room_content <= 125) {
+           char message[100];
+            snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - 101]);
+            print_message(message);
         } else {
-            printf("HERE YOU FIND AN UNKNOWN ROOM.\n");
+            print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
         }
-
         user_command = get_user_input();
 
         switch (user_command) {
@@ -287,7 +292,7 @@ void main_game_loop(Player *player, GameState *game)
 
         if (!game_over) {
             handle_room_event(player, game);
-            game_over = check_game_over(player, game);
+            game_over = check_game_over(player);
         }
     }
 
@@ -781,10 +786,21 @@ void print_help()
 }
 
 // Game ending functions
-int check_game_over(Player *player, GameState *game)
-{
-
+int check_game_over(Player *player) {
+    // Check if player has died
+    if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
+        return 1;
+    }
+    
+    // Check if player has won (e.g., found the Orb of Zot and exited)
+    if (player->orb_flag && player->x == 1 && player->y == 4 && player->level == 1) {
+        return 1;
+    }
+    
+    // Game is not over
+    return 0;
 }
+
 
 void end_game(Player *player, GameState *game)
 {
@@ -875,4 +891,16 @@ void open_book(Player *player, GameState *game)
     
     // Remove the book from the room
     set_room_content(game, player->x, player->y, player->level, 101);  // Empty room
+}
+
+const char* get_race_name(int race)
+{
+    switch(race)
+    {
+        case 1: return "HOBBIT";
+        case 2: return "ELF";
+        case 3: return "HUMAN";
+        case 4: return "DWARF";
+        default: return "UNKNOWN";
+    }
 }
