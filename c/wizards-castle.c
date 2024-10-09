@@ -232,7 +232,7 @@ void main_game_loop(Player *player, GameState *game)
             print_message(message);
             if (room_content==107)
             {
-                int gold_found = (RANDOM_INT(1000) + 1);  // Random amount between 1 and 1000
+                int gold_found = random_number(1000);  // Random amount between 1 and 1000
                 player->gold += gold_found;
                 char message[100];
                 snprintf(message, sizeof(message), "%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
@@ -241,7 +241,7 @@ void main_game_loop(Player *player, GameState *game)
             }
             else if (room_content==108)
             {
-                int flares_found = RANDOM_INT(5)+1;  // Random amount between 1 and 5
+                int flares_found = random_number(1000);  // Random amount between 1 and 5
 
                 player->flares += flares_found;
                 char message[100];
@@ -917,9 +917,10 @@ void gaze_into_orb(Player *player, GameState *game)
 }
 
 // Utility functions
+
 int random_number(int max_value)
 {
-
+    return 1 + rand() % max_value;
 }
 
 void print_status(Player *player)
