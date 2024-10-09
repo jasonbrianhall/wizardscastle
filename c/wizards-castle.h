@@ -34,6 +34,7 @@ typedef struct {
 
 typedef struct {
     int location_map[MAP_SIZE];
+    int discovered_rooms[MAP_SIZE];
     int treasure[TREASURE_COUNT];
     int orb_location[3];
     int runestaff_location[3];
@@ -41,6 +42,7 @@ typedef struct {
     int monster_count;
     int game_over;
     int victory;
+    
 
 } GameState;
 
@@ -100,4 +102,10 @@ void printStars(void);
 void open_book(Player *player, GameState *game);
 
 const char* get_race_name(int race);
+
+void mark_room_discovered(GameState *game, int x, int y, int level);
+int is_room_discovered(GameState *game, int x, int y, int level);
+void discover_adjacent_rooms(GameState *game, Player *player);
+
+char get_room_symbol(int room_content);
 #endif 

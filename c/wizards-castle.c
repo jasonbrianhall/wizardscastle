@@ -7,7 +7,7 @@
 #include <time.h>
 
 #define RANDOM_INT(max) (1 + rand() % (max))
-#define WRAP_COORDINATE(coord) ((coord) + 8 * ((coord) == 9) - 8 * ((coord) == 0))
+#define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
 #define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
 #define ENSURE_VALID_CONTENT(content) ((content) + 100 * ((content) > 99))
 
@@ -160,7 +160,12 @@ void initialize_game(GameState *game)
     // Set the entrance
     x = 1; y = 4; z = 1;
     game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 102;
-
+    for (int i = 0; i < MAP_SIZE; i++) {
+        game->discovered_rooms[i] = 0;
+    }
+    
+    // Mark the entrance as discovered
+    mark_room_discovered(game, 1, 4, 1);
 
 }
 
@@ -592,7 +597,6 @@ void move_player(Player *player, GameState *game, char direction)
 
     int new_x = player->x;
     int new_y = player->y;
-
     switch(direction) {
         case 'N':
             new_x--;
@@ -630,6 +634,7 @@ void move_player(Player *player, GameState *game, char direction)
 
     // Check for special room events (like warp or sinkhole)
     int room_content = get_room_content(game, player->x, player->y, player->level);
+    mark_room_discovered(game, player->x, player->y, player->level);
     
     if (room_content == 109) {  // Warp
         player->x = 1 + rand() % 8;
@@ -791,12 +796,68 @@ void buy_lamp_and_flares(Player *player)
 
 void use_lamp(Player *player, GameState *game)
 {
+    if (!player->lamp_flag) {
+        print_message("You don't have a lamp!\n");
+        return;
+    }
 
+    print_message("Which direction do you want to shine the lamp? (N/S/E/W) ");
+    char direction = get_user_input();
+    int dx = 0, dy = 0;
+
+    switch(direction) {
+        case 'N': dx = -1; break;
+        case 'S': dx = 1; break;
+        case 'W': dy = -1; break;
+        case 'E': dy = 1; break;
+        default:
+            print_message("Invalid direction!\n");
+            return;
+    }
+
+    int x = WRAP_COORDINATE(player->x + dx);
+    int y = WRAP_COORDINATE(player->y + dy);
+    
+    mark_room_discovered(game, x, y, player->level);
+    int room_content = get_room_content(game, x, y, player->level);
+    char symbol = get_room_symbol(room_content);
+
+    print_message("\nThe lamp reveals: ");
+    char room_str[4] = " ? ";
+    room_str[1] = symbol;
+    print_message(room_str);
+    print_message("\n");
 }
 
 void use_flare(Player *player, GameState *game)
 {
+    if (player->flares <= 0) {
+        print_message("You don't have any flares!\n");
+        return;
+    }
 
+    player->flares--;
+    print_message("\nYou light a flare. It illuminates the surrounding rooms:\n\n");
+
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int x = WRAP_COORDINATE(player->x + dx);
+            int y = WRAP_COORDINATE(player->y + dy);
+            
+            mark_room_discovered(game, x, y, player->level);
+            int room_content = get_room_content(game, x, y, player->level);
+            char symbol = get_room_symbol(room_content);
+
+            if (dx == 0 && dy == 0) {
+                print_message("[@]");
+            } else {
+                char room_str[4] = " ? ";
+                room_str[1] = symbol;
+                print_message(room_str);
+            }
+        }
+        print_message("\n");
+    }
 }
 
 void open_chest(Player *player, GameState *game)
@@ -883,12 +944,6 @@ void print_status(Player *player)
 
 void display_map(GameState *game, Player *player)
 {
-    const char* symbols = ".EUDPCFGSWOBMMMMMMMMMMMMMV";
-    // . = Empty Room     E = Entrance/Exit  U = Stairs Up     D = Stairs Down
-    // P = Pool           C = Chest          F = Flares        G = Gold
-    // S = Sinkhole       W = Warp           O = Crystal Orb   B = Book
-    // M = Monster (all types)               V = Vendor
-
     print_message("\n=== MAP OF LEVEL ");
     char level_str[3];
     snprintf(level_str, sizeof(level_str), "%d", player->level);
@@ -897,24 +952,16 @@ void display_map(GameState *game, Player *player)
 
     for (int x = 1; x <= 8; x++) {
         for (int y = 1; y <= 8; y++) {
-            int room_content = get_room_content(game, x, y, player->level);
-            char symbol;
-
-            if (room_content >= 101 && room_content <= 125) {
-                symbol = symbols[room_content - 101];
-            } else if (room_content >= 126 && room_content <= 133) {
-                symbol = 'T'; // Treasure
-            } else {
-                symbol = '?'; // Unknown
-            }
-
-            // Check if this is the player's current position
             if (x == player->x && y == player->y) {
                 print_message("[@]");
-            } else {
+            } else if (is_room_discovered(game, x, y, player->level)) {
+                int room_content = get_room_content(game, x, y, player->level);
+                char symbol = get_room_symbol(room_content);
                 char room_str[4] = " ? ";
                 room_str[1] = symbol;
                 print_message(room_str);
+            } else {
+                print_message(" ? ");
             }
         }
         print_message("\n");
@@ -926,6 +973,7 @@ void display_map(GameState *game, Player *player)
     print_message("S = Sinkhole W = Warp    O = Orb       B = Book\n");
     print_message("M = Monster  V = Vendor  T = Treasure  ? = Unknown\n");
 }
+
 void print_help()
 {
     print_message("\n*** WIZARD'S CASTLE COMMAND AND INFORMATION SUMMARY ***\n\n");
@@ -1120,5 +1168,50 @@ const char* get_race_name(int race)
         case 3: return "HUMAN";
         case 4: return "DWARF";
         default: return "UNKNOWN";
+    }
+}
+
+void mark_room_discovered(GameState *game, int x, int y, int level)
+{
+    int index = CALCULATE_ROOM_INDEX(level, x, y);
+    game->discovered_rooms[index] = 1;
+}
+
+int is_room_discovered(GameState *game, int x, int y, int level)
+{
+    int index = CALCULATE_ROOM_INDEX(level, x, y);
+    return game->discovered_rooms[index];
+}
+
+void discover_adjacent_rooms(GameState *game, Player *player)
+{
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int x = WRAP_COORDINATE(player->x + dx);
+            int y = WRAP_COORDINATE(player->y + dy);
+            mark_room_discovered(game, x, y, player->level);
+        }
+    }
+}
+
+char get_room_symbol(int room_content)
+{
+    switch (room_content) {
+        case 101: return '.';  // Empty room
+        case 102: return 'E';  // Entrance
+        case 103: return 'U';  // Stairs going up
+        case 104: return 'D';  // Stairs going down
+        case 105: return 'P';  // Pool
+        case 106: return 'C';  // Chest
+        case 107: return 'G';  // Gold
+        case 108: return 'F';  // Flares
+        case 109: return 'W';  // Warp
+        case 110: return 'S';  // Sinkhole
+        case 111: return 'O';  // Crystal Orb
+        case 112: return 'B';  // Book
+        case 113 ... 124: return 'M';  // Monsters (all types)
+        case 125: return 'V';  // Vendor
+        case 126 ... 133: return 'T';  // Treasures
+        default: return '?';  // Unknown
     }
 }
