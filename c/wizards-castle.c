@@ -692,17 +692,18 @@ void move_player(Player *player, GameState *game, char direction)
     mark_room_discovered(game, player->x, player->y, player->level);
     
     if (room_content == 109) {  // Warp
-        player->x = 1 + rand() % 8;
-        player->y = 1 + rand() % 8;
-        player->level = 1 + rand() % 8;
+        player->x = random_number(8);
+        player->y = random_number(8);
+        player->level = random_number(8);
         print_message("You've been warped to a random location!\n");
     } else if (room_content == 110) {  // Sinkhole
         if (player->level < 8) {
             player->level++;
-            print_message("You've fallen through a sinkhole to the level below!\n");
         } else {
-            print_message("You've fallen through a sinkhole, but you're already at the bottom level!\n");
+            player->level=1
         }
+        print_message("You've fallen through a sinkhole to the level below!\n");
+
     }
 
     // Print the new room description
