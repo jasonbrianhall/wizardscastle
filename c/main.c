@@ -12,5 +12,6 @@ int main(void)
 	choose_race(&player);
 	print_message("\n");
 	choose_sex(&player);
+	buy_equipment(&player);
 	return 0;
 }

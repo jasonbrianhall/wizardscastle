@@ -202,7 +202,77 @@ void handle_vendor(Player *player, GameState *game)
 // Item and treasure functions
 void buy_equipment(Player *player)
 {
+    char user_input[10];
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
+    const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
+    int cost;
 
+    // Buy Armor
+    print_message("\nOK, ");
+    print_message(race_names[player->race - 1]);
+    printf(", YOU HAVE %d GOLD PIECES (GP'S).\n\n", player->gold);
+    
+    print_message("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
+    print_message("PLATE<30> CHAINMAIL<20> LEATHER<10> NOTHING<0>\n\n");
+    
+    do {
+        print_message("YOUR CHOICE:  ");
+        fgets(user_input, sizeof(user_input), stdin);
+        user_input[0] = toupper(user_input[0]);
+
+        switch(user_input[0]) {
+            case 'P': player->armor_type = 3; cost = 30; break;
+            case 'C': player->armor_type = 2; cost = 20; break;
+            case 'L': player->armor_type = 1; cost = 10; break;
+            case 'N': player->armor_type = 0; cost = 0; break;
+            default:
+                printf("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
+                continue;
+        }
+        break;
+    } while (1);
+
+    player->gold -= cost;
+    player->armor_points = player->armor_type * 7;
+
+    // Buy Weapon
+    printf("\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
+    print_message("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
+    print_message("SWORD<30> MACE<20> DAGGER<10> NOTHING<0>\n\n");
+    
+    do {
+        print_message("YOUR CHOICE:  ");
+        fgets(user_input, sizeof(user_input), stdin);
+        user_input[0] = toupper(user_input[0]);
+
+        switch(user_input[0]) {
+            case 'S': 
+                if (player->gold < 30) {
+                    print_message("** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
+                    continue;
+                }
+                player->weapon_type = 3; cost = 30; break;
+            case 'M': 
+                if (player->gold < 20) {
+                    print_message("** SORRY SIR, I'M AFRAID I DON'T GIVE CREDIT!\n\n");
+                    continue;
+                }
+                player->weapon_type = 2; cost = 20; break;
+            case 'D': player->weapon_type = 1; cost = 10; break;
+            case 'N': player->weapon_type = 0; cost = 0; break;
+            default:
+                print_message("** TRY AGAIN, YOUR CHOICE MUST BE S, M, D, OR N.\n\n");
+                continue;
+        }
+        break;
+    } while (1);
+
+    player->gold -= cost;
+
+    printf("\nYOU NOW HAVE %s ARMOR AND A %s.\n", 
+           armor_types[player->armor_type], weapon_types[player->weapon_type]);
+    printf("YOU HAVE %d GOLD PIECES LEFT.\n", player->gold);
 
 }
 
