@@ -92,4 +92,5 @@ char get_user_input();
 void print_message(const char *message);
 void printStars(void);
 
+void open_book(Player *player, GameState *game);
 #endif 

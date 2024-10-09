@@ -208,6 +208,13 @@ void main_game_loop(Player *player, GameState *game)
 
         print_message("\n");
         print_status(player);
+        
+        int room_content = get_room_content(game, player->x, player->y, player->level);
+        if (room_content >= 101 && room_content <= 125) {
+            printf("HERE YOU FIND %s.\n", room_contents[room_content - 101]);
+        } else {
+            printf("HERE YOU FIND AN UNKNOWN ROOM.\n");
+        }
 
         user_command = get_user_input();
 
@@ -216,17 +223,17 @@ void main_game_loop(Player *player, GameState *game)
                 move_player(player, game, user_command);
                 break;
             case 'U':
-                if (get_room_content(game, player->x, player->y, player->level) == 3) {
+                if (room_content == 103) {  // Stairs going up
                     player->level--;
-                    handle_room_event(player, game);
+                    print_message("YOU CLIMB UP THE STAIRS.\n");
                 } else {
                     print_message("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
                 }
                 break;
             case 'D':
-                if (get_room_content(game, player->x, player->y, player->level) == 4) {
+                if (room_content == 104) {  // Stairs going down
                     player->level++;
-                    handle_room_event(player, game);
+                    print_message("YOU DESCEND THE STAIRS.\n");
                 } else {
                     print_message("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
                 }
@@ -241,10 +248,20 @@ void main_game_loop(Player *player, GameState *game)
                 use_lamp(player, game);
                 break;
             case 'O':
-                open_chest(player, game);
+                if (room_content == 106) {  // Chest
+                    open_chest(player, game);
+                } else if (room_content == 112) {  // Book
+                    open_book(player, game);
+                } else {
+                    print_message("THERE'S NOTHING HERE TO OPEN!\n");
+                }
                 break;
             case 'G':
-                gaze_into_orb(player, game);
+                if (room_content == 111) {  // Crystal orb
+                    gaze_into_orb(player, game);
+                } else {
+                    print_message("THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
+                }
                 break;
             case 'T':
                 if (player->runestaff_flag) {
@@ -254,7 +271,7 @@ void main_game_loop(Player *player, GameState *game)
                 }
                 break;
             case 'Q':
-                print_message("DO YOU REALLY WANT TO QUIT NOW? ");
+                print_message("DO YOU REALLY WANT TO QUIT NOW? (Y/N) ");
                 if (get_user_input() == 'Y') {
                     game_over = 1;
                 } else {
@@ -728,7 +745,39 @@ void display_map(GameState *game, int current_level)
 
 void print_help()
 {
+    print_message("\n*** WIZARD'S CASTLE COMMAND AND INFORMATION SUMMARY ***\n\n");
+    print_message("THE FOLLOWING COMMANDS ARE AVAILABLE:\n\n");
+    print_message("H/ELP     - Display this help information\n");
+    print_message("N/ORTH    - Move north\n");
+    print_message("S/OUTH    - Move south\n");
+    print_message("E/AST     - Move east\n");
+    print_message("W/EST     - Move west\n");
+    print_message("U/P       - Go up stairs\n");
+    print_message("D/OWN     - Go down stairs\n");
+    print_message("DR/INK    - Drink from a pool\n");
+    print_message("M/AP      - Display map of current level\n");
+    print_message("F/LARE    - Light a flare\n");
+    print_message("L/AMP     - Use lamp to look into adjacent room\n");
+    print_message("O/PEN     - Open a chest or book\n");
+    print_message("G/AZE     - Gaze into a crystal orb\n");
+    print_message("T/ELEPORT - Teleport to a new location (requires Runestaff)\n");
+    print_message("Q/UIT     - End the game\n\n");
 
+    print_message("THE CONTENTS OF ROOMS ARE AS FOLLOWS:\n\n");
+    print_message(". = EMPTY ROOM      B = BOOK            C = CHEST\n");
+    print_message("D = STAIRS DOWN     E = ENTRANCE/EXIT   F = FLARES\n");
+    print_message("G = GOLD PIECES     M = MONSTER         O = CRYSTAL ORB\n");
+    print_message("P = MAGIC POOL      S = SINKHOLE        T = TREASURE\n");
+    print_message("U = STAIRS UP       V = VENDOR          W = WARP/ORB\n\n");
+
+    print_message("THE BENEFITS OF HAVING TREASURES ARE:\n\n");
+    print_message("RUBY RED    - AVOID LETHARGY     PALE PEARL  - AVOID LEECH\n");
+    print_message("GREEN GEM   - AVOID FORGETTING   OPAL EYE    - CURES BLINDNESS\n");
+    print_message("BLUE FLAME  - DISSOLVES BOOKS    NORN STONE  - NO BENEFIT\n");
+    print_message("PALANTIR    - NO BENEFIT         SILMARIL    - NO BENEFIT\n\n");
+
+    print_message("PRESS ENTER TO CONTINUE...");
+    while (getchar() != '\n');  // Wait for Enter key
 }
 
 // Game ending functions
@@ -790,3 +839,40 @@ void print_message(const char *message)
 	printf("%s", message);
 }
 
+void open_book(Player *player, GameState *game)
+{
+    int effect = random_number(6);
+    
+    print_message("YOU OPEN THE BOOK AND ");
+    
+    switch(effect) {
+        case 1:
+            print_message("FLASH! OH NO! YOU ARE NOW A BLIND ");
+            print_message(player->race == 3 ? "HUMAN" : "CREATURE");
+            print_message("!\n");
+            player->blindness_flag = 1;
+            break;
+        case 2:
+            print_message("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
+            break;
+        case 3:
+            print_message("IT'S AN OLD COPY OF PLAYBOY!\n");
+            break;
+        case 4:
+            print_message("IT'S A MANUAL OF DEXTERITY!\n");
+            player->dexterity = 18;
+            break;
+        case 5:
+            print_message("IT'S A MANUAL OF STRENGTH!\n");
+            player->strength = 18;
+            break;
+        case 6:
+            print_message("THE BOOK STICKS TO YOUR HANDS -\n");
+            print_message("NOW YOU ARE UNABLE TO DRAW YOUR WEAPON!\n");
+            player->stickybook_flag = 1;
+            break;
+    }
+    
+    // Remove the book from the room
+    set_room_content(game, player->x, player->y, player->level, 101);  // Empty room
+}
