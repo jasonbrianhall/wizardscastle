@@ -1117,26 +1117,39 @@ void buy_lamp_and_flares(Player *player)
         } while (1);
     }
 
-    // Try to buy flares
+   // Try to buy flares
     if (player->gold >= 1) {
         printf("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n", race_names[player->race - 1], player->gold);
         print_message("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
         
         int flares_to_buy;
+        char *endptr;
         do {
             fgets(user_input, sizeof(user_input), stdin);
-            flares_to_buy = atoi(user_input);
+            user_input[strcspn(user_input, "\n")] = 0; // Remove newline
 
-            if (flares_to_buy >= 0 && flares_to_buy <= player->gold) {
+            // Check if the input is "0" to explicitly buy no flares
+            if (strcmp(user_input, "0") == 0) {
+                print_message("YOU CHOSE NOT TO BUY ANY FLARES.\n");
+                return;
+            }
+
+            // Convert input to integer and check for errors
+            flares_to_buy = strtol(user_input, &endptr, 10);
+
+            if (*endptr != '\0') {
+                print_message("** INVALID INPUT. PLEASE ENTER A NUMBER OR 0 TO BUY NO FLARES.\n");
+            } else if (flares_to_buy < 0) {
+                print_message("** PLEASE ENTER A NON-NEGATIVE NUMBER.\n");
+            } else if (flares_to_buy > player->gold) {
+                printf("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
+            } else {
                 player->flares += flares_to_buy;
                 player->gold -= flares_to_buy;
                 printf("\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n", player->flares, player->gold);
-                break;
-            } else if (flares_to_buy > player->gold) {
-                printf("** YOU CAN ONLY AFFORD %d.\n", player->gold);
-            } else {
-                print_message("** IF YOU DON'T WANT ANY, JUST TYPE 0 (ZERO).\n");
+                return;
             }
+            print_message("HOW MANY FLARES DO YOU WANT? (OR ENTER 0 TO BUY NONE) ");
         } while (1);
     }
 }
