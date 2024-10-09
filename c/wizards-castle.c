@@ -117,6 +117,43 @@ void choose_race(Player *player)
 
 void choose_sex(Player *player)
 {
+    char user_input[10];
+    int valid_choice = 0;
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+
+    do {
+        print_message("WHICH SEX DO YOU PREFER?\n\n");
+        print_message("YOUR CHOICE:  ");
+        fgets(user_input, sizeof(user_input), stdin);
+
+        // Convert input to uppercase
+        for (int i = 0; user_input[i]; i++) {
+            user_input[i] = toupper(user_input[i]);
+        }
+
+        // Remove newline character if present
+        user_input[strcspn(user_input, "\n")] = 0;
+
+        switch (user_input[0]) {
+            case 'M':
+                player->sex = 1;
+                valid_choice = 1;
+                break;
+            case 'F':
+                player->sex = 0;
+                valid_choice = 1;
+                break;
+            default:
+                {
+                    char message[100];
+                    snprintf(message, sizeof(message), "** CUTE %s, REAL CUTE. TRY M OR F.\n", race_names[player->race - 1]);
+                    print_message(message);
+                }
+                break;
+        }
+    } while (!valid_choice);
+
+    print_message("\n");
 
 }
 

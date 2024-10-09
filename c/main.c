@@ -10,6 +10,7 @@ int main(void)
 
 	print_introduction();
 	choose_race(&player);
-
+	print_message("\n");
+	choose_sex(&player);
 	return 0;
 }
