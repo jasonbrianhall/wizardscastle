@@ -22,6 +22,14 @@ typedef struct {
     int level;
     int runestaff_flag;
     int orb_flag;
+    
+    int book_flag;
+    int blindness_flag;
+    int stickybook_flag;
+    int has_runestaff;
+    int has_orb;
+    int treasure_count;
+
 } Player;
 
 typedef struct {
@@ -34,7 +42,9 @@ typedef struct {
 } GameState;
 
 // Main game functions
-void initialize_game(Player *player, GameState *game);
+void initialize_game(GameState *game);
+void initialize_player(Player *player);
+
 void print_introduction(void);
 void main_game_loop(Player *player, GameState *game);
 

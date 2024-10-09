@@ -4,6 +4,12 @@
 
 int main(void)
 {
+	Player player;
+	GameState game;
+        initialize_player(&player);
+
 	print_introduction();
+	choose_race(&player);
+
 	return 0;
 }
