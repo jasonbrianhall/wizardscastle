@@ -16,5 +16,7 @@ int main(void)
 	allocate_attributes(&player);
 	buy_equipment(&player);
 	buy_lamp_and_flares(&player);
+	generate_castle(&game);
+	
 	return 0;
 }

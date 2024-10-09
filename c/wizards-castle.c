@@ -156,9 +156,125 @@ void initialize_game(GameState *game)
         game->treasure[i] = 0;
     }
 }
+
 void main_game_loop(Player *player, GameState *game)
 {
+    char user_command;
+    int game_over = 0;
+    const char *room_contents[] = {
+        "AN EMPTY ROOM", "THE ENTRANCE", "STAIRS GOING UP", "STAIRS GOING DOWN",
+        "A POOL", "A CHEST", "GOLD PIECES", "FLARES", "A WARP", "A SINKHOLE",
+        "A CRYSTAL ORB", "A BOOK", "A KOBOLD", "AN ORC", "A WOLF", "A GOBLIN",
+        "AN OGRE", "A TROLL", "A BEAR", "A MINOTAUR", "A GARGOYLE", "A CHIMERA",
+        "A BALROG", "A DRAGON", "A VENDOR"
+    };
 
+    while (!game_over) {
+        game->turn_count++;
+
+        // Handle curses
+        if (player->runestaff_flag == 0 && player->orb_flag == 0) {
+            // Implement curse effects here (similar to lines 1950-2005 in BASIC)
+        }
+
+        // Display random events (similar to lines 2010-2060 in BASIC)
+        if (random_number(5) == 1) {
+            print_message("\nYOU ");
+            int event_type = random_number(7) + player->blindness_flag;
+            if (event_type > 7) event_type = 4;
+            
+            switch (event_type) {
+                case 1: print_message("SEE A BAT FLY BY!\n"); break;
+                case 2: print_message("HEAR FOOTSTEPS!\n"); break;
+                case 3: print_message("SNEEZED!\n"); break;
+                case 4: print_message("STEPPED ON A FROG!\n"); break;
+                case 5: print_message("SMELL SOMETHING FRYING!\n"); break;
+                case 6: print_message("FEEL LIKE YOU'RE BEING WATCHED!\n"); break;
+                case 7: print_message("HEAR FAINT RUSTLING NOISES!\n"); break;
+            }
+        }
+
+        // Handle blindness cure (similar to lines 2065-2075 in BASIC)
+        if (player->blindness_flag == 1 && game->treasure[3] == 1) {
+            print_message("\nTHE OPAL EYE CURES YOUR BLINDNESS!\n");
+            player->blindness_flag = 0;
+        }
+
+        // Handle sticky book cure (similar to lines 2080-2090 in BASIC)
+        if (player->stickybook_flag == 1 && game->treasure[5] == 1) {
+            print_message("\nTHE BLUE FLAME DISSOLVES THE BOOK!\n");
+            player->stickybook_flag = 0;
+        }
+
+        print_message("\n");
+        print_status(player);
+
+        user_command = get_user_input();
+
+        switch (user_command) {
+            case 'N': case 'S': case 'E': case 'W':
+                move_player(player, game, user_command);
+                break;
+            case 'U':
+                if (get_room_content(game, player->x, player->y, player->level) == 3) {
+                    player->level--;
+                    handle_room_event(player, game);
+                } else {
+                    print_message("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
+                }
+                break;
+            case 'D':
+                if (get_room_content(game, player->x, player->y, player->level) == 4) {
+                    player->level++;
+                    handle_room_event(player, game);
+                } else {
+                    print_message("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
+                }
+                break;
+            case 'M':
+                display_map(game, player->level);
+                break;
+            case 'F':
+                use_flare(player, game);
+                break;
+            case 'L':
+                use_lamp(player, game);
+                break;
+            case 'O':
+                open_chest(player, game);
+                break;
+            case 'G':
+                gaze_into_orb(player, game);
+                break;
+            case 'T':
+                if (player->runestaff_flag) {
+                    teleport(player, game);
+                } else {
+                    print_message("YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+                }
+                break;
+            case 'Q':
+                print_message("DO YOU REALLY WANT TO QUIT NOW? ");
+                if (get_user_input() == 'Y') {
+                    game_over = 1;
+                } else {
+                    print_message("OK, CONTINUE ON BRAVE ADVENTURER!\n");
+                }
+                break;
+            case 'H':
+                print_help();
+                break;
+            default:
+                print_message("INVALID COMMAND. TYPE 'H' FOR HELP.\n");
+        }
+
+        if (!game_over) {
+            handle_room_event(player, game);
+            game_over = check_game_over(player, game);
+        }
+    }
+
+    end_game(player, game);
 }
 
 // Player creation and attribute functions
