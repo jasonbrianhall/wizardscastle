@@ -13,5 +13,6 @@ int main(void)
 	print_message("\n");
 	choose_sex(&player);
 	buy_equipment(&player);
+	buy_lamp_and_flares(&player);
 	return 0;
 }

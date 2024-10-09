@@ -51,6 +51,7 @@ void main_game_loop(Player *player, GameState *game);
 // Player creation and attribute functions
 void choose_race(Player *player);
 void choose_sex(Player *player);
+void buy_lamp_and_flares(Player *player);
 void allocate_attributes(Player *player);
 
 // Map and room functions

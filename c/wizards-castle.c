@@ -276,6 +276,56 @@ void buy_equipment(Player *player)
 
 }
 
+void buy_lamp_and_flares(Player *player)
+{
+    char user_input[10];
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+
+    // Try to buy a lamp
+    if (player->gold >= 20 && !player->lamp_flag) {
+        print_message("\nDO YOU WANT TO BUY A LAMP FOR 20 GP'S?\n");
+        do {
+            print_message("YOUR CHOICE (Y/N):  ");
+            fgets(user_input, sizeof(user_input), stdin);
+            user_input[0] = toupper(user_input[0]);
+
+            if (user_input[0] == 'Y') {
+                player->lamp_flag = 1;
+                player->gold -= 20;
+                print_message("\nOK, LAMP PURCHASED. IT'S GUARANTEED TO OUTLIVE YOU!\n");
+                break;
+            } else if (user_input[0] == 'N') {
+                break;
+            } else {
+                print_message("** PLEASE ANSWER YES OR NO.\n");
+            }
+        } while (1);
+    }
+
+    // Try to buy flares
+    if (player->gold >= 1) {
+        printf("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n", race_names[player->race - 1], player->gold);
+        print_message("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
+        
+        int flares_to_buy;
+        do {
+            fgets(user_input, sizeof(user_input), stdin);
+            flares_to_buy = atoi(user_input);
+
+            if (flares_to_buy >= 0 && flares_to_buy <= player->gold) {
+                player->flares += flares_to_buy;
+                player->gold -= flares_to_buy;
+                printf("\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n", player->flares, player->gold);
+                break;
+            } else if (flares_to_buy > player->gold) {
+                printf("** YOU CAN ONLY AFFORD %d.\n", player->gold);
+            } else {
+                print_message("** IF YOU DON'T WANT ANY, JUST TYPE 0 (ZERO).\n");
+            }
+        } while (1);
+    }
+}
+
 void use_lamp(Player *player, GameState *game)
 {
 
