@@ -69,6 +69,11 @@ void move_player(Player *player, GameState *game, char direction);
 void handle_room_event(Player *player, GameState *game);
 void fight_monster(Player *player, GameState *game);
 void handle_vendor(Player *player, GameState *game);
+void trade_with_vendor(Player *player, GameState *game);
+void attack_vendor(Player *player, GameState *game);
+const char* get_treasure_name(int index);
+int min(int a, int b);
+
 
 // Item and treasure functions
 void buy_equipment(Player *player);

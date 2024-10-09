@@ -696,7 +696,191 @@ void fight_monster(Player *player, GameState *game)
 
 void handle_vendor(Player *player, GameState *game)
 {
+    print_message("\nYou've encountered a vendor!\n");
+    
+    // Check if the player has attacked the vendor before
+    if (game->vendor_attacked) {
+        print_message("The vendor refuses to trade with you due to your previous attack.\n");
+        return;
+    }
 
+    char choice;
+    do {
+        print_message("\nDo you want to (T)rade, (A)ttack, or (I)gnore the vendor? ");
+        choice = get_user_input();
+
+        switch(choice) {
+            case 'T':
+                trade_with_vendor(player, game);
+                return;
+            case 'A':
+                attack_vendor(player, game);
+                return;
+            case 'I':
+                print_message("You ignore the vendor and move on.\n");
+                return;
+            default:
+                print_message("Invalid choice. Please choose T, A, or I.\n");
+        }
+    } while (1);
+}
+
+void trade_with_vendor(Player *player, GameState *game)
+{
+    // Offer to buy treasures
+    for (int i = 0; i < TREASURE_COUNT; i++) {
+        if (game->treasure[i]) {
+            int offer = random_number(1500) * (i + 1);
+            char message[100];
+            snprintf(message, sizeof(message), "Do you want to sell %s for %d GP? (Y/N) ", 
+                     get_treasure_name(i), offer);
+            print_message(message);
+            
+            if (get_user_input_yn() == 'Y') {
+                player->gold += offer;
+                game->treasure[i] = 0;
+                player->treasure_count--;
+                print_message("Sold!\n");
+            }
+        }
+    }
+
+    // Offer to sell items if player has enough gold
+    while (player->gold >= 1000) {
+        print_message("\nWhat would you like to buy?\n");
+        print_message("1. Improve Strength (1000 GP)\n");
+        print_message("2. Improve Intelligence (1000 GP)\n");
+        print_message("3. Improve Dexterity (1000 GP)\n");
+        print_message("4. Armor upgrade (1000 GP)\n");
+        print_message("5. Weapon upgrade (1000 GP)\n");
+        print_message("6. Lamp (1000 GP)\n");
+        print_message("7. Nothing more\n");
+
+        char purchase_choice = get_user_input();
+        switch(purchase_choice) {
+            case '1':
+                player->strength = min(player->strength + random_number(6), 18);
+                break;
+            case '2':
+                player->intelligence = min(player->intelligence + random_number(6), 18);
+                break;
+            case '3':
+                player->dexterity = min(player->dexterity + random_number(6), 18);
+                break;
+            case '4':
+                if (player->armor_type < 3) {
+                    player->armor_type++;
+                    player->armor_points += 7;
+                } else {
+                    print_message("You already have the best armor!\n");
+                    continue;
+                }
+                break;
+            case '5':
+                if (player->weapon_type < 3) {
+                    player->weapon_type++;
+                } else {
+                    print_message("You already have the best weapon!\n");
+                    continue;
+                }
+                break;
+            case '6':
+                if (!player->lamp_flag) {
+                    player->lamp_flag = 1;
+                } else {
+                    print_message("You already have a lamp!\n");
+                    continue;
+                }
+                break;
+            case '7':
+                return;
+            default:
+                print_message("Invalid choice.\n");
+                continue;
+        }
+
+        player->gold -= 1000;
+        print_message("Purchase successful!\n");
+    }
+
+    print_message("You don't have enough gold for any more purchases.\n");
+}
+
+void attack_vendor(Player *player, GameState *game)
+{
+    print_message("You attack the vendor!\n");
+    game->vendor_attacked = 1;
+
+    // The vendor has high stats and good equipment
+    int vendor_strength = 15;
+    int vendor_dexterity = 15;
+    int vendor_armor = 3;
+    int vendor_weapon = 3;
+
+    // Simple combat resolution
+    if (random_number(20) + player->dexterity > random_number(20) + vendor_dexterity) {
+        int damage = random_number(player->weapon_type * 2 + 2) - vendor_armor;
+        if (damage > 0) {
+            print_message("You hit the vendor!\n");
+            vendor_strength -= damage;
+            if (vendor_strength <= 0) {
+                print_message("You've defeated the vendor!\n");
+                // Give player vendor's inventory
+                player->gold += 2000;
+                player->armor_type = 3;
+                player->armor_points = 21;
+                player->weapon_type = 3;
+                if (!player->lamp_flag) {
+                    player->lamp_flag = 1;
+                    print_message("You found a lamp!\n");
+                }
+                player->strength = min(player->strength + random_number(6), 18);
+                player->intelligence = min(player->intelligence + random_number(6), 18);
+                player->dexterity = min(player->dexterity + random_number(6), 18);
+                return;
+            }
+        } else {
+            print_message("Your attack was ineffective.\n");
+        }
+    } else {
+        print_message("You missed the vendor!\n");
+    }
+
+    // Vendor's counterattack
+    if (random_number(20) + vendor_dexterity > random_number(20) + player->dexterity) {
+        int damage = random_number(vendor_weapon * 2 + 2) - player->armor_points / 7;
+        if (damage > 0) {
+            print_message("The vendor hits you!\n");
+            player->strength -= damage;
+            if (player->strength <= 0) {
+                print_message("The vendor has defeated you!\n");
+                game->game_over = 1;
+                return;
+            }
+        } else {
+            print_message("The vendor's attack was ineffective.\n");
+        }
+    } else {
+        print_message("The vendor missed you!\n");
+    }
+
+    print_message("The vendor disappears in a puff of smoke!\n");
+}
+
+// Helper function to get treasure names
+const char* get_treasure_name(int index)
+{
+    static const char* treasure_names[] = {
+        "Ruby Red", "Norn Stone", "Pale Pearl", "Opal Eye",
+        "Green Gem", "Blue Flame", "Palantir", "Silmaril"
+    };
+    return treasure_names[index];
+}
+
+// Helper function for minimum of two integers
+int min(int a, int b)
+{
+    return (a < b) ? a : b;
 }
 
 // Item and treasure functions
