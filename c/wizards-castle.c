@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define RANDOM_INT(max) (1 + rand() % (max))
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
 #define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
 #define ENSURE_VALID_CONTENT(content) ((content) + 100 * ((content) > 99))
@@ -89,7 +88,7 @@ void initialize_game(GameState *game)
     for (level = 1; level <= 7; level++) {
         for (int i = 1; i <= 2; i++) {
             do {
-                x = RANDOM_INT(8); y = RANDOM_INT(8);
+                x = random_number(8); y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
             game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 103;  // Stairs going down
             game->location_map[CALCULATE_ROOM_INDEX(level + 1, x, y)] = 104;  // Stairs going up
@@ -101,7 +100,7 @@ void initialize_game(GameState *game)
         // Place monsters, treasures, etc.
         for (content = 113; content <= 124; content++) {
             do {
-                x = RANDOM_INT(8); y = RANDOM_INT(8);
+                x = random_number(8); y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
             game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = content;
         }
@@ -110,14 +109,14 @@ void initialize_game(GameState *game)
         for (int i = 1; i <= 3; i++) {
             for (content = 105; content <= 112; content++) {
                 do {
-                    x = RANDOM_INT(8); y = RANDOM_INT(8);
+                    x = random_number(8); y = random_number(8);
                 } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
                 game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = content;
             }
             
             // Place vendor
             do {
-                x = RANDOM_INT(8); y = RANDOM_INT(8);
+                x = random_number(8); y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
             game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 125;
         }
@@ -126,23 +125,23 @@ void initialize_game(GameState *game)
     // Place special items (crystal orb, ruby red, etc.)
     for (content = 126; content <= 133; content++) {
         do {
-            x = RANDOM_INT(8); y = RANDOM_INT(8); level = RANDOM_INT(8);
+            x = random_number(8); y = random_number(8); level = random_number(8);
         } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
         game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = content;
     }
 
     // Place the Runestaff
     do {
-        x = RANDOM_INT(8); y = RANDOM_INT(8); level = RANDOM_INT(8);
+        x = random_number(8); y = random_number(8); level = random_number(8);
     } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
-    game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 112 + RANDOM_INT(12);
+    game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 112 + random_number(12);
     game->runestaff_location[0] = x;
     game->runestaff_location[1] = y;
     game->runestaff_location[2] = level;
 
     // Place the Orb of Zot
     do {
-        x = RANDOM_INT(8); y = RANDOM_INT(8); level = RANDOM_INT(8);
+        x = random_number(8); y = random_number(8); level = random_number(8);
     } while (game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] != 101);
     game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 109;
     game->orb_location[0] = x;
@@ -520,8 +519,8 @@ void generate_castle(GameState *game)
     for (z = 1; z <= 7; z++) {
         for (q1 = 1; q1 <= 2; q1++) {
             do {
-                x = RANDOM_INT(8);
-                y = RANDOM_INT(8);
+                x = random_number(8);
+                y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
             game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 103;  // Stairs down
             game->location_map[CALCULATE_ROOM_INDEX(z+1, x, y)] = 104;  // Stairs up
@@ -533,8 +532,8 @@ void generate_castle(GameState *game)
         // Place monsters, treasures, etc.
         for (q = 113; q <= 124; q++) {
             do {
-                x = RANDOM_INT(8);
-                y = RANDOM_INT(8);
+                x = random_number(8);
+                y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
             game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
         }
@@ -543,16 +542,16 @@ void generate_castle(GameState *game)
         for (q1 = 1; q1 <= 3; q1++) {
             for (q = 105; q <= 112; q++) {
                 do {
-                    x = RANDOM_INT(8);
-                    y = RANDOM_INT(8);
+                    x = random_number(8);
+                    y = random_number(8);
                 } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
                 game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
             }
             
             // Place vendor
             do {
-                x = RANDOM_INT(8);
-                y = RANDOM_INT(8);
+                x = random_number(8);
+                y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
             game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 125;
         }
@@ -561,29 +560,29 @@ void generate_castle(GameState *game)
     // Place special items (crystal orb, ruby red, etc.)
     for (q = 126; q <= 133; q++) {
         do {
-            z = RANDOM_INT(8);
-            x = RANDOM_INT(8);
-            y = RANDOM_INT(8);
+            z = random_number(8);
+            x = random_number(8);
+            y = random_number(8);
         } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
         game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
     }
 
     // Place the Runestaff
     do {
-        z = RANDOM_INT(8);
-        x = RANDOM_INT(8);
-        y = RANDOM_INT(8);
+        z = random_number(8);
+        x = random_number(8);
+        y = random_number(8);
     } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
-    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 112 + RANDOM_INT(12);
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 112 + random_number(12);
     game->runestaff_location[0] = x;
     game->runestaff_location[1] = y;
     game->runestaff_location[2] = z;
 
     // Place the Orb of Zot
     do {
-        z = RANDOM_INT(8);
-        x = RANDOM_INT(8);
-        y = RANDOM_INT(8);
+        z = random_number(8);
+        x = random_number(8);
+        y = random_number(8);
     } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
     game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 109;
     game->orb_location[0] = x;
@@ -700,7 +699,7 @@ void move_player(Player *player, GameState *game, char direction)
         if (player->level < 8) {
             player->level++;
         } else {
-            player->level=1
+            player->level=1;
         }
         print_message("You've fallen through a sinkhole to the level below!\n");
 
