@@ -1298,8 +1298,16 @@ void display_map(GameState *game, Player *player)
     print_message(level_str);
     print_message(" ===\n\n");
 
+    // Print top border with column coordinates
+    print_message("    1   2   3   4   5   6   7   8\n");
+    print_message("  +---+---+---+---+---+---+---+---+\n");
+
     for (int x = 1; x <= 8; x++) {
+        // Print row coordinate
+        printf("%d ", x);
+
         for (int y = 1; y <= 8; y++) {
+            print_message("|");
             if (x == player->x && y == player->y) {
                 print_message("[@]");
             } else if (is_room_discovered(game, x, y, player->level)) {
@@ -1312,8 +1320,16 @@ void display_map(GameState *game, Player *player)
                 print_message(" ? ");
             }
         }
-        print_message("\n");
+        print_message("|\n");
+
+        // Print horizontal border between rows
+        if (x < 8) {
+            print_message("  +---+---+---+---+---+---+---+---+\n");
+        }
     }
+
+    // Print bottom border
+    print_message("  +---+---+---+---+---+---+---+---+\n");
 
     print_message("\nLEGEND:\n");
     print_message("[@] = You    . = Empty   E = Entrance  U/D = Stairs\n");
@@ -1587,21 +1603,21 @@ void discover_adjacent_rooms(GameState *game, Player *player)
 char get_room_symbol(int room_content)
 {
     switch (room_content) {
-        case 101: return '.';  // Empty room
-        case 102: return 'E';  // Entrance
-        case 103: return 'U';  // Stairs going up
-        case 104: return 'D';  // Stairs going down
-        case 105: return 'P';  // Pool
-        case 106: return 'C';  // Chest
-        case 107: return 'G';  // Gold
-        case 108: return 'F';  // Flares
-        case 109: return 'W';  // Warp
-        case 110: return 'S';  // Sinkhole
-        case 111: return 'O';  // Crystal Orb
-        case 112: return 'B';  // Book
-        case 113 ... 124: return 'M';  // Monsters (all types)
-        case 125: return 'V';  // Vendor
-        case 126 ... 133: return 'T';  // Treasures
+        case EMPTY_ROOM: return '.';  // Empty room
+        case ENTRANCE: return 'E';  // Entrance
+        case STAIRS_UP: return 'U';  // Stairs going up
+        case STAIRS_DOWN: return 'D';  // Stairs going down
+        case POOL: return 'P';  // Pool
+        case CHEST: return 'C';  // Chest
+        case GOLD: return 'G';  // Gold
+        case FLARES: return 'F';  // Flares
+        case WARP: return 'W';  // Warp
+        case SINKHOLE: return 'S';  // Sinkhole
+        case CRYSTAL_ORB: return 'O';  // Crystal Orb
+        case BOOK: return 'B';  // Book
+        case MONSTER_START ... MONSTER_END: return 'M';  // Monsters (all types)
+        case VENDOR: return 'V';  // Vendor
+        case TREASURE_START ... TREASURE_END: return 'T';  // Treasures
         default: return '?';  // Unknown
     }
 }
