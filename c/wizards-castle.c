@@ -227,9 +227,28 @@ void main_game_loop(Player *player, GameState *game)
             snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
             print_message(message);
         } else if (room_content >= 101 && room_content <= 125) {
-           char message[100];
+            char message[100];
             snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - 101]);
             print_message(message);
+            if (room_content==107)
+            {
+                int gold_found = (RANDOM_INT(1000) + 1);  // Random amount between 1 and 1000
+                player->gold += gold_found;
+                char message[100];
+                snprintf(message, sizeof(message), "%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
+                print_message(message);
+                set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
+            }
+            else if (room_content==108)
+            {
+                int flares_found = RANDOM_INT(5)+1;  // Random amount between 1 and 5
+
+                player->flares += flares_found;
+                char message[100];
+                snprintf(message, sizeof(message), "%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
+                print_message(message);
+                set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
+           }
         } else {
             print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
             printf("%i\n", room_content);
@@ -562,9 +581,20 @@ int get_room_content(GameState *game, int x, int y, int level)
     return -1;  // Invalid room
 }
 
+
 void set_room_content(GameState *game, int x, int y, int level, int content)
 {
-
+    int index = CALCULATE_ROOM_INDEX(level, x, y);
+    if (index >= 0 && index < MAP_SIZE) {
+        game->location_map[index] = content;
+    } else {
+        // Handle error: invalid room coordinates
+        char error_message[100];
+        snprintf(error_message, sizeof(error_message), 
+                 "Error: Attempted to set invalid room content at (%d,%d) level %d\n", 
+                 x, y, level);
+        print_message(error_message);
+    }
 }
 
 // Movement and action functions
