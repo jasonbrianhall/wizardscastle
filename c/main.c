@@ -17,6 +17,7 @@ int main(void)
 	buy_equipment(&player);
 	buy_lamp_and_flares(&player);
 	generate_castle(&game);
+	main_game_loop(&player, &game);
 	
 	return 0;
 }
