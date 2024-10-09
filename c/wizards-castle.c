@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
 #define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
@@ -169,7 +170,7 @@ void initialize_game(GameState *game)
 
 }
 
-void main_game_loop(Player *player, GameState *game)
+bool main_game_loop(Player *player, GameState *game)
 {
     char *user_command;
     int game_over = 0;
@@ -356,6 +357,17 @@ void main_game_loop(Player *player, GameState *game)
     }
 
     end_game(player, game);
+    // Ask if the player wants to play again
+    print_message("\nARE YOU FOOLISH ENOUGH TO WANT TO PLAY AGAIN? ");
+    char play_again = get_user_input_yn();
+    if (play_again == 'Y') {
+        print_message("\nSOME ADVENTURERS NEVER LEARN!\n\n");
+        print_message("PLEASE BE PATIENT WHILE THE CASTLE IS RESTOCKED.\n\n");
+        return 1;
+    } else {
+        print_message("\nGOOD BYE, AND GOOD LUCK IN YOUR TRAVELS!\n");
+        return 0;        
+    }
 }
 
 // Player creation and attribute functions
@@ -1407,12 +1419,6 @@ int check_game_over(Player *player) {
     return 0;
 }
 
-
-void end_game(Player *player, GameState *game)
-{
-
-}
-
 char* get_user_input_main() {
     static char input[100];  // Buffer to store user input
     while (1) {
@@ -1661,4 +1667,62 @@ char get_room_symbol(int room_content)
         case TREASURE_START ... TREASURE_END: return 'T';  // Treasures
         default: return '?';  // Unknown
     }
+}
+
+void end_game(Player *player, GameState *game)
+{
+    printStars();
+    
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
+    const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
+
+    if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
+        printf("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n", race_names[player->race - 1]);
+        
+        if (player->strength <= 0)
+            print_message("YOU DIED DUE TO LACK OF STRENGTH.\n\n");
+        else if (player->intelligence <= 0)
+            print_message("YOU DIED DUE TO LACK OF INTELLIGENCE.\n\n");
+        else
+            print_message("YOU DIED DUE TO LACK OF DEXTERITY.\n\n");
+
+        print_message("AT THE TIME YOU DIED, YOU HAD :\n");
+    }
+    else if (game->victory) {
+        print_message("CONGRATULATIONS!\n\n");
+        print_message("YOU LEFT THE CASTLE WITH THE ORB OF ZOT.\n\n");
+        print_message("AN INCREDIBLY GLORIOUS VICTORY!!\n\n");
+        print_message("IN ADDITION, YOU GOT OUT WITH THE FOLLOWING :\n");
+    }
+    else {
+        print_message("YOU LEFT THE CASTLE WITHOUT THE ORB OF ZOT.\n\n");
+        print_message("A LESS THAN AWE-INSPIRING DEFEAT.\n\n");
+        print_message("WHEN YOU LEFT THE CASTLE, YOU HAD :\n");
+    }
+
+    // List treasures
+    for (int i = 0; i < TREASURE_COUNT; i++) {
+        if (game->treasure[i]) {
+            printf("%s\n", get_treasure_name(i));
+        }
+    }
+
+    // Print equipment
+    printf("%s AND %s", weapon_types[player->weapon_type], armor_types[player->armor_type]);
+    if (player->lamp_flag)
+        print_message(" AND A LAMP");
+    print_message("\n");
+
+    // Print flares and gold
+    printf("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n", player->flares, player->gold);
+
+    // Print Runestaff status
+    if (player->runestaff_flag)
+        print_message("AND THE RUNESTAFF\n");
+
+    // Print turn count
+    printf("\nAND IT TOOK YOU %d TURNS!\n", game->turn_count);
+
+    printStars();
 }

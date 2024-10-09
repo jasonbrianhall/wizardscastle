@@ -1,6 +1,9 @@
 #ifndef WIZARDS_CASTLE_H
 #define WIZARDS_CASTLE_H
 
+#include <stdbool.h>
+
+
 #define MAP_SIZE 512
 #define TREASURE_COUNT 8
 
@@ -95,7 +98,8 @@ void initialize_game(GameState *game);
 void initialize_player(Player *player);
 
 void print_introduction(void);
-void main_game_loop(Player *player, GameState *game);
+// Returns True or False if the player wants to play again
+bool main_game_loop(Player *player, GameState *game);
 
 // Player creation and attribute functions
 void choose_race(Player *player);
