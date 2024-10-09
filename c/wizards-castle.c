@@ -936,7 +936,7 @@ char get_user_input()
         command = input[0];
 
         // Check if it's a valid command
-        if (strchr("NSEWUDMFLOGTHQ", command) != NULL) {
+        if (strchr("NSEWUDMFLOGTHQYN", command) != NULL) {
             return command;
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
