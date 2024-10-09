@@ -171,7 +171,7 @@ void initialize_game(GameState *game)
 
 void main_game_loop(Player *player, GameState *game)
 {
-    char user_command;
+    char *user_command;
     int game_over = 0;
     const char *room_contents[] = {
         "AN EMPTY ROOM", "THE ENTRANCE", "STAIRS GOING UP", "STAIRS GOING DOWN",
@@ -219,7 +219,7 @@ void main_game_loop(Player *player, GameState *game)
         }
 
         print_message("\n");
-        print_status(player);
+        //print_status(player);
         
         int room_content = get_room_content(game, player->x, player->y, player->level);
         if (room_content == 102) {  // The Entrance
@@ -269,11 +269,11 @@ void main_game_loop(Player *player, GameState *game)
             print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
             printf("%i\n", room_content);
         }
-        user_command = get_user_input();
-
-        switch (user_command) {
+        user_command=get_user_input_main();
+        printf("User Command: %s\n", user_command);
+        switch (user_command[0]) {
             case 'N': case 'S': case 'E': case 'W':
-                move_player(player, game, user_command);
+                move_player(player, game, user_command[0]);
                 break;
             case 'U':
                 if (room_content == 103) {  // Stairs going up
@@ -288,7 +288,10 @@ void main_game_loop(Player *player, GameState *game)
                 }
                 break;
             case 'D':
-                if (room_content == 104) {  // Stairs going down
+                if (strncmp(user_command, "DR", 2) == 0) {
+                    print_message("YOU DRINK SOMETHING.\n");
+                }
+                else if (room_content == 104) {  // Stairs going down
                     player->level++;
                     if (player->level>8)
                     {
@@ -1376,6 +1379,48 @@ int check_game_over(Player *player) {
 void end_game(Player *player, GameState *game)
 {
 
+}
+
+char* get_user_input_main() {
+    static char input[100];  // Buffer to store user input
+    while (1) {
+        print_message("ENTER YOUR COMMAND: ");
+        // Get user input
+        if (fgets(input, sizeof(input), stdin) == NULL) {
+            print_message("Error reading input. Please try again.\n");
+            continue;
+        }
+        // Remove newline character if present
+        input[strcspn(input, "\n")] = '\0';
+        // Convert input to uppercase
+        for (int i = 0; input[i]; i++) {
+            input[i] = toupper((unsigned char)input[i]);
+        }
+        // Check if input is empty
+        if (input[0] == '\0') {
+            print_message("Please enter a command.\n");
+            continue;
+        }
+        // Get the first character
+        char firstChar = input[0];
+        // Validate commands
+        if (firstChar == 'D' && input[1] == 'R') {
+            return "DR";  // Return "DR" for DRINK
+        } else if (firstChar == 'T') {
+            // Handle teleport command
+            if (strlen(input) > 1) {
+                return input;  // Return the teleport command with coordinates
+            } else {
+                print_message("Please provide coordinates for teleport.\n");
+                continue;
+            }
+        } else if (strchr("ADEFGHILMNOQSTUWY", firstChar) != NULL) {
+            return input;  // Return the single letter command
+        } else {
+            print_message("Invalid command. Type 'H' for help.\n");
+            continue;
+        }
+    }
 }
 
 // Input/Output functions
