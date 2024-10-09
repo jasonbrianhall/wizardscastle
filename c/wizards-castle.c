@@ -69,7 +69,7 @@ void initialize_player(Player *player)
 
 void initialize_game(GameState *game)
 {
-    int content, level, x, y;
+    int content, level, x, y, z;
     
     // Seed the random number generator
     srand(time(NULL));
@@ -78,7 +78,7 @@ void initialize_game(GameState *game)
     for (int i = 0; i < MAP_SIZE; i++) {
         game->location_map[i] = 101;  // Empty room
     }
-
+    
     // Set the entrance
     x = 1; y = 4; level = 1;
     game->location_map[CALCULATE_ROOM_INDEX(level, x, y)] = 2;  // Entrance
@@ -155,6 +155,12 @@ void initialize_game(GameState *game)
     for (int i = 0; i < TREASURE_COUNT; i++) {
         game->treasure[i] = 0;
     }
+
+    // Set the entrance
+    x = 1; y = 4; z = 1;
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 102;
+
+
 }
 
 void main_game_loop(Player *player, GameState *game)
@@ -220,6 +226,7 @@ void main_game_loop(Player *player, GameState *game)
             print_message(message);
         } else {
             print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
+            printf("%i\n", room_content);
         }
         user_command = get_user_input();
 
@@ -459,10 +466,6 @@ void generate_castle(GameState *game)
         game->location_map[q] = 101;
     }
 
-    // Set the entrance
-    x = 1; y = 4; z = 1;
-    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 2;
-
     // Place stairs
     for (z = 1; z <= 7; z++) {
         for (q1 = 1; q1 <= 2; q1++) {
@@ -536,11 +539,21 @@ void generate_castle(GameState *game)
     game->orb_location[0] = x;
     game->orb_location[1] = y;
     game->orb_location[2] = z;
+
+    // Set the entrance
+    x = 1; y = 4; z = 1;
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 102;
+
+
 }
 
 int get_room_content(GameState *game, int x, int y, int level)
 {
-
+    int index = CALCULATE_ROOM_INDEX(level, x, y);
+    if (index >= 0 && index < MAP_SIZE) {
+        return game->location_map[index];
+    }
+    return -1;  // Invalid room
 }
 
 void set_room_content(GameState *game, int x, int y, int level, int content)
