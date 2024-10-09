@@ -160,4 +160,5 @@ int is_room_discovered(GameState *game, int x, int y, int level);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
 char get_room_symbol(int room_content);
+void get_room_description(int room_content, char *desc);
 #endif 

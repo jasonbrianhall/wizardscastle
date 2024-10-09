@@ -1299,8 +1299,8 @@ void display_map(GameState *game, Player *player)
     print_message(" ===\n\n");
 
     // Print top border with column coordinates
-    print_message("    1   2   3   4   5   6   7   8\n");
-    print_message("  +---+---+---+---+---+---+---+---+\n");
+    print_message("       1        2        3        4        5        6        7        8     \n");
+    print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     for (int x = 1; x <= 8; x++) {
         // Print row coordinate
@@ -1309,33 +1309,36 @@ void display_map(GameState *game, Player *player)
         for (int y = 1; y <= 8; y++) {
             print_message("|");
             if (x == player->x && y == player->y) {
-                print_message("[@]");
+                print_message("  [YOU] ");
             } else if (is_room_discovered(game, x, y, player->level)) {
                 int room_content = get_room_content(game, x, y, player->level);
-                char symbol = get_room_symbol(room_content);
-                char room_str[4] = " ? ";
-                room_str[1] = symbol;
+                char room_str[9] = "        ";
+                get_room_description(room_content, room_str);
                 print_message(room_str);
             } else {
-                print_message(" ? ");
+                print_message("????????");
             }
         }
         print_message("|\n");
 
         // Print horizontal border between rows
         if (x < 8) {
-            print_message("  +---+---+---+---+---+---+---+---+\n");
+            print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
         }
     }
 
     // Print bottom border
-    print_message("  +---+---+---+---+---+---+---+---+\n");
+    print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     print_message("\nLEGEND:\n");
-    print_message("[@] = You    . = Empty   E = Entrance  U/D = Stairs\n");
-    print_message("P = Pool     C = Chest   F = Flares    G = Gold\n");
-    print_message("S = Sinkhole W = Warp    O = Orb       B = Book\n");
-    print_message("M = Monster  V = Vendor  T = Treasure  ? = Unknown\n");
+    print_message("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
+    print_message("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
+    print_message("GOLD     = Gold Pieces     FLARES   = Flares\n");
+    print_message("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
+    print_message("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
+    print_message("MONSTER  = Any Monster     VENDOR   = Vendor\n");
+    print_message("TREASURE = Any Treasure    ???????? = Undiscovered\n");
+    print_message("STAIRS UP= Stairs Up       STAIRS DN= Stairs Down\n");
 }
 
 void print_help()
@@ -1598,6 +1601,31 @@ void discover_adjacent_rooms(GameState *game, Player *player)
             mark_room_discovered(game, x, y, player->level);
         }
     }
+}
+
+// New helper function to get abbreviated room descriptions
+void get_room_description(int room_content, char *desc)
+{
+    const char *full_desc;
+    switch (room_content) {
+        case EMPTY_ROOM: full_desc = "EMPTY   "; break;
+        case ENTRANCE: full_desc = "ENTRANCE"; break;
+        case STAIRS_UP: full_desc = "STAIRS UP"; break;
+        case STAIRS_DOWN: full_desc = "STAIRS DN"; break;
+        case POOL: full_desc = "POOL    "; break;
+        case CHEST: full_desc = "CHEST   "; break;
+        case GOLD: full_desc = "GOLD    "; break;
+        case FLARES: full_desc = "FLARES  "; break;
+        case WARP: full_desc = "WARP    "; break;
+        case SINKHOLE: full_desc = "SINKHOLE"; break;
+        case CRYSTAL_ORB: full_desc = "CRYSTAL "; break;
+        case BOOK: full_desc = "BOOK    "; break;
+        case MONSTER_START ... MONSTER_END: full_desc = "MONSTER "; break;
+        case VENDOR: full_desc = "VENDOR  "; break;
+        case TREASURE_START ... TREASURE_END: full_desc = "TREASURE"; break;
+        default: full_desc = "   ??   "; break;
+    }
+    strncpy(desc, full_desc, 8);
 }
 
 char get_room_symbol(int room_content)
