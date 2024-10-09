@@ -83,7 +83,7 @@ void gaze_into_orb(Player *player, GameState *game);
 // Utility functions
 int random_number(int max_value);
 void print_status(Player *player);
-void display_map(GameState *game, int current_level);
+void display_map(GameState *game, Player *player);
 void print_help();
 
 // Game ending functions

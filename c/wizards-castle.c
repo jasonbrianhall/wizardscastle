@@ -252,7 +252,7 @@ void main_game_loop(Player *player, GameState *game)
                 }
                 break;
             case 'M':
-                display_map(game, player->level);
+                display_map(game, player);
                 break;
             case 'F':
                 use_flare(player, game);
@@ -881,11 +881,51 @@ void print_status(Player *player)
     print_message("======================\n");
 }
 
-void display_map(GameState *game, int current_level)
+void display_map(GameState *game, Player *player)
 {
+    const char* symbols = ".EUDPCFGSWOBMMMMMMMMMMMMMV";
+    // . = Empty Room     E = Entrance/Exit  U = Stairs Up     D = Stairs Down
+    // P = Pool           C = Chest          F = Flares        G = Gold
+    // S = Sinkhole       W = Warp           O = Crystal Orb   B = Book
+    // M = Monster (all types)               V = Vendor
 
+    print_message("\n=== MAP OF LEVEL ");
+    char level_str[3];
+    snprintf(level_str, sizeof(level_str), "%d", player->level);
+    print_message(level_str);
+    print_message(" ===\n\n");
+
+    for (int x = 1; x <= 8; x++) {
+        for (int y = 1; y <= 8; y++) {
+            int room_content = get_room_content(game, x, y, player->level);
+            char symbol;
+
+            if (room_content >= 101 && room_content <= 125) {
+                symbol = symbols[room_content - 101];
+            } else if (room_content >= 126 && room_content <= 133) {
+                symbol = 'T'; // Treasure
+            } else {
+                symbol = '?'; // Unknown
+            }
+
+            // Check if this is the player's current position
+            if (x == player->x && y == player->y) {
+                print_message("[@]");
+            } else {
+                char room_str[4] = " ? ";
+                room_str[1] = symbol;
+                print_message(room_str);
+            }
+        }
+        print_message("\n");
+    }
+
+    print_message("\nLEGEND:\n");
+    print_message("[@] = You    . = Empty   E = Entrance  U/D = Stairs\n");
+    print_message("P = Pool     C = Chest   F = Flares    G = Gold\n");
+    print_message("S = Sinkhole W = Warp    O = Orb       B = Book\n");
+    print_message("M = Monster  V = Vendor  T = Treasure  ? = Unknown\n");
 }
-
 void print_help()
 {
     print_message("\n*** WIZARD'S CASTLE COMMAND AND INFORMATION SUMMARY ***\n\n");
