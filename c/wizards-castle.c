@@ -939,7 +939,7 @@ void print_status(Player *player)
     snprintf(message, sizeof(message), "Treasures Found: %d\n", player->treasure_count);
     print_message(message);
 
-    print_message("======================\n");
+    print_message("======================\n\n");
 }
 
 void display_map(GameState *game, Player *player)
