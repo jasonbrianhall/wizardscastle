@@ -751,7 +751,7 @@ void buy_lamp_and_flares(Player *player)
         print_message("\nDO YOU WANT TO BUY A LAMP FOR 20 GP'S?\n");
         do {
             print_message("YOUR CHOICE (Y/N):  ");
-            user_input_yn = get_user_input();
+            user_input_yn = get_user_input_yn();
             if (user_input_yn == 'Y') {
                 player->lamp_flag = 1;
                 player->gold -= 20;
@@ -833,7 +833,52 @@ int random_number(int max_value)
 
 void print_status(Player *player)
 {
+    char message[256];  // Buffer for formatting messages
 
+    print_message("\n=== PLAYER STATUS ===\n");
+
+    // Print player race and attributes
+    snprintf(message, sizeof(message), "Race: %s\n", get_race_name(player->race));
+    print_message(message);
+    snprintf(message, sizeof(message), "Strength: %d  Intelligence: %d  Dexterity: %d\n",
+             player->strength, player->intelligence, player->dexterity);
+    print_message(message);
+
+    // Print player position
+    snprintf(message, sizeof(message), "Location: Level %d, Room (%d, %d)\n",
+             player->level, player->x, player->y);
+    print_message(message);
+
+    // Print player inventory
+    snprintf(message, sizeof(message), "Gold Pieces: %d  Flares: %d\n",
+             player->gold, player->flares);
+    print_message(message);
+
+    // Print armor and weapon
+    const char* armor_types[] = {"No Armor", "Leather", "Chainmail", "Plate"};
+    const char* weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword"};
+    snprintf(message, sizeof(message), "Armor: %s  Weapon: %s\n",
+             armor_types[player->armor_type], weapon_types[player->weapon_type]);
+    print_message(message);
+
+    // Print special items
+    print_message("Special Items: ");
+    if (player->lamp_flag) print_message("Lamp ");
+    if (player->runestaff_flag) print_message("Runestaff ");
+    if (player->orb_flag) print_message("Orb of Zot ");
+    print_message("\n");
+
+    // Print curses or blessings
+    print_message("Status Effects: ");
+    if (player->blindness_flag) print_message("Blind ");
+    if (player->stickybook_flag) print_message("Sticky Book ");
+    print_message("\n");
+
+    // Print number of treasures
+    snprintf(message, sizeof(message), "Treasures Found: %d\n", player->treasure_count);
+    print_message(message);
+
+    print_message("======================\n");
 }
 
 void display_map(GameState *game, int current_level)
