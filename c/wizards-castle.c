@@ -159,8 +159,64 @@ void choose_sex(Player *player)
 
 void allocate_attributes(Player *player)
 {
+    int other_points;
+    char user_input[10];
+    int points_to_add;
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
 
+    // Set other_points based on race
+    if (player->race == 1) { // Hobbit
+        other_points = 4;
+    } else { // Elf, Human, Dwarf
+        other_points = 8;
+    }
+
+    printf("OK, %s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n", race_names[player->race - 1]);
+    printf("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
+           player->strength, player->intelligence, player->dexterity);
+    printf("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n", other_points);
+
+    // Allocate points to Strength
+    while (other_points > 0) {
+        printf("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
+        fgets(user_input, sizeof(user_input), stdin);
+        points_to_add = atoi(user_input);
+
+        if (points_to_add >= 0 && points_to_add <= other_points) {
+            player->strength += points_to_add;
+            other_points -= points_to_add;
+            break;
+        } else {
+            printf("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
+        }
+    }
+
+    // Allocate points to Intelligence
+    while (other_points > 0) {
+        printf("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
+        fgets(user_input, sizeof(user_input), stdin);
+        points_to_add = atoi(user_input);
+
+        if (points_to_add >= 0 && points_to_add <= other_points) {
+            player->intelligence += points_to_add;
+            other_points -= points_to_add;
+            break;
+        } else {
+            printf("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
+        }
+    }
+
+    // Allocate remaining points to Dexterity
+    if (other_points > 0) {
+        printf("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n", other_points);
+        player->dexterity += other_points;
+    }
+
+    printf("\nYOUR ATTRIBUTES ARE NOW:\n");
+    printf("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
+           player->strength, player->intelligence, player->dexterity);
 }
+          
 
 // Map and room functions
 void generate_castle(GameState *game)
