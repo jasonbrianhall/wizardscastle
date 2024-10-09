@@ -92,6 +92,8 @@ void end_game(Player *player, GameState *game);
 
 // Input/Output functions
 char get_user_input();
+char get_user_input_yn();
+
 void print_message(const char *message);
 void printStars(void);
 

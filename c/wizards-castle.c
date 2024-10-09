@@ -285,7 +285,7 @@ void main_game_loop(Player *player, GameState *game)
                 break;
             case 'Q':
                 print_message("DO YOU REALLY WANT TO QUIT NOW? (Y/N) ");
-                if (get_user_input() == 'Y') {
+                if (get_user_input_yn() == 'Y') {
                     game_over = 1;
                 } else {
                     print_message("OK, CONTINUE ON BRAVE ADVENTURER!\n");
@@ -577,7 +577,7 @@ void move_player(Player *player, GameState *game, char direction)
             return;
         } else {
             print_message("You're at the entrance. Are you sure you want to leave without the Orb of Zot? (Y/N) ");
-            char choice = get_user_input();
+            char choice = get_user_input_yn();
             if (choice == 'Y') {
                 print_message("You leave the castle empty-handed. Game over!\n");
                 // Set a flag or call a function to end the game
@@ -743,7 +743,7 @@ void buy_equipment(Player *player)
 
 void buy_lamp_and_flares(Player *player)
 {
-    char user_input[10];
+    char user_input_yn, user_input[10];
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
 
     // Try to buy a lamp
@@ -751,15 +751,13 @@ void buy_lamp_and_flares(Player *player)
         print_message("\nDO YOU WANT TO BUY A LAMP FOR 20 GP'S?\n");
         do {
             print_message("YOUR CHOICE (Y/N):  ");
-            fgets(user_input, sizeof(user_input), stdin);
-            user_input[0] = toupper(user_input[0]);
-
-            if (user_input[0] == 'Y') {
+            user_input_yn = get_user_input();
+            if (user_input_yn == 'Y') {
                 player->lamp_flag = 1;
                 player->gold -= 20;
                 print_message("\nOK, LAMP PURCHASED. IT'S GUARANTEED TO OUTLIVE YOU!\n");
                 break;
-            } else if (user_input[0] == 'N') {
+            } else if (user_input_yn == 'N') {
                 break;
             } else {
                 print_message("** PLEASE ANSWER YES OR NO.\n");
@@ -937,6 +935,46 @@ char get_user_input()
 
         // Check if it's a valid command
         if (strchr("NSEWUDMFLOGTHQYN", command) != NULL) {
+            return command;
+        } else {
+            print_message("Invalid command. Type 'H' for help.\n");
+        }
+    }
+}
+
+char get_user_input_yn()
+{
+    char input[100];  // Buffer to store user input
+    char command;
+
+    while (1) {
+        
+        // Get user input
+        if (fgets(input, sizeof(input), stdin) == NULL) {
+            // Handle input error or EOF
+            print_message("Error reading input. Please try again.\n");
+            continue;
+        }
+
+        // Remove newline character if present
+        input[strcspn(input, "\n")] = 0;
+
+        // Convert input to uppercase
+        for (int i = 0; input[i]; i++) {
+            input[i] = toupper((unsigned char)input[i]);
+        }
+
+        // Check if input is empty
+        if (strlen(input) == 0) {
+            print_message("PLEASE ENTER Y OR NO.\n");
+            continue;
+        }
+
+        // Get the first character of the input
+        command = input[0];
+
+        // Check if it's a valid command
+        if (strchr("YN", command) != NULL) {
             return command;
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
