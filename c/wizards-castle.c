@@ -154,11 +154,11 @@ bool main_game_loop(Player *player, GameState *game)
             char message[100];
             snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
             print_message(message);
-        } else if (room_content >= 101 && room_content <= 133) {
+        } else if (room_content >= EMPTY_ROOM && room_content <= TREASURE_END) {
             char message[100];
             snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - 101]);
             print_message(message);
-            if (room_content==107)
+            if (room_content==GOLD)
             {
                 int gold_found = random_number(1000);  // Random amount between 1 and 1000
                 player->gold += gold_found;
@@ -646,6 +646,8 @@ void move_player(Player *player, GameState *game, char direction)
         case 'E':
             new_y++;
             break;
+        case 'T':  //teleport
+            break;
         default:
             print_message("Invalid direction!\n");
             return;
@@ -672,12 +674,12 @@ void move_player(Player *player, GameState *game, char direction)
     int room_content = get_room_content(game, player->x, player->y, player->level);
     mark_room_discovered(game, player->x, player->y, player->level);
     
-    if (room_content == 109) {  // Warp
+    if (room_content == WARP) {  // Warp
         player->x = random_number(8);
         player->y = random_number(8);
         player->level = random_number(8);
         print_message("You've been warped to a random location!\n");
-    } else if (room_content == 110) {  // Sinkhole
+    } else if (room_content == SINKHOLE) {  // Sinkhole
         if (player->level < 8) {
             player->level++;
         } else {
@@ -1573,6 +1575,8 @@ void teleport(Player *player, GameState *game)
         player->orb_flag = 1;
         game->orb_location[0] = 0;  // Mark as found
     }
+    move_player(player, game, 'T');
+   
 }
 
 void gaze_into_orb(Player *player, GameState *game)
