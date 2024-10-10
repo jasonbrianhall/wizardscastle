@@ -1842,7 +1842,6 @@ char* get_user_input_main() {
             return input;  // Return the single letter command
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
-            continue;
         }
     }
 }
