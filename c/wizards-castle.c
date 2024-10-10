@@ -209,10 +209,10 @@ bool main_game_loop(Player *player, GameState *game)
                     break;
                 case 'U':
                     if (room_content == STAIRS_UP) {  // Stairs going up
-                        player->level--;
-                        if (player->level<1)
+                        player->level++;
+                        if (player->level>8)
                         {
-                            player->level=8;
+                            player->level=1;
                         }
                         print_message("YOU CLIMB UP THE STAIRS.\n");
                     } else {
@@ -221,13 +221,20 @@ bool main_game_loop(Player *player, GameState *game)
                     break;
                 case 'D':
                     if (strncmp(user_command, "DR", 2) == 0) {
-                        drink_from_pool(player, game);
-                    }
-                    else if (room_content == 104) {  // Stairs going down
-                        player->level++;
-                        if (player->level>8)
+                        if (room_content == POOL)
                         {
-                            player->level=1;
+                            drink_from_pool(player, game);
+                        }
+                        else
+                        {
+                            print_message("** IF YOU WANT A DRINK, FIND A POOL!");
+                        }
+                    }
+                    else if (room_content == STAIRS_DOWN) {  // Stairs going down
+                        player->level--;
+                        if (player->level<1)
+                        {
+                            player->level=8;
                         }
                         print_message("YOU DESCEND THE STAIRS.\n");
                     } else {
@@ -244,16 +251,16 @@ bool main_game_loop(Player *player, GameState *game)
                     use_lamp(player, game);
                     break;
                 case 'O':
-                    if (room_content == 106) {  // Chest
+                    if (room_content == CHEST) {  // Chest
                         open_chest(player, game);
-                    } else if (room_content == 112) {  // Book
+                    } else if (room_content == BOOK) {  // Book
                         open_book(player, game);
                     } else {
                         print_message("THERE'S NOTHING HERE TO OPEN!\n");
                     }
                     break;
                 case 'G':
-                    if (room_content == 111) {  // Crystal orb
+                    if (room_content == CRYSTAL_ORB) {  // Crystal orb
                         gaze_into_orb(player, game);
                     } else {
                         print_message("THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
@@ -490,11 +497,11 @@ void generate_castle(GameState *game)
             } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != EMPTY_ROOM);
             
             // Place stairs down on current level
-            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = STAIRS_DOWN;  // Stairs down
+            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = STAIRS_UP;  // Stairs down
             
             // Place corresponding stairs up on the level below (or on level 1 if we're on level 8)
             int next_level = (z % 8) + 1;
-            game->location_map[CALCULATE_ROOM_INDEX(next_level, x, y)] = STAIRS_UP;  // Stairs up
+            game->location_map[CALCULATE_ROOM_INDEX(next_level, x, y)] = STAIRS_DOWN;  // Stairs up
         }
     }
 
