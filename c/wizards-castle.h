@@ -2,6 +2,7 @@
 #define WIZARDS_CASTLE_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 
 #define MAP_SIZE 512
@@ -55,30 +56,30 @@
 
 // Structures
 typedef struct {
-    int race;
-    int sex;
-    int strength;
-    int intelligence;
-    int dexterity;
+    uint8_t race:4;
+    uint8_t sex:4;
+    uint8_t strength:5;
+    uint8_t intelligence:5;
+    uint8_t dexterity:5;
     int gold;
     int flares;
-    int armor_type;
-    int armor_points;
-    int weapon_type;
-    int lamp_flag;
-    int x;
-    int y;
-    int level;
-    int runestaff_flag;
-    int orb_flag;
+    uint8_t armor_type:4;
+    uint8_t armor_points:6;
+    uint8_t weapon_type:4;
+    uint8_t lamp_flag;
+    uint8_t x:4;
+    uint8_t y:4;
+    uint8_t level;
+    uint8_t runestaff_flag;
+    uint8_t orb_flag;
     
-    int book_flag;
-    int blindness_flag;
-    int stickybook_flag;
-    int has_runestaff;
-    int has_orb;
-    int treasure_count;
-    int web_count;
+    uint8_t book_flag;
+    uint8_t blindness_flag;
+    uint8_t stickybook_flag;
+    uint8_t has_runestaff;
+    uint8_t has_orb;
+    uint8_t treasure_count:4;
+    uint8_t web_count:8;
 
 } Player;
 
@@ -90,9 +91,9 @@ typedef struct {
     int runestaff_location[3];
     int turn_count;
     int monster_count;
-    int game_over;
-    int victory;
-    int vendor_attacked;
+    uint8_t game_over;
+    uint8_t victory;
+    uint8_t vendor_attacked;
 
 } GameState;
 
