@@ -1553,16 +1553,113 @@ void drink_from_pool(Player *player, GameState *game)
 
 void teleport(Player *player, GameState *game)
 {
+    if (!player->runestaff_flag) {
+        printf("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+        return;
+    }
 
+    int new_x, new_y, new_level;
+
+    printf("\nEnter X-coordinate (1-8): ");
+    scanf("%d", &new_x);
+    if (new_x < 1 || new_x > 8) {
+        printf("Invalid coordinate. Teleportation failed.\n");
+        return;
+    }
+
+    printf("Enter Y-coordinate (1-8): ");
+    scanf("%d", &new_y);
+    if (new_y < 1 || new_y > 8) {
+        printf("Invalid coordinate. Teleportation failed.\n");
+        return;
+    }
+
+    printf("Enter Z-coordinate (level 1-8): ");
+    scanf("%d", &new_level);
+    if (new_level < 1 || new_level > 8) {
+        printf("Invalid level. Teleportation failed.\n");
+        return;
+    }
+
+    player->x = new_x;
+    player->y = new_y;
+    player->level = new_level;
+
+    printf("\nYou have teleported to (%d, %d) on level %d.\n", player->x, player->y, player->level);
+
+    // Check if the player teleported to the Orb of Zot
+    if (player->x == game->orb_location[0] && 
+        player->y == game->orb_location[1] && 
+        player->level == game->orb_location[2]) {
+        printf("\nGREAT UNMITIGATED ZOT!\n");
+        printf("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
+        printf("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
+        player->runestaff_flag = 0;
+        player->orb_flag = 1;
+        game->orb_location[0] = 0;  // Mark as found
+    }
 }
 
 void gaze_into_orb(Player *player, GameState *game)
 {
+    if (get_room_content(game, player->x, player->y, player->level) != CRYSTAL_ORB) {
+        printf("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
+        return;
+    }
 
+    printf("\nYou gaze into the crystal orb and see ");
+
+    int vision = random_number(6);
+    switch(vision) {
+        case 1:
+            printf("yourself in a bloody heap!\n");
+            player->strength -= random_number(2);
+            if (player->strength <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 2:
+            printf("yourself drinking from a pool and becoming %s!\n", 
+                   get_monster_name(MONSTER_START + random_number(12) - 1));
+            break;
+        case 3:
+            printf("%s gazing back at you!\n", 
+                   get_monster_name(MONSTER_START + random_number(12) - 1));
+            break;
+        case 4:
+            {
+                int x = random_number(8);
+                int y = random_number(8);
+                int z = random_number(8);
+                int content = get_room_content(game, x, y, z);
+                char room_desc[100];  // Adjust size as needed
+                get_room_description(content, room_desc);
+                printf("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
+            }
+            break;
+        case 5:
+            {
+                int x, y, z;
+                if (random_number(8) < 4) {
+                    x = game->orb_location[0];
+                    y = game->orb_location[1];
+                    z = game->orb_location[2];
+                } else {
+                    x = random_number(8);
+                    y = random_number(8);
+                    z = random_number(8);
+                }
+                printf("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
+            }
+            break;
+        case 6:
+            printf("a soap opera rerun!\n");
+            break;
+    }
 }
 
 // Utility functions
-
 int random_number(int max_value)
 {
     return 1 + rand() % max_value;
