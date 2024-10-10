@@ -646,7 +646,6 @@ void move_player(Player *player, GameState *game, char direction)
             }
         }
     }
-
     int new_x = player->x;
     int new_y = player->y;
     switch(direction) {

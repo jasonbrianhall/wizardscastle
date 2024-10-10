@@ -56,8 +56,8 @@
 
 // Structures
 typedef struct {
-    int8_t race:4;
-    int8_t sex:4;
+    uint8_t race:4;
+    uint8_t sex:4;
     int16_t strength;
     int16_t intelligence;
     int16_t dexterity;
@@ -66,12 +66,12 @@ typedef struct {
     int8_t armor_type:4;
     int8_t armor_points;
     int8_t weapon_type:4;
-    int8_t lamp_flag;
-    int8_t x:4;
-    int8_t y:4;
-    int8_t level;
-    int8_t runestaff_flag;
-    int8_t orb_flag;
+    uint8_t lamp_flag:1;
+    uint8_t x:4;  // Keep unsigned (four bits to save memory)
+    uint8_t y:4;  // Keep unsigned (four bits to save memory)
+    uint8_t level:4;  // Keep unsigned
+    uint8_t runestaff_flag:1;
+    uint8_t orb_flag:1;
     
     uint8_t book_flag:1;
     uint8_t blindness_flag:1;
