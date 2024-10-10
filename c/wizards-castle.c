@@ -2012,21 +2012,21 @@ void get_room_description(int room_content, char *desc)
 {
     char full_desc[100];
     switch (room_content) {
-        case EMPTY_ROOM: strncpy(full_desc, "EMPTY   ", 8); break;
-        case ENTRANCE: strncpy(full_desc, "ENTRANCE", 8); break;
-        case STAIRS_UP: strncpy(full_desc,"STAIRS UP", 8); break;
-        case STAIRS_DOWN: strncpy(full_desc,"STAIRS DN",8); break;
-        case POOL: strncpy(full_desc,"POOL    ", 8); break;
-        case CHEST: strncpy(full_desc,"CHEST   ",8); break;
-        case GOLD: strncpy(full_desc,"GOLD    ",8); break;
-        case FLARES: strncpy(full_desc,"FLARES  ",8); break;
-        case WARP: strncpy(full_desc,"WARP    ",8); break;
-        case SINKHOLE: strncpy(full_desc,"SINKHOLE",8); break;
-        case CRYSTAL_ORB: strncpy(full_desc,"CRYSTAL ",8); break;
-        case BOOK: strncpy(full_desc,"BOOK    ",8); break;
-        case MONSTER_START ... MONSTER_END: strncpy(full_desc,"MONSTER ",8); break;
-        case VENDOR: strncpy(full_desc,"VENDOR  ", 8); break;
-        case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE", 8); break;
+        case EMPTY_ROOM: strncpy(full_desc, "EMPTY   \0", 8); break;
+        case ENTRANCE: strncpy(full_desc, "ENTRANCE\0", 8); break;
+        case STAIRS_UP: strncpy(full_desc,"STAIRS UP\0", 8); break;
+        case STAIRS_DOWN: strncpy(full_desc,"STAIRS DN\0",8); break;
+        case POOL: strncpy(full_desc,"POOL    \0", 8); break;
+        case CHEST: strncpy(full_desc,"CHEST   \0",8); break;
+        case GOLD: strncpy(full_desc,"GOLD    \0",8); break;
+        case FLARES: strncpy(full_desc,"FLARES  \0",8); break;
+        case WARP: strncpy(full_desc,"WARP    \0",8); break;
+        case SINKHOLE: strncpy(full_desc,"SINKHOLE\0",8); break;
+        case CRYSTAL_ORB: strncpy(full_desc,"CRYSTAL \0",8); break;
+        case BOOK: strncpy(full_desc,"BOOK    \0",8); break;
+        case MONSTER_START ... MONSTER_END: strncpy(full_desc,"MONSTER \0",8); break;
+        case VENDOR: strncpy(full_desc,"VENDOR  \0", 8); break;
+        case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE\0", 8); break;
         default: strncpy(full_desc,"   ??   ",8); break;
     }
     strncpy(desc, full_desc, 8);
