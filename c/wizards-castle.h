@@ -76,6 +76,7 @@ typedef struct {
     int has_runestaff;
     int has_orb;
     int treasure_count;
+    int web_count;
 
 } Player;
 
@@ -114,7 +115,6 @@ void set_room_content(GameState *game, int x, int y, int level, int content);
 
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
-void handle_room_event(Player *player, GameState *game);
 void fight_monster(Player *player, GameState *game);
 void handle_vendor(Player *player, GameState *game);
 void trade_with_vendor(Player *player, GameState *game);

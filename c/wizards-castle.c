@@ -64,6 +64,7 @@ void initialize_player(Player *player)
 	player->has_runestaff = 0;
 	player->has_orb = 0;
 	player->treasure_count = 0;
+	player->web_count = 0;
 
 }
 
@@ -381,7 +382,6 @@ bool main_game_loop(Player *player, GameState *game)
         }
 
         if (!game_over) {
-            handle_room_event(player, game);
             game_over = check_game_over(player);
         }
     }
@@ -751,12 +751,6 @@ void move_player(Player *player, GameState *game, char direction)
     }
 
     // Print the new room description
-    handle_room_event(player, game);
-}
-
-void handle_room_event(Player *player, GameState *game)
-{
-
 }
 
 void fight_monster(Player *player, GameState *game)
@@ -786,7 +780,8 @@ void fight_monster(Player *player, GameState *game)
             printf("YOU CAN ALSO CAST A SPELL.\n");
         }
         printf("\n");
-        printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %D.\n", player->strength, player->dexterity, player->intelligence);
+        printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
+               player->strength, player->dexterity, player->intelligence);
 
         char choice = get_user_input();
 
@@ -848,44 +843,52 @@ void fight_monster(Player *player, GameState *game)
                 continue;
         }
 
-        // Enemy's turn - always occurs unless player successfully retreated
-   if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
-        printf("\nTHE %s ATTACKS!\n", enemy_name);
-        if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
-            printf("\nOUCH! HE HIT YOU!\n");
-            int damage = (enemy_strength / 2) + 1;
-            int original_damage = damage;
-            
-            // Apply armor reduction
-            if (player->armor_type != 0) {
-                damage -= player->armor_type;
-                player->armor_points -= player->armor_type;
-                if (damage < 0) {
-                    player->armor_points -= damage;  // Absorb excess damage
-                    damage = 0;
-                }
-                if (player->armor_points < 0) {
-                    player->armor_points = 0;
-                    player->armor_type = 0;
-                    printf("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
+        // Enemy's turn
+        if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
+            if (player->web_count > 0) {
+                player->web_count--;
+                if (player->web_count == 0) {
+                    printf("\nTHE WEB JUST BROKE!\n");
+                } else {
+                    printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
+                    continue;  // Skip the enemy's attack
                 }
             }
-            
-            player->strength -= damage;
-            printf("YOU TAKE %d DAMAGE!\n", damage);
-            
-            if (player->strength <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
-                game->game_over = 1;
-                return;
+
+            printf("\nTHE %s ATTACKS!\n", enemy_name);
+            if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+                printf("\nOUCH! HE HIT YOU!\n");
+                int damage = (enemy_strength / 2) + 1;
+                
+                // Apply armor reduction
+                if (player->armor_type != 0) {
+                    damage -= player->armor_type;
+                    player->armor_points -= player->armor_type;
+                    if (damage < 0) {
+                        player->armor_points -= damage;  // Absorb excess damage
+                        damage = 0;
+                    }
+                    if (player->armor_points < 0) {
+                        player->armor_points = 0;
+                        player->armor_type = 0;
+                        printf("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
+                    }
+                }
+                
+                player->strength -= damage;
+                printf("YOU TAKE %d DAMAGE!\n", damage);
+                
+                if (player->strength <= 0) {
+                    printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                    game->game_over = 1;
+                    return;
+                }
+            } else {
+                printf("\nWHAT LUCK, HE MISSED YOU!\n");
             }
-        } else {
-            printf("\nWHAT LUCK, HE MISSED YOU!\n");
         }
     }
-    }
 }
-
 void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name)
 {
     printf("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
@@ -969,9 +972,9 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
                 game->game_over = 1;
                 return 1;
             }
-            printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
+            player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
+            printf("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
             return 0;
-
         case 'F':
             player->strength--;
             player->intelligence--;
