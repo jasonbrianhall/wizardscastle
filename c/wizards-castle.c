@@ -1278,8 +1278,16 @@ void buy_weapon(Player *player)
     switch(weapon_choice) {
         case '1':
             if (player->gold >= 1250) {
-                player->weapon_type = 1;
-                player->gold -= 1250;
+                if (player->weapon_type < 1)
+                {
+                    player->weapon_type = 1;
+                    player->gold -= 1250;
+                    print_message("Weapon purchased successfully!\n");
+                }
+                else
+                {
+                    print_message("YOUR WEAPON IS ALREADY SUPERIOR!\n");
+                }
             } else {
                 print_message("Not enough gold for a Dagger.\n");
                 return;
@@ -1287,8 +1295,17 @@ void buy_weapon(Player *player)
             break;
         case '2':
             if (player->gold >= 1500) {
-                player->weapon_type = 2;
-                player->gold -= 1500;
+                if (player->weapon_type <2)
+                {
+                    player->weapon_type = 2;
+                    player->gold -= 1500;
+                    print_message("Weapon purchased successfully!\n");
+
+                }
+                else
+                {
+                    print_message("YOUR WEAPON IS ALREADY SUPERIOR!\n");
+                }                
             } else {
                 print_message("Not enough gold for a Mace.\n");
                 return;
@@ -1296,8 +1313,17 @@ void buy_weapon(Player *player)
             break;
         case '3':
             if (player->gold >= 2000) {
-                player->weapon_type = 3;
-                player->gold -= 2000;
+                if (player->weapon_type < 3)
+                {
+                    player->weapon_type = 3;
+                    player->gold -= 2000;
+                    print_message("Weapon purchased successfully!\n");
+                }
+                else
+                {
+                    print_message("YOUR WEAPON IS ALREADY SUPERIOR!\n");                
+                }
+                
             } else {
                 print_message("Not enough gold for a Sword.\n");
                 return;
@@ -1309,7 +1335,7 @@ void buy_weapon(Player *player)
             print_message("Invalid choice. No weapon purchased.\n");
             return;
     }
-    print_message("Weapon purchased successfully!\n");
+    
 }
 
 // Helper function to get treasure names
