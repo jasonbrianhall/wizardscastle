@@ -914,7 +914,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 
 int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
 {
-    print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? ");
+    print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? \n\n");
     char spell = get_user_input();
 
     switch (spell) {
