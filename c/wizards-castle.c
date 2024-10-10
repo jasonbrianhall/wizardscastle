@@ -595,6 +595,7 @@ uint8_t get_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level)
     if (index >= 0 && index < MAP_SIZE) {
         return game->location_map[index];
     }
+    printf("Invalid Room %i\n", index);
     return -1;  // Invalid room
 }
 
@@ -2212,6 +2213,7 @@ void get_room_description(uint8_t room_content, char *desc)
         case RUBY_RED:    strncpy(full_desc,"RUBY RED\0", 9); break;
         case NORN_STONE:  strncpy(full_desc,"NORN STN\0", 9); break;
         case PALE_PEARL:  strncpy(full_desc,"PALE PRL\0", 9); break;
+        case OPAL_EYE:    strncpy(full_desc,"OPAL EYE\0", 9); break;
         case GREEN_GEM:   strncpy(full_desc,"GREEN GM\0", 9); break;
         case BLUE_FLAME:  strncpy(full_desc,"BLUE FLM\0", 9); break;
         case PALANTIR:    strncpy(full_desc,"PALANTIR\0", 9); break;
@@ -2326,43 +2328,44 @@ void handle_treasure(Player *player, GameState *game, uint8_t room_content)
     int treasure_index = room_content - TREASURE_START;
     const char* treasure_name = get_treasure_name(treasure_index);
 
-    printf("\nYOU FOUND %s!\n", treasure_name);
+    printf("\nYOU FOUND %s!\n\n", treasure_name);
     
     game->treasure[treasure_index] = 1;
     player->treasure_count++;
-    printf("YOU NOW HAVE %d TREASURES.\n", player->treasure_count);
+    printf("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
 
     // Apply special effects of treasures
     switch (treasure_index) {
         case 0: // Ruby Red
-        	print_message("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n");
+        	print_message("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n\n");
 	    break;
         case 1: // Norn Stone
-	    print_message("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n");
+	    print_message("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n\n");
     	break;
         case 2: // Pale Pearl
-	    print_message("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n");
+	    print_message("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n\n");
         	break;
         case 3: // Opal Eye
 	    print_message("THE OPAL EYE WILL CURE BLINDNESS.\n");
         	if (player->blindness_flag) {
 	            player->blindness_flag = 0;
-	        print_message("YOUR BLINDNESS IS CURED!\n");
+	            print_message("YOUR BLINDNESS IS CURED!\n");
         	}
+        	print_message("\n");
 	    break;
         case 4: // Green Gem
-	    print_message("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n");
+	    print_message("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n\n");
         	break;
         case 5: // Blue Flame
-	    print_message("THE BLUE FLAME WILL DISSOLVE BOOKS.\n");
+	    print_message("THE BLUE FLAME WILL DISSOLVE BOOKS.\n\n");
         	if (player->stickybook_flag) {
 	        player->stickybook_flag = 0;
-	        print_message("THE STICKY BOOK DISSOLVES!\n");
+	        print_message("THE STICKY BOOK DISSOLVES!\n\n");
         	}
 	    break;
         case 6: // Palantir
         case 7: // Silmaril
-	    print_message("ITS BEAUTY IS BEYOND COMPARE.\n");
+	    print_message("ITS BEAUTY IS BEYOND COMPARE.\n\n");
         	break;
     }
 
