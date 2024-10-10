@@ -2030,7 +2030,7 @@ void get_room_description(int room_content, char *desc)
         case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE\0", 9); break;
         default: strncpy(full_desc,"   ??   ",9); break;
     }
-    strncpy(desc, full_desc, 8);
+    strncpy(desc, full_desc, 9);
 }
 
 char get_room_symbol(int room_content)
