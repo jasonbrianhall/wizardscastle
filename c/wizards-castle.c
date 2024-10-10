@@ -185,9 +185,36 @@ bool main_game_loop(Player *player, GameState *game)
     while (!game_over) {
         game->turn_count++;
 
-        // Handle curses
+       // Handle curses
         if (player->runestaff_flag == 0 && player->orb_flag == 0) {
-            // Implement curse effects here (similar to lines 1950-2005 in BASIC)
+            // Lethargy curse (similar to line 1960 in BASIC)
+            if (!game->treasure[0] && random_number(100) <= 5) {  // 5% chance if no Ruby Red
+                game->turn_count++;
+                printf("\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
+            }
+
+            // Leech curse (similar to line 1965 in BASIC)
+            if (!game->treasure[2] && random_number(100) <= 5) {  // 5% chance if no Pale Pearl
+                int gold_lost = random_number(5);
+                player->gold = (player->gold > gold_lost) ? player->gold - gold_lost : 0;
+                printf("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", gold_lost);
+            }
+
+            // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
+            if (!game->treasure[4] && random_number(100) <= 5) {  // 5% chance if no Green Gem
+                int old_x = player->x, old_y = player->y, old_z = player->level;
+                player->x = random_number(8);
+                player->y = random_number(8);
+                player->level = random_number(8);
+                printf("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
+                printf("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n", player->x, player->y, player->level);
+
+                // If player was in an empty room, mark old room as unexplored
+                if (get_room_content(game, old_x, old_y, old_z) == EMPTY_ROOM) {
+                    int index = CALCULATE_ROOM_INDEX(old_z, old_x, old_y);
+                    game->discovered_rooms[index] = 0;
+                }
+            }
         }
 
         // Display random events (similar to lines 2010-2060 in BASIC)
@@ -263,7 +290,7 @@ bool main_game_loop(Player *player, GameState *game)
            // Treasure
            else if (room_content>=126 && room_content<=133)
            {
-                printf("Fix me, Get Treasure"); 
+                handle_treasure(player, game, room_content); 
            }
            
         } else {
@@ -2148,3 +2175,55 @@ const char* get_monster_name(int room_content)
     }
 }
 
+void handle_treasure(Player *player, GameState *game, int room_content)
+{
+    int treasure_index = room_content - TREASURE_START;
+    const char* treasure_name = get_treasure_name(treasure_index);
+
+    printf("\nYOU FOUND %s!\n", treasure_name);
+    
+    if (!game->treasure[treasure_index]) {
+        game->treasure[treasure_index] = 1;
+        player->treasure_count++;
+        printf("YOU NOW HAVE %d TREASURES.\n", player->treasure_count);
+
+        // Apply special effects of treasures
+        switch (treasure_index) {
+            case 0: // Ruby Red
+                printf("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n");
+                break;
+            case 1: // Norn Stone
+                printf("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n");
+                break;
+            case 2: // Pale Pearl
+                printf("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n");
+                break;
+            case 3: // Opal Eye
+                printf("THE OPAL EYE WILL CURE BLINDNESS.\n");
+                if (player->blindness_flag) {
+                    player->blindness_flag = 0;
+                    printf("YOUR BLINDNESS IS CURED!\n");
+                }
+                break;
+            case 4: // Green Gem
+                printf("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n");
+                break;
+            case 5: // Blue Flame
+                printf("THE BLUE FLAME WILL DISSOLVE BOOKS.\n");
+                if (player->stickybook_flag) {
+                    player->stickybook_flag = 0;
+                    printf("THE STICKY BOOK DISSOLVES!\n");
+                }
+                break;
+            case 6: // Palantir
+            case 7: // Silmaril
+                printf("ITS BEAUTY IS BEYOND COMPARE.\n");
+                break;
+        }
+    } else {
+        printf("YOU ALREADY HAVE THIS TREASURE.\n");
+    }
+
+    // Remove the treasure from the room
+    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+}

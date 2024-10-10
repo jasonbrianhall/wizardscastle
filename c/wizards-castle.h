@@ -166,6 +166,8 @@ char get_room_symbol(int room_content);
 void get_room_description(int room_content, char *desc);
 
 void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name);
+void handle_treasure(Player *player, GameState *game, int roomcontent);
+
 int handle_bribe(Player *player, GameState *game, const char *enemy_name);
 int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name);
 void move_player_randomly(Player *player, GameState *game);
