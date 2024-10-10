@@ -173,6 +173,8 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
 void move_player_randomly(Player *player, GameState *game);
 const char* get_weapon_name(int weapon_type);
 const char* get_random_body_part();
+const char* get_random_species();
+
 const char* get_monster_name(int room_content);
 
 #endif 

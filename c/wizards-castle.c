@@ -1032,6 +1032,12 @@ const char* get_random_body_part()
     return body_parts[random_number(8) - 1];
 }
 
+const char* get_random_species()
+{
+    const char* body_parts[] = {"ELF", "HUMAN", "DWARF", "HOBBIT"};
+    return body_parts[random_number(4) - 1];
+}
+
 
 void handle_vendor(Player *player, GameState *game)
 {
@@ -2000,7 +2006,7 @@ void open_book(Player *player, GameState *game)
             print_message("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
             break;
         case 3:
-            print_message("IT'S AN OLD COPY OF PLAYBOY!\n");
+            printf("IT'S AN OLD COPY OF PLAY%s!\n", get_random_species());
             break;
         case 4:
             print_message("IT'S A MANUAL OF DEXTERITY!\n");
