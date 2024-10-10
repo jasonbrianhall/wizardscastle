@@ -182,6 +182,8 @@ bool main_game_loop(Player *player, GameState *game)
         "AN OGRE", "A TROLL", "A BEAR", "A MINOTAUR", "A GARGOYLE", "A CHIMERA",
         "A BALROG", "A DRAGON", "A VENDOR"
     };
+    char message[100];
+
 
     while (!game_over) {
         game->turn_count++;
@@ -273,7 +275,6 @@ bool main_game_loop(Player *player, GameState *game)
                 int flares_found = random_number(5);  // Random amount between 1 and 5
 
                 player->flares += flares_found;
-                char message[100];
                 snprintf(message, sizeof(message), "%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
                 print_message(message);
                 set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
@@ -296,13 +297,15 @@ bool main_game_loop(Player *player, GameState *game)
            
         } else {
             print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
-            printf("%i\n", room_content);
+            snprintf(message, sizeof(message), "%i\n", room_content);
+            print_message(message);
         }
         game_over = check_game_over(player);
         if(!game_over)
         {
             user_command=get_user_input_main();
-            printf("User Command: %s\n", user_command);
+            snprintf(message, sizeof(message), "User Command: %s\n", user_command);
+            print_message(message);
             switch (user_command[0]) {
                 case 'N': case 'S': case 'E': case 'W':
                     move_player(player, game, user_command[0]);
@@ -510,7 +513,7 @@ void allocate_attributes(Player *player)
 
     // Allocate points to Strength
     while (other_points > 0) {
-        printf("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
+        print_message("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
         fgets(user_input, sizeof(user_input), stdin);
         points_to_add = atoi(user_input);
 
@@ -525,7 +528,7 @@ void allocate_attributes(Player *player)
 
     // Allocate points to Intelligence
     while (other_points > 0) {
-        printf("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
+        print_message("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
         fgets(user_input, sizeof(user_input), stdin);
         points_to_add = atoi(user_input);
 
@@ -544,7 +547,7 @@ void allocate_attributes(Player *player)
         player->dexterity += other_points;
     }
 
-    printf("\nYOUR ATTRIBUTES ARE NOW:\n");
+    print_message("\nYOUR ATTRIBUTES ARE NOW:\n");
     printf("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
            player->strength, player->intelligence, player->dexterity);
 }
@@ -775,14 +778,14 @@ void fight_monster(Player *player, GameState *game)
 
     while (1) {
         printf("\nYOU'RE FACING %s!\n\n", enemy_name);
-        printf("YOU MAY ATTACK OR RETREAT.\n");
+        print_message("YOU MAY ATTACK OR RETREAT.\n");
         if (can_bribe) {
-            printf("YOU CAN ALSO ATTEMPT OR BRIBE.\n");
+            print_message("YOU CAN ALSO ATTEMPT OR BRIBE.\n");
         }
         if (player->intelligence > 14) {
-            printf("YOU CAN ALSO CAST A SPELL.\n");
+            print_message("YOU CAN ALSO CAST A SPELL.\n");
         }
-        printf("\n");
+        print_message("\n");
         printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
                player->strength, player->dexterity, player->intelligence);
 
@@ -793,9 +796,9 @@ void fight_monster(Player *player, GameState *game)
                 if (player->weapon_type == 0) {
                     printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
                 } else if (player->stickybook_flag) {
-                    printf("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
+                    print_message("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
                 } else if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
-                    printf("\nYOU MISSED, TOO BAD!\n");
+                    print_message("\nYOU MISSED, TOO BAD!\n");
                 } else {
                     printf("\nYOU HIT THE EVIL %s!\n", enemy_name);
                     enemy_strength -= player->weapon_type;
@@ -812,17 +815,17 @@ void fight_monster(Player *player, GameState *game)
 
             case 'R':
                 if (random_number(20) + player->dexterity > random_number(20) + enemy_dexterity) {
-                    printf("\nYOU HAVE ESCAPED!\n");
+                    print_message("\nYOU HAVE ESCAPED!\n");
                     move_player_randomly(player, game);
                     return;
                 } else {
-                    printf("\nYOU FAILED TO RETREAT!\n");
+                    print_message("\nYOU FAILED TO RETREAT!\n");
                 }
                 break;
 
             case 'B':
                 if (!can_bribe) {
-                    printf("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                    print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                     continue;
                 }
                 if (handle_bribe(player, game, enemy_name)) {
@@ -833,7 +836,7 @@ void fight_monster(Player *player, GameState *game)
 
             case 'C':
                 if (player->intelligence <= 14) {
-                    printf("\n** YOU CAN'T CAST A SPELL NOW!\n");
+                    print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
                     continue;
                 }
                 if (handle_spell(player, game, &enemy_strength, enemy_name)) {
@@ -842,7 +845,7 @@ void fight_monster(Player *player, GameState *game)
                 break;
 
             default:
-                printf("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                 continue;
         }
 
@@ -851,7 +854,7 @@ void fight_monster(Player *player, GameState *game)
             if (player->web_count > 0) {
                 player->web_count--;
                 if (player->web_count == 0) {
-                    printf("\nTHE WEB JUST BROKE!\n");
+                    print_message("\nTHE WEB JUST BROKE!\n");
                 } else {
                     printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
                     continue;  // Skip the enemy's attack
@@ -860,7 +863,7 @@ void fight_monster(Player *player, GameState *game)
 
             printf("\nTHE %s ATTACKS!\n", enemy_name);
             if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
-                printf("\nOUCH! HE HIT YOU!\n");
+                print_message("\nOUCH! HE HIT YOU!\n");
                 int damage = (enemy_strength / 2) + 1;
                 
                 // Apply armor reduction
@@ -874,7 +877,7 @@ void fight_monster(Player *player, GameState *game)
                     if (player->armor_points < 0) {
                         player->armor_points = 0;
                         player->armor_type = 0;
-                        printf("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
+                        print_message("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
                     }
                 }
                 
@@ -882,12 +885,12 @@ void fight_monster(Player *player, GameState *game)
                 printf("YOU TAKE %d DAMAGE!\n", damage);
                 
                 if (player->strength <= 0) {
-                    printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                    print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                     game->game_over = 1;
                     return;
                 }
             } else {
-                printf("\nWHAT LUCK, HE MISSED YOU!\n");
+                print_message("\nWHAT LUCK, HE MISSED YOU!\n");
             }
         }
     }
@@ -901,20 +904,20 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     }
 
     if (is_vendor) {
-        printf("\nYOU GET ALL HIS WARES:\n");
-        printf("PLATE ARMOR\n");
+        print_message("\nYOU GET ALL HIS WARES:\n");
+        print_message("PLATE ARMOR\n");
         player->armor_type = 3;
         player->armor_points = 21;
-        printf("A SWORD\n");
+        print_message("A SWORD\n");
         player->weapon_type = 3;
-        printf("A STRENGTH POTION\n");
+        print_message("A STRENGTH POTION\n");
         player->strength = min(player->strength + random_number(6), 18);
-        printf("AN INTELLIGENCE POTION\n");
+        print_message("AN INTELLIGENCE POTION\n");
         player->intelligence = min(player->intelligence + random_number(6), 18);
-        printf("A DEXTERITY POTION\n");
+        print_message("A DEXTERITY POTION\n");
         player->dexterity = min(player->dexterity + random_number(6), 18);
         if (!player->lamp_flag) {
-            printf("A LAMP\n");
+            print_message("A LAMP\n");
             player->lamp_flag = 1;
         }
     } else {
@@ -922,7 +925,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         if (player->x == game->runestaff_location[0] &&
             player->y == game->runestaff_location[1] &&
             player->level == game->runestaff_location[2]) {
-            printf("\nGREAT ZOT! YOU'VE FOUND THE RUNESTAFF!\n");
+            print_message("\nGREAT ZOT! YOU'VE FOUND THE RUNESTAFF!\n");
             player->runestaff_flag = 1;
             game->runestaff_location[0] = 0;  // Mark as found
         }
@@ -939,7 +942,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
 int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 {
     if (player->treasure_count == 0) {
-        printf("\nALL I WANT IS YOUR LIFE!\n");
+        print_message("\nALL I WANT IS YOUR LIFE!\n");
         return 0;
     }
 
@@ -954,7 +957,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
     if (choice == 'Y') {
         game->treasure[treasure_index] = 0;
         player->treasure_count--;
-        printf("\nOK, JUST DON'T TELL ANYONE ELSE.\n");
+        print_message("\nOK, JUST DON'T TELL ANYONE ELSE.\n");
         if (strcmp(enemy_name, "VENDOR") == 0) {
             game->vendor_attacked = 1;  // Vendor won't trade anymore
         }
@@ -965,7 +968,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 
 int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
 {
-    printf("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? ");
+    print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? ");
     char spell = get_user_input();
 
     switch (spell) {
@@ -995,20 +998,20 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
             return 0;
 
         case 'D':
-            printf("\nDEATH . . . ");
+            print_message("\nDEATH . . . ");
             if (player->intelligence < random_number(4) + 15) {
-                printf("YOURS!\n");
+                print_message("YOURS!\n");
                 player->intelligence = 0;
                 game->game_over = 1;
                 return 1;
             } else {
-                printf("HIS!\n");
+                print_message("HIS!\n");
                 handle_combat_victory(player, game, 0, enemy_name);
                 return 1;
             }
 
         default:
-            printf("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+            print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
             return 0;
     }
 }
@@ -1289,10 +1292,12 @@ void buy_equipment(Player *player)
     const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
     int cost;
+    char message[100];
 
     // Buy Armor
     print_message("\nOK, ");
     print_message(race_names[player->race - 1]);
+
     printf(", YOU HAVE %d GOLD PIECES (GP'S).\n\n", player->gold);
     
     print_message("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
@@ -1487,17 +1492,17 @@ void use_flare(Player *player, GameState *game)
 
 void open_chest(Player *player, GameState *game)
 {
-    printf("\nYou open the chest and ");
+    print_message("\nYou open the chest and ");
 
     int event = random_number(4);
     switch(event) {
         case 1:
-            printf("KABOOM! IT EXPLODES!!\n");
+            print_message("KABOOM! IT EXPLODES!!\n");
             int damage = random_number(6);
             player->strength -= damage;
             printf("You take %d damage.\n", damage);
             if (player->strength <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
             }
             break;
@@ -1512,7 +1517,7 @@ void open_chest(Player *player, GameState *game)
             break;
 
         case 3:
-            printf("GAS!! YOU STAGGER FROM THE ROOM!\n");
+            print_message("GAS!! YOU STAGGER FROM THE ROOM!\n");
             game->turn_count += 20;  // Equivalent to T = T + 20 in BASIC
             // Move player in a random direction
             char directions[] = {'N', 'S', 'E', 'W'};
@@ -1527,43 +1532,43 @@ void open_chest(Player *player, GameState *game)
 
 void drink_from_pool(Player *player, GameState *game)
 {
-    printf("\nYou take a drink and ");
+    print_message("\nYou take a drink and ");
 
     int effect = random_number(8);
     switch(effect) {
         case 1:
             player->strength = min(18, player->strength + random_number(3));
-            printf("feel STRONGER.\n");
+            print_message("feel STRONGER.\n");
             break;
         case 2:
             player->strength -= random_number(3);
-            printf("feel WEAKER.\n");
+            print_message("feel WEAKER.\n");
             if (player->strength <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
             }
             break;
         case 3:
             player->intelligence = min(18, player->intelligence + random_number(3));
-            printf("feel SMARTER.\n");
+            print_message("feel SMARTER.\n");
             break;
         case 4:
             player->intelligence -= random_number(3);
-            printf("feel DUMBER.\n");
+            print_message("feel DUMBER.\n");
             if (player->intelligence <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
+                print_message("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
                 game->game_over = 1;
             }
             break;
         case 5:
             player->dexterity = min(18, player->dexterity + random_number(3));
-            printf("feel NIMBLER.\n");
+            print_message("feel NIMBLER.\n");
             break;
         case 6:
             player->dexterity -= random_number(3);
-            printf("feel CLUMSIER.\n");
+            print_message("feel CLUMSIER.\n");
             if (player->dexterity <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
+                print_message("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
                 game->game_over = 1;
             }
             break;
@@ -1593,30 +1598,30 @@ void drink_from_pool(Player *player, GameState *game)
 void teleport(Player *player, GameState *game)
 {
     if (!player->runestaff_flag) {
-        printf("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+        print_message("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
         return;
     }
 
     int new_x, new_y, new_level;
 
-    printf("\nEnter X-coordinate (1-8): ");
+    print_message("\nEnter X-coordinate (1-8): ");
     scanf("%d", &new_x);
     if (new_x < 1 || new_x > 8) {
-        printf("Invalid coordinate. Teleportation failed.\n");
+        print_message("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
-    printf("Enter Y-coordinate (1-8): ");
+    print_message("Enter Y-coordinate (1-8): ");
     scanf("%d", &new_y);
     if (new_y < 1 || new_y > 8) {
-        printf("Invalid coordinate. Teleportation failed.\n");
+        print_message("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
-    printf("Enter Z-coordinate (level 1-8): ");
+    print_message("Enter Z-coordinate (level 1-8): ");
     scanf("%d", &new_level);
     if (new_level < 1 || new_level > 8) {
-        printf("Invalid level. Teleportation failed.\n");
+        print_message("Invalid level. Teleportation failed.\n");
         return;
     }
 
@@ -1630,9 +1635,9 @@ void teleport(Player *player, GameState *game)
     if (player->x == game->orb_location[0] && 
         player->y == game->orb_location[1] && 
         player->level == game->orb_location[2]) {
-        printf("\nGREAT UNMITIGATED ZOT!\n");
-        printf("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
-        printf("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
+        print_message("\nGREAT UNMITIGATED ZOT!\n");
+        print_message("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
+        print_message("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
         player->runestaff_flag = 0;
         player->orb_flag = 1;
         game->orb_location[0] = 0;  // Mark as found
@@ -1642,19 +1647,19 @@ void teleport(Player *player, GameState *game)
 void gaze_into_orb(Player *player, GameState *game)
 {
     if (get_room_content(game, player->x, player->y, player->level) != CRYSTAL_ORB) {
-        printf("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
+        print_message("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
         return;
     }
 
-    printf("\nYou gaze into the crystal orb and see ");
+    print_message("\nYou gaze into the crystal orb and see ");
 
     int vision = random_number(6);
     switch(vision) {
         case 1:
-            printf("yourself in a bloody heap!\n");
+            print_message("yourself in a bloody heap!\n");
             player->strength -= random_number(2);
             if (player->strength <= 0) {
-                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
             }
             break;
@@ -1693,7 +1698,7 @@ void gaze_into_orb(Player *player, GameState *game)
             }
             break;
         case 6:
-            printf("a soap opera rerun!\n");
+            print_message("a soap opera rerun!\n");
             break;
     }
 }
@@ -1757,7 +1762,7 @@ void print_status(Player *player)
 void display_map(GameState *game, Player *player)
 {
     print_message("\n=== MAP OF LEVEL ");
-    char level_str[3];
+    char level_str[3], number_str[3];
     snprintf(level_str, sizeof(level_str), "%d", player->level);
     print_message(level_str);
     print_message(" ===\n\n");
@@ -1768,7 +1773,9 @@ void display_map(GameState *game, Player *player)
 
     for (int x = 1; x <= 8; x++) {
         // Print row coordinate
-        printf("%d ", x);
+        snprintf(number_str, sizeof(number_str), "%d", x);
+
+        print_message(number_str);
 
         for (int y = 1; y <= 8; y++) {
             print_message("|");
@@ -2202,38 +2209,38 @@ void handle_treasure(Player *player, GameState *game, int room_content)
         // Apply special effects of treasures
         switch (treasure_index) {
             case 0: // Ruby Red
-                printf("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n");
+                print_message("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n");
                 break;
             case 1: // Norn Stone
-                printf("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n");
+                print_message("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n");
                 break;
             case 2: // Pale Pearl
-                printf("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n");
+                print_message("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n");
                 break;
             case 3: // Opal Eye
-                printf("THE OPAL EYE WILL CURE BLINDNESS.\n");
+                print_message("THE OPAL EYE WILL CURE BLINDNESS.\n");
                 if (player->blindness_flag) {
                     player->blindness_flag = 0;
-                    printf("YOUR BLINDNESS IS CURED!\n");
+                    print_message("YOUR BLINDNESS IS CURED!\n");
                 }
                 break;
             case 4: // Green Gem
-                printf("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n");
+                print_message("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n");
                 break;
             case 5: // Blue Flame
-                printf("THE BLUE FLAME WILL DISSOLVE BOOKS.\n");
+                print_message("THE BLUE FLAME WILL DISSOLVE BOOKS.\n");
                 if (player->stickybook_flag) {
                     player->stickybook_flag = 0;
-                    printf("THE STICKY BOOK DISSOLVES!\n");
+                    print_message("THE STICKY BOOK DISSOLVES!\n");
                 }
                 break;
             case 6: // Palantir
             case 7: // Silmaril
-                printf("ITS BEAUTY IS BEYOND COMPARE.\n");
+                print_message("ITS BEAUTY IS BEYOND COMPARE.\n");
                 break;
         }
     } else {
-        printf("YOU ALREADY HAVE THIS TREASURE.\n");
+        print_message("YOU ALREADY HAVE THIS TREASURE.\n");
     }
 
     // Remove the treasure from the room
