@@ -298,89 +298,92 @@ bool main_game_loop(Player *player, GameState *game)
             print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
             printf("%i\n", room_content);
         }
-        user_command=get_user_input_main();
-        printf("User Command: %s\n", user_command);
-        switch (user_command[0]) {
-            case 'N': case 'S': case 'E': case 'W':
-                move_player(player, game, user_command[0]);
-                break;
-            case 'U':
-                if (room_content == 103) {  // Stairs going up
-                    player->level--;
-                    if (player->level<1)
-                    {
-                        player->level=8;
+        game_over = check_game_over(player);
+        if(!game_over)
+        {
+            user_command=get_user_input_main();
+            printf("User Command: %s\n", user_command);
+            switch (user_command[0]) {
+                case 'N': case 'S': case 'E': case 'W':
+                    move_player(player, game, user_command[0]);
+                    break;
+                case 'U':
+                    if (room_content == 103) {  // Stairs going up
+                        player->level--;
+                        if (player->level<1)
+                        {
+                            player->level=8;
+                        }
+                        print_message("YOU CLIMB UP THE STAIRS.\n");
+                    } else {
+                        print_message("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
                     }
-                    print_message("YOU CLIMB UP THE STAIRS.\n");
-                } else {
-                    print_message("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
-                }
-                break;
-            case 'D':
-                if (strncmp(user_command, "DR", 2) == 0) {
-                    drink_from_pool(player, game);
-                }
-                else if (room_content == 104) {  // Stairs going down
-                    player->level++;
-                    if (player->level>8)
-                    {
-                        player->level=1;
+                    break;
+                case 'D':
+                    if (strncmp(user_command, "DR", 2) == 0) {
+                        drink_from_pool(player, game);
                     }
-                    print_message("YOU DESCEND THE STAIRS.\n");
-                } else {
-                    print_message("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
-                }
-                break;
-            case 'M':
-                display_map(game, player);
-                break;
-            case 'F':
-                use_flare(player, game);
-                break;
-            case 'L':
-                use_lamp(player, game);
-                break;
-            case 'O':
-                if (room_content == 106) {  // Chest
-                    open_chest(player, game);
-                } else if (room_content == 112) {  // Book
-                    open_book(player, game);
-                } else {
-                    print_message("THERE'S NOTHING HERE TO OPEN!\n");
-                }
-                break;
-            case 'G':
-                if (room_content == 111) {  // Crystal orb
-                    gaze_into_orb(player, game);
-                } else {
-                    print_message("THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
-                }
-                break;
-            case 'T':
-                if (player->runestaff_flag) {
-                    teleport(player, game);
-                } else {
-                    print_message("YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
-                }
-                break;
-            case 'Q':
-                print_message("DO YOU REALLY WANT TO QUIT NOW? (Y/N) ");
-                if (get_user_input_yn() == 'Y') {
-                    game_over = 1;
-                } else {
-                    print_message("OK, CONTINUE ON BRAVE ADVENTURER!\n");
-                }
-                break;
-            case 'Z':
-                print_status(player);
-                break;
-            case 'H':
-                print_help();
-                break;
-            default:
-                print_message("INVALID COMMAND. TYPE 'H' FOR HELP.\n");
+                    else if (room_content == 104) {  // Stairs going down
+                        player->level++;
+                        if (player->level>8)
+                        {
+                            player->level=1;
+                        }
+                        print_message("YOU DESCEND THE STAIRS.\n");
+                    } else {
+                        print_message("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
+                    }
+                    break;
+                case 'M':
+                    display_map(game, player);
+                    break;
+                case 'F':
+                    use_flare(player, game);    
+                    break;    
+                case 'L':
+                    use_lamp(player, game);
+                    break;
+                case 'O':
+                    if (room_content == 106) {  // Chest
+                        open_chest(player, game);
+                    } else if (room_content == 112) {  // Book
+                        open_book(player, game);
+                    } else {
+                        print_message("THERE'S NOTHING HERE TO OPEN!\n");
+                    }
+                    break;
+                case 'G':
+                    if (room_content == 111) {  // Crystal orb
+                        gaze_into_orb(player, game);
+                    } else {
+                        print_message("THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
+                    }
+                    break;
+                case 'T':
+                    if (player->runestaff_flag) {
+                        teleport(player, game);
+                    } else {
+                        print_message("YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+                    }
+                    break;
+                case 'Q':
+                    print_message("DO YOU REALLY WANT TO QUIT NOW? (Y/N) ");
+                    if (get_user_input_yn() == 'Y') {
+                        game_over = 1;
+                    } else {
+                        print_message("OK, CONTINUE ON BRAVE ADVENTURER!\n");
+                    }
+                    break;
+                case 'Z':
+                    print_status(player);
+                    break;
+                case 'H':
+                    print_help();
+                    break;
+                default:
+                    print_message("INVALID COMMAND. TYPE 'H' FOR HELP.\n");
+            }
         }
-
         if (!game_over) {
             game_over = check_game_over(player);
         }
@@ -774,7 +777,7 @@ void fight_monster(Player *player, GameState *game)
         printf("\nYOU'RE FACING %s!\n\n", enemy_name);
         printf("YOU MAY ATTACK OR RETREAT.\n");
         if (can_bribe) {
-            printf("YOU CAN ALSO ATTEMPT A BRIBE.\n");
+            printf("YOU CAN ALSO ATTEMPT OR BRIBE.\n");
         }
         if (player->intelligence > 14) {
             printf("YOU CAN ALSO CAST A SPELL.\n");
@@ -1042,7 +1045,7 @@ void handle_vendor(Player *player, GameState *game)
 
     char choice;
     do {
-        print_message("\nDo you want to (T)rade, (A)ttack, or (I)gnore the vendor? ");
+        print_message("\nDo you want to (T)rade, (A)ttack, or (I)gnore the vendor?\n");
         choice = get_user_input();
 
         switch(choice) {
@@ -1926,7 +1929,7 @@ char get_user_input()
         command = input[0];
 
         // Check if it's a valid command
-        if (strchr("1234567ADEFGHILMNOQSTUWY", command) != NULL) {
+        if (strchr("1234567ABCDEFGHILMNOQRSTUWY", command) != NULL) {
             return command;
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
