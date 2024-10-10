@@ -1558,8 +1558,10 @@ void teleport(Player *player, GameState *game)
         return;
     }
 
-    player->x = new_x;
-    player->y = new_y;
+
+    // X and Y are switched
+    player->x = new_y;
+    player->y = new_x;
     player->level = new_level;
 
     printf("\nYou have teleported to (%d, %d) on level %d.\n", player->x, player->y, player->level);
@@ -1818,7 +1820,7 @@ char* get_user_input_main() {
         }
         // Check if input is empty
         if (input[0] == '\0') {
-            print_message("Please enter a command.\n");
+            print_message("\n\nPlease enter a command.\n\n");
             continue;
         }
         // Get the first character
