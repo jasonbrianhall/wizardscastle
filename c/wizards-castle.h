@@ -139,7 +139,7 @@ void gaze_into_orb(Player *player, GameState *game);
 
 // Utility functions
 int random_number(int max_value);
-void print_status(Player *player);
+void print_status(Player *player, GameState *game);
 void display_map(GameState *game, Player *player);
 void print_help();
 
@@ -175,7 +175,7 @@ void move_player_randomly(Player *player, GameState *game);
 const char* get_weapon_name(int weapon_type);
 const char* get_random_body_part();
 const char* get_random_species();
-
+int get_user_input_number();
 const char* get_monster_name(int room_content);
 
 #endif 
