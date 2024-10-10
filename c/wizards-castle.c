@@ -2011,24 +2011,24 @@ void discover_adjacent_rooms(GameState *game, Player *player)
 // New helper function to get abbreviated room descriptions
 void get_room_description(int room_content, char *desc)
 {
-    const char *full_desc;
+    char full_desc[100];
     switch (room_content) {
-        case EMPTY_ROOM: full_desc = "EMPTY   "; break;
-        case ENTRANCE: full_desc = "ENTRANCE"; break;
-        case STAIRS_UP: full_desc = "STAIRS UP"; break;
-        case STAIRS_DOWN: full_desc = "STAIRS DN"; break;
-        case POOL: full_desc = "POOL    "; break;
-        case CHEST: full_desc = "CHEST   "; break;
-        case GOLD: full_desc = "GOLD    "; break;
-        case FLARES: full_desc = "FLARES  "; break;
-        case WARP: full_desc = "WARP    "; break;
-        case SINKHOLE: full_desc = "SINKHOLE"; break;
-        case CRYSTAL_ORB: full_desc = "CRYSTAL "; break;
-        case BOOK: full_desc = "BOOK    "; break;
-        case MONSTER_START ... MONSTER_END: full_desc = "MONSTER "; break;
-        case VENDOR: full_desc = "VENDOR  "; break;
-        case TREASURE_START ... TREASURE_END: full_desc = "TREASURE"; break;
-        default: full_desc = "   ??   "; break;
+        case EMPTY_ROOM: strncpy(full_desc, "EMPTY   ", 8); break;
+        case ENTRANCE: strncpy(full_desc, "ENTRANCE", 8); break;
+        case STAIRS_UP: strncpy(full_desc,"STAIRS UP", 8); break;
+        case STAIRS_DOWN: strncpy(full_desc,"STAIRS DN",8); break;
+        case POOL: strncpy(full_desc,"POOL    ", 8); break;
+        case CHEST: strncpy(full_desc,"CHEST   ",8); break;
+        case GOLD: strncpy(full_desc,"GOLD    ",8); break;
+        case FLARES: strncpy(full_desc,"FLARES  ",8); break;
+        case WARP: strncpy(full_desc,"WARP    ",8); break;
+        case SINKHOLE: strncpy(full_desc,"SINKHOLE",8); break;
+        case CRYSTAL_ORB: strncpy(full_desc,"CRYSTAL ",8); break;
+        case BOOK: strncpy(full_desc,"BOOK    ",8); break;
+        case MONSTER_START ... MONSTER_END: strncpy(full_desc,"MONSTER ",8); break;
+        case VENDOR: strncpy(full_desc,"VENDOR  ", 8); break;
+        case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE", 8); break;
+        default: strncpy(full_desc,"   ??   ",8); break;
     }
     strncpy(desc, full_desc, 8);
 }
