@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 {
     Player player;
     GameState game;
+    int q;
     bool playagain = true;
     bool debug_mode = false;
 
@@ -46,9 +47,12 @@ int main(int argc, char *argv[])
             player.armor_type = 3;   // Plate (assuming this is the best armor, equivalent to "Shield")
             player.armor_points = 21; // Max armor points for Plate armor
 
+
             printf("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
             printf("DEBUG MODE: You have a Sword and Plate armor.\n");
             printf("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
+            printf("DEBUG MODE: All rooms are discovered\n");
+
         }
 
         generate_castle(&game);
@@ -56,6 +60,10 @@ int main(int argc, char *argv[])
         if (debug_mode) {
             printf("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 
                    game.orb_location[0], game.orb_location[1], game.orb_location[2]);
+            for (q = 0; q < MAP_SIZE; q++) {
+                game.discovered_rooms[q] = 1;  // 0 means undiscovered
+            }
+
         }
 
         playagain = main_game_loop(&player, &game);

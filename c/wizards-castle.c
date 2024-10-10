@@ -474,7 +474,12 @@ void generate_castle(GameState *game)
     // Initialize all rooms to empty (101)
     for (q = 0; q < MAP_SIZE; q++) {
         game->location_map[q] = EMPTY_ROOM;
+        game->discovered_rooms[q] = 0;  // 0 means undiscovered
     }
+
+    int entrance_index = CALCULATE_ROOM_INDEX(level, x, y);
+    game->location_map[entrance_index] = ENTRANCE;
+    game->discovered_rooms[entrance_index] = 1;  // 1 means discovered
 
     // Place stairs
     for (z = 1; z <= 8; z++) {
@@ -1817,14 +1822,6 @@ char* get_user_input_main() {
         // Validate commands
         if (firstChar == 'D' && input[1] == 'R') {
             return "DR";  // Return "DR" for DRINK
-        } else if (firstChar == 'T') {
-            // Handle teleport command
-            if (strlen(input) > 1) {
-                return input;  // Return the teleport command with coordinates
-            } else {
-                print_message("Please provide coordinates for teleport.\n");
-                continue;
-            }
         } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
             return input;  // Return the single letter command
         } else {
