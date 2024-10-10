@@ -556,7 +556,7 @@ void allocate_attributes(Player *player)
 // Map and room functions
 void generate_castle(GameState *game)
 {
-    int x, y, z, q, q1;
+    int x, y, z, q;
     
     // Seed the random number generator
     srand(time(NULL));
@@ -567,16 +567,22 @@ void generate_castle(GameState *game)
     }
 
     // Place stairs
-    for (z = 1; z <= 7; z++) {
-        for (q1 = 1; q1 <= 2; q1++) {
+    for (z = 1; z <= 8; z++) {
+        for (int i = 1; i <= 2; i++) {
             do {
                 x = random_number(8);
                 y = random_number(8);
             } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
-            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 103;  // Stairs down
-            game->location_map[CALCULATE_ROOM_INDEX(z+1, x, y)] = 104;  // Stairs up
+            
+            // Place stairs down on current level
+            game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 104;  // Stairs down
+            
+            // Place corresponding stairs up on the level below (or on level 1 if we're on level 8)
+            int next_level = (z % 8) + 1;
+            game->location_map[CALCULATE_ROOM_INDEX(next_level, x, y)] = 103;  // Stairs up
         }
     }
+
 
     // Place other elements
     for (z = 1; z <= 8; z++) {
