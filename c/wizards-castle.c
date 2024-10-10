@@ -724,12 +724,12 @@ void fight_monster(Player *player, GameState *game)
 
     while (1) {
         printf("\nYOU'RE FACING %s!\n\n", enemy_name);
-        print_message("YOU MAY ATTACK OR RETREAT.\n");
+        print_message("YOU MAY (A)TTACK OR (R)ETREAT.\n");
         if (can_bribe) {
-            print_message("YOU CAN ALSO ATTEMPT OR BRIBE.\n");
+            print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
         }
         if (player->intelligence > 14) {
-            print_message("YOU CAN ALSO CAST A SPELL.\n");
+            print_message("YOU CAN ALSO (C)CAST A SPELL.\n");
         }
         print_message("\n");
         printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
