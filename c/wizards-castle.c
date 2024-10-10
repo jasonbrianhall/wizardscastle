@@ -77,7 +77,8 @@ bool main_game_loop(Player *player, GameState *game)
         "A POOL", "A CHEST", "GOLD PIECES", "FLARES", "A WARP", "A SINKHOLE",
         "A CRYSTAL ORB", "A BOOK", "A KOBOLD", "AN ORC", "A WOLF", "A GOBLIN",
         "AN OGRE", "A TROLL", "A BEAR", "A MINOTAUR", "A GARGOYLE", "A CHIMERA",
-        "A BALROG", "A DRAGON", "A VENDOR"
+        "A BALROG", "A DRAGON", "A VENDOR", "A RED RUBY", "THE NORN STONE", "THE PALE_PEARL",
+        "THE OPAL EYE", "A GREEN GEM", "THE BLUE FLAME", "THE PALANTIR", "THE SILMARIL"
     };
     char message[100];
 
@@ -156,7 +157,7 @@ bool main_game_loop(Player *player, GameState *game)
             print_message(message);
         } else if (room_content >= EMPTY_ROOM && room_content <= TREASURE_END) {
             char message[100];
-            snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - 101]);
+            snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - EMPTY_ROOM]);
             print_message(message);
             if (room_content==GOLD)
             {

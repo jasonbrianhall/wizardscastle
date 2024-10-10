@@ -78,8 +78,8 @@ typedef struct {
     uint8_t stickybook_flag:1;
     uint8_t has_runestaff:1;
     uint8_t has_orb:1;
-    uint8_t treasure_count:4;
-    uint8_t web_count:8;
+    int8_t treasure_count;
+    int8_t web_count;
 
 } Player;
 
