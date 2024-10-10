@@ -550,7 +550,7 @@ void generate_castle(GameState *game)
         x = random_number(8);
         y = random_number(8);
     } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != EMPTY_ROOM);
-    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = 112 + random_number(12);
+    game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = MONSTER_START + random_number(MONSTER_END-MONSTER_START)-1;
     game->runestaff_location[0] = x;
     game->runestaff_location[1] = y;
     game->runestaff_location[2] = z;
