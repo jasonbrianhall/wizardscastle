@@ -729,7 +729,7 @@ void fight_monster(Player *player, GameState *game)
             print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
         }
         if (player->intelligence > 14) {
-            print_message("YOU CAN ALSO (C)CAST A SPELL.\n");
+            print_message("YOU CAN ALSO (C)AST A SPELL.\n");
         }
         print_message("\n");
         printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
