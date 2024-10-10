@@ -70,7 +70,7 @@ void initialize_player(Player *player)
 
 bool main_game_loop(Player *player, GameState *game)
 {
-    char *user_command;
+    char user_command[100];
     int game_over = 0;
     const char *room_contents[] = {
         "AN EMPTY ROOM", "THE ENTRANCE", "STAIRS GOING UP", "STAIRS GOING DOWN",
@@ -200,9 +200,9 @@ bool main_game_loop(Player *player, GameState *game)
         game_over = check_game_over(player);
         if(!game_over)
         {
-            user_command=get_user_input_main();
-            snprintf(message, sizeof(message), "User Command: %s\n", user_command);
-            print_message(message);
+            strncpy(user_command, get_user_input_main(), sizeof(user_command) - 1);
+            user_command[sizeof(user_command) - 1] = '\0';  // Ensure null-termination            snprintf(message, sizeof(message), "User Command: %s\n", user_command);
+            //print_message(message);
             switch (user_command[0]) {
                 case 'N': case 'S': case 'E': case 'W':
                     move_player(player, game, user_command[0]);
@@ -614,7 +614,7 @@ void set_room_content(GameState *game, int x, int y, int level, int content)
 void move_player(Player *player, GameState *game, char direction)
 {
     int current_room = get_room_content(game, player->x, player->y, player->level);
-    
+    int printstatusmessage=1;
     // Check if player is at the entrance and moving north
     if (current_room == 102 && direction == 'N') {
         if (player->orb_flag) {
@@ -654,6 +654,7 @@ void move_player(Player *player, GameState *game, char direction)
             new_y++;
             break;
         case 'T':  //teleport
+            printstatusmessage=0;
             break;
         default:
             print_message("Invalid direction!\n");
@@ -669,14 +670,16 @@ void move_player(Player *player, GameState *game, char direction)
     player->y = new_y;
 
     // Print movement message
-    char message[100];
-    snprintf(message, sizeof(message), "You move %s to (%d, %d) on level %d.\n", 
-             direction == 'N' ? "North" :
-             direction == 'S' ? "South" :
-             direction == 'W' ? "West" : "East",
-             player->x, player->y, player->level);
-    print_message(message);
-
+    if (printstatusmessage==1)
+    {
+        char message[100];
+        snprintf(message, sizeof(message), "You move %s to (%d, %d) on level %d.\n", 
+                 direction == 'N' ? "North" :
+                 direction == 'S' ? "South" :
+                 direction == 'W' ? "West" : "East",
+                 player->y, player->x, player->level);
+        print_message(message);
+    }
     // Check for special room events (like warp or sinkhole)
     int room_content = get_room_content(game, player->x, player->y, player->level);
     mark_room_discovered(game, player->x, player->y, player->level);
@@ -1571,7 +1574,7 @@ void teleport(Player *player, GameState *game)
     player->y = new_x;
     player->level = new_level;
 
-    printf("\nYou have teleported to (%d, %d) on level %d.\n", player->x, player->y, player->level);
+    printf("\nYou have teleported to (%d, %d) on level %d.\n", player->y, player->x, player->level);
 
     // Check if the player teleported to the Orb of Zot
     if (player->x == game->orb_location[0] && 
@@ -1668,7 +1671,7 @@ void print_status(Player *player)
 
     // Print player position
     snprintf(message, sizeof(message), "Location: Level %d, Room (%d, %d)\n",
-             player->level, player->x, player->y);
+             player->level, player->y, player->x);
     print_message(message);
 
     // Print player inventory
