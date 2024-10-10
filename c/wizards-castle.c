@@ -974,7 +974,7 @@ void handle_vendor(Player *player, GameState *game)
     
     // Check if the player has attacked the vendor before
     if (game->vendor_attacked) {
-        print_message("The vendor refuses to trade with you due to your previous attack.\n");
+        fight_monster(player, game);
         return;
     }
 
