@@ -1731,7 +1731,7 @@ void display_map(GameState *game, Player *player)
                 print_message("  [YOU] ");
             } else if (is_room_discovered(game, x, y, player->level)) {
                 int room_content = get_room_content(game, x, y, player->level);
-                char room_str[9] = "        ";
+                char room_str[9] = "        \0";
                 get_room_description(room_content, room_str);
                 print_message(room_str);
             } else {
