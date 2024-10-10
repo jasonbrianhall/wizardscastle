@@ -56,22 +56,22 @@
 
 // Structures
 typedef struct {
-    uint8_t race:4;
-    uint8_t sex:4;
-    uint8_t strength;
-    uint8_t intelligence;
-    uint8_t dexterity;
-    uint32_t gold;
-    uint32_t flares;
-    uint8_t armor_type:4;
-    uint8_t armor_points;
-    uint8_t weapon_type:4;
-    uint8_t lamp_flag;
-    uint8_t x:4;
-    uint8_t y:4;
-    uint8_t level;
-    uint8_t runestaff_flag;
-    uint8_t orb_flag;
+    int8_t race:4;
+    int8_t sex:4;
+    int16_t strength;
+    int16_t intelligence;
+    int16_t dexterity;
+    int32_t gold;
+    int32_t flares;
+    int8_t armor_type:4;
+    int8_t armor_points;
+    int8_t weapon_type:4;
+    int8_t lamp_flag;
+    int8_t x:4;
+    int8_t y:4;
+    int8_t level;
+    int8_t runestaff_flag;
+    int8_t orb_flag;
     
     uint8_t book_flag:1;
     uint8_t blindness_flag:1;
@@ -122,7 +122,7 @@ void handle_vendor(Player *player, GameState *game);
 void trade_with_vendor(Player *player, GameState *game);
 void attack_vendor(Player *player, GameState *game);
 const char* get_treasure_name(uint8_t index);
-uint32_t min(uint32_t a, uint32_t b);
+int32_t min(int32_t a, int32_t b);
 void buy_armor(Player *player);
 void buy_flares(Player *player);
 
@@ -160,20 +160,20 @@ void printStars(void);
 
 void open_book(Player *player, GameState *game);
 
-const char* get_race_name(int race);
+const char* get_race_name(uint8_t race);
 
 void mark_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level);
 uint8_t is_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
-char get_room_symbol(int room_content);
-void get_room_description(int room_content, char *desc);
+char get_room_symbol(uint8_t room_content);
+void get_room_description(uint8_t room_content, char *desc);
 
 void handle_combat_victory(Player *player, GameState *game, uint8_t is_vendor, const char *enemy_name);
 void handle_treasure(Player *player, GameState *game, uint8_t roomcontent);
 
 uint8_t handle_bribe(Player *player, GameState *game, const char *enemy_name);
-uint8_t handle_spell(Player *player, GameState *game, uint8_t *enemy_strength, const char *enemy_name);
+uint8_t handle_spell(Player *player, GameState *game, int16_t *enemy_strength, const char *enemy_name);
 void move_player_randomly(Player *player, GameState *game);
 const char* get_weapon_name(uint8_t weapon_type);
 const char* get_random_body_part();

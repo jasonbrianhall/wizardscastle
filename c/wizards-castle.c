@@ -711,10 +711,10 @@ void move_player(Player *player, GameState *game, char direction)
 
 void fight_monster(Player *player, GameState *game)
 {
-    uint8_t room_content = get_room_content(game, player->x, player->y, player->level);
-    uint8_t is_vendor = (room_content == VENDOR);
-    uint8_t enemy_strength, enemy_dexterity;
-    uint8_t can_bribe = 1;
+    int8_t room_content = get_room_content(game, player->x, player->y, player->level);
+    int8_t is_vendor = (room_content == VENDOR);
+    int16_t enemy_strength, enemy_dexterity;
+    int8_t can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     player->web_count=0;
     // Set enemy stats based on room content
@@ -916,7 +916,7 @@ uint8_t handle_bribe(Player *player, GameState *game, const char *enemy_name)
     return 0;
 }
 
-uint8_t handle_spell(Player *player, GameState *game, uint8_t *enemy_strength, const char *enemy_name)
+uint8_t handle_spell(Player *player, GameState *game, int16_t *enemy_strength, const char *enemy_name)
 {
     print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? \n\n");
     char spell = get_user_input();
@@ -1362,7 +1362,7 @@ const char* get_treasure_name(uint8_t index)
 }
 
 // Helper function for minimum of two integers
-uint32_t min(uint32_t a, uint32_t b)
+int32_t min(int32_t a, int32_t b)
 {
     return (a < b) ? a : b;
 }
@@ -2143,7 +2143,7 @@ void open_book(Player *player, GameState *game)
     set_room_content(game, player->x, player->y, player->level, 101);  // Empty room
 }
 
-const char* get_race_name(int race)
+const char* get_race_name(uint8_t race)
 {
     switch(race)
     {
@@ -2179,7 +2179,7 @@ void discover_adjacent_rooms(GameState *game, Player *player)
 }
 
 // New helper function to get abbreviated room descriptions
-void get_room_description(int room_content, char *desc)
+void get_room_description(uint8_t room_content, char *desc)
 {
     char full_desc[100];
     switch (room_content) {
@@ -2220,7 +2220,7 @@ void get_room_description(int room_content, char *desc)
     strncpy(desc, full_desc, 9);
 }
 
-char get_room_symbol(int room_content)
+char get_room_symbol(uint8_t room_content)
 {
     switch (room_content) {
         case EMPTY_ROOM: return '.';  // Empty room
