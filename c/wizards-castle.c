@@ -556,7 +556,7 @@ void allocate_attributes(Player *player)
 // Map and room functions
 void generate_castle(GameState *game)
 {
-    int x, y, z, q;
+    int x, y, z, q, q1;
     
     // Seed the random number generator
     srand(time(NULL));
