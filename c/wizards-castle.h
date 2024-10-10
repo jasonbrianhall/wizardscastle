@@ -73,22 +73,22 @@ typedef struct {
     uint8_t runestaff_flag;
     uint8_t orb_flag;
     
-    uint8_t book_flag;
-    uint8_t blindness_flag;
-    uint8_t stickybook_flag;
-    uint8_t has_runestaff;
-    uint8_t has_orb;
+    uint8_t book_flag:1;
+    uint8_t blindness_flag:1;
+    uint8_t stickybook_flag:1;
+    uint8_t has_runestaff:1;
+    uint8_t has_orb:1;
     uint8_t treasure_count:4;
     uint8_t web_count:8;
 
 } Player;
 
 typedef struct {
-    int location_map[MAP_SIZE];
-    int discovered_rooms[MAP_SIZE];
-    int treasure[TREASURE_COUNT];
-    int orb_location[3];
-    int runestaff_location[3];
+    uint8_t location_map[MAP_SIZE];
+    uint8_t discovered_rooms[MAP_SIZE];
+    uint8_t treasure[TREASURE_COUNT];
+    uint8_t orb_location[3];
+    uint8_t runestaff_location[3];
     int turn_count;
     int monster_count;
     uint8_t game_over;
