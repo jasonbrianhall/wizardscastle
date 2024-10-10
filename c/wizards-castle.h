@@ -58,13 +58,13 @@
 typedef struct {
     uint8_t race:4;
     uint8_t sex:4;
-    uint8_t strength:5;
-    uint8_t intelligence:5;
-    uint8_t dexterity:5;
+    uint8_t strength;
+    uint8_t intelligence;
+    uint8_t dexterity;
     uint32_t gold;
     uint32_t flares;
     uint8_t armor_type:4;
-    uint8_t armor_points:6;
+    uint8_t armor_points;
     uint8_t weapon_type:4;
     uint8_t lamp_flag;
     uint8_t x:4;
