@@ -1549,22 +1549,22 @@ void teleport(Player *player, GameState *game)
     int new_x, new_y, new_level;
 
     print_message("\nEnter X-coordinate (1-8): ");
-    scanf("%d", &new_x);
+    new_x=get_user_input_number();
     if (new_x < 1 || new_x > 8) {
         print_message("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
     print_message("Enter Y-coordinate (1-8): ");
-    scanf("%d", &new_y);
-    if (new_y < 1 || new_y > 8) {
+    new_y=get_user_input_number();
+        if (new_y < 1 || new_y > 8) {
         print_message("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
     print_message("Enter Z-coordinate (level 1-8): ");
-    scanf("%d", &new_level);
-    if (new_level < 1 || new_level > 8) {
+    new_level=get_user_input_number();
+        if (new_level < 1 || new_level > 8) {
         print_message("Invalid level. Teleportation failed.\n");
         return;
     }
@@ -1843,6 +1843,27 @@ char* get_user_input_main() {
             return input;  // Return the single letter command
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
+        }
+    }
+}
+
+
+int get_user_input_number() 
+{
+    int number;
+    char input[100];
+
+    while (1) {
+        printf("Enter a number: ");
+        if (fgets(input, sizeof(input), stdin) == NULL) {
+            printf("Error reading input. Please try again.\n");
+            continue;
+        }
+
+        if (sscanf(input, "%d", &number) == 1) {
+            return number;
+        } else {
+            printf("Invalid input. Please enter a valid integer.\n");
         }
     }
 }
