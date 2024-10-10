@@ -618,6 +618,10 @@ void move_player(Player *player, GameState *game, char direction)
 {
     int current_room = get_room_content(game, player->x, player->y, player->level);
     int printstatusmessage=1;
+    
+    // If I cast web in a previous turn, webcount should be zero again
+    player->web_count=0;
+
     // Check if player is at the entrance and moving north
     if (current_room == 102 && direction == 'N') {
         if (player->orb_flag) {
@@ -712,7 +716,7 @@ void fight_monster(Player *player, GameState *game)
     int enemy_strength, enemy_dexterity;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
-
+    player->web_count=0;
     // Set enemy stats based on room content
     if (is_vendor) {
         enemy_strength = 15;
