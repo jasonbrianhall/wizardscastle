@@ -12,6 +12,7 @@
 #define ENTRANCE 102
 #define STAIRS_UP 103
 #define STAIRS_DOWN 104
+#define START_ITEMS
 #define POOL 105
 #define CHEST 106
 #define GOLD 107
@@ -20,6 +21,7 @@
 #define SINKHOLE 110
 #define CRYSTAL_ORB 111
 #define BOOK 112
+#define END_ITEMS
 
 // Monster rooms (113-124)
 #define MONSTER_START 113
@@ -95,7 +97,6 @@ typedef struct {
 } GameState;
 
 // Main game functions
-void initialize_game(GameState *game);
 void initialize_player(Player *player);
 
 void print_introduction(void);

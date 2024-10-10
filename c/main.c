@@ -11,8 +11,6 @@ int main(void)
         while (playagain) 
         {
 		initialize_player(&player);
-		initialize_game(&game);
-
 		print_introduction();
 		choose_race(&player);
 		print_message("\n");
