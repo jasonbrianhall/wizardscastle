@@ -1756,7 +1756,7 @@ void display_map(GameState *game, Player *player)
     print_message("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
     print_message("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
     print_message("MONSTER  = Monster Name    VENDOR   = Vendor\n");
-    print_message("TREASURE = Any Treasure    ???????? = Undiscovered\n");
+    print_message("TREASURE = Treasure Name   ???????? = Undiscovered\n");
     print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 }
 
@@ -2059,8 +2059,14 @@ void get_room_description(int room_content, char *desc)
         case BALROG:      strncpy(full_desc,"BALROG  \0",9); break;
         case DRAGON:      strncpy(full_desc,"DRAGON  \0",9); break;
         case VENDOR:      strncpy(full_desc,"VENDOR  \0", 9); break;
-        case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE\0", 9); break;
-        default: strncpy(full_desc,"   ??   ",9); break;
+        case RUBY_RED:    strncpy(full_desc,"RUBY RED\0", 9); break;
+        case NORN_STONE:  strncpy(full_desc,"NORN STN\0", 9); break;
+        case PALE_PEARL:  strncpy(full_desc,"PALE PRL\0", 9); break;
+        case GREEN_GEM:   strncpy(full_desc,"GREEN GM\0", 9); break;
+        case BLUE_FLAME:  strncpy(full_desc,"BLUE FLM\0", 9); break;
+        case PALANTIR:    strncpy(full_desc,"PALANTIR\0", 9); break;
+        case SILMARIL:    strncpy(full_desc,"SILMARIL\0", 9); break;
+        default:         strncpy(full_desc, "   ??   \0",9); break;
     }
     strncpy(desc, full_desc, 9);
 }
