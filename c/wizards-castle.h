@@ -123,6 +123,8 @@ void attack_vendor(Player *player, GameState *game);
 const char* get_treasure_name(int index);
 int min(int a, int b);
 void buy_armor(Player *player);
+void buy_flares(Player *player);
+
 void buy_weapon(Player *player);
 
 
