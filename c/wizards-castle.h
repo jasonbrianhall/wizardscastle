@@ -130,10 +130,9 @@ void buy_equipment(Player *player);
 void use_lamp(Player *player, GameState *game);
 void use_flare(Player *player, GameState *game);
 void open_chest(Player *player, GameState *game);
-void drink_from_pool(Player *player);
+void drink_from_pool(Player *player, GameState *game);
 
 // Magic and special abilities
-void cast_spell(Player *player, GameState *game, char spell_type);
 void teleport(Player *player, GameState *game);
 void gaze_into_orb(Player *player, GameState *game);
 

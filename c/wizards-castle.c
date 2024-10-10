@@ -290,7 +290,7 @@ bool main_game_loop(Player *player, GameState *game)
                 break;
             case 'D':
                 if (strncmp(user_command, "DR", 2) == 0) {
-                    print_message("YOU DRINK SOMETHING.\n");
+                    drink_from_pool(player, game);
                 }
                 else if (room_content == 104) {  // Stairs going down
                     player->level++;
@@ -342,6 +342,9 @@ bool main_game_loop(Player *player, GameState *game)
                 } else {
                     print_message("OK, CONTINUE ON BRAVE ADVENTURER!\n");
                 }
+                break;
+            case 'Z':
+                print_status(player);
                 break;
             case 'H':
                 print_help();
@@ -1445,19 +1448,108 @@ void use_flare(Player *player, GameState *game)
 
 void open_chest(Player *player, GameState *game)
 {
+    printf("\nYou open the chest and ");
 
+    int event = random_number(4);
+    switch(event) {
+        case 1:
+            printf("KABOOM! IT EXPLODES!!\n");
+            int damage = random_number(6);
+            player->strength -= damage;
+            printf("You take %d damage.\n", damage);
+            if (player->strength <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+            }
+            break;
+
+        case 2:
+        case 4:
+            {
+                int gold = random_number(1000);
+                printf("find %d gold pieces!\n", gold);
+                player->gold += gold;
+            }
+            break;
+
+        case 3:
+            printf("GAS!! YOU STAGGER FROM THE ROOM!\n");
+            game->turn_count += 20;  // Equivalent to T = T + 20 in BASIC
+            // Move player in a random direction
+            char directions[] = {'N', 'S', 'E', 'W'};
+            char direction = directions[random_number(4) - 1];
+            move_player(player, game, direction);
+            break;
+    }
+
+    // Remove the chest from the room
+    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
 }
 
-void drink_from_pool(Player *player)
+void drink_from_pool(Player *player, GameState *game)
 {
+    printf("\nYou take a drink and ");
 
+    int effect = random_number(8);
+    switch(effect) {
+        case 1:
+            player->strength = min(18, player->strength + random_number(3));
+            printf("feel STRONGER.\n");
+            break;
+        case 2:
+            player->strength -= random_number(3);
+            printf("feel WEAKER.\n");
+            if (player->strength <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 3:
+            player->intelligence = min(18, player->intelligence + random_number(3));
+            printf("feel SMARTER.\n");
+            break;
+        case 4:
+            player->intelligence -= random_number(3);
+            printf("feel DUMBER.\n");
+            if (player->intelligence <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 5:
+            player->dexterity = min(18, player->dexterity + random_number(3));
+            printf("feel NIMBLER.\n");
+            break;
+        case 6:
+            player->dexterity -= random_number(3);
+            printf("feel CLUMSIER.\n");
+            if (player->dexterity <= 0) {
+                printf("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 7:
+            {
+                int new_race;
+                do {
+                    new_race = random_number(4);
+                } while (new_race == player->race);
+                player->race = new_race;
+                printf("become a %s.\n", get_race_name(player->race));
+            }
+            break;
+        case 8:
+            player->sex = 1 - player->sex;  // Toggle between 0 and 1
+            printf("turn into a %s %s!\n", 
+                   player->sex ? "MALE" : "FEMALE", 
+                   get_race_name(player->race));
+            break;
+    }
+
+    // The pool remains in the room, so we don't remove it
 }
 
-// Magic and special abilities
-void cast_spell(Player *player, GameState *game, char spell_type)
-{
 
-}
 
 void teleport(Player *player, GameState *game)
 {
@@ -1595,7 +1687,8 @@ void print_help()
     print_message("O/PEN     - Open a chest or book\n");
     print_message("G/AZE     - Gaze into a crystal orb\n");
     print_message("T/ELEPORT - Teleport to a new location (requires Runestaff)\n");
-    print_message("Q/UIT     - End the game\n\n");
+    print_message("Q/UIT     - End the game\n");
+    print_message("Z/tatus   - Player Status (South was already used)\n\n");
 
     print_message("THE CONTENTS OF ROOMS ARE AS FOLLOWS:\n\n");
     print_message(". = EMPTY ROOM      B = BOOK            C = CHEST\n");
@@ -1663,7 +1756,7 @@ char* get_user_input_main() {
                 print_message("Please provide coordinates for teleport.\n");
                 continue;
             }
-        } else if (strchr("ADEFGHILMNOQSTUWY", firstChar) != NULL) {
+        } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
             return input;  // Return the single letter command
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
