@@ -624,6 +624,16 @@ void generate_castle(GameState *game)
         game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
     }
 
+    // Place treasures (126-133)
+    for (q = TREASURE_START; q <= TREASURE_END; q++) {
+        do {
+            z = random_number(8);
+            x = random_number(8);
+            y = random_number(8);
+        } while (game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] != 101);
+        game->location_map[CALCULATE_ROOM_INDEX(z, x, y)] = q;
+    }
+
     // Place the Runestaff
     do {
         z = random_number(8);
