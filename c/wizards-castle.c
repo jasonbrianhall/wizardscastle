@@ -1267,7 +1267,8 @@ void buy_equipment(Player *player)
     player->armor_points = player->armor_type * 7;
 
     // Buy Weapon
-    printf("\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
+    snprintf(message, sizeof(message), "\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
+    print_message(message);
     print_message("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
     print_message("SWORD<30> MACE<20> DAGGER<10> NOTHING<0>\n\n");
     
@@ -1756,7 +1757,7 @@ void display_map(GameState *game, Player *player)
     print_message("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
     print_message("MONSTER  = Any Monster     VENDOR   = Vendor\n");
     print_message("TREASURE = Any Treasure    ???????? = Undiscovered\n");
-    print_message("STAIRS UP= Stairs Up       STAIRS DN= Stairs Down\n");
+    print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 }
 
 void print_help()
@@ -2012,22 +2013,22 @@ void get_room_description(int room_content, char *desc)
 {
     char full_desc[100];
     switch (room_content) {
-        case EMPTY_ROOM: strncpy(full_desc, "EMPTY   \0", 8); break;
-        case ENTRANCE: strncpy(full_desc, "ENTRANCE\0", 8); break;
-        case STAIRS_UP: strncpy(full_desc,"STAIRS UP\0", 8); break;
-        case STAIRS_DOWN: strncpy(full_desc,"STAIRS DN\0",8); break;
-        case POOL: strncpy(full_desc,"POOL    \0", 8); break;
-        case CHEST: strncpy(full_desc,"CHEST   \0",8); break;
-        case GOLD: strncpy(full_desc,"GOLD    \0",8); break;
-        case FLARES: strncpy(full_desc,"FLARES  \0",8); break;
-        case WARP: strncpy(full_desc,"WARP    \0",8); break;
-        case SINKHOLE: strncpy(full_desc,"SINKHOLE\0",8); break;
-        case CRYSTAL_ORB: strncpy(full_desc,"CRYSTAL \0",8); break;
-        case BOOK: strncpy(full_desc,"BOOK    \0",8); break;
-        case MONSTER_START ... MONSTER_END: strncpy(full_desc,"MONSTER \0",8); break;
-        case VENDOR: strncpy(full_desc,"VENDOR  \0", 8); break;
-        case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE\0", 8); break;
-        default: strncpy(full_desc,"   ??   ",8); break;
+        case EMPTY_ROOM: strncpy(full_desc, "EMPTY   \0", 9); break;
+        case ENTRANCE: strncpy(full_desc, "ENTRANCE\0", 9); break;
+        case STAIRS_UP: strncpy(full_desc,"STAIRS U\0", 9); break;
+        case STAIRS_DOWN: strncpy(full_desc,"STAIRS D\0",9); break;
+        case POOL: strncpy(full_desc,"POOL    \0", 9); break;
+        case CHEST: strncpy(full_desc,"CHEST   \0",9); break;
+        case GOLD: strncpy(full_desc,"GOLD    \0",9); break;
+        case FLARES: strncpy(full_desc,"FLARES  \0",9); break;
+        case WARP: strncpy(full_desc,"WARP    \0",9); break;
+        case SINKHOLE: strncpy(full_desc,"SINKHOLE\0",9); break;
+        case CRYSTAL_ORB: strncpy(full_desc,"CRYSTAL \0",9); break;
+        case BOOK: strncpy(full_desc,"BOOK    \0",9); break;
+        case MONSTER_START ... MONSTER_END: strncpy(full_desc,"MONSTER \0",9); break;
+        case VENDOR: strncpy(full_desc,"VENDOR  \0", 9); break;
+        case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE\0", 9); break;
+        default: strncpy(full_desc,"   ??   ",9); break;
     }
     strncpy(desc, full_desc, 8);
 }
