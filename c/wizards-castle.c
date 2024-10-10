@@ -588,7 +588,7 @@ void generate_castle(GameState *game)
 
 }
 
-int get_room_content(GameState *game, int x, int y, int level)
+uint8_t get_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     if (index >= 0 && index < MAP_SIZE) {
@@ -598,7 +598,7 @@ int get_room_content(GameState *game, int x, int y, int level)
 }
 
 
-void set_room_content(GameState *game, int x, int y, int level, int content)
+void set_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level, uint8_t content)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     if (index >= 0 && index < MAP_SIZE) {
@@ -711,10 +711,10 @@ void move_player(Player *player, GameState *game, char direction)
 
 void fight_monster(Player *player, GameState *game)
 {
-    int room_content = get_room_content(game, player->x, player->y, player->level);
-    int is_vendor = (room_content == VENDOR);
-    int enemy_strength, enemy_dexterity;
-    int can_bribe = 1;
+    uint8_t room_content = get_room_content(game, player->x, player->y, player->level);
+    uint8_t is_vendor = (room_content == VENDOR);
+    uint8_t enemy_strength, enemy_dexterity;
+    uint8_t can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     player->web_count=0;
     // Set enemy stats based on room content
@@ -845,7 +845,7 @@ void fight_monster(Player *player, GameState *game)
         }
     }
 }
-void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name)
+void handle_combat_victory(Player *player, GameState *game, uint8_t is_vendor, const char *enemy_name)
 {
     printf("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
     
@@ -889,7 +889,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
 }
 
-int handle_bribe(Player *player, GameState *game, const char *enemy_name)
+uint8_t handle_bribe(Player *player, GameState *game, const char *enemy_name)
 {
     if (player->treasure_count == 0) {
         print_message("\nALL I WANT IS YOUR LIFE!\n");
@@ -916,7 +916,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
     return 0;
 }
 
-int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
+uint8_t handle_spell(Player *player, GameState *game, uint8_t *enemy_strength, const char *enemy_name)
 {
     print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? \n\n");
     char spell = get_user_input();
@@ -973,10 +973,19 @@ void move_player_randomly(Player *player, GameState *game)
     move_player(player, game, direction);
 }
 
-const char* get_weapon_name(int weapon_type)
+const char* get_weapon_name(uint8_t weapon_type)
 {
     const char* weapon_names[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
-    return weapon_names[weapon_type];
+
+    if (weapon_type<4)
+    {
+        return weapon_names[weapon_type];
+
+    }
+    else
+    {
+        return weapon_names[0];
+    }    
 }
 
 const char* get_random_body_part()
@@ -1343,7 +1352,7 @@ void buy_weapon(Player *player)
 }
 
 // Helper function to get treasure names
-const char* get_treasure_name(int index)
+const char* get_treasure_name(uint8_t index)
 {
     static const char* treasure_names[] = {
         "Ruby Red", "Norn Stone", "Pale Pearl", "Opal Eye",
@@ -1353,7 +1362,7 @@ const char* get_treasure_name(int index)
 }
 
 // Helper function for minimum of two integers
-int min(int a, int b)
+uint32_t min(uint32_t a, uint32_t b)
 {
     return (a < b) ? a : b;
 }
@@ -1783,7 +1792,7 @@ void gaze_into_orb(Player *player, GameState *game)
 }
 
 // Utility functions
-int random_number(int max_value)
+uint32_t random_number(uint32_t max_value)
 {
     return 1 + rand() % max_value;
 }
@@ -1939,7 +1948,7 @@ void print_help()
 }
 
 // Game ending functions
-int check_game_over(Player *player) {
+uint8_t check_game_over(Player *player) {
     // Check if player has died
     if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
         return 1;
@@ -1988,7 +1997,7 @@ char* get_user_input_main() {
 }
 
 
-int get_user_input_number() 
+uint32_t get_user_input_number() 
 {
     int number;
     char input[100];
@@ -2146,13 +2155,13 @@ const char* get_race_name(int race)
     }
 }
 
-void mark_room_discovered(GameState *game, int x, int y, int level)
+void mark_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     game->discovered_rooms[index] = 1;
 }
 
-int is_room_discovered(GameState *game, int x, int y, int level)
+uint8_t is_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     return game->discovered_rooms[index];
@@ -2292,7 +2301,7 @@ void end_game(Player *player, GameState *game)
 }
 
 
-const char* get_monster_name(int room_content)
+const char* get_monster_name(uint8_t room_content)
 {
     switch (room_content) {
         case KOBOLD: return "KOBOLD";
@@ -2311,7 +2320,7 @@ const char* get_monster_name(int room_content)
     }
 }
 
-void handle_treasure(Player *player, GameState *game, int room_content)
+void handle_treasure(Player *player, GameState *game, uint8_t room_content)
 {
     int treasure_index = room_content - TREASURE_START;
     const char* treasure_name = get_treasure_name(treasure_index);
