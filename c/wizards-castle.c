@@ -1755,7 +1755,7 @@ void display_map(GameState *game, Player *player)
     print_message("GOLD     = Gold Pieces     FLARES   = Flares\n");
     print_message("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
     print_message("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
-    print_message("MONSTER  = Any Monster     VENDOR   = Vendor\n");
+    print_message("MONSTER  = Monster Name    VENDOR   = Vendor\n");
     print_message("TREASURE = Any Treasure    ???????? = Undiscovered\n");
     print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 }
@@ -2034,20 +2034,31 @@ void get_room_description(int room_content, char *desc)
 {
     char full_desc[100];
     switch (room_content) {
-        case EMPTY_ROOM: strncpy(full_desc, "EMPTY   \0", 9); break;
-        case ENTRANCE: strncpy(full_desc, "ENTRANCE\0", 9); break;
-        case STAIRS_UP: strncpy(full_desc,"STAIRS U\0", 9); break;
+        case EMPTY_ROOM:  strncpy(full_desc, "EMPTY   \0", 9); break;
+        case ENTRANCE:    strncpy(full_desc, "ENTRANCE\0", 9); break;
+        case STAIRS_UP:   strncpy(full_desc,"STAIRS U\0", 9); break;
         case STAIRS_DOWN: strncpy(full_desc,"STAIRS D\0",9); break;
-        case POOL: strncpy(full_desc,"POOL    \0", 9); break;
-        case CHEST: strncpy(full_desc,"CHEST   \0",9); break;
-        case GOLD: strncpy(full_desc,"GOLD    \0",9); break;
-        case FLARES: strncpy(full_desc,"FLARES  \0",9); break;
-        case WARP: strncpy(full_desc,"WARP    \0",9); break;
-        case SINKHOLE: strncpy(full_desc,"SINKHOLE\0",9); break;
+        case POOL:        strncpy(full_desc,"POOL    \0", 9); break;
+        case CHEST:       strncpy(full_desc,"CHEST   \0",9); break;
+        case GOLD:        strncpy(full_desc,"GOLD    \0",9); break;
+        case FLARES:      strncpy(full_desc,"FLARES  \0",9); break;
+        case WARP:        strncpy(full_desc,"WARP    \0",9); break;
+        case SINKHOLE:    strncpy(full_desc,"SINKHOLE\0",9); break;
         case CRYSTAL_ORB: strncpy(full_desc,"CRYSTAL \0",9); break;
-        case BOOK: strncpy(full_desc,"BOOK    \0",9); break;
-        case MONSTER_START ... MONSTER_END: strncpy(full_desc,"MONSTER \0",9); break;
-        case VENDOR: strncpy(full_desc,"VENDOR  \0", 9); break;
+        case BOOK:        strncpy(full_desc,"BOOK    \0",9); break;
+        case KOBOLD:      strncpy(full_desc,"KOBOLD  \0",9); break;
+        case ORC:         strncpy(full_desc,"ORC     \0",9); break;
+        case WOLF:        strncpy(full_desc,"WOLF    \0",9); break;
+        case GOBLIN:      strncpy(full_desc,"ORC     \0",9); break;
+        case OGRE:        strncpy(full_desc,"OGRE    \0",9); break;
+        case TROLL:       strncpy(full_desc,"TROLL   \0",9); break;
+        case BEAR:        strncpy(full_desc,"BEAR    \0",9); break;
+        case MINOTAUR:    strncpy(full_desc,"MINOTAUR\0",9); break;
+        case GARGOYLE:    strncpy(full_desc,"GARGOYLE\0",9); break;
+        case CHIMERA:     strncpy(full_desc,"CHIMERA \0",9); break;
+        case BALROG:      strncpy(full_desc,"BALROG  \0",9); break;
+        case DRAGON:      strncpy(full_desc,"DRAGON  \0",9); break;
+        case VENDOR:      strncpy(full_desc,"VENDOR  \0", 9); break;
         case TREASURE_START ... TREASURE_END: strncpy(full_desc,"TREASURE\0", 9); break;
         default: strncpy(full_desc,"   ??   ",9); break;
     }
