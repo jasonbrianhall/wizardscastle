@@ -1,5 +1,7 @@
 # Wizard's Castle
 
+![Intro to Wizard's Castle](images/intro.png "Wizard's Castle Title")
+
 ## Journey into the Mystical Realm of Zot
 
 Embark on an epic text-based adventure in **Wizard's Castle**, a classic dungeon crawler reimagined for modern systems. Dive into a world of magic, monsters, and mystery as you search for the legendary Orb of Zot!
