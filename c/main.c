@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
         if (debug_mode) {
             printf("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 
-                   game.orb_location[0], game.orb_location[1], game.orb_location[2]);
+                   game.orb_location[1], game.orb_location[0], game.orb_location[2]);
             for (q = 0; q < MAP_SIZE; q++) {
                 game.discovered_rooms[q] = 1;  // 0 means undiscovered
             }
