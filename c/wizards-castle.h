@@ -147,7 +147,7 @@ void display_map(GameState *game, Player *player);
 void print_help();
 
 // Game ending functions
-int check_game_over(Player *player);
+int check_game_over(Player *player, GameState *game);
 void end_game(Player *player, GameState *game);
 
 // Input/Output functions

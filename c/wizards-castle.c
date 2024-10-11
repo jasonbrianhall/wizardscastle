@@ -198,7 +198,7 @@ bool main_game_loop(Player *player, GameState *game)
             snprintf(message, sizeof(message), "%i\n", room_content);
             print_message(message);
         }
-        game_over = check_game_over(player);
+        game_over = check_game_over(player, game);
         if(!game_over)
         {
             strncpy(user_command, get_user_input_main(), sizeof(user_command) - 1);
@@ -293,7 +293,7 @@ bool main_game_loop(Player *player, GameState *game)
             }
         }
         if (!game_over) {
-            game_over = check_game_over(player);
+            game_over = check_game_over(player, game);
         }
     }
 
@@ -1949,17 +1949,21 @@ void print_help()
 }
 
 // Game ending functions
-int check_game_over(Player *player) {
+int check_game_over(Player *player, GameState *game) {
     // Check if player has died
     if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
         return 1;
     }
     
     // Check if player has won (e.g., found the Orb of Zot and exited)
-    if (player->orb_flag && player->x == 1 && player->y == 4 && player->level == 1) {
+    /*if (player->orb_flag && player->x == 1 && player->y == 4 && player->level == 1) {
+        return 1;
+    }*/
+    
+    if (game->game_over)
+    {
         return 1;
     }
-    
     // Game is not over
     return 0;
 }
