@@ -77,7 +77,7 @@ Want to contribute or modify the game? Here's how to set up your dev environment
 
 ### Contributing
 
-We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+We welcome contributions! Please read our [Contributing Guide](../CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ### License
 
