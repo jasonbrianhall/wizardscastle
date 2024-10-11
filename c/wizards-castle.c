@@ -1775,8 +1775,8 @@ void gaze_into_orb(Player *player, GameState *game)
             {
                 int x, y, z;
                 if (random_number(8) < 4) {
-                    x = game->orb_location[0];
-                    y = game->orb_location[1];
+                    x = game->orb_location[1];
+                    y = game->orb_location[0];
                     z = game->orb_location[2];
                 } else {
                     x = random_number(8);
