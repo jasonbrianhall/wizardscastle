@@ -56,6 +56,12 @@ For an easier experience and to test broken code, try the debug mode:
 - Explore rooms, fight monsters, read books, explore chests, trade with vendors, and collect treasures.
 - Manage your resources wisely - gold, flares, and health are crucial!
 - Find the Orb of Zot and escape the castle to win!
+- Type in H for a list of available commands
+- Type in M for a map of the current level (unexplored rooms will be hiddne)
+
+![Map to Wizard's Castle](images/map.png "Wizard's Castle Map")
+
+
 
 ### Development
 
