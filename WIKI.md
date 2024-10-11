@@ -102,6 +102,8 @@ Armor:
 
 Enemies range from weak to strong:
 - Kobold, Orc, Wolf, Goblin, Ogre, Troll, Bear, Minotaur, Gargoyle, Chimera, Balrog, Dragon
+- Gargoyles and Dragons can break weapons so be careful
+- You can not attack monsters with your bare hands or if you have a book stuck to your hand
 
 ### Combat System
 
@@ -132,7 +134,7 @@ The castle is randomly generated at the start of each game, ensuring a unique ex
 - Pools (can be drunk from for random effects)
 - Chests (can contain gold or traps)
 - Crystal Orbs (can be gazed into for information)
-- Books (can be read for various effects)
+- Books (can be read for various effects); beware their is a chance a book will stick to your hand
 - Monster rooms
 - Vendor rooms
 - Warp rooms (teleport you to a random location)
