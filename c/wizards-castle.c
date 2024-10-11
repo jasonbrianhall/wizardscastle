@@ -589,7 +589,7 @@ void generate_castle(GameState *game)
 
 }
 
-uint8_t get_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level)
+int get_room_content(GameState *game, int x, int y, int level)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     if (index >= 0 && index < MAP_SIZE) {
@@ -600,7 +600,7 @@ uint8_t get_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level)
 }
 
 
-void set_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level, uint8_t content)
+void set_room_content(GameState *game, int x, int y, int level, int content)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     if (index >= 0 && index < MAP_SIZE) {
@@ -712,10 +712,10 @@ void move_player(Player *player, GameState *game, char direction)
 
 void fight_monster(Player *player, GameState *game)
 {
-    int8_t room_content = get_room_content(game, player->x, player->y, player->level);
-    int8_t is_vendor = (room_content == VENDOR);
-    int16_t enemy_strength, enemy_dexterity;
-    int8_t can_bribe = 1;
+    int room_content = get_room_content(game, player->x, player->y, player->level);
+    int is_vendor = (room_content == VENDOR);
+    int enemy_strength, enemy_dexterity;
+    int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     player->web_count=0;
     // Set enemy stats based on room content
@@ -846,7 +846,7 @@ void fight_monster(Player *player, GameState *game)
         }
     }
 }
-void handle_combat_victory(Player *player, GameState *game, uint8_t is_vendor, const char *enemy_name)
+void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name)
 {
     printf("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
     
@@ -890,7 +890,7 @@ void handle_combat_victory(Player *player, GameState *game, uint8_t is_vendor, c
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
 }
 
-uint8_t handle_bribe(Player *player, GameState *game, const char *enemy_name)
+int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 {
     if (player->treasure_count == 0) {
         print_message("\nALL I WANT IS YOUR LIFE!\n");
@@ -917,7 +917,7 @@ uint8_t handle_bribe(Player *player, GameState *game, const char *enemy_name)
     return 0;
 }
 
-uint8_t handle_spell(Player *player, GameState *game, int16_t *enemy_strength, const char *enemy_name)
+int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
 {
     print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? \n\n");
     char spell = get_user_input();
@@ -974,7 +974,7 @@ void move_player_randomly(Player *player, GameState *game)
     move_player(player, game, direction);
 }
 
-const char* get_weapon_name(uint8_t weapon_type)
+const char* get_weapon_name(int weapon_type)
 {
     const char* weapon_names[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
 
@@ -1353,7 +1353,7 @@ void buy_weapon(Player *player)
 }
 
 // Helper function to get treasure names
-const char* get_treasure_name(uint8_t index)
+const char* get_treasure_name(int index)
 {
     static const char* treasure_names[] = {
         "Ruby Red", "Norn Stone", "Pale Pearl", "Opal Eye",
@@ -1363,7 +1363,7 @@ const char* get_treasure_name(uint8_t index)
 }
 
 // Helper function for minimum of two integers
-int32_t min(int32_t a, int32_t b)
+int min(int a, int b)
 {
     return (a < b) ? a : b;
 }
@@ -1793,7 +1793,7 @@ void gaze_into_orb(Player *player, GameState *game)
 }
 
 // Utility functions
-uint32_t random_number(uint32_t max_value)
+int random_number(int max_value)
 {
     return 1 + rand() % max_value;
 }
@@ -1949,7 +1949,7 @@ void print_help()
 }
 
 // Game ending functions
-uint8_t check_game_over(Player *player) {
+int check_game_over(Player *player) {
     // Check if player has died
     if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
         return 1;
@@ -1998,7 +1998,7 @@ char* get_user_input_main() {
 }
 
 
-uint32_t get_user_input_number() 
+int get_user_input_number() 
 {
     int number;
     char input[100];
@@ -2144,7 +2144,7 @@ void open_book(Player *player, GameState *game)
     set_room_content(game, player->x, player->y, player->level, 101);  // Empty room
 }
 
-const char* get_race_name(uint8_t race)
+const char* get_race_name(int race)
 {
     switch(race)
     {
@@ -2156,13 +2156,13 @@ const char* get_race_name(uint8_t race)
     }
 }
 
-void mark_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level)
+void mark_room_discovered(GameState *game, int x, int y, int level)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     game->discovered_rooms[index] = 1;
 }
 
-uint8_t is_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level)
+int is_room_discovered(GameState *game, int x, int y, int level)
 {
     int index = CALCULATE_ROOM_INDEX(level, x, y);
     return game->discovered_rooms[index];
@@ -2180,7 +2180,7 @@ void discover_adjacent_rooms(GameState *game, Player *player)
 }
 
 // New helper function to get abbreviated room descriptions
-void get_room_description(uint8_t room_content, char *desc)
+void get_room_description(int room_content, char *desc)
 {
     char full_desc[100];
     switch (room_content) {
@@ -2222,7 +2222,7 @@ void get_room_description(uint8_t room_content, char *desc)
     strncpy(desc, full_desc, 9);
 }
 
-char get_room_symbol(uint8_t room_content)
+char get_room_symbol(int room_content)
 {
     switch (room_content) {
         case EMPTY_ROOM: return '.';  // Empty room
@@ -2303,7 +2303,7 @@ void end_game(Player *player, GameState *game)
 }
 
 
-const char* get_monster_name(uint8_t room_content)
+const char* get_monster_name(int room_content)
 {
     switch (room_content) {
         case KOBOLD: return "KOBOLD";
@@ -2322,7 +2322,7 @@ const char* get_monster_name(uint8_t room_content)
     }
 }
 
-void handle_treasure(Player *player, GameState *game, uint8_t room_content)
+void handle_treasure(Player *player, GameState *game, int room_content)
 {
     int treasure_index = room_content - TREASURE_START;
     const char* treasure_name = get_treasure_name(treasure_index);

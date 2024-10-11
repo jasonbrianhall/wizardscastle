@@ -56,44 +56,44 @@
 
 // Structures
 typedef struct {
-    uint8_t race:4;
-    uint8_t sex:4;
-    int16_t strength;
-    int16_t intelligence;
-    int16_t dexterity;
-    int32_t gold;
-    int32_t flares;
-    int8_t armor_type:4;
-    int8_t armor_points;
-    int8_t weapon_type:4;
-    uint8_t lamp_flag:1;
-    uint8_t x:4;  // Keep unsigned (four bits to save memory)
-    uint8_t y:4;  // Keep unsigned (four bits to save memory)
-    uint8_t level:4;  // Keep unsigned
-    uint8_t runestaff_flag:1;
-    uint8_t orb_flag:1;
+    int race:4;
+    int sex:4;
+    int strength;
+    int intelligence;
+    int dexterity;
+    int gold;
+    int flares;
+    int armor_type;
+    int armor_points;
+    int weapon_type;
+    int lamp_flag;
+    int x;  // Keep unsigned (four bits to save memory)
+    int y;  // Keep unsigned (four bits to save memory)
+    int level;  // Keep unsigned
+    int runestaff_flag;
+    int orb_flag;
     
-    uint8_t book_flag:1;
-    uint8_t blindness_flag:1;
-    uint8_t stickybook_flag:1;
-    uint8_t has_runestaff:1;
-    uint8_t has_orb:1;
-    int8_t treasure_count;
-    int8_t web_count;
+    int book_flag;
+    int blindness_flag;
+    int stickybook_flag;
+    int has_runestaff;
+    int has_orb;
+    int treasure_count;
+    int web_count;
 
 } Player;
 
 typedef struct {
-    uint8_t location_map[MAP_SIZE];
-    uint8_t discovered_rooms[MAP_SIZE];  // No sane way to make this one bit integer
-    uint8_t treasure[TREASURE_COUNT];
-    uint8_t orb_location[3];
-    uint8_t runestaff_location[3];
-    uint32_t turn_count;
-    uint32_t monster_count;
-    uint8_t game_over;
-    uint8_t victory;
-    uint8_t vendor_attacked;
+    int location_map[MAP_SIZE];
+    int discovered_rooms[MAP_SIZE];  // No sane way to make this one bit integer
+    int treasure[TREASURE_COUNT];
+    int orb_location[3];
+    int runestaff_location[3];
+    int turn_count;
+    int monster_count;
+    int game_over;
+    int victory;
+    int vendor_attacked;
 
 } GameState;
 
@@ -112,8 +112,8 @@ void allocate_attributes(Player *player);
 
 // Map and room functions
 void generate_castle(GameState *game);
-uint8_t get_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level);
-void set_room_content(GameState *game, uint8_t x, uint8_t y, uint8_t level, uint8_t content);
+int get_room_content(GameState *game, int x, int y, int level);
+void set_room_content(GameState *game, int x, int y, int level, int content);
 
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
@@ -121,8 +121,8 @@ void fight_monster(Player *player, GameState *game);
 void handle_vendor(Player *player, GameState *game);
 void trade_with_vendor(Player *player, GameState *game);
 void attack_vendor(Player *player, GameState *game);
-const char* get_treasure_name(uint8_t index);
-int32_t min(int32_t a, int32_t b);
+const char* get_treasure_name(int index);
+int min(int a, int b);
 void buy_armor(Player *player);
 void buy_flares(Player *player);
 
@@ -141,13 +141,13 @@ void teleport(Player *player, GameState *game);
 void gaze_into_orb(Player *player, GameState *game);
 
 // Utility functions
-uint32_t random_number(uint32_t max_value);
+int random_number(int max_value);
 void print_status(Player *player, GameState *game);
 void display_map(GameState *game, Player *player);
 void print_help();
 
 // Game ending functions
-uint8_t check_game_over(Player *player);
+int check_game_over(Player *player);
 void end_game(Player *player, GameState *game);
 
 // Input/Output functions
@@ -160,25 +160,25 @@ void printStars(void);
 
 void open_book(Player *player, GameState *game);
 
-const char* get_race_name(uint8_t race);
+const char* get_race_name(int race);
 
-void mark_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level);
-uint8_t is_room_discovered(GameState *game, uint8_t x, uint8_t y, uint8_t level);
+void mark_room_discovered(GameState *game, int x, int y, int level);
+int is_room_discovered(GameState *game, int x, int y, int level);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
-char get_room_symbol(uint8_t room_content);
-void get_room_description(uint8_t room_content, char *desc);
+char get_room_symbol(int room_content);
+void get_room_description(int room_content, char *desc);
 
-void handle_combat_victory(Player *player, GameState *game, uint8_t is_vendor, const char *enemy_name);
-void handle_treasure(Player *player, GameState *game, uint8_t roomcontent);
+void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name);
+void handle_treasure(Player *player, GameState *game, int roomcontent);
 
-uint8_t handle_bribe(Player *player, GameState *game, const char *enemy_name);
-uint8_t handle_spell(Player *player, GameState *game, int16_t *enemy_strength, const char *enemy_name);
+int handle_bribe(Player *player, GameState *game, const char *enemy_name);
+int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name);
 void move_player_randomly(Player *player, GameState *game);
-const char* get_weapon_name(uint8_t weapon_type);
+const char* get_weapon_name(int weapon_type);
 const char* get_random_body_part();
 const char* get_random_species();
-uint32_t get_user_input_number();
-const char* get_monster_name(uint8_t room_content);
+int get_user_input_number();
+const char* get_monster_name(int room_content);
 
 #endif 
