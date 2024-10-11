@@ -38,7 +38,7 @@ Wizard's Castle is a text-based roguelike adventure game where players explore a
 
 ### Turn System
 
-Each action you take counts as a turn. Monsters may act after your turn, and certain events (like curses) may occur randomly between turns.
+Each action you take counts as a turn. Monsters are statically located, and certain events (like curses) may occur randomly between turns.
 
 ### Exploring the Castle
 
