@@ -92,7 +92,9 @@ We welcome fellow enchanters to join our quest! Please consult the [Contributor'
 
 ### 📜 License
 
-This project is protected by the MIT License - see the [LICENSE](LICENSE.md) scroll for details.
+This project is safeguarded by the Sacred Scroll of MIT, a powerful enchantment that grants rights and protections to all who encounter this code. The scroll is guarded by the fierce dragon Licensora, whose flames ensure the terms are forever honored. Brave souls who wish to understand their rights and responsibilities may approach the LICENSE.md chamber, but beware - the dragon's watchful eyes never close!
+
+See the [LICENSE](LICENSE.md) scroll for details.
 
 ### 🙏 Acknowledgments
 
