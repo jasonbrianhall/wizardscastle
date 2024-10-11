@@ -134,7 +134,7 @@ The castle is randomly generated at the start of each game, ensuring a unique ex
 - Pools (can be drunk from for random effects)
 - Chests (can contain gold or traps)
 - Crystal Orbs (can be gazed into for information)
-- Books (can be read for various effects); beware their is a chance a book will stick to your hand
+- Books (can be read for various effects); beware their is a chance a book will stick to your hand or make you blind
 - Monster rooms
 - Vendor rooms
 - Warp rooms (teleport you to a random location)
@@ -189,6 +189,6 @@ A: Not currently, but it's a potential future development.
 
 We encourage all players and developers to contribute to this wiki. If you have knowledge to share or find any inaccuracies, please feel free to edit and improve these pages. Together, we can create a comprehensive resource for all things Wizard's Castle!
 
-For guidelines on contributing to the project itself, please refer to our [CONTRIBUTING.md](https://github.com/jasonbrianhall/wizardscastle/blob/main/CONTRIBUTING.md) file.
+For guidelines on contributing to the project itself, please refer to our [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 Happy adventuring in the Wizard's Castle!
