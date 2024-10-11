@@ -84,7 +84,7 @@ Want to contribute or modify the game? Here's how to set up your dev environment
 
 ### Documentation
 
-For more detailed information about game mechanics, commands, and development, check out our [Wiki](https://github.com/jasonbrianhall/wizardscastle/wiki).
+For more detailed information about game mechanics, commands, and development, check out our [Wiki](https://github.com/jasonbrianhall/wizardscastle/WIKI.md).
 
 ### Contributing
 
