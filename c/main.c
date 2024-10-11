@@ -11,9 +11,9 @@ int main(int argc, char *argv[])
     int q;
     bool playagain = true;
     bool debug_mode = false;
-
+    int i;
     // Check for debug flag
-    for (int i = 1; i < argc; i++) {
+    for (i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--debug") == 0) {
             debug_mode = true;
             break;
