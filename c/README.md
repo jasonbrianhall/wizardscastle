@@ -91,8 +91,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Future Plans
 
 - RPM package support (coming soon!)
-- Multiplayer mode
 - NES and SNES versions
+- Maybe a Mobile Version
 
 Dive into the Wizard's Castle today and claim the Orb of Zot! Will you emerge victorious, or fall to the castle's many perils? Your adventure awaits!
 
