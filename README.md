@@ -11,7 +11,7 @@ Embark on an epic text-based adventure in **Wizard's Castle**, a classic dungeon
 This repository contains multiple implementations and versions of the Wizard's Castle game:
 
 - **C Implementation (Fully Functional)**: Located in the `c/` directory. This is the complete and playable version of the game.
-- **Python Implementation (Incomplete)**: Found in the `python/` directory. This was an initial attempt to rewrite the game in Python but is currently non-functional. **Do not use this version for gameplay.**
+- **Python Implementation (Incomplete)**: Found in the `python/` directory. This was an initial attempt to rewrite the game in Python but is currently non-functional. **Do not use this version for gameplay.**.  I think I tried to do too much and change too much code from the original.  Left here for reference.
 - **Original BASIC Source**: Available in the `original_source/` directory. This version can be run using Quick Basic 7.1.
 - **Refactored BASIC Source**: Located in the `refactored_source/` directory, featuring cleaned-up BASIC code.
 
