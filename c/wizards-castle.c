@@ -813,7 +813,13 @@ void fight_monster(Player *player, GameState *game)
             }
 
             printf("\nTHE %s ATTACKS!\n", enemy_name);
-            if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+            if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
+                    dragon_fireball_attack(player, game);
+                    if (game->game_over) {
+                        return;
+                    }
+            }
+            else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
                 print_message("\nOUCH! HE HIT YOU!\n");
                 int damage = (enemy_strength / 2) + 1;
                 
@@ -2373,5 +2379,46 @@ void handle_treasure(Player *player, GameState *game, int room_content)
     }
 
     // Remove the treasure from the room
-    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);   
+}
+
+void dragon_fireball_attack(Player *player, GameState *game) {
+    print_message("\nThe dragon breathes a massive fireball at you!\n");
+    
+    // Dexterity-based avoidance check
+    if (random_number(20) + player->dexterity > random_number(20) + 15) {  // Dragon has high dexterity
+        print_message("You manage to dodge the fireball!\n");
+        return;
+    }
+    
+    int damage = random_number(10) + 5;  // 6 to 15 damage
+    printf("The fireball hits you for %d damage!\n", damage);
+    
+    // Apply armor reduction
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type;
+        damage -= armor_protection;
+        player->armor_points -= armor_protection;
+        
+        if (damage < 0) {
+            player->armor_points += damage;  // Adjust for overkill protection
+            damage = 0;
+        }
+        
+        printf("Your armor absorbs %d damage.\n", armor_protection);
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message("YOUR ARMOR HAS BEEN DESTROYED BY THE DRAGON'S FIRE!\n");
+        }
+    }
+    
+    player->strength -= damage;
+    printf("You take %d final damage from the fireball!\n", damage);
+    
+    if (player->strength <= 0) {
+        print_message("\nYOU HAVE BEEN INCINERATED BY THE DRAGON'S FIRE!\n");
+        game->game_over = 1;
+    }
 }
