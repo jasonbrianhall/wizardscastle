@@ -53,12 +53,25 @@ To craft an artifact for the kingdom of Windows:
    make windows 
    ```
 
-Or, to invoke the ancient MS-DOS spell:
+Or, to invoke the ancient MS-DOS spell (:
    ``` 
    make msdos
    ```
 
 But take heed, brave adventurer—these rituals draw upon the power of Docker, and only a properly prepared Docker system will channel the magic required.
+
+
+For those venturing into the realm of MS-DOS, it is highly recommended to first equip yourself with the forgotten relic known as vmode. Retrieve it from the archives here: [vmode.exe](https://mendelson.org/wpdos/vmode.exe)
+
+Once acquired, invoke its power with:
+
+```
+vmode 0x54
+```
+
+Should your quest demand further arcane knowledge of display configurations, additional video modes may be discovered in this ancient tome: [PC Video Modes](https://cs.lmu.edu/~ray/notes/pcvideomodes/)
+
+Only then will the mystical display align itself for your journey.
 
 #### Embarking on Your Quest
 
