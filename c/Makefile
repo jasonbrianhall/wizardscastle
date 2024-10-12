@@ -73,7 +73,7 @@ windows: pull-mingw
 run-msdos: msdos
 	dosbox $(DOS_TARGET)
 
-dist: clean
+rpm: clean
 	# Create the source tarball
 	mkdir -p wizardscastle-$(VERSION)
 	cp *.c wizardscastle-$(VERSION)/
