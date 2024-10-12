@@ -1,4 +1,5 @@
 # Makefile for Wizard's Castle
+VERSION=1.0
 
 # Compiler
 CC = gcc
@@ -71,5 +72,21 @@ windows: pull-mingw
 # Target to run the MS-DOS executable using DOSBox
 run-msdos: msdos
 	dosbox $(DOS_TARGET)
+
+dist: clean
+	# Create the source tarball
+	mkdir -p wizardscastle-$(VERSION)
+	cp *.c wizardscastle-$(VERSION)/
+	cp *.h wizardscastle-$(VERSION)/
+	cp Makefile wizardscastle-$(VERSION)/
+	tar -czf wizardscastle-$(VERSION).tar.gz wizardscastle-$(VERSION)
+	rm -rf wizardscastle-$(VERSION)
+
+	# Move the source tarball to the SOURCES directory for rpmbuild
+	mkdir -p ~/rpmbuild/SOURCES
+	cp wizardscastle-$(VERSION).tar.gz ~/rpmbuild/SOURCES/
+
+	# Build the RPM using the existing spec file
+	rpmbuild -ba -D 'debug_package %{nil}' wizardscastle.spec
 
 .PHONY: all debug clean pull-djgpp get-csdpmi msdos run-msdos
