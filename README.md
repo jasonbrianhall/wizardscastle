@@ -77,6 +77,24 @@ Should your quest demand further arcane knowledge of display configurations, add
 
 Only then will the mystical display align itself for your journey.
 
+5. Summon the Power of the RPMs
+
+For those brave enough to wield the mystical forces of package management, you may call upon the ancient command:
+
+```
+make rpm
+```
+
+Watch in awe as your system transforms the humble source code into a shiny RPM package, ready for distribution! This command is akin to casting a spell; just be sure to have your potion ingredients (a.k.a. dependencies) at the ready.
+
+Warning: Engaging in this sorcery may result in unanticipated magical side effects, such as:
+
+    Unexpected Dependencies: You might find your system craving libraries it never knew it wanted.
+    Missing Debug Symbols: Fear not! The great and powerful compiler may forget to add those elusive symbols, leaving your debugging attempts as effective as a spell with no target.
+    Ghostly Messages: If you hear the distant echoes of error or warning, do not be alarmed! These are merely the spirits of the code reminding you to pay attention.
+
+So grab your staff (or keyboard), and may the RPM gods smile upon your endeavor!
+
 #### Embarking on Your Quest
 
 Launch your adventure:
