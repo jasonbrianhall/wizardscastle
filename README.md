@@ -46,6 +46,19 @@ This repository is your gateway to multiple realms of the Wizard's Castle:
    ```
    make
    ```
+4. For those daring to explore realms beyond the world of Zot, you may summon the powers of alternate universes:
+
+To craft an artifact for the kingdom of Windows:
+   ``` 
+   make windows 
+   ```
+
+Or, to invoke the ancient MS-DOS spell:
+   ``` 
+   make msdos
+   ```
+
+But take heed, brave adventurer—these rituals draw upon the power of Docker, and only a properly prepared Docker system will channel the magic required.
 
 #### Embarking on Your Quest
 
