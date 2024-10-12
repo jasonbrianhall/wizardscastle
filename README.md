@@ -71,6 +71,8 @@ vmode 0x11
 vmode 0x12
 ```
 
+These configurations are known to work well with the mystical DOSBox, aligning the stars of your display for a smoother adventure.
+
 Should your quest demand further arcane knowledge of display configurations, additional video modes may be discovered in this ancient tome: [PC Video Modes](https://cs.lmu.edu/~ray/notes/pcvideomodes/)
 
 Only then will the mystical display align itself for your journey.
