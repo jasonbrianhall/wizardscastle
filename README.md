@@ -67,6 +67,8 @@ Once acquired, invoke its power with:
 
 ```
 vmode 0x54
+vmode 0x11
+vmode 0x12
 ```
 
 Should your quest demand further arcane knowledge of display configurations, additional video modes may be discovered in this ancient tome: [PC Video Modes](https://cs.lmu.edu/~ray/notes/pcvideomodes/)
