@@ -9,6 +9,7 @@ SRCS = main.c wizards-castle.c
 # Output executable
 TARGET = wizardscastle
 DOS_TARGET = wizard.exe
+WINDOWS_TARGET = wizard_windows.exe
 
 # Compiler flags
 CFLAGS = -Wall -Wextra
@@ -17,8 +18,18 @@ DEBUGFLAGS = -g -fsanitize=address
 # Docker image for DJGPP
 DJGPP_IMAGE = djfdyuruiry/djgpp
 
+# Docker image for Windows
+MINGW_IMAGE = mdashnet/mingw  # MinGW for Windows
+
+# Compiler for Windows (MinGW)
+MINGW_CC = x86_64-w64-mingw32-gcc
+
 # Correct CSDPMI URL
 CSDPMI_URL = http://na.mirror.garr.it/mirrors/djgpp/current/v2misc/csdpmi7b.zip
+
+# Get current user and group IDs
+USER_ID = $(shell id -u)
+GROUP_ID = $(shell id -g)
 
 # Default target
 all: $(TARGET)
@@ -40,6 +51,10 @@ clean:
 pull-djgpp:
 	docker pull $(DJGPP_IMAGE)
 
+pull-mingw:
+	docker pull $(MINGW_IMAGE)
+
+
 # Target to download CSDPMI
 get-csdpmi:
 	wget $(CSDPMI_URL)
@@ -47,8 +62,11 @@ get-csdpmi:
 
 # Target to build for MS-DOS using DJGPP in Docker
 msdos: pull-djgpp get-csdpmi
-	docker run --rm -v $(PWD):/src $(DJGPP_IMAGE) bash -c "cd /src && gcc $(SRCS) -o $(DOS_TARGET)"
+	docker run --rm -v $(PWD):/src -u $(USER_ID):$(GROUP_ID) $(DJGPP_IMAGE) /bin/sh -c "cd /src && gcc $(SRCS) -o $(DOS_TARGET)"
 	cp csdpmi/bin/CWSDPMI.EXE .
+
+windows: pull-mingw
+	docker run --rm -v $(PWD):/src -u $(USER_ID):$(GROUP_ID) $(MINGW_IMAGE) /bin/sh -c "cd /src && $(MINGW_CC) $(SRCS) -o $(WINDOWS_TARGET)"
 
 # Target to run the MS-DOS executable using DOSBox
 run-msdos: msdos
