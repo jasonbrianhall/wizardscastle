@@ -53,8 +53,9 @@ jobs:
         sudo tar -xvf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
         export PATH=$PATH:/usr/local/djgpp/bin
         find /usrl/ocal/djgpp/bin
-        cd c
+        pushd c
         /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc *.c -o wizard.exe
+        popd 
 
     - name: Build Linux version and create package
       run: |
@@ -71,10 +72,10 @@ jobs:
         mkdir -p dos_package
         cp c/wizard.exe dos_package/
         cp c/CWSDPMI.EXE dos_package/
-        cd dos_package
+        pushd dos_package
         zip -r ../wizard.zip .
-        cd ..
-    
+        popd
+
     - name: Generate release date
       id: date
       run: echo "::set-output name=date::v$(date +'%Y%m%d')"
