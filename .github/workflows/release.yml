@@ -49,8 +49,8 @@ jobs:
     - name: Build MS-DOS version
       run: |
         wget https://github.com/andrewwutw/build-djgpp/releases/download/v3.3/djgpp-linux64-gcc1210.tar.bz2
-        sudo mkdir -p /usr/local/djgpp
-        sudo tar -xvf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
+        mkdir -p /usr/local/djgpp
+        tar -xf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
         export PATH=$PATH:/usr/local/djgpp/bin
         find /usr/local/djgpp/bin
         pushd c
