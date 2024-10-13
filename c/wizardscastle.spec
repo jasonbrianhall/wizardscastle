@@ -1,6 +1,8 @@
+%global build_date %(date +"%Y%m%d")
+
 Name:           wizardscastle
 Version:        1.0
-Release:        1%{?dist}
+Release:        %{build_date}%{?dist}
 Summary:        Epic text-based dungeon crawler
 
 License:        MIT
@@ -26,5 +28,5 @@ install -m 0755 wizardscastle %{buildroot}/usr/bin/wizardscastle
 /usr/bin/wizardscastle
 
 %changelog
-* Sat Oct 12 2024 jbhall <you@example.com> - 1.0-1
+* %(date "+%a %b %d %Y") jbhall <jasonbrianhall@gmail.com> - 1.0-%{build_date}
 - Initial RPM release
