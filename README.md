@@ -151,7 +151,7 @@ See the [LICENSE](LICENSE.md) scroll for details.
 
 ### 🧙‍♂️ Author
 
-Jason Hall (jasonbrianhall@gmail.com)
+🧛 Jason Hall (jasonbrianhall@gmail.com)
 
 **Note:** Please respect the author's privacy and refrain from sending unsolicited messages via carrier pigeon or magical means.
 
