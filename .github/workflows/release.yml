@@ -24,8 +24,6 @@ jobs:
     - name: Build RPM
       run: |
         cd c
-        # Install RPM build dependencies
-        sudo apt-get install -y rpm-build
         # Create the source tarball
         mkdir -p wizardscastle-1.0
         cp *.c wizardscastle-1.0/
