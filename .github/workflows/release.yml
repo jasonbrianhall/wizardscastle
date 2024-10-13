@@ -59,7 +59,7 @@ jobs:
 
     - name: Build Linux version and create package
       run: |
-        pushd
+        pushd c
         make
         mkdir -p wizardscastle-linux
         cp wizardscastle wizardscastle-linux/
