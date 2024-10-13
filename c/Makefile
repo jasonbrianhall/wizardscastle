@@ -45,11 +45,11 @@ debug: $(TARGET)
 
 # Clean target to remove generated files
 clean:
-	rm -f $(TARGET) $(DOS_TARGET) csdpmi7b.zip
-	rm -rf csdpmi
-	rm *.exe
-	rm *.zip
-	rm *.zip.*
+	rm -f $(TARGET) $(DOS_TARGET) csdpmi7b.zip || true
+	rm -rf csdpmi  || true
+	rm *.exe || true
+	rm *.zip || true
+	rm *.zip.*  || true
 
 # Target to pull the DJGPP Docker image
 pull-djgpp:
