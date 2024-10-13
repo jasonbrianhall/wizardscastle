@@ -90,15 +90,21 @@ jobs:
     - name: Generate release date
       id: date
       run: echo "::set-output name=date::v$(date +'%Y%m%d')"
-    
+
+    - name: Generate release date and unique identifier
+      id: date
+      run: |
+        echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+        echo "unique_id=$(date +'%H%M%S')" >> $GITHUB_OUTPUT
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.date.outputs.date }}
-        release_name: Release ${{ steps.date.outputs.date }}
+        tag_name: v${{ steps.date.outputs.date }}-${{ steps.date.outputs.unique_id }}
+        release_name: Release ${{ steps.date.outputs.date }}-${{ steps.date.outputs.unique_id }}
         draft: false
         prerelease: false
 
