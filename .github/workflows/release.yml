@@ -39,8 +39,6 @@ jobs:
     
     - name: Build Windows version
       run: |
-- name: Build Windows version
-      run: |
         cd c
         # Debug: Print current directory and list files
         pwd
