@@ -67,11 +67,11 @@ get-csdpmi:
 
 # Target to build for MS-DOS using DJGPP in Docker
 msdos: pull-djgpp get-csdpmi
-	docker run --rm -v $(PWDP:/src -u $(USER_ID):$(GROUP_ID) $(DJGPP_IMAGE) /bin/sh -c "cd /src && gcc $(SRCS) -o $(DOS_TARGET)"
+	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(DJGPP_IMAGE) /bin/sh -c "cd /src && gcc $(SRCS) -o $(DOS_TARGET)"
 	cp csdpmi/bin/CWSDPMI.EXE .
 
 windows: pull-mingw
-	docker run --rm -v $(PWD):/src:Z -u $(USER_ID):$(GROUP_ID) $(MINGW_IMAGE) /bin/sh -c "cd /src && $(MINGW_CC) $(SRCS) -o $(WINDOWS_TARGET)"
+	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(MINGW_IMAGE) /bin/sh -c "cd /src && $(MINGW_CC) $(SRCS) -o $(WINDOWS_TARGET)"
 
 # Target to run the MS-DOS executable using DOSBox
 run-msdos: msdos
