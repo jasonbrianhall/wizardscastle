@@ -23,7 +23,7 @@ jobs:
     
     - name: Build RPM
       run: |
-        cd c
+        pushd c
         # Create the source tarball
         mkdir -p wizardscastle-1.0
         cp *.c wizardscastle-1.0/
@@ -36,10 +36,12 @@ jobs:
         cp wizardscastle-1.0.tar.gz ~/rpmbuild/SOURCES/
         # Build the RPM using the existing spec file
         rpmbuild -ba -D 'debug_package %{nil}' wizardscastle.spec
-    
+        popd
+
     - name: Build Windows version
       run: |
-        cd c
+        pwd
+        pushd c
         echo "Creating temporary Docker container"
         CONTAINER_ID=$(docker create mdashnet/mingw)
         echo "Copying source files into container"
@@ -54,12 +56,14 @@ jobs:
         docker rm $CONTAINER_ID
         echo "Checking if executable was created:"
         ls -l wizard_windows.exe
- 
+        popd
+
     - name: Build MS-DOS version
       run: |
-        cd c
+        pushd c
         make msdos
-    
+        popd
+
     - name: Build Linux version and create package
       run: |
         cd c
