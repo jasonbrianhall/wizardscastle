@@ -29,7 +29,8 @@ jobs:
         sudo tar -xjf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
         echo 'export PATH=$PATH:/usr/local/djgpp/bin' >> $HOME/.bashrc
         source $HOME/.bashrc
-    
+        ls /usr/local/djgpp
+  
     - name: Build RPM
       run: |
         pushd c
