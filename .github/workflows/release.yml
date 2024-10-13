@@ -87,10 +87,6 @@ jobs:
         fi
         RPM_FILENAME=$(basename "$RPM_PATH")
 
-    - name: Generate release date
-      id: date
-      run: echo "::set-output name=date::v$(date +'%Y%m%d')"
-
     - name: Generate release date and unique identifier
       id: date
       run: |
