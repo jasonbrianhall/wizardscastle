@@ -19,7 +19,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo dnf install -y rpm zip gcc make docker rpm-build mingw64-gcc wget
+        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget
 
     - name: Build RPM
       run: |
