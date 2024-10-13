@@ -43,14 +43,14 @@ jobs:
         pwd
         echo "Contents of c directory:"
         ls -la c
-        echo "Debugging Docker mount:"
-        docker run --rm -v /__w/wizardscastle/wizardscastle/c:/src:Z -u 0:0 mdashnet/mingw /bin/sh -c "
-          echo 'Inside Docker container:' && 
-          pwd && 
+        docker run --rm -v $(pwd)/c:/tmp_src:Z -u 0:0 mdashnet/mingw /bin/sh -c "
+          mkdir /src &&
+          cp /tmp_src/* /src/ &&
+          cd /src &&
           echo 'Contents of /src:' &&
-          ls -la /src &&
-          echo 'Attempting to compile:' &&
-          x86_64-w64-mingw32-gcc /src/main.c /src/wizards-castle.c -o /src/wizard_windows.exe
+          ls -la &&
+          x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe &&
+          cp wizard_windows.exe /tmp_src/
         "
         echo "After Docker run, contents of c directory:"
         ls -la c
