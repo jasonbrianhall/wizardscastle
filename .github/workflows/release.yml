@@ -78,6 +78,21 @@ jobs:
         zip -r ../wizard.zip .
         popd
 
+    - name: Find and Upload RPM Package
+      run: |
+        RPM_PATH=$(find ~/rpmbuild/RPMS/x86_64/ -name "wizardscastle-*.rpm" | head -n 1)
+        if [ -z "$RPM_PATH" ]; then
+          echo "Error: RPM file not found"
+          exit 1
+        fi
+        RPM_FILENAME=$(basename "$RPM_PATH")
+        echo "Found RPM: $RPM_FILENAME"
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/x-rpm" \
+          --data-binary @"$RPM_PATH" \
+          "${{ steps.create_release.outputs.upload_url }}?name=$RPM_FILENAME"
+
     - name: Generate release date
       id: date
       run: echo "::set-output name=date::v$(date +'%Y%m%d')"
@@ -92,16 +107,16 @@ jobs:
         release_name: Release ${{ steps.date.outputs.date }}
         draft: false
         prerelease: false
-    
+
     - name: Upload RPM Package
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ~/rpmbuild/RPMS/x86_64/wizardscastle-1.0-1.x86_64.rpm
-        asset_name: wizardscastle-${{ steps.date.outputs.date }}.rpm
-        asset_content_type: application/x-rpm
+        asset_path: ${{ steps.find_rpm.outputs.rpm_path }}
+        asset_name: ${{ steps.find_rpm.outputs.rpm_filename }}
+        asset_content_type: application/x-rpm    
     
     - name: Upload Windows Binary
       uses: actions/upload-release-asset@v1
