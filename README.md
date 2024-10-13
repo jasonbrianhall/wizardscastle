@@ -157,7 +157,6 @@ Jason Hall (jasonbrianhall@gmail.com)
 
 ### 🔮 Future Quests
 
-- RPM package support (coming soon to a realm near you!)
 - NES and SNES versions (for the retro-conjurers among us)
 - Perhaps a Mobile Version (for adventuring on-the-go)
 
