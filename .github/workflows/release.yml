@@ -51,9 +51,10 @@ jobs:
         wget https://github.com/andrewwutw/build-djgpp/releases/download/v3.3/djgpp-linux64-gcc1210.tar.bz2
         tar -xf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/
         export PATH=$PATH:/usr/local/djgpp/bin
-        find /usr/local/djgpp
         pushd c
         /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc *.c -o wizard.exe
+        wget http://na.mirror.garr.it/mirrors/djgpp/current/v2misc/csdpmi7b.zip
+        unzip csdpmi7b.zip
         popd 
 
     - name: Build Linux version and create package
