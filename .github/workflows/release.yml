@@ -19,7 +19,8 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo dnf install -y rpm zip gcc make docker rpm-build
+        sudo dnf install -y rpm zip gcc make docker rpm-build mingw64-gcc
+
     
     - name: Build RPM
       run: |
@@ -41,7 +42,9 @@ jobs:
     - name: Build Windows version
       run: |
         pushd c
-        make windows
+        x86_64-w64-mingw32-gcc *.c -o wizard_windows.exe
+        echo "Checking if executable was created:"
+        ls -l wizard_windows.exe
         popd
 
     - name: Build MS-DOS version
