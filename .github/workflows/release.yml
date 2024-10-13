@@ -39,13 +39,17 @@ jobs:
     
     - name: Build Windows version
       run: |
-        cd c
-        # Debug: Print current directory and list files
+        echo "Current directory:"
         pwd
+        echo "Contents of current directory:"
         ls -la
-        # Ensure the Docker command mounts the current directory correctly
-        docker run --rm -v $(pwd):/src -w /src mdashnet/mingw:latest /bin/sh -c "ls -la && x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe"
-        # Debug: Check if the Windows executable was created
+        echo "Contents of parent directory:"
+        ls -la ..
+        echo "Contents of c directory:"
+        ls -la c
+        echo "Attempting to build Windows version:"
+        docker run --rm -v $(pwd):/src -w /src mdashnet/mingw:latest /bin/sh -c "echo 'Inside Docker container:' && pwd && ls -la && x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe"
+        echo "After Docker run, contents of current directory:"
         ls -la
     
     - name: Build MS-DOS version
