@@ -55,8 +55,7 @@ jobs:
         /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc *.c -o wizard.exe
         wget http://na.mirror.garr.it/mirrors/djgpp/current/v2misc/csdpmi7b.zip
         unzip -f csdpmi7b.zip
-        find bin
-        cp *.EXE .
+        find * -type f
         popd 
 
     - name: Build Linux version and create package
@@ -73,7 +72,7 @@ jobs:
       run: |
         mkdir -p dos_package
         cp c/wizard.exe dos_package/
-        cp c/cwsdpmi.exe dos_package/
+        cp c/CWSDPMI*.EXE dos_package/
         pushd dos_package
         zip -r ../wizard.zip .
         popd
