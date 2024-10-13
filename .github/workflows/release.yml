@@ -52,7 +52,7 @@ jobs:
         sudo mkdir -p /usr/local/djgpp
         sudo tar -xvf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
         export PATH=$PATH:/usr/local/djgpp/bin
-        find /usrl/ocal/djgpp/bin
+        find /usr/local/djgpp/bin
         pushd c
         /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc *.c -o wizard.exe
         popd 
