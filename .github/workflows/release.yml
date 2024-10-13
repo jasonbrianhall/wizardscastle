@@ -86,12 +86,6 @@ jobs:
           exit 1
         fi
         RPM_FILENAME=$(basename "$RPM_PATH")
-        echo "Found RPM: $RPM_FILENAME"
-        curl -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/x-rpm" \
-          --data-binary @"$RPM_PATH" \
-          "${{ steps.create_release.outputs.upload_url }}?name=$RPM_FILENAME"
 
     - name: Generate release date
       id: date
