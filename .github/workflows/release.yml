@@ -78,7 +78,8 @@ jobs:
         zip -r ../wizard.zip .
         popd
 
-    - name: Find and Upload RPM Package
+    - name: Find RPM Package
+      id: find_rpm
       run: |
         RPM_PATH=$(find ~/rpmbuild/RPMS/x86_64/ -name "wizardscastle-*.rpm" | head -n 1)
         if [ -z "$RPM_PATH" ]; then
@@ -86,7 +87,9 @@ jobs:
           exit 1
         fi
         RPM_FILENAME=$(basename "$RPM_PATH")
-
+        echo "rpm_path=$RPM_PATH" >> $GITHUB_OUTPUT
+        echo "rpm_filename=$RPM_FILENAME" >> $GITHUB_OUTPUT
+    
     - name: Generate release date and unique identifier
       id: date
       run: |
@@ -112,7 +115,7 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.find_rpm.outputs.rpm_path }}
         asset_name: ${{ steps.find_rpm.outputs.rpm_filename }}
-        asset_content_type: application/x-rpm    
+        asset_content_type: application/x-rpm
     
     - name: Upload Windows Binary
       uses: actions/upload-release-asset@v1
