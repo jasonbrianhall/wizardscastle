@@ -158,7 +158,7 @@ See the [LICENSE](LICENSE.md) scroll for details.
 ### 🔮 Future Quests
 
 - NES and SNES versions (for the retro-conjurers among us)
-  * NES is unlikely since limited to 2k of RAM but but the 64k of RAM on the SNES is a better target
+  * NES is unlikely since limited to 2k of RAM (and the use of numbers larger then 256) but but the 64k of RAM on the SNES is a better target (and 16 bit integers)
 - Perhaps a Mobile Version (for adventuring on-the-go)
 
 Brave soul, the Wizard's Castle awaits! Will you emerge victorious with the Orb of Zot, or fall to the castle's many perils? Your legend begins now!
