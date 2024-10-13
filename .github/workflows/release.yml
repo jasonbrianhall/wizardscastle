@@ -1,0 +1,84 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main  # or your default branch name
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v1
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y rpm zip
+    
+    - name: Build RPM
+      run: make rpm
+    
+    - name: Build Windows version
+      run: make windows
+    
+    - name: Build MS-DOS version
+      run: make msdos
+    
+    - name: Create DOS zip package
+      run: |
+        mkdir -p dos_package
+        cp wizard.exe dos_package/
+        cp CWSDPMI.EXE dos_package/
+        cd dos_package
+        zip -r ../wizard.zip .
+        cd ..
+    
+    - name: Generate release date
+      id: date
+      run: echo "::set-output name=date::v$(date +'%Y%m%d')"
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.date.outputs.date }}
+        release_name: Release ${{ steps.date.outputs.date }}
+        draft: false
+        prerelease: false
+    
+    - name: Upload RPM Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ~/rpmbuild/RPMS/x86_64/wizardscastle-1.0-1.x86_64.rpm
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}.rpm
+        asset_content_type: application/x-rpm
+    
+    - name: Upload Windows Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./wizard_windows.exe
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-windows.exe
+        asset_content_type: application/octet-stream
+    
+    - name: Upload DOS Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./wizard.zip
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-dos.zip
+        asset_content_type: application/zip
