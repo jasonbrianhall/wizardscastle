@@ -35,6 +35,15 @@ jobs:
         cd c
         make msdos
     
+    - name: Build Linux version and create package
+      run: |
+        cd c
+        make
+        mkdir -p wizardscastle-linux
+        cp wizardscastle wizardscastle-linux/
+        tar -czf wizardscastle-linux.tar.gz wizardscastle-linux
+        rm -rf wizardscastle-linux
+    
     - name: Create DOS zip package
       run: |
         mkdir -p dos_package
@@ -88,4 +97,13 @@ jobs:
         asset_path: ./wizard.zip
         asset_name: wizardscastle-${{ steps.date.outputs.date }}-dos.zip
         asset_content_type: application/zip
-
+    
+    - name: Upload Linux Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./c/wizardscastle-linux.tar.gz
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-linux.tar.gz
+        asset_content_type: application/gzip
