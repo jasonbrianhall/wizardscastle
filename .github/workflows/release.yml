@@ -40,11 +40,16 @@ jobs:
 
     - name: Build Windows version
       run: |
-        pwd
-        pushd c
-        ls -la
-        make windows
-        popd
+        echo "Preparing temp directory"
+        mkdir -p ${{ runner.temp }}/src
+        cp c/*.c c/*.h ${{ runner.temp }}/src/
+        echo "Creating and running Docker container"
+        docker run --rm -v ${{ runner.temp }}/src:/src -w /src mdashnet/mingw /bin/sh -c "x86_64-w64-mingw32-gcc *.c -o wizard_windows.exe"
+        echo "Copying executable from temp directory"
+        cp ${{ runner.temp }}/src/wizard_windows.exe c/
+        echo "Checking if executable was created:"
+        ls -l c/wizard_windows.exe
+
 
     - name: Build MS-DOS version
       run: |
