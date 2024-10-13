@@ -85,7 +85,7 @@ For those brave enough to wield the mystical forces of package management, you m
 make rpm
 ```
 
-Watch in awe as your system transforms the humble source code into a shiny RPM package, ready for distribution! This command is akin to casting a spell; just be sure to have your potion ingredients (a.k.a. dependencies) at the ready.
+🎁 Watch in awe as your system transforms the humble source code into a shiny RPM package, ready for distribution! This command is akin to casting a spell; just be sure to have your potion ingredients (a.k.a. dependencies) at the ready.
 
 Warning: Engaging in this sorcery may result in unanticipated magical side effects, such as:
 

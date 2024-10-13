@@ -39,8 +39,16 @@ jobs:
     
     - name: Build Windows version
       run: |
+- name: Build Windows version
+      run: |
         cd c
-        make windows
+        # Debug: Print current directory and list files
+        pwd
+        ls -la
+        # Ensure the Docker command mounts the current directory correctly
+        docker run --rm -v $(pwd):/src -w /src mdashnet/mingw:latest /bin/sh -c "ls -la && x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe"
+        # Debug: Check if the Windows executable was created
+        ls -la
     
     - name: Build MS-DOS version
       run: |
