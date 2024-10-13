@@ -47,6 +47,7 @@ debug: $(TARGET)
 clean:
 	rm -f $(TARGET) $(DOS_TARGET) csdpmi7b.zip
 	rm -rf csdpmi
+	rm *.exe
 
 # Target to pull the DJGPP Docker image
 pull-djgpp:
@@ -63,7 +64,7 @@ get-csdpmi:
 
 # Target to build for MS-DOS using DJGPP in Docker
 msdos: pull-djgpp get-csdpmi
-	docker run --rm -v $(PWD):/src -u $(USER_ID):$(GROUP_ID) $(DJGPP_IMAGE) /bin/sh -c "cd /src && gcc $(SRCS) -o $(DOS_TARGET)"
+	docker run --rm -v $(PWDP:/src -u $(USER_ID):$(GROUP_ID) $(DJGPP_IMAGE) /bin/sh -c "cd /src && gcc $(SRCS) -o $(DOS_TARGET)"
 	cp csdpmi/bin/CWSDPMI.EXE .
 
 windows: pull-mingw
