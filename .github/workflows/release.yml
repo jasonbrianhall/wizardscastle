@@ -43,10 +43,11 @@ jobs:
         echo "Creating temporary Docker container"
         CONTAINER_ID=$(docker create mdashnet/mingw)
         echo "Copying source files into container"
-        docker cp *.c $CONTAINER_ID:/src/
-        docker cp *.h $CONTAINER_ID:/src/
+        for file in *.c *.h; do
+          [ -e "$file" ] && docker cp "$file" $CONTAINER_ID:/src/
+        done
         echo "Compiling in container"
-        docker start -a -i $CONTAINER_ID /bin/sh -c "cd /src && x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe"
+        docker start -a -i $CONTAINER_ID /bin/sh -c "cd /src && x86_64-w64-mingw32-gcc *.c -o wizard_windows.exe"
         echo "Copying executable from container"
         docker cp $CONTAINER_ID:/src/wizard_windows.exe ./
         echo "Removing temporary container"
