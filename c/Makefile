@@ -50,6 +50,7 @@ clean:
 	rm *.exe || true
 	rm *.zip || true
 	rm *.zip.*  || true
+	rm *.tar.gz || true
 
 # Target to pull the DJGPP Docker image
 pull-djgpp:
@@ -70,7 +71,7 @@ msdos: pull-djgpp get-csdpmi
 	cp csdpmi/bin/CWSDPMI.EXE .
 
 windows: pull-mingw
-	docker run --rm -v $(PWD):/src -u $(USER_ID):$(GROUP_ID) $(MINGW_IMAGE) /bin/sh -c "cd /src && $(MINGW_CC) $(SRCS) -o $(WINDOWS_TARGET)"
+	docker run --rm -v $(PWD):/src:Z -u $(USER_ID):$(GROUP_ID) $(MINGW_IMAGE) /bin/sh -c "cd /src && $(MINGW_CC) $(SRCS) -o $(WINDOWS_TARGET)"
 
 # Target to run the MS-DOS executable using DOSBox
 run-msdos: msdos
