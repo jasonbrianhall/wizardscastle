@@ -18,19 +18,19 @@ This repository is your gateway to multiple realms of the Wizard's Castle:
 ### ✨ Features That Await You
 
 - **📖 Immersive Text-Based Gameplay**: Experience the thrill of old-school RPGs with modern twists.
-- **🎲 Randomly Generated Castles**: Every game promises a unique adventure with 512 rooms to explore.
+- **🎲 Randomly Generated Castles**: Every game promises a unique adventure with 🗺️ 512 rooms to explore; each with 🐻 Monsters, 🧞 Vendors, 🪄 Rune staff, 💰 Gold, ⚡ Flares, 💎 Mystical Treasures, and more.
 - **🧝‍♂️ Diverse Character Races**: Choose your alter ego - Human, Elf, Hobbit, or Dwarf - each with unique traits.
-- **⚔️ Strategic Combat**: Face fearsome foes from sneaky Kobolds to mighty Dragons. Use your wits and weapons wisely!
+- **⚔️ Strategic Combat**: Face fearsome foes from sneaky Kobolds to mighty Dragons 🐉. Use your wits and weapons wisely!
 - **🔮 Magic and Mystery**: Cast powerful spells, drink from enchanted pools, and uncover ancient treasures.
 - **💰 Vendor Interactions**: Barter with the castle's enigmatic merchant. What secrets might they hold?
 - **🗺️ ASCII Map**: Navigate the treacherous castle with a clear, retro-style map display.
 
 ### 🚀 Getting Started
 
-#### Prerequisites
+#### 🔮 Prerequisites
 
-- GCC compiler (your trusty sword)
-- Make build system (your faithful shield)
+- GCC compiler (your trusty sword ⚔️ )
+- Make build system (your faithful shield 🛡️)
 
 #### Installation
 
@@ -48,7 +48,7 @@ This repository is your gateway to multiple realms of the Wizard's Castle:
    ```
 4. For those daring to explore realms beyond the world of Zot, you may summon the powers of alternate universes:
 
-To craft an artifact for the kingdom of Windows:
+🧬 To craft an artifact for the kingdom of Windows:
    ``` 
    make windows 
    ```
