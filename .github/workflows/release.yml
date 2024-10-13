@@ -42,20 +42,8 @@ jobs:
       run: |
         pwd
         pushd c
-        echo "Creating temporary Docker container"
-        CONTAINER_ID=$(docker create mdashnet/mingw)
-        echo "Copying source files into container"
-        for file in *.c *.h; do
-          [ -e "$file" ] && docker cp "$file" $CONTAINER_ID:/src/
-        done
-        echo "Compiling in container"
-        docker start -a -i $CONTAINER_ID /bin/sh -c "cd /src && x86_64-w64-mingw32-gcc *.c -o wizard_windows.exe"
-        echo "Copying executable from container"
-        docker cp $CONTAINER_ID:/src/wizard_windows.exe ./
-        echo "Removing temporary container"
-        docker rm $CONTAINER_ID
-        echo "Checking if executable was created:"
-        ls -l wizard_windows.exe
+        ls -la
+        make windows
         popd
 
     - name: Build MS-DOS version
