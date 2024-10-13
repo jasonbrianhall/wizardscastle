@@ -48,6 +48,8 @@ clean:
 	rm -f $(TARGET) $(DOS_TARGET) csdpmi7b.zip
 	rm -rf csdpmi
 	rm *.exe
+	rm *.zip
+	rm *.zip.*
 
 # Target to pull the DJGPP Docker image
 pull-djgpp:
