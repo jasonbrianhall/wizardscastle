@@ -8,7 +8,9 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-    
+    container:
+      image: fedora:latest
+
     steps:
     - uses: actions/checkout@v2
     
@@ -17,8 +19,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y rpm zip gcc make docker rpm-build
+        sudo dnf install -y rpm zip gcc make docker rpm-build
     
     - name: Build RPM
       run: |
