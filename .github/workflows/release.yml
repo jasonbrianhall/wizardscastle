@@ -73,7 +73,7 @@ jobs:
       run: |
         mkdir -p dos_package
         cp c/wizard.exe dos_package/
-        cp c/cwsdpmi*.EXE dos_package/
+        cp c/cwsdpmi.exe dos_package/
         pushd dos_package
         zip -r ../wizard.zip .
         popd
