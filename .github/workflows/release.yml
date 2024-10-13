@@ -19,8 +19,16 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo dnf install -y rpm zip gcc make docker rpm-build mingw64-gcc
+        sudo dnf install -y rpm zip gcc make docker rpm-build mingw64-gcc wget
 
+    - name: Install DJGPP
+      run: |
+        sudo dnf install -y wget
+        wget https://github.com/andrewwutw/build-djgpp/releases/download/v3.3/djgpp-linux64-gcc1210.tar.bz2
+        sudo mkdir -p /usr/local/djgpp
+        sudo tar -xjf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
+        echo 'export PATH=$PATH:/usr/local/djgpp/bin' >> $HOME/.bashrc
+        source $HOME/.bashrc
     
     - name: Build RPM
       run: |
@@ -49,9 +57,8 @@ jobs:
 
     - name: Build MS-DOS version
       run: |
-        pushd c
-        make msdos
-        popd
+        cd c
+        /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc *.c -o wizard.exe
 
     - name: Build Linux version and create package
       run: |
