@@ -21,16 +21,6 @@ jobs:
       run: |
         sudo dnf install -y rpm zip gcc make docker rpm-build mingw64-gcc wget
 
-    - name: Install DJGPP
-      run: |
-        sudo dnf install -y wget
-        wget https://github.com/andrewwutw/build-djgpp/releases/download/v3.3/djgpp-linux64-gcc1210.tar.bz2
-        sudo mkdir -p /usr/local/djgpp
-        sudo tar -xjf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
-        echo 'export PATH=$PATH:/usr/local/djgpp/bin' >> $HOME/.bashrc
-        source $HOME/.bashrc
-        ls /usr/local/djgpp
-  
     - name: Build RPM
       run: |
         pushd c
@@ -58,6 +48,11 @@ jobs:
 
     - name: Build MS-DOS version
       run: |
+        wget https://github.com/andrewwutw/build-djgpp/releases/download/v3.3/djgpp-linux64-gcc1210.tar.bz2
+        sudo mkdir -p /usr/local/djgpp
+        sudo tar -xvf djgpp-linux64-gcc1210.tar.bz2 -C /usr/local/djgpp
+        export PATH=$PATH:/usr/local/djgpp/bin
+        find /usrl/ocal/djgpp/bin
         cd c
         /usr/local/djgpp/bin/i586-pc-msdosdjgpp-gcc *.c -o wizard.exe
 
