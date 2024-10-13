@@ -43,15 +43,13 @@ jobs:
         pwd
         echo "Contents of current directory:"
         ls -la
-        echo "Contents of parent directory:"
-        ls -la ..
         echo "Contents of c directory:"
         ls -la c
         echo "Attempting to build Windows version:"
-        docker run --rm -v $(pwd):/src -w /src mdashnet/mingw:latest /bin/sh -c "echo 'Inside Docker container:' && pwd && ls -la && x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe"
-        echo "After Docker run, contents of current directory:"
-        ls -la
-    
+        docker run --rm -v $(pwd)/c:/src -w /src mdashnet/mingw:latest /bin/sh -c "echo 'Inside Docker container:' && pwd && ls -la && x86_64-w64-mingw32-gcc main.c wizards-castle.c -o wizard_windows.exe"
+        echo "After Docker run, contents of c directory:"
+        ls -la c
+ 
     - name: Build MS-DOS version
       run: |
         cd c
