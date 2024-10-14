@@ -36,4 +36,8 @@ int min(int a, int b)
     return (a < b) ? a : b;
 }
 
+void printStars(void)
+{
+	print_message("****************************************************************\n");
 
+}

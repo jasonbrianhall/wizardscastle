@@ -9,6 +9,7 @@ void move_player_randomly(Player *player, GameState *game);
 const char* get_random_body_part();
 const char* get_random_species();
 int min(int a, int b);
+void printStars(void);
 
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)

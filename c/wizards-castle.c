@@ -31,12 +31,6 @@ void print_introduction(void)
 
 }
 
-void printStars(void)
-{
-	print_message("****************************************************************\n");
-
-}
-
 bool main_game_loop(Player *player, GameState *game)
 {
     char user_command[100];
