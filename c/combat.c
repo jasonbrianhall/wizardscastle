@@ -197,6 +197,7 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+            printf("THE %s ATTACKS\n", enemy_name);
             print_message("\nOUCH! HE HIT YOU!\n");
             int damage = (enemy_strength / 2) + 1;
             
@@ -224,6 +225,7 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         } else {
+            printf("THE %s ATTACKS\n", enemy_name);
             print_message("\nWHAT LUCK, HE MISSED YOU!\n");
         }
     }
