@@ -116,9 +116,9 @@ void fight_monster(Player *player, GameState *game)
                     } else {
                         // Player cannot cast a spell
                         print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
-                        break;
+                        continue;  // Skip enemy's turn if player couldn't cast a spell
                     }
-                    continue;
+                    break;
                 default:
                     print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                     continue;
@@ -129,107 +129,102 @@ void fight_monster(Player *player, GameState *game)
         }
         
         // Enemy's turn
-        if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
-            if (player->web_count > 0) {
-                player->web_count--;
-                if (player->web_count == 0) {
-                    print_message("\nTHE WEB JUST BROKE!\n");
-                } else {
-                    printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
-                    continue;  // Skip the enemy's attack
-                }
-            }
-            else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
-                    printf("\nTHE %s ATTACKS!\n", enemy_name);
-
-                    dragon_fireball_attack(player, game);
-                    if (game->game_over) {
-                        return;
-                    }
-            }
-            else if (room_content == BALROG && random_number(5) == 1) {
-                balrog_flame_whip_attack(player, game);
-                if (game->game_over) {
-                    return;
-                }
-            }
-            else if ((room_content == KOBOLD || room_content == DRAGON) && random_number(4)==1)
-            {
-                spellcasted=random_number(4);
-                switch (spellcasted)
-                {
-                     case 1:
-                         temp=random_number(5);
-                         printf("THE MONSTER CASTS HEAL AND GAINED %i STRENGTH POINTS\n", temp);
-                         enemy_strength+=temp;
-                         break;                         
-                     case 2:
-                         temp=random_number(5);
-                         printf("THE MONSTER CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", temp);
-                         enemy_dexterity+=temp;
-                         break;                         
-                     case 3:
-                         temp=random_number(5);
-                         printf("THE MONSTER CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", temp);
-                         enemy_intelligence+=temp;
-                         break;                         
-                     case 4:
-                         printf("THE MONSTER CASTS MUTE; ");
-                         base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
-    
-                         // Add a random factor (-10 to +10)
-                        int random_factor = (rand() % 21) - 10;
-    
-                        // Calculate final success chance
-                        int success_chance = base_chance + random_factor;
-    
-                        // Ensure the success chance is within a reasonable range (5 to 95)
-                        if (success_chance < 5) success_chance = 5;
-                        if (success_chance > 95) success_chance = 95;
-    
-                        // Determine if the spell succeeds
-                        if (rand() % 100 < success_chance) {
-                             printf("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
-                             muted=1;
-                        } else {
-                             printf("THE SPELL FAILED.\n");
-
-                            muted=0; // Spell fails, can still caste
-                        }
-                        break;                         
-                }
-            }
-            else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
-
-                print_message("\nOUCH! HE HIT YOU!\n");
-                int damage = (enemy_strength / 2) + 1;
-                
-                // Apply armor reduction
-                if (player->armor_type != 0) {
-                    damage -= player->armor_type;
-                    player->armor_points -= player->armor_type;
-                    if (damage < 0) {
-                        player->armor_points -= damage;  // Absorb excess damage
-                        damage = 0;
-                    }
-                    if (player->armor_points < 0) {
-                        player->armor_points = 0;
-                        player->armor_type = 0;
-                        print_message("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
-                    }
-                }
-                
-                player->strength -= damage;
-                printf("YOU TAKE %d DAMAGE!\n", damage);
-                
-                if (player->strength <= 0) {
-                    print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
-                    game->game_over = 1;
-                    return;
-                }
+        if (player->web_count > 0) {
+            player->web_count--;
+            if (player->web_count == 0) {
+                print_message("\nTHE WEB JUST BROKE!\n");
             } else {
-                print_message("\nWHAT LUCK, HE MISSED YOU!\n");
+                printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
+                continue;  // Skip the enemy's attack
             }
+        }
+        else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
+            printf("\nTHE %s ATTACKS!\n", enemy_name);
+            dragon_fireball_attack(player, game);
+            if (game->game_over) {
+                return;
+            }
+        }
+        else if (room_content == BALROG && random_number(5) == 1) {
+            balrog_flame_whip_attack(player, game);
+            if (game->game_over) {
+                return;
+            }
+        }
+        else if ((room_content == KOBOLD || room_content == DRAGON) && random_number(4)==1)
+        {
+            spellcasted=random_number(4);
+            switch (spellcasted)
+            {
+                 case 1:
+                     temp=random_number(5);
+                     printf("THE MONSTER CASTS HEAL AND GAINED %i STRENGTH POINTS\n", temp);
+                     enemy_strength+=temp;
+                     break;                         
+                 case 2:
+                     temp=random_number(5);
+                     printf("THE MONSTER CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", temp);
+                     enemy_dexterity+=temp;
+                     break;                         
+                 case 3:
+                     temp=random_number(5);
+                     printf("THE MONSTER CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", temp);
+                     enemy_intelligence+=temp;
+                     break;                         
+                 case 4:
+                     printf("THE MONSTER CASTS MUTE; ");
+                     base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
+
+                     // Add a random factor (-10 to +10)
+                    int random_factor = (rand() % 21) - 10;
+
+                    // Calculate final success chance
+                    int success_chance = base_chance + random_factor;
+
+                    // Ensure the success chance is within a reasonable range (5 to 95)
+                    if (success_chance < 5) success_chance = 5;
+                    if (success_chance > 95) success_chance = 95;
+
+                    // Determine if the spell succeeds
+                    if (rand() % 100 < success_chance) {
+                         printf("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
+                         muted=1;
+                    } else {
+                         printf("THE SPELL FAILED.\n");
+                        muted=0; // Spell fails, can still cast
+                    }
+                    break;                         
+            }
+        }
+        else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+            print_message("\nOUCH! HE HIT YOU!\n");
+            int damage = (enemy_strength / 2) + 1;
+            
+            // Apply armor reduction
+            if (player->armor_type != 0) {
+                damage -= player->armor_type;
+                player->armor_points -= player->armor_type;
+                if (damage < 0) {
+                    player->armor_points -= damage;  // Absorb excess damage
+                    damage = 0;
+                }
+                if (player->armor_points < 0) {
+                    player->armor_points = 0;
+                    player->armor_type = 0;
+                    print_message("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
+                }
+            }
+            
+            player->strength -= damage;
+            printf("YOU TAKE %d DAMAGE!\n", damage);
+            
+            if (player->strength <= 0) {
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+                return;
+            }
+        } else {
+            print_message("\nWHAT LUCK, HE MISSED YOU!\n");
         }
     }
 }
