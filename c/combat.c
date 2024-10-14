@@ -11,7 +11,7 @@ void fight_monster(Player *player, GameState *game)
 {
     int room_content = get_room_content(game, player->x, player->y, player->level);
     int is_vendor = (room_content == VENDOR);
-    int enemy_strength, enemy_dexterity, enemy_intelligence, muted=0, spellcasted, temp, base_chance, success_chance, random_factor;
+    int enemy_strength, enemy_dexterity, enemy_intelligence, muted=0, spellcasted, temp, base_chance, success_chance, random_factor, avoidance_chance;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     int firststrike;  
@@ -154,7 +154,7 @@ void fight_monster(Player *player, GameState *game)
         }
         else if ((room_content == KOBOLD && random_number(4)==1) || (room_content == DRAGON && random_number(3)==1))
         {
-            spellcasted=random_number(4);
+            spellcasted=random_number(7);
             switch (room_content)
             {
                 case KOBOLD:
@@ -203,7 +203,93 @@ void fight_monster(Player *player, GameState *game)
                         printf("THE SPELL FAILED.\n");
                         muted=0; // Spell fails, can still cast
                     }
-                    break;                         
+                    break;
+                 case 5:
+                     printf("THE %s CASTS WEAKNESS!\n", enemy_name);
+    
+                     // Calculate avoidance chance based on player stats
+                     avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
+    
+                     // Add a random factor
+                     avoidance_chance += random_number(10) - 5;  // -5 to +5 random adjustment
+    
+                     // Ensure the avoidance chance is within a reasonable range (5% to 95%)
+                     if (avoidance_chance < 5) avoidance_chance = 5;
+                     if (avoidance_chance > 95) avoidance_chance = 95;
+    
+                     if (random_number(100) < avoidance_chance) {
+                         printf("YOU SUCCESSFULLY RESIST THE WEAKNESS SPELL!\n");
+                     } else {
+                         temp = random_number(max_increase);
+                         printf("THE SPELL HITS! YOU LOSE %i STRENGTH POINTS\n", temp);
+                         player->strength -= temp;
+        
+                         if (player->strength <= 0) {
+                             player->strength = 0;
+                             printf("YOUR STRENGTH HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             game->game_over = 1;
+                             return;
+                         }
+                     }
+                     break;   
+                 case 6:
+                    printf("THE %s CASTS CLUMSY!\n", enemy_name);
+    
+                     // Calculate avoidance chance based on player stats
+                     avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
+    
+                     // Add a random factor
+                     avoidance_chance += random_number(10) - 5;  // -5 to +5 random adjustment
+    
+                     // Ensure the avoidance chance is within a reasonable range (5% to 95%)
+                     if (avoidance_chance < 5) avoidance_chance = 5;
+                     if (avoidance_chance > 95) avoidance_chance = 95;
+    
+                     if (random_number(100) < avoidance_chance) {
+                         printf("YOU SUCCESSFULLY RESIST THE CLUMSY SPELL!\n");
+                     } else {
+                         temp = random_number(max_increase);
+                         printf("THE SPELL HITS! YOU LOSE %i DEXTERITY POINTS\n", temp);
+                         player->dexterity -= temp;
+        
+                         if (player->dexterity <= 0) {
+                             player->dexterity = 0;
+                             printf("YOUR DEXTERITY HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             game->game_over = 1;
+                             return;
+                         }
+                     }
+                     break;
+                 case 7:
+                    printf("THE %s CASTS MIND FOG!\n", enemy_name);
+    
+                     // Calculate avoidance chance based on player stats
+                     avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
+    
+                     // Add a random factor
+                     avoidance_chance += random_number(10) - 5;  // -5 to +5 random adjustment
+    
+                     // Ensure the avoidance chance is within a reasonable range (5% to 95%)
+                     if (avoidance_chance < 5) avoidance_chance = 5;
+                     if (avoidance_chance > 95) avoidance_chance = 95;
+    
+                     if (random_number(100) < avoidance_chance) {
+                         printf("YOU SUCCESSFULLY RESIST THE MING FOG SPELL!\n");
+                     } else {
+                         temp = random_number(max_increase);
+                         printf("THE SPELL HITS! YOU LOSE %i INTELLIGENCE POINTS\n", temp);
+                         player->intelligence -= temp;
+        
+                         if (player->intelligence <= 0) {
+                             player->intelligence = 0;
+                             printf("YOUR INTELLIGENCE HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             game->game_over = 1;
+                             return;
+                         }
+                     }
+                     break;
+
+                                             
             }
         }
         else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
