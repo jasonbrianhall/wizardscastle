@@ -258,9 +258,13 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
     {
         print_message("    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
     }
-    print_message("    (H)EAL - Permanently heals you\n");
-    print_message("    (S)PEED - Temporarily increases your dexterity\n");
-    print_message("    (B)RIGHT - Temporarily increases your intelligence \n\n");
+    if (player->race == ELF || player->race == DWARF)
+    {
+        print_message("    (H)EAL - Permanently heals you\n");
+        print_message("    (S)PEED - Temporarily increases your dexterity\n");
+        print_message("    (B)RIGHT - Temporarily increases your intelligence \n");
+    }
+    print_message("\n");
     char spell = get_user_input();
     for (;;) {
         switch (spell) {
