@@ -716,7 +716,6 @@ void fight_monster(Player *player, GameState *game)
     int is_vendor = (room_content == VENDOR);
     int enemy_strength, enemy_dexterity;
     int can_bribe = 1;
-    int dragonattacked;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     player->web_count=0;
     // Set enemy stats based on room content
@@ -729,7 +728,6 @@ void fight_monster(Player *player, GameState *game)
     }
 
     while (1) {
-        dragonattacked=0;
         printf("\nYOU'RE FACING %s!\n\n", enemy_name);
         print_message("YOU MAY (A)TTACK OR (R)ETREAT.\n");
         if (can_bribe) {
@@ -813,11 +811,10 @@ void fight_monster(Player *player, GameState *game)
                     continue;  // Skip the enemy's attack
                 }
             }
-
-            printf("\nTHE %s ATTACKS!\n", enemy_name);
             else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
+                    printf("\nTHE %s ATTACKS!\n", enemy_name);
+
                     dragon_fireball_attack(player, game);
-                    dragonattacked=1;
                     if (game->game_over) {
                         return;
                     }
