@@ -4,6 +4,7 @@
 #include <string.h>
 #include "wizards-castle.h"
 #include "player.h"
+#include "gamestate.h"
 
 int main(int argc, char *argv[])
 {
