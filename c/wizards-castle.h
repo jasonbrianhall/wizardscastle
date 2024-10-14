@@ -97,15 +97,11 @@ typedef struct {
 
 } GameState;
 
-// Main game functions
-void initialize_player(Player *player);
-
 void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
 
 // Player creation and attribute functions
-void choose_race(Player *player);
 void choose_sex(Player *player);
 void buy_lamp_and_flares(Player *player);
 void allocate_attributes(Player *player);
