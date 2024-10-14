@@ -3,6 +3,9 @@
 
 #include "wizards-castle.h"
 
+#define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
+
+
 // Function prototypes
 int check_game_over(Player *player, GameState *game);
 void end_game(Player *player, GameState *game);

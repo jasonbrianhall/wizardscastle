@@ -101,33 +101,9 @@ void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
 
-// Movement and action functions
-void move_player(Player *player, GameState *game, char direction);
-void fight_monster(Player *player, GameState *game);
-void handle_vendor(Player *player, GameState *game);
-void trade_with_vendor(Player *player, GameState *game);
-void attack_vendor(Player *player, GameState *game);
-const char* get_treasure_name(int index);
-int min(int a, int b);
-void buy_armor(Player *player);
-void buy_flares(Player *player);
 
-void buy_weapon(Player *player);
-
-
-// Item and treasure functions
-void buy_equipment(Player *player);
-void use_lamp(Player *player, GameState *game);
-void use_flare(Player *player, GameState *game);
-void open_chest(Player *player, GameState *game);
-void drink_from_pool(Player *player, GameState *game);
-
-// Magic and special abilities
-void teleport(Player *player, GameState *game);
-void gaze_into_orb(Player *player, GameState *game);
 
 // Utility functions
-int random_number(int max_value);
 void display_map(GameState *game, Player *player);
 void print_help();
 
@@ -137,29 +113,7 @@ char *get_user_input_main();
 char get_user_input_yn();
 
 void print_message(const char *message);
-void printStars(void);
 
-void open_book(Player *player, GameState *game);
-
-const char* get_race_name(int race);
-
-int is_room_discovered(GameState *game, int x, int y, int level);
-void discover_adjacent_rooms(GameState *game, Player *player);
-
-char get_room_symbol(int room_content);
-void get_room_description(int room_content, char *desc);
-
-void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name);
-
-int handle_bribe(Player *player, GameState *game, const char *enemy_name);
-int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name);
-void move_player_randomly(Player *player, GameState *game);
-const char* get_weapon_name(int weapon_type);
-const char* get_random_body_part();
-const char* get_random_species();
 int get_user_input_number();
-
-void dragon_fireball_attack(Player *player, GameState *game);
-void balrog_flame_whip_attack(Player *player, GameState *game);
 
 #endif 

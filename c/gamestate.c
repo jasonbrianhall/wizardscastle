@@ -1,10 +1,9 @@
 #include "gamestate.h"
+#include "utilities.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
-
-#define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
 
 // Game ending functions
 int check_game_over(Player *player, GameState *game) {
