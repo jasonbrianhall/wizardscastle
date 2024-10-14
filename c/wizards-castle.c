@@ -1912,9 +1912,12 @@ void display_map(GameState *game, Player *player)
     // Print bottom border
     print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
+    #ifdef MSDOS
+    print_message("PRESS ENTER TO CONTINUE...");
+    while (getchar() != '\n');  // Wait for Enter key
+    #endif
 
     // Map is too large for the default font for MS-DOS (Same Information is available in help)
-    #ifndef MSDOS
     print_message("\nLEGEND:\n");
     print_message("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
     print_message("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
@@ -1924,7 +1927,6 @@ void display_map(GameState *game, Player *player)
     print_message("MONSTER  = Monster Name    VENDOR   = Vendor\n");
     print_message("TREASURE = Treasure Name   ???????? = Undiscovered\n");
     print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
-    #endif
 }
 
 void print_help()
@@ -1948,12 +1950,17 @@ void print_help()
     print_message("Q/UIT     - End the game\n");
     print_message("Z/tatus   - Player Status (South was already used)\n\n");
 
+    #ifdef MSDOS
+    print_message("PRESS ENTER TO CONTINUE...");
+    while (getchar() != '\n');  // Wait for Enter key
+    #endif
+
     print_message("THE CONTENTS OF ROOMS ARE AS FOLLOWS:\n\n");
-    print_message(". = EMPTY ROOM      B = BOOK            C = CHEST\n");
-    print_message("D = STAIRS DOWN     E = ENTRANCE/EXIT   F = FLARES\n");
-    print_message("G = GOLD PIECES     M = MONSTER         O = CRYSTAL ORB\n");
-    print_message("P = MAGIC POOL      S = SINKHOLE        T = TREASURE\n");
-    print_message("U = STAIRS UP       V = VENDOR          W = WARP/ORB\n\n");
+    print_message("EMPTY    = EMPTY ROOM      BOOK     = BOOK            C = CHEST\n");
+    print_message("STAIRS D = STAIRS DOWN     ENTRANCE = ENTRANCE/EXIT   F = FLARES\n");
+    print_message("GOLD     = GOLD PIECES     MONSTER  = MONSTER NAME    O = CRYSTAL ORB\n");
+    print_message("POOL     = MAGIC POOL      SINKHOLE = SINKHOLE        T = TREASURE\n");
+    print_message("STAIRS U = STAIRS UP       VENDOR   = VENDOR          W = WARP/ORB\n\n");
 
     print_message("THE BENEFITS OF HAVING TREASURES ARE:\n\n");
     print_message("RUBY RED    - AVOID LETHARGY     PALE PEARL  - AVOID LEECH\n");
