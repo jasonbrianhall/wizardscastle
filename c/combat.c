@@ -101,7 +101,7 @@ void fight_monster(Player *player, GameState *game)
                     can_bribe = 0;
                     break;
                 case 'C':
-                    if (player->intelligence < 10) {
+                    if ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14) {
                         print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
                         continue;
                     }
@@ -252,15 +252,18 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
 {
     print_message("\nWHICH SPELL\n");
-    print_message("    (W)EB - Casts a magical web that prevents a monster from attacking\n");
-    print_message("    (F)IREBALL - Casts a Fireball at the enemy\n");
+    if(player->intelligence >=14)
+    {
+        print_message("    (W)EB - Casts a magical web that prevents a monster from attacking\n");
+        print_message("    (F)IREBALL - Casts a Fireball at the enemy\n");
+    }
     if (player->intelligence >= 16)
     {
         print_message("    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
     }
-    if (player->race == ELF || player->race == DWARF)
+    if ((player->race == ELF || player->race == DWARF) && player->intelligence>=10)
     {
-        print_message("    (H)EAL - Permanently heals you\n");
+        print_message("    (H)EAL - Permanently heals you (but maxes out at 18 after combat)\n");
         print_message("    (S)PEED - Temporarily increases your dexterity\n");
         print_message("    (B)RIGHT - Temporarily increases your intelligence \n");
     }
