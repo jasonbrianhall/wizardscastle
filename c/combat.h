@@ -12,4 +12,9 @@ void dragon_fireball_attack(Player *player, GameState *game);
 void balrog_flame_whip_attack(Player *player, GameState *game);
 const char* get_monster_name(int room_content);
 
+int cast_heal_spell(Player *player);
+int cast_bright_spell(Player *player);
+int cast_haste_spell(Player *player);
+
+
 #endif // COMBAT_H

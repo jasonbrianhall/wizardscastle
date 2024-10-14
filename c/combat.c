@@ -230,7 +230,16 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 
 int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
 {
-    print_message("\nWHICH SPELL (WEB, FIREBALL, DEATHSPELL)? \n\n");
+    print_message("\nWHICH SPELL\n");
+    print_message("    (W)EB - Casts a magical web that prevents a monster from attacking\n");
+    print_message("    (F)IREBALL - Casts a Fireball at the enemy\n");
+    if (player->intelligence >= 16)
+    {
+        print_message("    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
+    }
+    print_message("    (H)EAL - Permanently heals you\n");
+    print_message("    (S)PEED - Temporarily increases your dexterity\n");
+    print_message("    (B)RIGHT - Temporarily increases your intelligence \n\n");
     char spell = get_user_input();
 
     switch (spell) {
@@ -378,4 +387,34 @@ const char* get_monster_name(int room_content)
         case DRAGON: return "DRAGON";
         default: return "UNKNOWN MONSTER";
     }
+}
+
+int cast_heal_spell(Player *player) {
+    if (random_number(20) + player->intelligence > 9) {
+        int heal_amount = random_number(5); // 1-5 Points
+        player->strength += heal_amount;
+        printf("YOUR HEALTH INCREASED BY %i POINTS.\n\n", heal_amount);
+        return 1;
+    }
+    return 0;
+}
+
+int cast_bright_spell(Player *player) {
+    if (random_number(20) + player->intelligence > 9) {
+        int bright_amount = random_number(5) + 1;  // Increase intelligence by 2-6 points
+        player->intelligence += bright_amount;
+        printf("YOUR INTELLIGENCE TEMPORARILY INCREASED BY %i POINTS.\n\n", bright_amount);
+        return 1;
+    }
+    return 0;
+}
+
+int cast_haste_spell(Player *player) {
+    if (random_number(20) + player->intelligence > 9) {
+        int haste_amount = random_number(5) + 1;  // Increase dexterity by 2-6 points
+        player->dexterity += haste_amount;
+        printf("YOUR DEXTERITY TEMPORARILY INCREASED BY %i POINTS.\n\n", haste_amount);
+        return 1;
+    }
+    return 0;
 }
