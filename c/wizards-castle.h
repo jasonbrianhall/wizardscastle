@@ -56,8 +56,8 @@
 
 // Structures
 typedef struct {
-    int race;
-    int sex;
+    int race:4;
+    int sex:4;
     int strength;
     int intelligence;
     int dexterity;
