@@ -101,14 +101,17 @@ void fight_monster(Player *player, GameState *game)
                     can_bribe = 0;
                     break;
                 case 'C':
-                    if ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14) {
+                    if ((player->intelligence >= 10 && (player->race == ELF || player->race == DWARF)) || player->intelligence > 14) {
+                        // Player can cast a spell
+                        if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
+                            return;
+                        }
+                    } else {
+                        // Player cannot cast a spell
                         print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
-                        continue;
+                        break;
                     }
-                    if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
-                        return;
-                    }
-                    break;
+                    continue;
                 default:
                     print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                     continue;
