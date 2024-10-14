@@ -134,7 +134,6 @@ char *get_user_input_main();
 char get_user_input_yn();
 
 void print_message(const char *message);
-void printStars(void);
 
 void open_book(Player *player, GameState *game);
 

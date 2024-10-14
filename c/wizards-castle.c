@@ -369,21 +369,6 @@ void move_player(Player *player, GameState *game, char direction)
     // Print the new room description
 }
 
-const char* get_weapon_name(int weapon_type)
-{
-    const char* weapon_names[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
-
-    if (weapon_type<4)
-    {
-        return weapon_names[weapon_type];
-
-    }
-    else
-    {
-        return weapon_names[0];
-    }    
-}
-
 void handle_vendor(Player *player, GameState *game)
 {
     print_message("\nYou've encountered a vendor!\n");

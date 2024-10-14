@@ -10,6 +10,7 @@ const char* get_random_body_part();
 const char* get_random_species();
 int min(int a, int b);
 void printStars(void);
+const char* get_weapon_name(int weapon_type);
 
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)

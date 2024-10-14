@@ -41,3 +41,18 @@ void printStars(void)
 	print_message("****************************************************************\n");
 
 }
+
+const char* get_weapon_name(int weapon_type)
+{
+    const char* weapon_names[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
+
+    if (weapon_type<4)
+    {
+        return weapon_names[weapon_type];
+
+    }
+    else
+    {
+        return weapon_names[0];
+    }    
+}
