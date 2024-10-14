@@ -103,9 +103,6 @@ bool main_game_loop(Player *player, GameState *game);
 
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
-const char* get_treasure_name(int index);
-
-void buy_weapon(Player *player);
 
 
 // Item and treasure functions
@@ -133,10 +130,6 @@ void open_book(Player *player, GameState *game);
 
 void discover_adjacent_rooms(GameState *game, Player *player);
 
-char get_room_symbol(int room_content);
-void get_room_description(int room_content, char *desc);
-
-const char* get_weapon_name(int weapon_type);
 int get_user_input_number();
 
 #endif 

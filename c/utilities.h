@@ -13,6 +13,9 @@ void printStars(void);
 const char* get_weapon_name(int weapon_type);
 // Helper function to get treasure names
 const char* get_treasure_name(int index);
+// New helper function to get abbreviated room descriptions
+void get_room_description(int room_content, char *desc);
+char get_room_symbol(int room_content);
 
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
