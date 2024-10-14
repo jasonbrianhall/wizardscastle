@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "wizards-castle.h"
+#include "player.h"
 
 int main(int argc, char *argv[])
 {
@@ -70,3 +71,4 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
