@@ -1,6 +1,7 @@
 #include "wizards-castle.h"
 #include "player.h"
 #include "gamestate.h"
+#include "utilities.h"
 #include "combat.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -374,13 +375,6 @@ void move_player(Player *player, GameState *game, char direction)
     // Print the new room description
 }
 
-void move_player_randomly(Player *player, GameState *game) 
-{
-    char directions[] = {'N', 'S', 'E', 'W'};
-    char direction = directions[random_number(4) - 1];
-    move_player(player, game, direction);
-}
-
 const char* get_weapon_name(int weapon_type)
 {
     const char* weapon_names[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
@@ -395,19 +389,6 @@ const char* get_weapon_name(int weapon_type)
         return weapon_names[0];
     }    
 }
-
-const char* get_random_body_part()
-{
-    const char* body_parts[] = {" SANDWICH", " STEW", " SOUP", " BURGER", " ROAST", " FILET", " TACO", " PIE"};
-    return body_parts[random_number(8) - 1];
-}
-
-const char* get_random_species()
-{
-    const char* body_parts[] = {"ELF", "HUMAN", "DWARF", "HOBBIT"};
-    return body_parts[random_number(4) - 1];
-}
-
 
 void handle_vendor(Player *player, GameState *game)
 {
@@ -769,12 +750,6 @@ const char* get_treasure_name(int index)
     return treasure_names[index];
 }
 
-// Helper function for minimum of two integers
-int min(int a, int b)
-{
-    return (a < b) ? a : b;
-}
-
 void use_lamp(Player *player, GameState *game)
 {
     if (!player->lamp_flag) {
@@ -1056,12 +1031,6 @@ void gaze_into_orb(Player *player, GameState *game)
             print_message("a soap opera rerun!\n");
             break;
     }
-}
-
-// Utility functions
-int random_number(int max_value)
-{
-    return 1 + rand() % max_value;
 }
 
 void display_map(GameState *game, Player *player)
