@@ -30,6 +30,9 @@ void gaze_into_orb(Player *player, GameState *game);
 void open_book(Player *player, GameState *game);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
+// Movement and action functions
+void move_player(Player *player, GameState *game, char direction);
+
 
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)

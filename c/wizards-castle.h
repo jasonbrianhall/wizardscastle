@@ -101,8 +101,6 @@ void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
 
-// Movement and action functions
-void move_player(Player *player, GameState *game, char direction);
 
 
 // Utility functions
