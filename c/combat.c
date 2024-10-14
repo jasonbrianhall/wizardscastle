@@ -11,9 +11,11 @@ void fight_monster(Player *player, GameState *game)
 {
     int room_content = get_room_content(game, player->x, player->y, player->level);
     int is_vendor = (room_content == VENDOR);
-    int enemy_strength, enemy_dexterity;
+    int enemy_strength, enemy_dexterity, enemy_intelligence;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
+    int firststrike=random_number(2);  
+    char choice;
     player->web_count=0;
     player->temp_strength=0;
     player->temp_intelligence=0;
@@ -23,84 +25,92 @@ void fight_monster(Player *player, GameState *game)
     if (is_vendor) {
         enemy_strength = 15;
         enemy_dexterity = 15;
+        enemy_intelligence = 15;
     } else {
         enemy_strength = (room_content - MONSTER_START + 1) * 2;
         enemy_dexterity = room_content - MONSTER_START + 8;
+        enemy_intelligence = room_content - MONSTER_START + 8;
     }
 
     while (1) {
-        printf("\nYOU'RE FACING %s!\n\n", enemy_name);
-        print_message("YOU MAY (A)TTACK OR (R)ETREAT.\n");
-        if (can_bribe) {
-            print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
-        }
-        if ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14)  {
-            print_message("YOU CAN ALSO (C)AST A SPELL.\n");
-        }
-        print_message("\n");
-        printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
-               player->strength, player->dexterity, player->intelligence);
+        if (firststrike==1)
+        {
+            printf("\nYOU'RE FACING %s!\n\n", enemy_name);
+            print_message("YOU MAY (A)TTACK OR (R)ETREAT.\n");
+            if (can_bribe) {
+                print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
+            }
+            if ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14)  {
+                print_message("YOU CAN ALSO (C)AST A SPELL.\n");
+            }
+            print_message("\n");
+            printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
+                   player->strength, player->dexterity, player->intelligence);
 
-        char choice = get_user_input();
+            printf("THE ENEMIES STRENGTH IS %d, DEXTERITY IS %d, AND INTELLIGENCE IS %d.\n\n", 
+                   enemy_strength, enemy_dexterity, enemy_intelligence);
 
-        switch (choice) {
-            case 'A':
-                if (player->weapon_type == 0) {
-                    printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
-                } else if (player->stickybook_flag) {
-                    print_message("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
-                } else if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
-                    print_message("\nYOU MISSED, TOO BAD!\n");
-                } else {
-                    printf("\nYOU HIT THE EVIL %s!\n", enemy_name);
-                    enemy_strength -= player->weapon_type;
-                    if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
-                        printf("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
-                        player->weapon_type = 0;
+
+            choice = get_user_input();
+
+            switch (choice) {
+                case 'A':
+                    if (player->weapon_type == 0) {
+                        printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
+                    } else if (player->stickybook_flag) {
+                        print_message("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
+                    } else if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
+                        print_message("\nYOU MISSED, TOO BAD!\n");
+                    } else {
+                        printf("\nYOU HIT THE EVIL %s!\n", enemy_name);
+                        enemy_strength -= player->weapon_type;
+                        if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
+                            printf("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
+                            player->weapon_type = 0;
+                        }
+                        if (enemy_strength <= 0) {
+                            handle_combat_victory(player, game, is_vendor, enemy_name);
+                            return;
+                        }
                     }
-                    if (enemy_strength <= 0) {
-                        handle_combat_victory(player, game, is_vendor, enemy_name);
+                    break;
+                case 'R':
+                    if (random_number(20) + player->dexterity > random_number(20) + enemy_dexterity) {
+                        print_message("\nYOU HAVE ESCAPED!\n");
+                        move_player_randomly(player, game);
+                        return;
+                    } else {
+                        print_message("\nYOU FAILED TO RETREAT!\n");
+                    }
+                    break;
+                case 'B':
+                    if (!can_bribe) {
+                        print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                        continue;
+                    }
+                    if (handle_bribe(player, game, enemy_name)) {
                         return;
                     }
-                }
-                break;
-
-            case 'R':
-                if (random_number(20) + player->dexterity > random_number(20) + enemy_dexterity) {
-                    print_message("\nYOU HAVE ESCAPED!\n");
-                    move_player_randomly(player, game);
-                    return;
-                } else {
-                    print_message("\nYOU FAILED TO RETREAT!\n");
-                }
-                break;
-
-            case 'B':
-                if (!can_bribe) {
+                    can_bribe = 0;
+                    break;
+                case 'C':
+                    if (player->intelligence < 10) {
+                        print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
+                        continue;
+                    }
+                    if (handle_spell(player, game, &enemy_strength, enemy_name)) {
+                        return;
+                    }
+                    break;
+                default:
                     print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                     continue;
-                }
-                if (handle_bribe(player, game, enemy_name)) {
-                    return;
-                }
-                can_bribe = 0;
-                break;
-
-            case 'C':
-                if (player->intelligence < 10) {
-                    print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
-                    continue;
-                }
-                if (handle_spell(player, game, &enemy_strength, enemy_name)) {
-                    return;
-                }
-                break;
-
-            default:
-                print_message("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
-                continue;
+            }
+        } else {
+            firststrike=1;
+            choice='\0'; // Enemy has first strike
         }
-
+        
         // Enemy's turn
         if (choice != 'R' || (choice == 'R' && random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity)) {
             if (player->web_count > 0) {
