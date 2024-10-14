@@ -104,7 +104,14 @@ void fight_monster(Player *player, GameState *game)
                     if ((player->intelligence >= 10 && (player->race == ELF || player->race == DWARF)) || player->intelligence > 14) {
                         // Player can cast a spell
                         if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
-                            return;
+                            if (game->game_over)
+                            {
+                                return;
+                            }
+                            if (enemy_strength <= 0) {
+                                handle_combat_victory(player, game, is_vendor, enemy_name);
+                                return;
+                            }
                         }
                     } else {
                         // Player cannot cast a spell
@@ -308,7 +315,10 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                     return 1;
                 } else {
                     print_message("HIS!\n");
-                    handle_combat_victory(player, game, 0, enemy_name);
+                    //handle_combat_victory(player, game, 0, enemy_name)
+                    *enemy_intelligence=0;
+                    *enemy_strength=0;
+                    *enemy_dexterity=0;
                     return 1;
                 }
             case 'H':
