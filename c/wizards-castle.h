@@ -101,11 +101,6 @@ void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
 
-// Map and room functions
-void generate_castle(GameState *game);
-int get_room_content(GameState *game, int x, int y, int level);
-void set_room_content(GameState *game, int x, int y, int level, int content);
-
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
 void fight_monster(Player *player, GameState *game);
@@ -136,10 +131,6 @@ int random_number(int max_value);
 void display_map(GameState *game, Player *player);
 void print_help();
 
-// Game ending functions
-int check_game_over(Player *player, GameState *game);
-void end_game(Player *player, GameState *game);
-
 // Input/Output functions
 char get_user_input();
 char *get_user_input_main();
@@ -152,7 +143,6 @@ void open_book(Player *player, GameState *game);
 
 const char* get_race_name(int race);
 
-void mark_room_discovered(GameState *game, int x, int y, int level);
 int is_room_discovered(GameState *game, int x, int y, int level);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
@@ -160,7 +150,6 @@ char get_room_symbol(int room_content);
 void get_room_description(int room_content, char *desc);
 
 void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name);
-void handle_treasure(Player *player, GameState *game, int roomcontent);
 
 int handle_bribe(Player *player, GameState *game, const char *enemy_name);
 int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name);
