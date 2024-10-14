@@ -14,7 +14,7 @@ void fight_monster(Player *player, GameState *game)
     int enemy_strength, enemy_dexterity, enemy_intelligence;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
-    int firststrike=random_number(2);  
+    int firststrike;  
     char choice;
     player->web_count=0;
     player->temp_strength=0;
@@ -30,6 +30,13 @@ void fight_monster(Player *player, GameState *game)
         enemy_strength = (room_content - MONSTER_START + 1) * 2;
         enemy_dexterity = room_content - MONSTER_START + 8;
         enemy_intelligence = room_content - MONSTER_START + 8;
+    }
+
+    firststrike=calculate_first_strike(player->dexterity, player->intelligence, player->strength, enemy_dexterity, enemy_intelligence, enemy_strength);
+    
+    if (firststrike==0)
+    {
+        print_message("ENEMY GETS FIRST STRIKE\n\n");
     }
 
     while (1) {
@@ -469,4 +476,30 @@ int cast_haste_spell(Player *player) {
         return 1;
     }
     return 0;
+}
+
+// Calculate first strike based on dexterity, intelligence, and strength
+int calculate_first_strike(int player_dex, int player_int, int player_str, 
+                           int enemy_dex, int enemy_int, int enemy_str) {
+    // Base the calculation primarily on dexterity
+    int player_score = player_dex * 2;
+    int enemy_score = enemy_dex * 2;
+    
+    // Add some influence from intelligence and strength
+    player_score += player_int / 2 + player_str / 4;
+    enemy_score += enemy_int / 2 + enemy_str / 4;
+    
+    // Add a small random factor
+    player_score += random_number(5);
+    enemy_score += random_number(5);
+    
+    // Determine who strikes first
+    if (player_score > enemy_score) {
+        return 1; // Player strikes first
+    } else if (player_score < enemy_score) {
+        return 0; // Enemy strikes first
+    } else {
+        // If scores are equal, randomize
+        return random_number(2);
+    }
 }

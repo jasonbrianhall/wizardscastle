@@ -15,6 +15,7 @@ const char* get_monster_name(int room_content);
 int cast_heal_spell(Player *player);
 int cast_bright_spell(Player *player);
 int cast_haste_spell(Player *player);
+int calculate_first_strike(int player_dex, int player_int, int player_str, int enemy_dex, int enemy_int, int enemy_str);
 
 
 #endif // COMBAT_H
