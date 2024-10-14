@@ -416,3 +416,52 @@ void gaze_into_orb(Player *player, GameState *game)
     }
 }
 
+void open_book(Player *player, GameState *game)
+{
+    int effect = random_number(6);
+    
+    print_message("YOU OPEN THE BOOK AND ");
+    
+    switch(effect) {
+        case 1:
+            print_message("FLASH! OH NO! YOU ARE NOW A BLIND ");
+            print_message(player->race == 3 ? "HUMAN" : "CREATURE");
+            print_message("!\n");
+            player->blindness_flag = 1;
+            break;
+        case 2:
+            print_message("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
+            break;
+        case 3:
+            printf("IT'S AN OLD COPY OF PLAY%s!\n", get_random_species());
+            break;
+        case 4:
+            print_message("IT'S A MANUAL OF DEXTERITY!\n");
+            player->dexterity = 18;
+            break;
+        case 5:
+            print_message("IT'S A MANUAL OF STRENGTH!\n");
+            player->strength = 18;
+            break;
+        case 6:
+            print_message("THE BOOK STICKS TO YOUR HANDS -\n");
+            print_message("NOW YOU ARE UNABLE TO DRAW YOUR WEAPON!\n");
+            player->stickybook_flag = 1;
+            break;
+    }
+    
+    // Remove the book from the room
+    set_room_content(game, player->x, player->y, player->level, 101);  // Empty room
+}
+
+void discover_adjacent_rooms(GameState *game, Player *player)
+{
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int x = WRAP_COORDINATE(player->x + dx);
+            int y = WRAP_COORDINATE(player->y + dy);
+            mark_room_discovered(game, x, y, player->level);
+        }
+    }
+}
+

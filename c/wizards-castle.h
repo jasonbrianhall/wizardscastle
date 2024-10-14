@@ -105,16 +105,6 @@ bool main_game_loop(Player *player, GameState *game);
 void move_player(Player *player, GameState *game, char direction);
 
 
-// Item and treasure functions
-void use_lamp(Player *player, GameState *game);
-void use_flare(Player *player, GameState *game);
-void open_chest(Player *player, GameState *game);
-void drink_from_pool(Player *player, GameState *game);
-
-// Magic and special abilities
-void teleport(Player *player, GameState *game);
-void gaze_into_orb(Player *player, GameState *game);
-
 // Utility functions
 void display_map(GameState *game, Player *player);
 void print_help();
@@ -125,10 +115,6 @@ char *get_user_input_main();
 char get_user_input_yn();
 
 void print_message(const char *message);
-
-void open_book(Player *player, GameState *game);
-
-void discover_adjacent_rooms(GameState *game, Player *player);
 
 int get_user_input_number();
 
