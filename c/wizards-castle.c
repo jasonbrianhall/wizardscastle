@@ -169,6 +169,17 @@ bool main_game_loop(Player *player, GameState *game)
             user_command[sizeof(user_command) - 1] = '\0';  // Ensure null-termination            snprintf(message, sizeof(message), "User Command: %s\n", user_command);
             //print_message(message);
             switch (user_command[0]) {
+                case '\0':
+                    int room_content = get_room_content(game, player->x, player->y, player->level);
+                    if (room_content == VENDOR) {
+                         handle_vendor(player, game);
+                    } else if (room_content >= MONSTER_START && room_content <= MONSTER_END) {
+                        fight_monster(player, game);        
+                    } else {
+                        print_message("\n\nPlease enter a command.\n\n");
+                    }
+                    break;
+
                 case 'N': case 'S': case 'E': case 'W':
                     move_player(player, game, user_command[0]);
                     break;
@@ -335,8 +346,9 @@ char* get_user_input_main() {
         }
         // Check if input is empty
         if (input[0] == '\0') {
-            print_message("\n\nPlease enter a command.\n\n");
-            continue;
+            return "\0";
+            //print_message("\n\nPlease enter a command.\n\n");
+            //continue;
         }
         // Get the first character
         char firstChar = input[0];
