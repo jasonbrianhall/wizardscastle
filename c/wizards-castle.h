@@ -158,7 +158,6 @@ const char* get_weapon_name(int weapon_type);
 const char* get_random_body_part();
 const char* get_random_species();
 int get_user_input_number();
-const char* get_monster_name(int room_content);
 
 void dragon_fireball_attack(Player *player, GameState *game);
 void balrog_flame_whip_attack(Player *player, GameState *game);
