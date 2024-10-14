@@ -34,7 +34,7 @@ void fight_monster(Player *player, GameState *game)
         if (can_bribe) {
             print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
         }
-        if (player->intelligence > 14) {
+        if ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14)  {
             print_message("YOU CAN ALSO (C)AST A SPELL.\n");
         }
         print_message("\n");
@@ -87,7 +87,7 @@ void fight_monster(Player *player, GameState *game)
                 break;
 
             case 'C':
-                if (player->intelligence <= 14) {
+                if (player->intelligence < 10) {
                     print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
                     continue;
                 }

@@ -43,24 +43,33 @@
 #define VENDOR 125
 
 // Treasures (126-133)
-#define TREASURE_START 126
-#define RUBY_RED 126
-#define NORN_STONE 127
-#define PALE_PEARL 128
-#define OPAL_EYE 129
-#define GREEN_GEM 130
-#define BLUE_FLAME 131
-#define PALANTIR 132
-#define SILMARIL 133
-#define TREASURE_END 133
+#define TREASURE_START  126
+#define RUBY_RED        126
+#define NORN_STONE      127
+#define PALE_PEARL      128
+#define OPAL_EYE        129
+#define GREEN_GEM       130
+#define BLUE_FLAME      131
+#define PALANTIR        132
+#define SILMARIL        133
+#define TREASURE_END    133
+
+#define HOBBIT 1
+#define ELF    2        
+#define HUMAN  3
+#define DWARF  4
 
 // Structures
 typedef struct {
     int race:4;
     int sex:4;
     int strength;
+    int temp_strength;
     int intelligence;
+    int temp_intelligence;
     int dexterity;
+    int temp_dexterity;
+
     int gold;
     int flares;
     int armor_type;
@@ -80,6 +89,7 @@ typedef struct {
     int has_orb;
     int treasure_count;
     int web_count;
+    
 
 } Player;
 
