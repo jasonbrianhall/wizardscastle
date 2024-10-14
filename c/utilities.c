@@ -1,4 +1,7 @@
 #include "utilities.h"
+#include "combat.h"
+#include "player.h"
+#include "gamestate.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -129,6 +132,287 @@ char get_room_symbol(int room_content)
         case VENDOR: return 'V';  // Vendor
         case TREASURE_START ... TREASURE_END: return 'T';  // Treasures
         default: return '?';  // Unknown
+    }
+}
+
+void use_lamp(Player *player, GameState *game)
+{
+    if (!player->lamp_flag) {
+        print_message("You don't have a lamp!\n");
+        return;
+    }
+
+    print_message("Which direction do you want to shine the lamp? (N/S/E/W) ");
+    char direction = get_user_input();
+    int dx = 0, dy = 0;
+
+    switch(direction) {
+        case 'N': dx = -1; break;
+        case 'S': dx = 1; break;
+        case 'W': dy = -1; break;
+        case 'E': dy = 1; break;
+        default:
+            print_message("Invalid direction!\n");
+            return;
+    }
+
+    int x = WRAP_COORDINATE(player->x + dx);
+    int y = WRAP_COORDINATE(player->y + dy);
+    
+    mark_room_discovered(game, x, y, player->level);
+    int room_content = get_room_content(game, x, y, player->level);
+    char symbol = get_room_symbol(room_content);
+
+    print_message("\nThe lamp reveals: ");
+    char room_str[4] = " ? ";
+    room_str[1] = symbol;
+    print_message(room_str);
+    print_message("\n");
+}
+
+void use_flare(Player *player, GameState *game)
+{
+    if (player->flares <= 0) {
+        print_message("You don't have any flares!\n");
+        return;
+    }
+
+    player->flares--;
+    print_message("\nYou light a flare. It illuminates the surrounding rooms:\n\n");
+
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int x = WRAP_COORDINATE(player->x + dx);
+            int y = WRAP_COORDINATE(player->y + dy);
+            
+            mark_room_discovered(game, x, y, player->level);
+            int room_content = get_room_content(game, x, y, player->level);
+            char symbol = get_room_symbol(room_content);
+
+            if (dx == 0 && dy == 0) {
+                print_message("[@]");
+            } else {
+                char room_str[4] = " ? ";
+                room_str[1] = symbol;
+                print_message(room_str);
+            }
+        }
+        print_message("\n");
+    }
+}
+
+void open_chest(Player *player, GameState *game)
+{
+    print_message("\nYou open the chest and ");
+
+    int event = random_number(4);
+    switch(event) {
+        case 1:
+            print_message("KABOOM! IT EXPLODES!!\n");
+            int damage = random_number(6);
+            player->strength -= damage;
+            printf("You take %d damage.\n", damage);
+            if (player->strength <= 0) {
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+            }
+            break;
+
+        case 2:
+        case 4:
+            {
+                int gold = random_number(1000);
+                printf("find %d gold pieces!\n", gold);
+                player->gold += gold;
+            }
+            break;
+
+        case 3:
+            print_message("GAS!! YOU STAGGER FROM THE ROOM!\n");
+            game->turn_count += 20;  // Equivalent to T = T + 20 in BASIC
+            // Move player in a random direction
+            char directions[] = {'N', 'S', 'E', 'W'};
+            char direction = directions[random_number(4) - 1];
+            move_player(player, game, direction);
+            break;
+    }
+
+    // Remove the chest from the room
+    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+}
+
+void drink_from_pool(Player *player, GameState *game)
+{
+    print_message("\nYou take a drink and ");
+
+    int effect = random_number(8);
+    switch(effect) {
+        case 1:
+            player->strength = min(18, player->strength + random_number(3));
+            print_message("feel STRONGER.\n");
+            break;
+        case 2:
+            player->strength -= random_number(3);
+            print_message("feel WEAKER.\n");
+            if (player->strength <= 0) {
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 3:
+            player->intelligence = min(18, player->intelligence + random_number(3));
+            print_message("feel SMARTER.\n");
+            break;
+        case 4:
+            player->intelligence -= random_number(3);
+            print_message("feel DUMBER.\n");
+            if (player->intelligence <= 0) {
+                print_message("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 5:
+            player->dexterity = min(18, player->dexterity + random_number(3));
+            print_message("feel NIMBLER.\n");
+            break;
+        case 6:
+            player->dexterity -= random_number(3);
+            print_message("feel CLUMSIER.\n");
+            if (player->dexterity <= 0) {
+                print_message("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 7:
+            {
+                int new_race;
+                do {
+                    new_race = random_number(4);
+                } while (new_race == player->race);
+                player->race = new_race;
+                printf("become a %s.\n", get_race_name(player->race));
+            }
+            break;
+        case 8:
+            player->sex = 1 - player->sex;  // Toggle between 0 and 1
+            printf("turn into a %s %s!\n", 
+                   player->sex ? "MALE" : "FEMALE", 
+                   get_race_name(player->race));
+            break;
+    }
+
+    // The pool remains in the room, so we don't remove it
+}
+
+void teleport(Player *player, GameState *game)
+{
+    if (!player->runestaff_flag) {
+        print_message("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+        return;
+    }
+
+    int new_x, new_y, new_level;
+
+    print_message("\nEnter X-coordinate (1-8): ");
+    new_x=get_user_input_number();
+    if (new_x < 1 || new_x > 8) {
+        print_message("Invalid coordinate. Teleportation failed.\n");
+        return;
+    }
+
+    print_message("Enter Y-coordinate (1-8): ");
+    new_y=get_user_input_number();
+        if (new_y < 1 || new_y > 8) {
+        print_message("Invalid coordinate. Teleportation failed.\n");
+        return;
+    }
+
+    print_message("Enter Z-coordinate (level 1-8): ");
+    new_level=get_user_input_number();
+        if (new_level < 1 || new_level > 8) {
+        print_message("Invalid level. Teleportation failed.\n");
+        return;
+    }
+
+
+    // X and Y are switched
+    player->x = new_y;
+    player->y = new_x;
+    player->level = new_level;
+
+    printf("\nYou have teleported to (%d, %d) on level %d.\n", player->y, player->x, player->level);
+
+    // Check if the player teleported to the Orb of Zot
+    if (player->x == game->orb_location[0] && 
+        player->y == game->orb_location[1] && 
+        player->level == game->orb_location[2]) {
+        print_message("\nGREAT UNMITIGATED ZOT!\n");
+        print_message("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
+        print_message("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
+        player->runestaff_flag = 0;
+        player->orb_flag = 1;
+        game->orb_location[0] = 0;  // Mark as found
+    }
+    move_player(player, game, 'T');
+   
+}
+
+void gaze_into_orb(Player *player, GameState *game)
+{
+    if (get_room_content(game, player->x, player->y, player->level) != CRYSTAL_ORB) {
+        print_message("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
+        return;
+    }
+
+    print_message("\nYou gaze into the crystal orb and see ");
+
+    int vision = random_number(6);
+    switch(vision) {
+        case 1:
+            print_message("yourself in a bloody heap!\n");
+            player->strength -= random_number(2);
+            if (player->strength <= 0) {
+                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                game->game_over = 1;
+            }
+            break;
+        case 2:
+            printf("yourself drinking from a pool and becoming %s!\n", 
+                   get_monster_name(MONSTER_START + random_number(12) - 1));
+            break;
+        case 3:
+            printf("%s gazing back at you!\n", 
+                   get_monster_name(MONSTER_START + random_number(12) - 1));
+            break;
+        case 4:
+            {
+                int x = random_number(8);
+                int y = random_number(8);
+                int z = random_number(8);
+                int content = get_room_content(game, x, y, z);
+                char room_desc[100];  // Adjust size as needed
+                get_room_description(content, room_desc);
+                printf("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
+            }
+            break;
+        case 5:
+            {
+                int x, y, z;
+                if (random_number(8) < 4) {
+                    x = game->orb_location[1];
+                    y = game->orb_location[0];
+                    z = game->orb_location[2];
+                } else {
+                    x = random_number(8);
+                    y = random_number(8);
+                    z = random_number(8);
+                }
+                printf("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
+            }
+            break;
+        case 6:
+            print_message("a soap opera rerun!\n");
+            break;
     }
 }
 

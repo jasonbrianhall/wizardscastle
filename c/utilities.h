@@ -17,6 +17,17 @@ const char* get_treasure_name(int index);
 void get_room_description(int room_content, char *desc);
 char get_room_symbol(int room_content);
 
+// Item and treasure functions
+void use_lamp(Player *player, GameState *game);
+void use_flare(Player *player, GameState *game);
+void open_chest(Player *player, GameState *game);
+void drink_from_pool(Player *player, GameState *game);
+
+// Magic and special abilities
+void teleport(Player *player, GameState *game);
+void gaze_into_orb(Player *player, GameState *game);
+
+
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
 #define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
