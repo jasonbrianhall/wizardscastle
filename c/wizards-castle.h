@@ -182,6 +182,6 @@ int get_user_input_number();
 const char* get_monster_name(int room_content);
 
 void dragon_fireball_attack(Player *player, GameState *game);
-
+void balrog_flame_whip_attack(Player *player, GameState *game);
 
 #endif 
