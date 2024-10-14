@@ -115,7 +115,6 @@ void buy_weapon(Player *player);
 
 
 // Item and treasure functions
-void buy_equipment(Player *player);
 void use_lamp(Player *player, GameState *game);
 void use_flare(Player *player, GameState *game);
 void open_chest(Player *player, GameState *game);
