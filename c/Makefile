@@ -48,6 +48,7 @@ clean:
 	rm -f $(TARGET) $(DOS_TARGET) csdpmi7b.zip || true
 	rm -rf csdpmi  || true
 	rm *.exe || true
+	rm *.EXE || true
 	rm *.zip || true
 	rm *.zip.*  || true
 	rm *.tar.gz || true
