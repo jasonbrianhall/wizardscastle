@@ -11,7 +11,7 @@ void fight_monster(Player *player, GameState *game)
 {
     int room_content = get_room_content(game, player->x, player->y, player->level);
     int is_vendor = (room_content == VENDOR);
-    int enemy_strength, enemy_dexterity, enemy_intelligence;
+    int enemy_strength, enemy_dexterity, enemy_intelligence, muted=0, spellcasted, temp, base_chance;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     int firststrike;  
@@ -47,7 +47,7 @@ void fight_monster(Player *player, GameState *game)
             if (can_bribe) {
                 print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
             }
-            if ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14)  {
+            if (muted==0 && ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14))  {
                 print_message("YOU CAN ALSO (C)AST A SPELL.\n");
             }
             print_message("\n");
@@ -101,7 +101,7 @@ void fight_monster(Player *player, GameState *game)
                     can_bribe = 0;
                     break;
                 case 'C':
-                    if ((player->intelligence >= 10 && (player->race == ELF || player->race == DWARF)) || player->intelligence > 14) {
+                    if (muted==0 && ((player->intelligence >= 10 && (player->race == ELF || player->race == DWARF)) || player->intelligence > 14)) {
                         // Player can cast a spell
                         if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
                             if (game->game_over)
@@ -151,6 +151,52 @@ void fight_monster(Player *player, GameState *game)
                 balrog_flame_whip_attack(player, game);
                 if (game->game_over) {
                     return;
+                }
+            }
+            else if ((room_content == KOBOLD || room_content == DRAGON) && random_number(4)==1)
+            {
+                spellcasted=random_number(4);
+                switch (spellcasted)
+                {
+                     case 1:
+                         temp=random_number(5);
+                         printf("THE MONSTER CASTS HEAL AND GAINED %i STRENGTH POINTS\n", temp);
+                         enemy_strength+=temp;
+                         break;                         
+                     case 2:
+                         temp=random_number(5);
+                         printf("THE MONSTER CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", temp);
+                         enemy_dexterity+=temp;
+                         break;                         
+                     case 3:
+                         temp=random_number(5);
+                         printf("THE MONSTER CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", temp);
+                         enemy_intelligence+=temp;
+                         break;                         
+                     case 4:
+                         printf("THE MONSTER CASTS MUTE; ");
+                         base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
+    
+                         // Add a random factor (-10 to +10)
+                        int random_factor = (rand() % 21) - 10;
+    
+                        // Calculate final success chance
+                        int success_chance = base_chance + random_factor;
+    
+                        // Ensure the success chance is within a reasonable range (5 to 95)
+                        if (success_chance < 5) success_chance = 5;
+                        if (success_chance > 95) success_chance = 95;
+    
+                        // Determine if the spell succeeds
+                        if (rand() % 100 < success_chance) {
+                             printf("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
+                             muted=1;
+                        } else {
+                             printf("THE SPELL FAILED.\n");
+
+                            muted=0; // Spell fails, can still caste
+                        }
+                        break;                         
                 }
             }
             else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
