@@ -170,7 +170,7 @@ bool main_game_loop(Player *player, GameState *game)
             //print_message(message);
             switch (user_command[0]) {
                 case '\0':
-                    int room_content = get_room_content(game, player->x, player->y, player->level);
+                    room_content = get_room_content(game, player->x, player->y, player->level);
                     if (room_content == VENDOR) {
                          handle_vendor(player, game);
                     } else if (room_content >= MONSTER_START && room_content <= MONSTER_END) {
