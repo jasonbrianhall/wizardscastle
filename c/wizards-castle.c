@@ -815,16 +815,14 @@ void fight_monster(Player *player, GameState *game)
             }
 
             printf("\nTHE %s ATTACKS!\n", enemy_name);
-            if (player->web_count==0 && room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
-                    printf("Here");
+            else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
                     dragon_fireball_attack(player, game);
                     dragonattacked=1;
                     if (game->game_over) {
                         return;
                     }
             }
-            else if (player->web_count==0 && dragonattacked==0 && (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity)) {
-                    printf("Here2");
+            else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
 
                 print_message("\nOUCH! HE HIT YOU!\n");
                 int damage = (enemy_strength / 2) + 1;
