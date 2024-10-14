@@ -105,7 +105,7 @@ void fight_monster(Player *player, GameState *game)
                         print_message("\n** YOU CAN'T CAST A SPELL NOW!\n");
                         continue;
                     }
-                    if (handle_spell(player, game, &enemy_strength, enemy_name)) {
+                    if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
                         return;
                     }
                     break;
@@ -249,7 +249,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
     return 0;
 }
 
-int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name)
+int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enemy_intelligence, int *enemy_dexterity, const char *enemy_name)
 {
     print_message("\nWHICH SPELL\n");
     if(player->intelligence >=14)
@@ -298,7 +298,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
 
             case 'D':
                 print_message("\nDEATH . . . ");
-                if (player->intelligence < random_number(4) + 15) {
+                if (calculate_death_spell(player->intelligence, player->strength, player->dexterity, *enemy_intelligence, *enemy_strength, *enemy_dexterity)) {
                     print_message("YOURS!\n");
                     player->intelligence = 0;
                     game->game_over = 1;
@@ -508,5 +508,34 @@ int calculate_first_strike(int player_dex, int player_int, int player_str,
     } else {
         // If scores are equal, randomize
         return random_number(2);
+    }
+}
+
+int calculate_death_spell(int caster_int, int caster_str, int caster_dex, 
+                          int target_int, int target_str, int target_dex) {
+    // Base the calculation primarily on intelligence
+    int spell_power = caster_int * 3;
+    int target_resistance = target_int * 2;
+    
+    // Add some influence from strength and dexterity
+    spell_power += caster_str / 3 + caster_dex / 3;
+    target_resistance += target_str / 4 + target_dex / 4;
+    
+    // Add a small random factor
+    spell_power += random_number(10);
+    target_resistance += random_number(10);
+    
+    // Calculate spell success chance (0 to 100)
+    int success_chance = spell_power - target_resistance;
+    
+    // Ensure the success chance is within a reasonable range (5 to 95)
+    if (success_chance < 5) success_chance = 5;
+    if (success_chance > 95) success_chance = 95;
+    
+    // Determine if the spell succeeds
+    if (random_number(100) < success_chance) {
+        return 0; // Spell succeeds, enemy dies
+    } else {
+        return 1; // Spell fails, enemy lives
     }
 }
