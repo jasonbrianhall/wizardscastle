@@ -137,7 +137,6 @@ void print_message(const char *message);
 
 void open_book(Player *player, GameState *game);
 
-int is_room_discovered(GameState *game, int x, int y, int level);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
 char get_room_symbol(int room_content);
@@ -145,8 +144,5 @@ void get_room_description(int room_content, char *desc);
 
 const char* get_weapon_name(int weapon_type);
 int get_user_input_number();
-
-void dragon_fireball_attack(Player *player, GameState *game);
-void balrog_flame_whip_attack(Player *player, GameState *game);
 
 #endif 
