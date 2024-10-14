@@ -285,14 +285,29 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
                     return 1;
                 }
             case 'H':
-                cast_heal_spell(player);
-                return 0;
+                if (player->race == ELF || player->race == DWARF)
+                {
+                    cast_heal_spell(player);
+                    return 0;
+                }
+                print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+                break;
             case 'S':
-                cast_haste_spell(player);
-                return 0;
+                if (player->race == ELF || player->race == DWARF)
+                {
+                    cast_haste_spell(player);
+                    return 0;
+                }
+                print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+                break;
             case 'B':
-                cast_bright_spell(player);
-                return 0;
+                if (player->race == ELF || player->race == DWARF)
+                {
+                    cast_bright_spell(player);
+                    return 0;
+                }
+                print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+                break;
                 
             default:
                 print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
