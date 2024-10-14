@@ -101,11 +101,6 @@ void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
 
-// Player creation and attribute functions
-void choose_sex(Player *player);
-void buy_lamp_and_flares(Player *player);
-void allocate_attributes(Player *player);
-
 // Map and room functions
 void generate_castle(GameState *game);
 int get_room_content(GameState *game, int x, int y, int level);
@@ -138,7 +133,6 @@ void gaze_into_orb(Player *player, GameState *game);
 
 // Utility functions
 int random_number(int max_value);
-void print_status(Player *player, GameState *game);
 void display_map(GameState *game, Player *player);
 void print_help();
 

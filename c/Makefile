@@ -5,7 +5,7 @@ VERSION=1.0
 CC = gcc
 
 # Source files
-SRCS = main.c wizards-castle.c
+SRCS = main.c wizards-castle.c player.c
 
 # Output executable
 TARGET = wizardscastle
