@@ -168,21 +168,21 @@ void fight_monster(Player *player, GameState *game)
             {
                  case 1:
                      temp=random_number(max_increase);
-                     printf("THE MONSTER CASTS HEAL AND GAINED %i STRENGTH POINTS\n", temp);
+                     printf("THE %s CASTS HEAL AND GAINED %i STRENGTH POINTS\n", enemy_name, temp);
                      enemy_strength+=temp;
                      break;                         
                  case 2:
                      temp=random_number(max_increase);
-                     printf("THE MONSTER CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", temp);
+                     printf("THE %s CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", enemy_name, temp);
                      enemy_dexterity+=temp;
                      break;                         
                  case 3:
                      temp=random_number(max_increase);
-                     printf("THE MONSTER CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", temp);
+                     printf("THE %s CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", enemy_name, temp);
                      enemy_intelligence+=temp;
                      break;                         
                  case 4:
-                     printf("THE MONSTER CASTS MUTE; ");
+                     printf("THE %s CASTS SILENCE; ", enemy_name);
                      base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
 
                      // Add a random factor (-10 to +10)
@@ -200,7 +200,7 @@ void fight_monster(Player *player, GameState *game)
                          printf("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
                          muted=1;
                     } else {
-                         printf("THE SPELL FAILED.\n");
+                        printf("THE SPELL FAILED.\n");
                         muted=0; // Spell fails, can still cast
                     }
                     break;                         
