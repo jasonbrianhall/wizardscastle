@@ -146,10 +146,6 @@ void discover_adjacent_rooms(GameState *game, Player *player);
 char get_room_symbol(int room_content);
 void get_room_description(int room_content, char *desc);
 
-void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name);
-
-int handle_bribe(Player *player, GameState *game, const char *enemy_name);
-int handle_spell(Player *player, GameState *game, int *enemy_strength, const char *enemy_name);
 const char* get_weapon_name(int weapon_type);
 int get_user_input_number();
 
