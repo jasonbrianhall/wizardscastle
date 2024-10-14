@@ -32,6 +32,7 @@ void discover_adjacent_rooms(GameState *game, Player *player);
 
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
+void display_map(GameState *game, Player *player);
 
 
 // Macro definitions
