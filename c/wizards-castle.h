@@ -137,8 +137,6 @@ void print_message(const char *message);
 
 void open_book(Player *player, GameState *game);
 
-const char* get_race_name(int race);
-
 int is_room_discovered(GameState *game, int x, int y, int level);
 void discover_adjacent_rooms(GameState *game, Player *player);
 
