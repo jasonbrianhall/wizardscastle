@@ -1912,6 +1912,9 @@ void display_map(GameState *game, Player *player)
     // Print bottom border
     print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
+
+    // Map is too large for the default font for MS-DOS (Same Information is available in help)
+    #ifndef MSDOS
     print_message("\nLEGEND:\n");
     print_message("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
     print_message("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
@@ -1921,6 +1924,7 @@ void display_map(GameState *game, Player *player)
     print_message("MONSTER  = Monster Name    VENDOR   = Vendor\n");
     print_message("TREASURE = Treasure Name   ???????? = Undiscovered\n");
     print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+    #endif
 }
 
 void print_help()
