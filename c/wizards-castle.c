@@ -155,10 +155,9 @@ bool main_game_loop(Player *player, GameState *game)
                    player->dexterity=player->temp_dexterity;
                    player->temp_dexterity=0;
                }
-               if (player->temp_strength>0)
+               if (player->strength>18)
                {
-                   player->strength=player->temp_strength;
-                   player->temp_strength=0;
+                   player->strength=18;
                }
 
 
@@ -177,9 +176,9 @@ bool main_game_loop(Player *player, GameState *game)
                    player->dexterity=player->temp_dexterity;
                    player->temp_dexterity=0;
                }
-               if (player->temp_strength>0)
+               if (player->strength>18)
                {
-                   player->strength=player->temp_strength;
+                   player->strength=18;
                    player->temp_strength=0;
                }
 

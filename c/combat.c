@@ -499,11 +499,6 @@ const char* get_monster_name(int room_content)
 int cast_heal_spell(Player *player) {
     if (player->intelligence > 9) {
         int heal_amount = random_number(5); // 1-5 Points
-        if (player->temp_strength == 0)
-        {
-            player->temp_strength=player->strength;
-        }
-
         player->strength += heal_amount;
         printf("YOUR HEALTH INCREASED BY %i POINTS.\n\n", heal_amount);
         return 1;
