@@ -103,13 +103,7 @@ bool main_game_loop(Player *player, GameState *game);
 
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
-void fight_monster(Player *player, GameState *game);
-void handle_vendor(Player *player, GameState *game);
-void trade_with_vendor(Player *player, GameState *game);
-void attack_vendor(Player *player, GameState *game);
 const char* get_treasure_name(int index);
-void buy_armor(Player *player);
-void buy_flares(Player *player);
 
 void buy_weapon(Player *player);
 

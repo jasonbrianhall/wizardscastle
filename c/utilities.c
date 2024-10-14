@@ -56,3 +56,13 @@ const char* get_weapon_name(int weapon_type)
         return weapon_names[0];
     }    
 }
+
+// Helper function to get treasure names
+const char* get_treasure_name(int index)
+{
+    static const char* treasure_names[] = {
+        "Ruby Red", "Norn Stone", "Pale Pearl", "Opal Eye",
+        "Green Gem", "Blue Flame", "Palantir", "Silmaril"
+    };
+    return treasure_names[index];
+}

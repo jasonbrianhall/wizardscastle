@@ -11,6 +11,8 @@ const char* get_random_species();
 int min(int a, int b);
 void printStars(void);
 const char* get_weapon_name(int weapon_type);
+// Helper function to get treasure names
+const char* get_treasure_name(int index);
 
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
