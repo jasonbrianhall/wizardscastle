@@ -11,11 +11,12 @@ void fight_monster(Player *player, GameState *game)
 {
     int room_content = get_room_content(game, player->x, player->y, player->level);
     int is_vendor = (room_content == VENDOR);
-    int enemy_strength, enemy_dexterity, enemy_intelligence, muted=0, spellcasted, temp, base_chance;
+    int enemy_strength, enemy_dexterity, enemy_intelligence, muted=0, spellcasted, temp, base_chance, success_chance, random_factor;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     int firststrike;  
     char choice;
+    int max_increase;
     player->web_count=0;
     player->temp_strength=0;
     player->temp_intelligence=0;
@@ -151,23 +152,32 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         }
-        else if ((room_content == KOBOLD || room_content == DRAGON) && random_number(4)==1)
+        else if ((room_content == KOBOLD && random_number(4)==1) || (room_content == DRAGON && random_number(3)==1))
         {
             spellcasted=random_number(4);
+            switch (room_content)
+            {
+                case KOBOLD:
+                    max_increase=3;
+                    break;
+                case DRAGON:
+                    max_increase=5;
+                    break;
+            }
             switch (spellcasted)
             {
                  case 1:
-                     temp=random_number(5);
+                     temp=random_number(max_increase);
                      printf("THE MONSTER CASTS HEAL AND GAINED %i STRENGTH POINTS\n", temp);
                      enemy_strength+=temp;
                      break;                         
                  case 2:
-                     temp=random_number(5);
+                     temp=random_number(max_increase);
                      printf("THE MONSTER CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", temp);
                      enemy_dexterity+=temp;
                      break;                         
                  case 3:
-                     temp=random_number(5);
+                     temp=random_number(max_increase);
                      printf("THE MONSTER CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", temp);
                      enemy_intelligence+=temp;
                      break;                         
@@ -176,10 +186,10 @@ void fight_monster(Player *player, GameState *game)
                      base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
 
                      // Add a random factor (-10 to +10)
-                    int random_factor = (rand() % 21) - 10;
+                    random_factor = (rand() % 21) - 10;
 
                     // Calculate final success chance
-                    int success_chance = base_chance + random_factor;
+                    success_chance = base_chance + random_factor;
 
                     // Ensure the success chance is within a reasonable range (5 to 95)
                     if (success_chance < 5) success_chance = 5;
