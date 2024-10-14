@@ -15,6 +15,10 @@ void fight_monster(Player *player, GameState *game)
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
     player->web_count=0;
+    player->temp_strength=0;
+    player->temp_intelligence=0;
+    player->temp_dexterity=0;
+    
     // Set enemy stats based on room content
     if (is_vendor) {
         enemy_strength = 15;
@@ -241,51 +245,61 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, const cha
     print_message("    (S)PEED - Temporarily increases your dexterity\n");
     print_message("    (B)RIGHT - Temporarily increases your intelligence \n\n");
     char spell = get_user_input();
+    for (;;) {
+        switch (spell) {
+            case 'W':
+                player->strength--;
+                if (player->strength <= 0) {
+                    game->game_over = 1;
+                    return 1;
+                }
+                player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
+                printf("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
+                return 0;
+            case 'F':
+                player->strength--;
+                player->intelligence--;
+                if (player->strength <= 0 || player->intelligence <= 0) {
+                    game->game_over = 1;
+                    return 1;
+                }
+                int damage = random_number(7) + random_number(7);
+                printf("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
+                *enemy_strength -= damage;
+                if (*enemy_strength <= 0) {
+                    handle_combat_victory(player, game, 0, enemy_name);
+                    return 1;
+                }
+                return 0;
 
-    switch (spell) {
-        case 'W':
-            player->strength--;
-            if (player->strength <= 0) {
-                game->game_over = 1;
-                return 1;
-            }
-            player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
-            printf("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
-            return 0;
-        case 'F':
-            player->strength--;
-            player->intelligence--;
-            if (player->strength <= 0 || player->intelligence <= 0) {
-                game->game_over = 1;
-                return 1;
-            }
-            int damage = random_number(7) + random_number(7);
-            printf("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
-            *enemy_strength -= damage;
-            if (*enemy_strength <= 0) {
-                handle_combat_victory(player, game, 0, enemy_name);
-                return 1;
-            }
-            return 0;
-
-        case 'D':
-            print_message("\nDEATH . . . ");
-            if (player->intelligence < random_number(4) + 15) {
-                print_message("YOURS!\n");
-                player->intelligence = 0;
-                game->game_over = 1;
-                return 1;
-            } else {
-                print_message("HIS!\n");
-                handle_combat_victory(player, game, 0, enemy_name);
-                return 1;
-            }
-
-        default:
-            print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
-            return 0;
+            case 'D':
+                print_message("\nDEATH . . . ");
+                if (player->intelligence < random_number(4) + 15) {
+                    print_message("YOURS!\n");
+                    player->intelligence = 0;
+                    game->game_over = 1;
+                    return 1;
+                } else {
+                    print_message("HIS!\n");
+                    handle_combat_victory(player, game, 0, enemy_name);
+                    return 1;
+                }
+            case 'H':
+                cast_heal_spell(player);
+                return 0;
+            case 'S':
+                cast_haste_spell(player);
+                return 0;
+            case 'B':
+                cast_bright_spell(player);
+                return 0;
+                
+            default:
+                print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+        }
     }
 }
+
 
 void dragon_fireball_attack(Player *player, GameState *game) {
     print_message("\nThe dragon breathes a massive fireball at you!\n");
@@ -390,8 +404,13 @@ const char* get_monster_name(int room_content)
 }
 
 int cast_heal_spell(Player *player) {
-    if (random_number(20) + player->intelligence > 9) {
+    if (player->intelligence > 9) {
         int heal_amount = random_number(5); // 1-5 Points
+        if (player->temp_strength == 0)
+        {
+            player->temp_strength=player->strength;
+        }
+
         player->strength += heal_amount;
         printf("YOUR HEALTH INCREASED BY %i POINTS.\n\n", heal_amount);
         return 1;
@@ -400,8 +419,12 @@ int cast_heal_spell(Player *player) {
 }
 
 int cast_bright_spell(Player *player) {
-    if (random_number(20) + player->intelligence > 9) {
+    if (player->intelligence > 9) {
         int bright_amount = random_number(5) + 1;  // Increase intelligence by 2-6 points
+        if (player->temp_intelligence == 0)
+        {
+            player->temp_intelligence=player->intelligence;
+        }
         player->intelligence += bright_amount;
         printf("YOUR INTELLIGENCE TEMPORARILY INCREASED BY %i POINTS.\n\n", bright_amount);
         return 1;
@@ -410,8 +433,12 @@ int cast_bright_spell(Player *player) {
 }
 
 int cast_haste_spell(Player *player) {
-    if (random_number(20) + player->intelligence > 9) {
+    if (player->intelligence > 9) {
         int haste_amount = random_number(5) + 1;  // Increase dexterity by 2-6 points
+        if (player->temp_dexterity == 0)
+        {
+            player->temp_dexterity=player->dexterity;
+        }
         player->dexterity += haste_amount;
         printf("YOUR DEXTERITY TEMPORARILY INCREASED BY %i POINTS.\n\n", haste_amount);
         return 1;
