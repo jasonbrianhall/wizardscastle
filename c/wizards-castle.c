@@ -115,7 +115,7 @@ bool main_game_loop(Player *player, GameState *game)
         //print_status(player, game);
         
         int room_content = get_room_content(game, player->x, player->y, player->level);
-        if (room_content == 102) {  // The Entrance
+        if (room_content == ENTRANCE) {  // The Entrance
             char message[100];
             snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
             print_message(message);
@@ -202,14 +202,7 @@ bool main_game_loop(Player *player, GameState *game)
             //print_message(message);
             switch (user_command[0]) {
                 case '\0':
-                    room_content = get_room_content(game, player->x, player->y, player->level);
-                    if (room_content == VENDOR) {
-                         handle_vendor(player, game);
-                    } else if (room_content >= MONSTER_START && room_content <= MONSTER_END) {
-                        fight_monster(player, game);        
-                    } else {
-                        print_message("\n\nPlease enter a command.\n\n");
-                    }
+                    print_message("\n\nPlease enter a command.\n\n");
                     break;
 
                 case 'N': case 'S': case 'E': case 'W':
