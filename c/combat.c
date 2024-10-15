@@ -293,7 +293,7 @@ void fight_monster(Player *player, GameState *game)
                                              
             }
         }
-        else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
+        else if (enemy_attack_hits(player, enemy_dexterity)) {
             printf("THE %s ATTACKS\n", enemy_name);
             print_message("\nOUCH! HE HIT YOU!\n");
             int damage = calculate_damage_enemy(player, enemy_strength, enemy_dexterity, (room_content-MONSTER_START)/3 +1 );
@@ -764,6 +764,30 @@ int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexteri
     
     // Damage can be zero or negative (will be treated as zero)
     return total_damage;
+}
+
+int enemy_attack_hits(Player *player, int enemy_dexterity) {
+    // Base hit chance (out of 100)
+    int hit_chance = 50;
+    
+    // Adjust for enemy dexterity (each point above 10 increases hit chance by 2)
+    hit_chance += (enemy_dexterity - 10) * 2;
+    
+    // Adjust for player dexterity (each point above 10 decreases hit chance by 2)
+    hit_chance -= (player->dexterity - 10) * 2;
+    
+    // Adjust for player's blindness
+    hit_chance += 15 * player->blindness_flag;
+    
+    // Ensure hit chance is within 5 to 95 range
+    if (hit_chance < 5) hit_chance = 5;
+    if (hit_chance > 95) hit_chance = 95;
+    
+    // Generate a random number between 1 and 100
+    int roll = random_number(100);
+    
+    // Return 1 if the attack hits, 0 if it misses
+    return (roll <= hit_chance) ? 1 : 0;
 }
 
 

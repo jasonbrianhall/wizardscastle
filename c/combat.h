@@ -19,5 +19,6 @@ int calculate_first_strike(int player_dex, int player_int, int player_str, int e
 int calculate_death_spell(int caster_int, int caster_str, int caster_dex, int target_int, int target_str, int target_dex);
 int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity);
 int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexterity, int basedamage);
+int enemy_attack_hits(Player *player, int enemy_dexterity);
 
 #endif // COMBAT_H
