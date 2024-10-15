@@ -68,7 +68,7 @@ void end_game(Player *player, GameState *game)
     print_message_formatted("%s AND %s", weapon_types[player->weapon_type], armor_types[player->armor_type]);
     if (player->lamp_flag)
         print_message_formatted(" AND A LAMP");
-    print_message("\n");
+    print_message_formatted("\n");
 
     // Print flares and gold
     print_message_formatted("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n", player->flares, player->gold);
@@ -218,7 +218,7 @@ int get_room_content(GameState *game, int x, int y, int level)
     if (index >= 0 && index < MAP_SIZE) {
         return game->location_map[index];
     }
-    print_message("Invalid Room %i\n", index);
+    print_message_formatted("Invalid Room %i\n", index);
     return -1;  // Invalid room
 }
 
@@ -234,7 +234,7 @@ void set_room_content(GameState *game, int x, int y, int level, int content)
         snprintf(error_message, sizeof(error_message), 
                  "Error: Attempted to set invalid room content at (%d,%d) level %d\n", 
                  x, y, level);
-        print_message(error_message);
+        print_message_formatted(error_message);
     }
 }
 
@@ -279,7 +279,7 @@ void handle_treasure(Player *player, GameState *game, int room_content)
 	            player->blindness_flag = 0;
 	            print_message_formatted("YOUR BLINDNESS IS CURED!\n");
         	}
-        	print_message("\n");
+        	print_message_formatted("\n");
 	    break;
         case 4: // Green Gem
 	    print_message_formatted("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n\n");

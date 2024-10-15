@@ -8,7 +8,7 @@
 
 void handle_vendor(Player *player, GameState *game)
 {
-    print_message("\nYou've encountered a vendor!\n");
+    print_message_formatted("\nYou've encountered a vendor!\n");
     
     // Check if the player has attacked the vendor before
     if (game->vendor_attacked) {
@@ -29,7 +29,7 @@ void handle_vendor(Player *player, GameState *game)
                 attack_vendor(player, game);
                 return;
             case 'I':
-                print_message("You ignore the vendor and move on.\n");
+                print_message_formatted("You ignore the vendor and move on.\n");
                 return;
             default:
                 print_message("Invalid choice. Please choose T, A, or I.\n");
@@ -52,14 +52,14 @@ void trade_with_vendor(Player *player, GameState *game)
                 player->gold += offer;
                 game->treasure[i] = 0;
                 player->treasure_count--;
-                print_message("Sold!\n");
+                print_message_formatted("Sold!\n");
             }
         }
     }
 
     // Offer to sell items if player has enough gold
     while (player->gold >= 10) {
-        print_message("\n\nWhat would you like to buy?\n");
+        print_message_formatted("\n\nWhat would you like to buy?\n");
         print_message("    1. Improve Strength (1000 GP)\n");
         print_message("    2. Improve Intelligence (1000 GP)\n");
         print_message("    3. Improve Dexterity (1000 GP)\n");
@@ -81,12 +81,12 @@ void trade_with_vendor(Player *player, GameState *game)
                     }
                     else
                     {
-                        print_message("\nYOU ARE ALREADY HERCULES\n");
+                        print_message_formatted("\nYOU ARE ALREADY HERCULES\n");
                     }
                 }
                 else
                 {
-                    print_message("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
+                    print_message_formatted("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
                 }
                 break;
             case '2':
@@ -99,12 +99,12 @@ void trade_with_vendor(Player *player, GameState *game)
                     }
                     else
                     {
-                        print_message("\nYOU ARE ALREADY A GENIUS ... GENIUS\n");
+                        print_message_formatted("\nYOU ARE ALREADY A GENIUS ... GENIUS\n");
                     }
                 }
                 else
                 {
-                    print_message("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
+                    print_message_formatted("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
                 }
                 break;
             case '3':
@@ -117,18 +117,18 @@ void trade_with_vendor(Player *player, GameState *game)
                     }
                     else
                     {
-                        print_message("\nYOU ARE ALREADY NIMBLE ... GENIUS\n");
+                        print_message_formatted("\nYOU ARE ALREADY NIMBLE ... GENIUS\n");
                     }
                 }
                 else
                 {
-                    print_message("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
+                    print_message_formatted("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
                 }
                 break;
             case '4':
                 if (player->gold<1250)
                 {
-                    print_message("\nYOU DO NOT HAVE ENOUGH GOLD TO BUY ARMOR!\n");
+                    print_message_formatted("\nYOU DO NOT HAVE ENOUGH GOLD TO BUY ARMOR!\n");
                 }
                 else
                 {
@@ -138,7 +138,7 @@ void trade_with_vendor(Player *player, GameState *game)
             case '5':
                 if (player->gold<1250)
                 {
-                    print_message("\nYOU DO NOT HAVE ENOUGH GOLD TO BUY WEAPONS!\n");
+                    print_message_formatted("\nYOU DO NOT HAVE ENOUGH GOLD TO BUY WEAPONS!\n");
                 }
                 else
                 {
@@ -149,12 +149,12 @@ void trade_with_vendor(Player *player, GameState *game)
                 if (!player->lamp_flag && player->gold >= 1000) {
                     player->lamp_flag = 1;
                     player->gold -= 1000;
-                    print_message("You bought a lamp!\n");
+                    print_message_formatted("You bought a lamp!\n");
                 } else if (player->lamp_flag) {
-                    print_message("\nYou already have a lamp!\n");
+                    print_message_formatted("\nYou already have a lamp!\n");
                     continue;
                 } else {
-                    print_message("\nYou don't have enough gold for a lamp.\n");
+                    print_message_formatted("\nYou don't have enough gold for a lamp.\n");
                     continue;
                 }
                 break;
@@ -162,22 +162,22 @@ void trade_with_vendor(Player *player, GameState *game)
                 buy_flares(player);
                 break;
             case '8':
-                print_message("\nOK FINE, DON'T TRADE\n");
+                print_message_formatted("\nOK FINE, DON'T TRADE\n");
                 return;
             default:
-                print_message("Invalid choice.\n");
+                print_message_formatted("Invalid choice.\n");
                 continue;
         }
 
-        //print_message("Purchase successful!\n");
+        //print_message_formatted("Purchase successful!\n");
     }
 
-    print_message("You don't have enough gold for any more purchases.\n");
+    print_message_formatted("You don't have enough gold for any more purchases.\n");
 }
 
 void attack_vendor(Player *player, GameState *game)
 {
-    print_message("You attack the vendor!\n");
+    print_message_formatted("You attack the vendor!\n");
     game->vendor_attacked = 1;
 
     // Call fight_monster to handle the combat
@@ -189,12 +189,12 @@ void buy_flares(Player *player)
     int max_flares = player->gold / 10;
     char message[100];
     snprintf(message, sizeof(message), "How many flares do you want to buy? (0-%d): ", max_flares);
-    print_message(message);
+    print_message_formatted(message);
 
     int flares_to_buy = get_user_input_number();
 
     if (flares_to_buy < 0 || flares_to_buy > max_flares) {
-        print_message("Invalid number of flares.\n");
+        print_message_formatted("Invalid number of flares.\n");
         return;
     }
 
@@ -222,12 +222,12 @@ void buy_armor(Player *player)
                     player->armor_type = 1;
                     player->armor_points = 7;
                     player->gold -= 1250;
-                    print_message("\nArmor purchased successfully!\n");
+                    print_message_formatted("\nArmor purchased successfully!\n");
                 }
                 else
                 {
 
-                    print_message("\nYOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
+                    print_message_formatted("\nYOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
                     player->armor_points = player->armor_type*7;
                 }
             } else {
@@ -251,7 +251,7 @@ void buy_armor(Player *player)
                     player->armor_points = player->armor_type*7;
                 }
             } else {
-                print_message("Not enough gold for Chainmail.\n");
+                print_message_formatted("Not enough gold for Chainmail.\n");
                 return;
             }
             break;
@@ -262,12 +262,12 @@ void buy_armor(Player *player)
                     player->armor_type = 3;
                     player->armor_points = 21;
                     player->gold -= 2000;
-                    print_message("Armor purchased successfully!\n");
+                    print_message_formatted("Armor purchased successfully!\n");
 
                 }
                 else
                 {
-                    print_message("YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
+                    print_message_formatted("YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
                     player->armor_points = player->armor_type*7;
                 }
                 
@@ -279,7 +279,7 @@ void buy_armor(Player *player)
         case '4':
             return;
         default:
-            print_message("Invalid choice. No armor purchased.\n");
+            print_message_formatted("Invalid choice. No armor purchased.\n");
             return;
     }
 }
@@ -300,14 +300,14 @@ void buy_weapon(Player *player)
                 {
                     player->weapon_type = 1;
                     player->gold -= 1250;
-                    print_message("Weapon purchased successfully!\n");
+                    print_message_formatted("Weapon purchased successfully!\n");
                 }
                 else
                 {
-                    print_message("YOUR WEAPON IS ALREADY SUPERIOR!\n");
+                    print_message_formatted("YOUR WEAPON IS ALREADY SUPERIOR!\n");
                 }
             } else {
-                print_message("Not enough gold for a Dagger.\n");
+                print_message_formatted("Not enough gold for a Dagger.\n");
                 return;
             }
             break;
@@ -317,15 +317,15 @@ void buy_weapon(Player *player)
                 {
                     player->weapon_type = 2;
                     player->gold -= 1500;
-                    print_message("Weapon purchased successfully!\n");
+                    print_message_formatted("Weapon purchased successfully!\n");
 
                 }
                 else
                 {
-                    print_message("YOUR WEAPON IS ALREADY SUPERIOR!\n");
+                    print_message_formatted("YOUR WEAPON IS ALREADY SUPERIOR!\n");
                 }                
             } else {
-                print_message("Not enough gold for a Mace.\n");
+                print_message_formatted("Not enough gold for a Mace.\n");
                 return;
             }
             break;
@@ -335,22 +335,22 @@ void buy_weapon(Player *player)
                 {
                     player->weapon_type = 3;
                     player->gold -= 2000;
-                    print_message("Weapon purchased successfully!\n");
+                    print_message_formatted("Weapon purchased successfully!\n");
                 }
                 else
                 {
-                    print_message("YOUR WEAPON IS ALREADY SUPERIOR!\n");                
+                    print_message_formatted("YOUR WEAPON IS ALREADY SUPERIOR!\n");                
                 }
                 
             } else {
-                print_message("Not enough gold for a Sword.\n");
+                print_message_formatted("Not enough gold for a Sword.\n");
                 return;
             }
             break;
         case '4':
             return;
         default:
-            print_message("Invalid choice. No weapon purchased.\n");
+            print_message_formatted("Invalid choice. No weapon purchased.\n");
             return;
     }
     

@@ -38,21 +38,21 @@ void move_player(Player *player, GameState *game, char direction)
     // Check if player is at the entrance and moving north
     if (current_room == 102 && direction == 'N') {
         if (player->orb_flag) {
-            print_message("Congratulations! You've escaped the castle with the Orb of Zot!\n");
+            print_message_formatted("Congratulations! You've escaped the castle with the Orb of Zot!\n");
             // Set a flag or call a function to end the game with victory
             game->game_over = 1;
             game->victory = 1;
             return;
         } else {
-            print_message("You're at the entrance. Are you sure you want to leave without the Orb of Zot? (Y/N) ");
+            print_message_formatted("You're at the entrance. Are you sure you want to leave without the Orb of Zot? (Y/N) ");
             char choice = get_user_input_yn();
             if (choice == 'Y') {
-                print_message("You leave the castle empty-handed. Game over!\n");
+                print_message_formatted("You leave the castle empty-handed. Game over!\n");
                 // Set a flag or call a function to end the game
                 game->game_over = 1;
                 return;
             } else {
-                print_message("You decide to stay in the castle.\n");
+                print_message_formatted("You decide to stay in the castle.\n");
                 return;
             }
         }
@@ -76,7 +76,7 @@ void move_player(Player *player, GameState *game, char direction)
             printstatusmessage=0;
             break;
         default:
-            print_message("Invalid direction!\n");
+            print_message_formatted("Invalid direction!\n");
             return;
     }
 
@@ -97,7 +97,7 @@ void move_player(Player *player, GameState *game, char direction)
                  direction == 'S' ? "South" :
                  direction == 'W' ? "West" : "East",
                  player->y, player->x, player->level);
-        print_message(message);
+        print_message_formatted(message);
     }
     // Check for special room events (like warp or sinkhole)
     int room_content = get_room_content(game, player->x, player->y, player->level);
@@ -107,14 +107,14 @@ void move_player(Player *player, GameState *game, char direction)
         player->x = random_number(8);
         player->y = random_number(8);
         player->level = random_number(8);
-        print_message("You've been warped to a random location!\n");
+        print_message_formatted("You've been warped to a random location!\n");
     } else if (room_content == SINKHOLE) {  // Sinkhole
         if (player->level < 8) {
             player->level++;
         } else {
             player->level=1;
         }
-        print_message("You've fallen through a sinkhole to the level below!\n");
+        print_message_formatted("You've fallen through a sinkhole to the level below!\n");
 
     }
 
@@ -137,7 +137,7 @@ int min(int a, int b)
 
 void printStars(void)
 {
-	print_message("****************************************************************\n");
+	print_message_formatted("****************************************************************\n");
 
 }
 
@@ -234,11 +234,11 @@ char get_room_symbol(int room_content)
 void use_lamp(Player *player, GameState *game)
 {
     if (!player->lamp_flag) {
-        print_message("You don't have a lamp!\n");
+        print_message_formatted("You don't have a lamp!\n");
         return;
     }
 
-    print_message("Which direction do you want to shine the lamp? (N/S/E/W) ");
+    print_message_formatted("Which direction do you want to shine the lamp? (N/S/E/W) ");
     char direction = get_user_input();
     int dx = 0, dy = 0;
 
@@ -248,7 +248,7 @@ void use_lamp(Player *player, GameState *game)
         case 'W': dy = -1; break;
         case 'E': dy = 1; break;
         default:
-            print_message("Invalid direction!\n");
+            print_message_formatted("Invalid direction!\n");
             return;
     }
 
@@ -260,7 +260,7 @@ void use_lamp(Player *player, GameState *game)
     char room_desc[9];
     get_room_description(room_content, room_desc);
 
-    print_message("\nThe lamp reveals: ");
+    print_message_formatted("\nThe lamp reveals: ");
     print_message_formatted("%s\n", room_desc);
 }
 
@@ -268,12 +268,12 @@ void use_lamp(Player *player, GameState *game)
 void use_flare(Player *player, GameState *game)
 {
     if (player->flares <= 0) {
-        print_message("You don't have any flares!\n");
+        print_message_formatted("You don't have any flares!\n");
         return;
     }
 
     player->flares--;
-    print_message("\nYou light a flare. It illuminates the surrounding rooms:\n\n");
+    print_message_formatted("\nYou light a flare. It illuminates the surrounding rooms:\n\n");
 
     for (int dx = -1; dx <= 1; dx++) {
         for (int dy = -1; dy <= 1; dy++) {
@@ -286,28 +286,28 @@ void use_flare(Player *player, GameState *game)
             get_room_description(room_content, room_desc);
 
             if (dx == 0 && dy == 0) {
-                print_message("[YOU]   ");
+                print_message_formatted("[YOU]   ");
             } else {
-                print_message(room_desc);
+                print_message_formatted(room_desc);
             }
         }
-        print_message("\n");
+        print_message_formatted("\n");
     }
 }
 
 void open_chest(Player *player, GameState *game)
 {
-    print_message("\nYou open the chest and ");
+    print_message_formatted("\nYou open the chest and ");
 
     int event = random_number(4);
     switch(event) {
         case 1:
-            print_message("KABOOM! IT EXPLODES!!\n");
+            print_message_formatted("KABOOM! IT EXPLODES!!\n");
             int damage = random_number(6);
             player->strength -= damage;
-            print_message("You take %d damage.\n", damage);
+            print_message_formatted("You take %d damage.\n", damage);
             if (player->strength <= 0) {
-                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
             }
             break;
@@ -316,13 +316,13 @@ void open_chest(Player *player, GameState *game)
         case 4:
             {
                 int gold = random_number(1000);
-                print_message("find %d gold pieces!\n", gold);
+                print_message_formatted("find %d gold pieces!\n", gold);
                 player->gold += gold;
             }
             break;
 
         case 3:
-            print_message("GAS!! YOU STAGGER FROM THE ROOM!\n");
+            print_message_formatted("GAS!! YOU STAGGER FROM THE ROOM!\n");
             game->turn_count += 20;  // Equivalent to T = T + 20 in BASIC
             // Move player in a random direction
             char directions[] = {'N', 'S', 'E', 'W'};
@@ -337,43 +337,43 @@ void open_chest(Player *player, GameState *game)
 
 void drink_from_pool(Player *player, GameState *game)
 {
-    print_message("\nYou take a drink and ");
+    print_message_formatted("\nYou take a drink and ");
 
     int effect = random_number(8);
     switch(effect) {
         case 1:
             player->strength = min(18, player->strength + random_number(3));
-            print_message("feel STRONGER.\n");
+            print_message_formatted("feel STRONGER.\n");
             break;
         case 2:
             player->strength -= random_number(3);
-            print_message("feel WEAKER.\n");
+            print_message_formatted("feel WEAKER.\n");
             if (player->strength <= 0) {
-                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
             }
             break;
         case 3:
             player->intelligence = min(18, player->intelligence + random_number(3));
-            print_message("feel SMARTER.\n");
+            print_message_formatted("feel SMARTER.\n");
             break;
         case 4:
             player->intelligence -= random_number(3);
-            print_message("feel DUMBER.\n");
+            print_message_formatted("feel DUMBER.\n");
             if (player->intelligence <= 0) {
-                print_message("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
+                print_message_formatted("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
                 game->game_over = 1;
             }
             break;
         case 5:
             player->dexterity = min(18, player->dexterity + random_number(3));
-            print_message("feel NIMBLER.\n");
+            print_message_formatted("feel NIMBLER.\n");
             break;
         case 6:
             player->dexterity -= random_number(3);
-            print_message("feel CLUMSIER.\n");
+            print_message_formatted("feel CLUMSIER.\n");
             if (player->dexterity <= 0) {
-                print_message("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
+                print_message_formatted("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
                 game->game_over = 1;
             }
             break;
@@ -384,12 +384,12 @@ void drink_from_pool(Player *player, GameState *game)
                     new_race = random_number(4);
                 } while (new_race == player->race);
                 player->race = new_race;
-                print_message("become a %s.\n", get_race_name(player->race));
+                print_message_formatted("become a %s.\n", get_race_name(player->race));
             }
             break;
         case 8:
             player->sex = 1 - player->sex;  // Toggle between 0 and 1
-            print_message("turn into a %s %s!\n", 
+            print_message_formatted("turn into a %s %s!\n", 
                    player->sex ? "MALE" : "FEMALE", 
                    get_race_name(player->race));
             break;
@@ -401,30 +401,30 @@ void drink_from_pool(Player *player, GameState *game)
 void teleport(Player *player, GameState *game)
 {
     if (!player->runestaff_flag) {
-        print_message("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+        print_message_formatted("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
         return;
     }
 
     int new_x, new_y, new_level;
 
-    print_message("\nEnter X-coordinate (1-8): ");
+    print_message_formatted("\nEnter X-coordinate (1-8): ");
     new_x=get_user_input_number();
     if (new_x < 1 || new_x > 8) {
-        print_message("Invalid coordinate. Teleportation failed.\n");
+        print_message_formatted("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
-    print_message("Enter Y-coordinate (1-8): ");
+    print_message_formatted("Enter Y-coordinate (1-8): ");
     new_y=get_user_input_number();
         if (new_y < 1 || new_y > 8) {
-        print_message("Invalid coordinate. Teleportation failed.\n");
+        print_message_formatted("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
-    print_message("Enter Z-coordinate (level 1-8): ");
+    print_message_formatted("Enter Z-coordinate (level 1-8): ");
     new_level=get_user_input_number();
         if (new_level < 1 || new_level > 8) {
-        print_message("Invalid level. Teleportation failed.\n");
+        print_message_formatted("Invalid level. Teleportation failed.\n");
         return;
     }
 
@@ -434,15 +434,15 @@ void teleport(Player *player, GameState *game)
     player->y = new_x;
     player->level = new_level;
 
-    print_message("\nYou have teleported to (%d, %d) on level %d.\n", player->y, player->x, player->level);
+    print_message_formatted("\nYou have teleported to (%d, %d) on level %d.\n", player->y, player->x, player->level);
 
     // Check if the player teleported to the Orb of Zot
     if (player->x == game->orb_location[0] && 
         player->y == game->orb_location[1] && 
         player->level == game->orb_location[2]) {
-        print_message("\nGREAT UNMITIGATED ZOT!\n");
-        print_message("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
-        print_message("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
+        print_message_formatted("\nGREAT UNMITIGATED ZOT!\n");
+        print_message_formatted("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
+        print_message_formatted("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
         player->runestaff_flag = 0;
         player->orb_flag = 1;
         game->orb_location[0] = 0;  // Mark as found
@@ -454,28 +454,28 @@ void teleport(Player *player, GameState *game)
 void gaze_into_orb(Player *player, GameState *game)
 {
     if (get_room_content(game, player->x, player->y, player->level) != CRYSTAL_ORB) {
-        print_message("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
+        print_message_formatted("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
         return;
     }
 
-    print_message("\nYou gaze into the crystal orb and see ");
+    print_message_formatted("\nYou gaze into the crystal orb and see ");
 
     int vision = random_number(6);
     switch(vision) {
         case 1:
-            print_message("yourself in a bloody heap!\n");
+            print_message_formatted("yourself in a bloody heap!\n");
             player->strength -= random_number(2);
             if (player->strength <= 0) {
-                print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
             }
             break;
         case 2:
-            print_message("yourself drinking from a pool and becoming a %s!\n", 
+            print_message_formatted("yourself drinking from a pool and becoming a %s!\n", 
                    strip(get_monster_name(MONSTER_START + random_number(12) - 1)));
             break;
         case 3:
-            print_message("%s gazing back at you!\n", 
+            print_message_formatted("%s gazing back at you!\n", 
                    strip(get_monster_name(MONSTER_START + random_number(12) - 1)));
             break;
         case 4:
@@ -486,7 +486,7 @@ void gaze_into_orb(Player *player, GameState *game)
                 int content = get_room_content(game, x, y, z);
                 char room_desc[100];  // Adjust size as needed
                 get_room_description(content, room_desc);
-                print_message("%s at (%d,%d) Level %d.\n", strip(room_desc), x, y, z);
+                print_message_formatted("%s at (%d,%d) Level %d.\n", strip(room_desc), x, y, z);
             }
             break;
         case 5:
@@ -501,11 +501,11 @@ void gaze_into_orb(Player *player, GameState *game)
                     y = random_number(8);
                     z = random_number(8);
                 }
-                print_message("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
+                print_message_formatted("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
             }
             break;
         case 6:
-            print_message("a soap opera rerun!\n");
+            print_message_formatted("a soap opera rerun!\n");
             break;
     }
 }
@@ -514,32 +514,32 @@ void open_book(Player *player, GameState *game)
 {
     int effect = random_number(6);
     
-    print_message("YOU OPEN THE BOOK AND ");
+    print_message_formatted("YOU OPEN THE BOOK AND ");
     
     switch(effect) {
         case 1:
-            print_message("FLASH! OH NO! YOU ARE NOW A BLIND ");
-            print_message(player->race == 3 ? "HUMAN" : "CREATURE");
-            print_message("!\n");
+            print_message_formatted("FLASH! OH NO! YOU ARE NOW A BLIND ");
+            print_message_formatted(player->race == 3 ? "HUMAN" : "CREATURE");
+            print_message_formatted("!\n");
             player->blindness_flag = 1;
             break;
         case 2:
-            print_message("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
+            print_message_formatted("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
             break;
         case 3:
-            print_message("IT'S AN OLD COPY OF PLAY%s!\n", get_random_species());
+            print_message_formatted("IT'S AN OLD COPY OF PLAY%s!\n", get_random_species());
             break;
         case 4:
-            print_message("IT'S A MANUAL OF DEXTERITY!\n");
+            print_message_formatted("IT'S A MANUAL OF DEXTERITY!\n");
             player->dexterity = 18;
             break;
         case 5:
-            print_message("IT'S A MANUAL OF STRENGTH!\n");
+            print_message_formatted("IT'S A MANUAL OF STRENGTH!\n");
             player->strength = 18;
             break;
         case 6:
-            print_message("THE BOOK STICKS TO YOUR HANDS -\n");
-            print_message("NOW YOU ARE UNABLE TO DRAW YOUR WEAPON!\n");
+            print_message_formatted("THE BOOK STICKS TO YOUR HANDS -\n");
+            print_message_formatted("NOW YOU ARE UNABLE TO DRAW YOUR WEAPON!\n");
             player->stickybook_flag = 1;
             break;
     }
@@ -561,61 +561,61 @@ void discover_adjacent_rooms(GameState *game, Player *player)
 
 void display_map(GameState *game, Player *player)
 {
-    print_message("\n=== MAP OF LEVEL ");
+    print_message_formatted("\n=== MAP OF LEVEL ");
     char level_str[3], number_str[3];
     snprintf(level_str, sizeof(level_str), "%d", player->level);
-    print_message(level_str);
-    print_message(" ===\n\n");
+    print_message_formatted(level_str);
+    print_message_formatted(" ===\n\n");
 
     // Print top border with column coordinates
-    print_message("       1        2        3        4        5        6        7        8     \n");
-    print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+    print_message_formatted("       1        2        3        4        5        6        7        8     \n");
+    print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     for (int x = 1; x <= 8; x++) {
         // Print row coordinate
         snprintf(number_str, sizeof(number_str), "%d", x);
 
-        print_message(number_str);
+        print_message_formatted(number_str);
 
         for (int y = 1; y <= 8; y++) {
-            print_message("|");
+            print_message_formatted("|");
             if (x == player->x && y == player->y) {
-                print_message("  [YOU] ");
+                print_message_formatted("  [YOU] ");
             } else if (is_room_discovered(game, x, y, player->level)) {
                 int room_content = get_room_content(game, x, y, player->level);
                 char room_str[9] = "        \0";
                 get_room_description(room_content, room_str);
-                print_message(room_str);
+                print_message_formatted(room_str);
             } else {
-                print_message("????????");
+                print_message_formatted("????????");
             }
         }
-        print_message("|\n");
+        print_message_formatted("|\n");
 
         // Print horizontal border between rows
         if (x < 8) {
-            print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+            print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
         }
     }
 
     // Print bottom border
-    print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+    print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     #ifdef MSDOS
-    print_message("PRESS ENTER TO CONTINUE...");
+    print_message_formatted("PRESS ENTER TO CONTINUE...");
     while (getchar() != '\n');  // Wait for Enter key
     #endif
 
     // Map is too large for the default font for MS-DOS (Same Information is available in help)
-    print_message("\nLEGEND:\n");
-    print_message("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
-    print_message("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
-    print_message("GOLD     = Gold Pieces     FLARES   = Flares\n");
-    print_message("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
-    print_message("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
-    print_message("MONSTER  = Monster Name    VENDOR   = Vendor\n");
-    print_message("TREASURE = Treasure Name   ???????? = Undiscovered\n");
-    print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+    print_message_formatted("\nLEGEND:\n");
+    print_message_formatted("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
+    print_message_formatted("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
+    print_message_formatted("GOLD     = Gold Pieces     FLARES   = Flares\n");
+    print_message_formatted("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
+    print_message_formatted("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
+    print_message_formatted("MONSTER  = Monster Name    VENDOR   = Vendor\n");
+    print_message_formatted("TREASURE = Treasure Name   ???????? = Undiscovered\n");
+    print_message_formatted("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 }
 
 char* strip(const char* str) {

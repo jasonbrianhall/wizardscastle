@@ -50,9 +50,9 @@ void choose_race(Player *player)
     char message[100];  // Buffer for the message
 
     do {
-        print_message("ALL RIGHT, BOLD ONE.\n");
-        print_message("YOU MAY BE AN ELF, DWARF, MAN, OR HOBBIT.\n\n");
-        print_message("YOUR CHOICE:  ");
+        print_message_formatted("ALL RIGHT, BOLD ONE.\n");
+        print_message          ("You may be an (E)lf, (D)warf, (M)an, or (H)obbit.\n\n");
+        print_message_formatted("YOUR CHOICE:  ");
         fgets(user_input, sizeof(user_input), stdin);
 
         // Convert input to uppercase
@@ -77,10 +77,10 @@ void choose_race(Player *player)
                 player->intelligence += 4;
             }
             snprintf(message, sizeof(message), "You have chosen to be a %s\n", races[player->race - 1]);
-            print_message(message);
+            print_message_formatted(message);
             valid_choice = 1;
         } else {
-            print_message("\n** THAT WAS INCORRECT. PLEASE TYPE E, D, M, OR H.\n");
+            print_message("\n** That was incorrect. Please type E, D, M, OR H.\n");
         }
     } while (!valid_choice);
 }
@@ -92,8 +92,8 @@ void choose_sex(Player *player)
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
 
     do {
-        print_message("WHICH SEX DO YOU PREFER?\n\n");
-        print_message("YOUR CHOICE:  ");
+        print_message_formatted("WHICH SEX DO YOU PREFER?\n\n");
+        print_message_formatted("YOUR CHOICE:  ");
         fgets(user_input, sizeof(user_input), stdin);
 
         // Convert input to uppercase
@@ -115,15 +115,14 @@ void choose_sex(Player *player)
                 break;
             default:
                 {
-                    char message[100];
-                    snprintf(message, sizeof(message), "** CUTE %s, REAL CUTE. TRY M OR F.\n", race_names[player->race - 1]);
-                    print_message(message);
+                    print_message_formatted("** CUTE %s, REAL CUTE. TRY ", race_names[player->race - 1]);
+                    print_message(          "M or F.\n");
                 }
                 break;
         }
     } while (!valid_choice);
 
-    print_message("\n");
+    print_message_formatted("\n");
 
 }
 
@@ -141,14 +140,15 @@ void allocate_attributes(Player *player)
         other_points = 8;
     }
 
-    print_message("OK, %s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n", race_names[player->race - 1]);
-    print_message("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
+    print_message_formatted("Ok, ");
+    print_message_formatted("%s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n", race_names[player->race - 1]);
+    print_message          ("Strength = %d    Intelligence = %d    Dexterity = %d\n", 
            player->strength, player->intelligence, player->dexterity);
-    print_message("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n", other_points);
+    print_message_formatted("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n", other_points);
 
     // Allocate points to Strength
     while (other_points > 0) {
-        print_message("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
+        print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
         fgets(user_input, sizeof(user_input), stdin);
         points_to_add = atoi(user_input);
 
@@ -157,13 +157,20 @@ void allocate_attributes(Player *player)
             other_points -= points_to_add;
             break;
         } else {
-            print_message("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
+            print_message_formatted("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
         }
     }
 
+    if (player->strength>18)
+    {
+        other_points+=player->strength-18;
+        player->strength=18;
+    }
+
+
     // Allocate points to Intelligence
     while (other_points > 0) {
-        print_message("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
+        print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
         fgets(user_input, sizeof(user_input), stdin);
         points_to_add = atoi(user_input);
 
@@ -172,18 +179,24 @@ void allocate_attributes(Player *player)
             other_points -= points_to_add;
             break;
         } else {
-            print_message("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
+            print_message_formatted("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
         }
+    }
+
+    if (player->intelligence>18)
+    {
+        other_points+=player->intelligence-18;
+        player->intelligence=18;
     }
 
     // Allocate remaining points to Dexterity
     if (other_points > 0) {
-        print_message("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n", other_points);
+        print_message_formatted("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n", other_points);
         player->dexterity += other_points;
     }
 
-    print_message("\nYOUR ATTRIBUTES ARE NOW:\n");
-    print_message("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
+    print_message_formatted("\nYOUR ATTRIBUTES ARE NOW:\n");
+    print_message          ("Strength = %d    Intelligence = %d    Dexterity = %d\n", 
            player->strength, player->intelligence, player->dexterity);
 }
 
@@ -198,16 +211,16 @@ void buy_equipment(Player *player)
     char message[100];
 
     // Buy Armor
-    print_message("\nOK, ");
-    print_message(race_names[player->race - 1]);
+    print_message_formatted("\nOK, ");
+    print_message_formatted(race_names[player->race - 1]);
 
-    print_message(", YOU HAVE %d GOLD PIECES (GP'S).\n\n", player->gold);
+    print_message_formatted(", YOU HAVE %d GOLD PIECES (GP'S).\n\n", player->gold);
     
-    print_message("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
-    print_message("PLATE<30> CHAINMAIL<20> LEATHER<10> NOTHING<0>\n\n");
+    print_message_formatted("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
+    print_message(          "(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
     
     do {
-        print_message("YOUR CHOICE:  ");
+        print_message_formatted("YOUR CHOICE:  ");
         fgets(user_input, sizeof(user_input), stdin);
         user_input[0] = toupper(user_input[0]);
 
@@ -217,7 +230,7 @@ void buy_equipment(Player *player)
             case 'L': player->armor_type = 1; cost = 10; break;
             case 'N': player->armor_type = 0; cost = 0; break;
             default:
-                print_message("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
+                print_message_formatted("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
                 continue;
         }
         break;
@@ -228,32 +241,32 @@ void buy_equipment(Player *player)
 
     // Buy Weapon
     snprintf(message, sizeof(message), "\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
-    print_message(message);
-    print_message("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
-    print_message("SWORD<30> MACE<20> DAGGER<10> NOTHING<0>\n\n");
+    print_message_formatted(message);
+    print_message_formatted("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
+    print_message_formatted("SWORD<30> MACE<20> DAGGER<10> NOTHING<0>\n\n");
     
     do {
-        print_message("YOUR CHOICE:  ");
+        print_message_formatted("YOUR CHOICE:  ");
         fgets(user_input, sizeof(user_input), stdin);
         user_input[0] = toupper(user_input[0]);
 
         switch(user_input[0]) {
             case 'S': 
                 if (player->gold < 30) {
-                    print_message("** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
+                    print_message_formatted("** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
                     continue;
                 }
                 player->weapon_type = 3; cost = 30; break;
             case 'M': 
                 if (player->gold < 20) {
-                    print_message("** SORRY SIR, I'M AFRAID I DON'T GIVE CREDIT!\n\n");
+                    print_message_formatted("** SORRY SIR, I'M AFRAID I DON'T GIVE CREDIT!\n\n");
                     continue;
                 }
                 player->weapon_type = 2; cost = 20; break;
             case 'D': player->weapon_type = 1; cost = 10; break;
             case 'N': player->weapon_type = 0; cost = 0; break;
             default:
-                print_message("** TRY AGAIN, YOUR CHOICE MUST BE S, M, D, OR N.\n\n");
+                print_message("** Try again, your choice must be S, M, D, or N.\n\n");
                 continue;
         }
         break;
@@ -261,9 +274,9 @@ void buy_equipment(Player *player)
 
     player->gold -= cost;
 
-    print_message("\nYOU NOW HAVE %s ARMOR AND A %s.\n", 
+    print_message_formatted("\nYOU NOW HAVE %s ARMOR AND A %s.\n", 
            armor_types[player->armor_type], weapon_types[player->weapon_type]);
-    print_message("YOU HAVE %d GOLD PIECES LEFT.\n", player->gold);
+    print_message_formatted("YOU HAVE %d GOLD PIECES LEFT.\n", player->gold);
 
 }
 
@@ -274,27 +287,27 @@ void buy_lamp_and_flares(Player *player)
 
     // Try to buy a lamp
     if (player->gold >= 20 && !player->lamp_flag) {
-        print_message("\nDO YOU WANT TO BUY A LAMP FOR 20 GP'S?\n");
+        print_message_formatted("\nDO YOU WANT TO BUY A LAMP FOR 20 GP'S?\n");
         do {
-            print_message("YOUR CHOICE (Y/N):  ");
+            print_message("Your choice (Y/N):  ");
             user_input_yn = get_user_input_yn();
             if (user_input_yn == 'Y') {
                 player->lamp_flag = 1;
                 player->gold -= 20;
-                print_message("\nOK, LAMP PURCHASED. IT'S GUARANTEED TO OUTLIVE YOU!\n");
+                print_message_formatted("\nOK, LAMP PURCHASED. IT'S GUARANTEED TO OUTLIVE YOU!\n");
                 break;
             } else if (user_input_yn == 'N') {
                 break;
             } else {
-                print_message("** PLEASE ANSWER YES OR NO.\n");
+                print_message_formatted("** PLEASE ANSWER YES OR NO.\n");
             }
         } while (1);
     }
 
    // Try to buy flares
     if (player->gold >= 1) {
-        print_message("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n", race_names[player->race - 1], player->gold);
-        print_message("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
+        print_message_formatted("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n", race_names[player->race - 1], player->gold);
+        print_message_formatted("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
         
         int flares_to_buy;
         char *endptr;
@@ -304,7 +317,7 @@ void buy_lamp_and_flares(Player *player)
 
             // Check if the input is "0" to explicitly buy no flares
             if (strcmp(user_input, "0") == 0) {
-                print_message("YOU CHOSE NOT TO BUY ANY FLARES.\n");
+                print_message_formatted("YOU CHOSE NOT TO BUY ANY FLARES.\n");
                 return;
             }
 
@@ -312,18 +325,18 @@ void buy_lamp_and_flares(Player *player)
             flares_to_buy = strtol(user_input, &endptr, 10);
 
             if (*endptr != '\0') {
-                print_message("** INVALID INPUT. PLEASE ENTER A NUMBER OR 0 TO BUY NO FLARES.\n");
+                print_message_formatted("** INVALID INPUT. PLEASE ENTER A NUMBER OR 0 TO BUY NO FLARES.\n");
             } else if (flares_to_buy < 0) {
-                print_message("** PLEASE ENTER A NON-NEGATIVE NUMBER.\n");
+                print_message_formatted("** PLEASE ENTER A NON-NEGATIVE NUMBER.\n");
             } else if (flares_to_buy > player->gold) {
-                print_message("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
+                print_message_formatted("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
             } else {
                 player->flares += flares_to_buy;
                 player->gold -= flares_to_buy;
-                print_message("\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n", player->flares, player->gold);
+                print_message_formatted("\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n", player->flares, player->gold);
                 return;
             }
-            print_message("HOW MANY FLARES DO YOU WANT? (OR ENTER 0 TO BUY NONE) ");
+            print_message_formatted("HOW MANY FLARES DO YOU WANT? (OR ENTER 0 TO BUY NONE) ");
         } while (1);
     }
 }
@@ -333,7 +346,7 @@ const char* get_race_name(int race)
     switch(race)
     {
         case 1: return "HOBBIT";
-        case 2: return "ELF";
+        case 2: return "ELF\0";
         case 3: return "HUMAN";
         case 4: return "DWARF";
         default: return "UNKNOWN";
@@ -348,8 +361,9 @@ void print_status(Player *player, GameState *game)
     print_message("\n=== PLAYER STATUS ===\n");
 
     // Print player race and attributes
-    snprintf(message, sizeof(message), "Race: %s\n", get_race_name(player->race));
-    print_message(message);
+    print_message("Race: ");
+    print_message_formatted(get_race_name(player->race));
+    print_mesage("\n");
     snprintf(message, sizeof(message), "Strength: %d  Intelligence: %d  Dexterity: %d\n",
              player->strength, player->intelligence, player->dexterity);
     print_message(message);
@@ -369,31 +383,31 @@ void print_status(Player *player, GameState *game)
     const char* weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword"};
     snprintf(message, sizeof(message), "Armor: %s  Weapon: %s\n",
              armor_types[player->armor_type], weapon_types[player->weapon_type]);
-    print_message(message);
+    print_message_formatted(message);
 
     // Print special items
     print_message("Special Items: ");
-    if (player->lamp_flag) print_message("Lamp ");
-    if (player->runestaff_flag) print_message("Runestaff ");
-    if (player->orb_flag) print_message("Orb of Zot ");
-    print_message("\n");
+    if (player->lamp_flag) print_message_formatted("Lamp ");
+    if (player->runestaff_flag) print_message_formatted("Runestaff ");
+    if (player->orb_flag) print_message_formatted("Orb of Zot ");
+    print_message_formatted("\n");
 
     // Print curses or blessings
-    print_message("Status Effects: ");
-    if (player->blindness_flag) print_message("Blind ");
-    if (player->stickybook_flag) print_message("Sticky Book ");
-    print_message("\n");
+    print_message_formatted("Status Effects: ");
+    if (player->blindness_flag) print_message_formatted("Blind ");
+    if (player->stickybook_flag) print_message_formatted("Sticky Book ");
+    print_message_formatted("\n");
 
     // Print number of treasures
     snprintf(message, sizeof(message), "Treasures Found: %d\n", player->treasure_count);
-    print_message(message);
+    print_message_formatted(message);
     for (int i=0; i<TREASURE_END-TREASURE_START; i++)
     {
         if(game->treasure[i]==1)
         {
-        	print_message("     ");
-        	print_message(get_treasure_name(i));
-        	print_message("\n");
+        	print_message_formatted("     ");
+        	print_message_formatted(get_treasure_name(i));
+        	print_message_formatted("\n");
         }
     }
 

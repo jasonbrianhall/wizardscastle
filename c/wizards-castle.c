@@ -20,19 +20,19 @@
 void print_introduction(void)
 {
 	printStars();
-        print_message("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
+        print_message_formatted("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
 	printStars();
-	print_message("\n");
+	print_message_formatted("\n");
 	print_message_formatted("MANY CYCLES AGO, IN THE KINGDOM OF ");
-	print_message(          "N'Dic, the gnomic\n"
+	print_message_formatted(          "N'Dic, the gnomic\n"
 	                        "wizard ");
 	print_message_formatted("ZOT FORGED HIS GREAT ");
-	print_message(          "*ORB OF POWER*. ");
+	print_message_formatted(          "*ORB OF POWER*. ");
 	print_message_formatted("HE SOON\n"
 	                        "VANISHED, LEAVING BEHIND HIS VAST SUBTERRANEAN CASTLE\n"
 	                        "FILLED WITH ESURIENT MONSTERS, FABULOUS TREASURES, AND\n"
                                 "THE INCREDIBLE "); 
-        print_message(          "*ORB OF ZOT*.");
+        print_message_formatted(          "*ORB OF ZOT*.");
         print_message_formatted(" FROM THAT TIME HENCE, MANY\n"
 	                        "A BOLD YOUTH HAS VENTURED INTO THE WIZARD'S CASTLE. AS\n"
 	                        "OF NOW, *NONE* HAS EVER EMERGED VICTORIOUSLY! BEWARE!!\n\n");
@@ -62,14 +62,14 @@ bool main_game_loop(Player *player, GameState *game)
             // Lethargy curse (similar to line 1960 in BASIC)
             if (!game->treasure[0] && random_number(100) <= 5) {  // 5% chance if no Ruby Red
                 game->turn_count++;
-                print_message("\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
+                print_message_formatted("\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
             }
 
             // Leech curse (similar to line 1965 in BASIC)
             if (!game->treasure[2] && random_number(100) <= 5) {  // 5% chance if no Pale Pearl
                 int gold_lost = random_number(5);
                 player->gold = (player->gold > gold_lost) ? player->gold - gold_lost : 0;
-                print_message("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", gold_lost);
+                print_message_formatted("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", gold_lost);
             }
 
             // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
@@ -78,8 +78,8 @@ bool main_game_loop(Player *player, GameState *game)
                 player->x = random_number(8);
                 player->y = random_number(8);
                 player->level = random_number(8);
-                print_message("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
-                print_message("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n", player->x, player->y, player->level);
+                print_message_formatted("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
+                print_message_formatted("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n", player->x, player->y, player->level);
 
                 // If player was in an empty room, mark old room as unexplored
                 if (get_room_content(game, old_x, old_y, old_z) == EMPTY_ROOM) {
@@ -91,52 +91,52 @@ bool main_game_loop(Player *player, GameState *game)
 
         // Display random events (similar to lines 2010-2060 in BASIC)
         if (random_number(5) == 1) {
-            print_message("\nYOU ");
+            print_message_formatted("\nYOU ");
             int event_type = random_number(7) + player->blindness_flag;
             if (event_type > 7) event_type = 4;
             
             switch (event_type) {
-                case 1: print_message("SEE A BAT FLY BY!\n"); break;
-                case 2: print_message("HEAR FOOTSTEPS!\n"); break;
-                case 3: print_message("SNEEZED!\n"); break;
-                case 4: print_message("STEPPED ON A FROG!\n"); break;
-                case 5: print_message("SMELL SOMETHING FRYING!\n"); break;
-                case 6: print_message("FEEL LIKE YOU'RE BEING WATCHED!\n"); break;
-                case 7: print_message("HEAR FAINT RUSTLING NOISES!\n"); break;
+                case 1: print_message_formatted("SEE A BAT FLY BY!\n"); break;
+                case 2: print_message_formatted("HEAR FOOTSTEPS!\n"); break;
+                case 3: print_message_formatted("SNEEZED!\n"); break;
+                case 4: print_message_formatted("STEPPED ON A FROG!\n"); break;
+                case 5: print_message_formatted("SMELL SOMETHING FRYING!\n"); break;
+                case 6: print_message_formatted("FEEL LIKE YOU'RE BEING WATCHED!\n"); break;
+                case 7: print_message_formatted("HEAR FAINT RUSTLING NOISES!\n"); break;
             }
         }
 
         // Handle blindness cure (similar to lines 2065-2075 in BASIC)
         if (player->blindness_flag == 1 && game->treasure[3] == 1) {
-            print_message("\nTHE OPAL EYE CURES YOUR BLINDNESS!\n");
+            print_message_formatted("\nTHE OPAL EYE CURES YOUR BLINDNESS!\n");
             player->blindness_flag = 0;
         }
 
         // Handle sticky book cure (similar to lines 2080-2090 in BASIC)
         if (player->stickybook_flag == 1 && game->treasure[5] == 1) {
-            print_message("\nTHE BLUE FLAME DISSOLVES THE BOOK!\n");
+            print_message_formatted("\nTHE BLUE FLAME DISSOLVES THE BOOK!\n");
             player->stickybook_flag = 0;
         }
 
-        print_message("\n");
+        print_message_formatted("\n");
         //print_status(player, game);
         
         int room_content = get_room_content(game, player->x, player->y, player->level);
         if (room_content == ENTRANCE) {  // The Entrance
             char message[100];
             snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
-            print_message(message);
+            print_message_formatted(message);
         } else if (room_content >= EMPTY_ROOM && room_content <= TREASURE_END) {
             char message[100];
             snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - EMPTY_ROOM]);
-            print_message(message);
+            print_message_formatted(message);
             if (room_content==GOLD)
             {
                 int gold_found = random_number(1000);  // Random amount between 1 and 1000
                 player->gold += gold_found;
                 char message[100];
                 snprintf(message, sizeof(message), "%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
-                print_message(message);
+                print_message_formatted(message);
                 set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
             }
             else if (room_content==FLARES)
@@ -145,7 +145,7 @@ bool main_game_loop(Player *player, GameState *game)
 
                 player->flares += flares_found;
                 snprintf(message, sizeof(message), "%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
-                print_message(message);
+                print_message_formatted(message);
                 set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
            }
            // Monsters
@@ -197,19 +197,19 @@ bool main_game_loop(Player *player, GameState *game)
            }
            
         } else {
-            print_message("HERE YOU FIND AN UNKNOWN ROOM.\n");
+            print_message_formatted("HERE YOU FIND AN UNKNOWN ROOM.\n");
             snprintf(message, sizeof(message), "%i\n", room_content);
-            print_message(message);
+            print_message_formatted(message);
         }
         game_over = check_game_over(player, game);
         if(!game_over)
         {
             strncpy(user_command, get_user_input_main(), sizeof(user_command) - 1);
             user_command[sizeof(user_command) - 1] = '\0';  // Ensure null-termination            snprintf(message, sizeof(message), "User Command: %s\n", user_command);
-            //print_message(message);
+            //print_message_formatted(message);
             switch (user_command[0]) {
                 case '\0':
-                    print_message("\n\nPlease enter a command.\n\n");
+                    print_message_formatted("\n\nPlease enter a command.\n\n");
                     break;
 
                 case 'N': case 'S': case 'E': case 'W':
@@ -222,9 +222,9 @@ bool main_game_loop(Player *player, GameState *game)
                         {
                             player->level=1;
                         }
-                        print_message("YOU CLIMB UP THE STAIRS.\n");
+                        print_message_formatted("YOU CLIMB UP THE STAIRS.\n");
                     } else {
-                        print_message("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
+                        print_message_formatted("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
                     }
                     break;
                 case 'D':
@@ -235,7 +235,7 @@ bool main_game_loop(Player *player, GameState *game)
                         }
                         else
                         {
-                            print_message("** IF YOU WANT A DRINK, FIND A POOL!");
+                            print_message_formatted("** IF YOU WANT A DRINK, FIND A POOL!");
                         }
                     }
                     else if (room_content == STAIRS_DOWN) {  // Stairs going down
@@ -244,9 +244,9 @@ bool main_game_loop(Player *player, GameState *game)
                         {
                             player->level=8;
                         }
-                        print_message("YOU DESCEND THE STAIRS.\n");
+                        print_message_formatted("YOU DESCEND THE STAIRS.\n");
                     } else {
-                        print_message("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
+                        print_message_formatted("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
                     }
                     break;
                 case 'M':
@@ -264,29 +264,29 @@ bool main_game_loop(Player *player, GameState *game)
                     } else if (room_content == BOOK) {  // Book
                         open_book(player, game);
                     } else {
-                        print_message("THERE'S NOTHING HERE TO OPEN!\n");
+                        print_message_formatted("THERE'S NOTHING HERE TO OPEN!\n");
                     }
                     break;
                 case 'G':
                     if (room_content == CRYSTAL_ORB) {  // Crystal orb
                         gaze_into_orb(player, game);
                     } else {
-                        print_message("THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
+                        print_message_formatted("THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
                     }
                     break;
                 case 'T':
                     if (player->runestaff_flag) {
                         teleport(player, game);
                     } else {
-                        print_message("YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+                        print_message_formatted("YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
                     }
                     break;
                 case 'Q':
-                    print_message("DO YOU REALLY WANT TO QUIT NOW? (Y/N) ");
+                    print_message("Do you really want to quit now? (Y/N) ");
                     if (get_user_input_yn() == 'Y') {
                         game_over = 1;
                     } else {
-                        print_message("OK, CONTINUE ON BRAVE ADVENTURER!\n");
+                        print_message_formatted("OK, CONTINUE ON BRAVE ADVENTURER!\n");
                     }
                     break;
                 case 'Z':
@@ -296,7 +296,7 @@ bool main_game_loop(Player *player, GameState *game)
                     print_help();
                     break;
                 default:
-                    print_message("INVALID COMMAND. TYPE 'H' FOR HELP.\n");
+                    print_message("Invalid command. Type 'H' for help.\n");
             }
         }
         if (!game_over) {
@@ -306,14 +306,14 @@ bool main_game_loop(Player *player, GameState *game)
 
     end_game(player, game);
     // Ask if the player wants to play again
-    print_message("\nARE YOU FOOLISH ENOUGH TO WANT TO PLAY AGAIN? ");
+    print_message_formatted("\nARE YOU FOOLISH ENOUGH TO WANT TO PLAY AGAIN? ");
     char play_again = get_user_input_yn();
     if (play_again == 'Y') {
-        print_message("\nSOME ADVENTURERS NEVER LEARN!\n\n");
-        print_message("PLEASE BE PATIENT WHILE THE CASTLE IS RESTOCKED.\n\n");
+        print_message_formatted("\nSOME ADVENTURERS NEVER LEARN!\n\n");
+        print_message_formatted("PLEASE BE PATIENT WHILE THE CASTLE IS RESTOCKED.\n\n");
         return 1;
     } else {
-        print_message("\nGOOD BYE, AND GOOD LUCK IN YOUR TRAVELS!\n");
+        print_message_formatted("\nGOOD BYE, AND GOOD LUCK IN YOUR TRAVELS!\n");
         return 0;        
     }
 }
@@ -340,24 +340,24 @@ void print_help()
     print_message("Z/tatus   - Player Status (South was already used)\n\n");
 
     #ifdef MSDOS
-    print_message("PRESS ENTER TO CONTINUE...");
+    print_message_formatted("PRESS ENTER TO CONTINUE...");
     while (getchar() != '\n');  // Wait for Enter key
     #endif
 
-    print_message("THE CONTENTS OF ROOMS ARE AS FOLLOWS:\n\n");
-    print_message("EMPTY    = EMPTY ROOM      BOOK     = BOOK            C = CHEST\n");
-    print_message("STAIRS D = STAIRS DOWN     ENTRANCE = ENTRANCE/EXIT   F = FLARES\n");
-    print_message("GOLD     = GOLD PIECES     MONSTER  = MONSTER NAME    O = CRYSTAL ORB\n");
-    print_message("POOL     = MAGIC POOL      SINKHOLE = SINKHOLE        T = TREASURE\n");
-    print_message("STAIRS U = STAIRS UP       VENDOR   = VENDOR          W = WARP/ORB\n\n");
+    print_message_formatted("THE CONTENTS OF ROOMS ARE AS FOLLOWS:\n\n");
+    print_message          ("EMPTY    = EMPTY ROOM      BOOK     = BOOK            Chest = CHEST\n");
+    print_message          ("STAIRS D = STAIRS DOWN     ENTRANCE = ENTRANCE/EXIT   FLARES = FLARES\n");
+    print_message          ("GOLD     = GOLD PIECES     MONSTER  = MONSTER NAME    ORB = CRYSTAL ORB\n");
+    print_message          ("POOL     = MAGIC POOL      SINKHOLE = SINKHOLE        TREASURE = TREASURE\n");
+    print_message          ("STAIRS U = STAIRS UP       VENDOR   = VENDOR          WARP = WARP/ORB\n\n");
 
-    print_message("THE BENEFITS OF HAVING TREASURES ARE:\n\n");
-    print_message("RUBY RED    - AVOID LETHARGY     PALE PEARL  - AVOID LEECH\n");
-    print_message("GREEN GEM   - AVOID FORGETTING   OPAL EYE    - CURES BLINDNESS\n");
-    print_message("BLUE FLAME  - DISSOLVES BOOKS    NORN STONE  - NO BENEFIT\n");
-    print_message("PALANTIR    - NO BENEFIT         SILMARIL    - NO BENEFIT\n\n");
+    print_message_formatted("THE BENEFITS OF HAVING TREASURES ARE:\n\n");
+    print_message          ("RUBY RED    - Avoid Lethargy     PALE PEARL  - Avoid Leech\n");
+    print_message          ("GREEN GEM   - Avoid Forgetting   OPAL EYE    - Cures Blindess\n");
+    print_message          ("BLUE FLAME  - Dissolves Books    NORN STONE  - Pretty\n");
+    print_message          ("PALANTIR    - Pretty             SILMARIL    - Pretty\n\n");
 
-    print_message("PRESS ENTER TO CONTINUE...");
+    print_message_formatted("PRESS ENTER TO CONTINUE...");
     while (getchar() != '\n');  // Wait for Enter key
 }
 
@@ -367,7 +367,7 @@ char* get_user_input_main() {
         print_message("ENTER YOUR COMMAND: ");
         // Get user input
         if (fgets(input, sizeof(input), stdin) == NULL) {
-            print_message("Error reading input. Please try again.\n");
+            print_message_formatted("Error reading input. Please try again.\n");
             continue;
         }
         // Remove newline character if present
@@ -379,7 +379,7 @@ char* get_user_input_main() {
         // Check if input is empty
         if (input[0] == '\0') {
             return "\0";
-            //print_message("\n\nPlease enter a command.\n\n");
+            //print_message_formatted("\n\nPlease enter a command.\n\n");
             //continue;
         }
         // Get the first character
@@ -402,16 +402,16 @@ int get_user_input_number()
     char input[100];
 
     while (1) {
-        print_message("Enter a number: ");
+        print_message_formatted("Enter a number: ");
         if (fgets(input, sizeof(input), stdin) == NULL) {
-            print_message("Error reading input. Please try again.\n");
+            print_message_formatted("Error reading input. Please try again.\n");
             continue;
         }
 
         if (sscanf(input, "%d", &number) == 1) {
             return number;
         } else {
-            print_message("Invalid input. Please enter a valid integer.\n");
+            print_message_formatted("Invalid input. Please enter a valid integer.\n");
         }
     }
 }
@@ -423,12 +423,12 @@ char get_user_input()
     char command;
 
     while (1) {
-        print_message("ENTER YOUR COMMAND: ");
+        print_message_formatted("ENTER YOUR COMMAND: ");
         
         // Get user input
         if (fgets(input, sizeof(input), stdin) == NULL) {
             // Handle input error or EOF
-            print_message("Error reading input. Please try again.\n");
+            print_message_formatted("Error reading input. Please try again.\n");
             continue;
         }
 
@@ -442,7 +442,7 @@ char get_user_input()
 
         // Check if input is empty
         if (strlen(input) == 0) {
-            print_message("Please enter a command.\n");
+            print_message_formatted("Please enter a command.\n");
             continue;
         }
 
@@ -468,7 +468,7 @@ char get_user_input_yn()
         // Get user input
         if (fgets(input, sizeof(input), stdin) == NULL) {
             // Handle input error or EOF
-            print_message("Error reading input. Please try again.\n");
+            print_message_formatted("Error reading input. Please try again.\n");
             continue;
         }
 
@@ -482,7 +482,7 @@ char get_user_input_yn()
 
         // Check if input is empty
         if (strlen(input) == 0) {
-            print_message("PLEASE ENTER Y OR NO.\n");
+            print_message("Please Enter Y or N.\n");
             continue;
         }
 
