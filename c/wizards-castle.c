@@ -145,12 +145,12 @@ bool main_game_loop(Player *player, GameState *game)
            else if (room_content>=MONSTER_START && room_content <=MONSTER_END)
            {
                fight_monster(player, game);
-               if (player->temp_intelligence>0)
+               if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
                {
                    player->intelligence=player->temp_intelligence;
                    player->temp_intelligence=0;
                }
-               if (player->temp_dexterity>0)
+               if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
                {
                    player->dexterity=player->temp_dexterity;
                    player->temp_dexterity=0;
@@ -166,12 +166,12 @@ bool main_game_loop(Player *player, GameState *game)
            else if (room_content==VENDOR)
            {
                handle_vendor(player, game);
-               if (player->temp_intelligence>0)
+               if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
                {
                    player->intelligence=player->temp_intelligence;
                    player->temp_intelligence=0;
                }
-               if (player->temp_dexterity>0)
+               if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
                {
                    player->dexterity=player->temp_dexterity;
                    player->temp_dexterity=0;

@@ -200,7 +200,7 @@ void fight_monster(Player *player, GameState *game)
                          printf("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
                          muted=1;
                     } else {
-                        printf("THE SPELL FAILED.\n");
+                        printf("THE SPELL FAILED.  YOU SUCCESSFULLY RESISTED THE SPELL\n");
                         muted=0; // Spell fails, can still cast
                     }
                     break;
