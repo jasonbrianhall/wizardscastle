@@ -383,7 +383,7 @@ void print_status(Player *player, GameState *game)
     const char* weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword"};
     snprintf(message, sizeof(message), "Armor: %s  Weapon: %s\n",
              armor_types[player->armor_type], weapon_types[player->weapon_type]);
-    print_message_formatted(message);
+    print_message(message);
 
     // Print special items
     print_message("Special Items: ");
