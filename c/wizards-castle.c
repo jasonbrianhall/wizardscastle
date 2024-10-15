@@ -492,6 +492,32 @@ char get_user_input_yn()
     }
 }
 
+void print_message_formatted(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    
+    // First, format the string
+    char buffer[1024];  // Assuming a maximum length, adjust as needed
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    
+    // Strip whitespace
+    char* stripped = strip(buffer);
+    if (stripped == NULL) {
+        va_end(args);
+        return;  // Memory allocation failed
+    }
+    
+    // Capitalize sentences
+    capitalize_sentences(stripped);
+    
+    // Print the result
+    printf("%s", stripped);
+    
+    // Clean up
+    free(stripped);
+    va_end(args);
+}
+
 void print_message(const char *format, ...)
 {
     va_list args;

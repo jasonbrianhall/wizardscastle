@@ -758,7 +758,6 @@ int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexteri
     }
     
     // Damage can be zero or negative (will be treated as zero)
-    print_message("Returned value %i\n", total_damage);
     return total_damage;
 }
 

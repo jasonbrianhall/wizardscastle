@@ -123,7 +123,7 @@ char *get_user_input_main();
 char get_user_input_yn();
 
 void print_message(const char *format, ...);
-
+void print_message_formatted(const char *format, ...);
 
 int get_user_input_number();
 

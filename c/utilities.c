@@ -473,12 +473,12 @@ void gaze_into_orb(Player *player, GameState *game)
             }
             break;
         case 2:
-            print_message("yourself drinking from a pool and becoming %s!\n", 
-                   get_monster_name(MONSTER_START + random_number(12) - 1));
+            print_message("yourself drinking from a pool and becoming a %s!\n", 
+                   strip(get_monster_name(MONSTER_START + random_number(12) - 1)));
             break;
         case 3:
             print_message("%s gazing back at you!\n", 
-                   get_monster_name(MONSTER_START + random_number(12) - 1));
+                   strip(get_monster_name(MONSTER_START + random_number(12) - 1)));
             break;
         case 4:
             {
@@ -488,7 +488,7 @@ void gaze_into_orb(Player *player, GameState *game)
                 int content = get_room_content(game, x, y, z);
                 char room_desc[100];  // Adjust size as needed
                 get_room_description(content, room_desc);
-                print_message("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
+                print_message("%s at (%d,%d) Level %d.\n", strip(room_desc), x, y, z);
             }
             break;
         case 5:
@@ -619,3 +619,53 @@ void display_map(GameState *game, Player *player)
     print_message("TREASURE = Treasure Name   ???????? = Undiscovered\n");
     print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 }
+
+char* strip(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    const char* start = str;
+    while (*start && (*start == ' ' || *start == '\t')) {
+        start++;
+    }
+    if (*start == '\0') {
+        return strdup("");
+    }
+    const char* end = str + strlen(str) - 1;
+    while (end > start && (*end == ' ' || *end == '\t')) {
+        end--;
+    }
+    size_t len = end - start + 1;
+    char* result = (char*)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    strncpy(result, start, len);
+    result[len] = '\0';
+    return result;
+}
+
+void capitalize_sentences(char* str) {
+    if (str == NULL || *str == '\0') {
+        return;
+    }
+    bool capitalize_next = true;
+    
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isalpha((unsigned char)str[i])) {
+            if (capitalize_next) {
+                str[i] = toupper((unsigned char)str[i]);
+                capitalize_next = false;
+            } else {
+                str[i] = tolower((unsigned char)str[i]);
+            }
+        } else if (str[i] == '.') {
+            capitalize_next = true;
+        } else if (!isspace((unsigned char)str[i])) {
+            capitalize_next = false;
+        }
+    }
+}
+
+
+
