@@ -45,30 +45,21 @@ void initialize_player(Player *player)
 void choose_race(Player *player)
 {
     const char *races[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
-    char user_input[10];
+    char user_input;
     int valid_choice = 0;
-    char message[100];  // Buffer for the message
 
     do {
         print_message_formatted("ALL RIGHT, BOLD ONE.\n");
         print_message          ("You may be an (E)lf, (D)warf, (M)an, or (H)obbit.\n\n");
         print_message_formatted("YOUR CHOICE:  ");
-        fgets(user_input, sizeof(user_input), stdin);
-
-        // Convert input to uppercase
-        for (int i = 0; user_input[i]; i++) {
-            user_input[i] = toupper(user_input[i]);
-        }
-
-        // Remove newline character if present
-        user_input[strcspn(user_input, "\n")] = 0;
+        user_input=get_user_input();
 
         player->race = 0;
 
-        if (user_input[0] == 'H') player->race = 1;  // Hobbit
-        else if (user_input[0] == 'E') player->race = 2;  // Elf
-        else if (user_input[0] == 'M') player->race = 3;  // Man/Human
-        else if (user_input[0] == 'D') player->race = 4;  // Dwarf
+        if (user_input == 'H') player->race = 1;  // Hobbit
+        else if (user_input== 'E') player->race = 2;  // Elf
+        else if (user_input == 'M') player->race = 3;  // Man/Human
+        else if (user_input == 'D') player->race = 4;  // Dwarf
 
         if (player->race > 0) {
             player->strength += 2 * player->race;
@@ -76,8 +67,8 @@ void choose_race(Player *player)
             if (player->race == 2) {  // Elf gets extra points
                 player->intelligence += 4;
             }
-            snprintf(message, sizeof(message), "You have chosen to be a %s\n", races[player->race - 1]);
-            print_message_formatted(message);
+            print_message(           "You have chosen to be a ");
+            print_message_formatted("%s\n", races[player->race - 1]);
             valid_choice = 1;
         } else {
             print_message("\n** That was incorrect. Please type E, D, M, OR H.\n");
@@ -87,24 +78,16 @@ void choose_race(Player *player)
 
 void choose_sex(Player *player)
 {
-    char user_input[10];
+    char user_input;
     int valid_choice = 0;
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
 
     do {
         print_message_formatted("WHICH SEX DO YOU PREFER?\n\n");
         print_message_formatted("YOUR CHOICE:  ");
-        fgets(user_input, sizeof(user_input), stdin);
+        user_input=get_user_input();
 
-        // Convert input to uppercase
-        for (int i = 0; user_input[i]; i++) {
-            user_input[i] = toupper(user_input[i]);
-        }
-
-        // Remove newline character if present
-        user_input[strcspn(user_input, "\n")] = 0;
-
-        switch (user_input[0]) {
+        switch (user_input) {
             case 'M':
                 player->sex = 1;
                 valid_choice = 1;
@@ -115,7 +98,8 @@ void choose_sex(Player *player)
                 break;
             default:
                 {
-                    print_message_formatted("** CUTE %s, REAL CUTE. TRY ", race_names[player->race - 1]);
+                    print_message_formatted("** CUTE ");
+                    print_message_formatted("%s, REAL CUTE. TRY ", race_names[player->race - 1]);
                     print_message(          "M or F.\n");
                 }
                 break;
