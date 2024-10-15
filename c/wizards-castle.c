@@ -20,7 +20,7 @@
 void print_introduction(void)
 {
 	printStars();
-        print_message_formatted("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
+        print_message          ("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
 	printStars();
 	print_message_formatted("\n");
 	print_message_formatted("MANY CYCLES AGO, IN THE KINGDOM OF ");

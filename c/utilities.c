@@ -561,15 +561,15 @@ void discover_adjacent_rooms(GameState *game, Player *player)
 
 void display_map(GameState *game, Player *player)
 {
-    print_message_formatted("\n=== MAP OF LEVEL ");
+    print_message("\n=== MAP OF LEVEL ");
     char level_str[3], number_str[3];
     snprintf(level_str, sizeof(level_str), "%d", player->level);
     print_message_formatted(level_str);
     print_message_formatted(" ===\n\n");
 
     // Print top border with column coordinates
-    print_message_formatted("       1        2        3        4        5        6        7        8     \n");
-    print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+    print_message("       1        2        3        4        5        6        7        8     \n");
+    print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     for (int x = 1; x <= 8; x++) {
         // Print row coordinate
@@ -580,21 +580,21 @@ void display_map(GameState *game, Player *player)
         for (int y = 1; y <= 8; y++) {
             print_message_formatted("|");
             if (x == player->x && y == player->y) {
-                print_message_formatted("  [YOU] ");
+                print_message("  [YOU] ");
             } else if (is_room_discovered(game, x, y, player->level)) {
                 int room_content = get_room_content(game, x, y, player->level);
                 char room_str[9] = "        \0";
                 get_room_description(room_content, room_str);
-                print_message_formatted(room_str);
+                print_message(room_str);
             } else {
-                print_message_formatted("????????");
+                print_message("????????");
             }
         }
-        print_message_formatted("|\n");
+        print_message("|\n");
 
         // Print horizontal border between rows
         if (x < 8) {
-            print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+            print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
         }
     }
 
@@ -602,20 +602,20 @@ void display_map(GameState *game, Player *player)
     print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     #ifdef MSDOS
-    print_message_formatted("PRESS ENTER TO CONTINUE...");
+    print_message("PRESS ENTER TO CONTINUE...");
     while (getchar() != '\n');  // Wait for Enter key
     #endif
 
     // Map is too large for the default font for MS-DOS (Same Information is available in help)
-    print_message_formatted("\nLEGEND:\n");
-    print_message_formatted("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
-    print_message_formatted("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
-    print_message_formatted("GOLD     = Gold Pieces     FLARES   = Flares\n");
-    print_message_formatted("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
-    print_message_formatted("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
-    print_message_formatted("MONSTER  = Monster Name    VENDOR   = Vendor\n");
-    print_message_formatted("TREASURE = Treasure Name   ???????? = Undiscovered\n");
-    print_message_formatted("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+    print_message("\nLEGEND:\n");
+    print_message("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
+    print_message("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
+    print_message("GOLD     = Gold Pieces     FLARES   = Flares\n");
+    print_message("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
+    print_message("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
+    print_message("MONSTER  = Monster Name    VENDOR   = Vendor\n");
+    print_message("TREASURE = Treasure Name   ???????? = Undiscovered\n");
+    print_message("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 }
 
 char* strip(const char* str) {
