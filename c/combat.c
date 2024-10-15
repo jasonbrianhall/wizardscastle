@@ -707,7 +707,7 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
     total_damage -= (enemy_strength_defense + enemy_dexterity_defense);
     
     // Add a random factor
-    int random_factor = random_number(5) - 2;  // -2 to +2 random adjustment
+    int random_factor = random_number(5) - 3;  // -2 to +2 random adjustment
     total_damage += random_factor;
     if (total_damage<=0)
     {
