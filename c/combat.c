@@ -71,7 +71,7 @@ void fight_monster(Player *player, GameState *game)
                         printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
                     } else if (player->stickybook_flag) {
                         print_message("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
-                    } else if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
+                    } else if (random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity + (3 * player->blindness_flag)) {
                         print_message("\nYOU MISSED, TOO BAD!\n");
                     } else {
                         temp=calculate_damage(player, enemy_strength, enemy_dexterity);
