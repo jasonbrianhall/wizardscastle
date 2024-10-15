@@ -27,12 +27,12 @@ void print_introduction(void)
 	print_message_formatted(          "N'Dic, the gnomic\n"
 	                        "wizard ");
 	print_message_formatted("ZOT FORGED HIS GREAT ");
-	print_message_formatted(          "*ORB OF POWER*. ");
+	print_message           (          "*ORB OF POWER*. ");
 	print_message_formatted("HE SOON\n"
 	                        "VANISHED, LEAVING BEHIND HIS VAST SUBTERRANEAN CASTLE\n"
 	                        "FILLED WITH ESURIENT MONSTERS, FABULOUS TREASURES, AND\n"
                                 "THE INCREDIBLE "); 
-        print_message_formatted(          "*ORB OF ZOT*.");
+        print_message(          "*ORB OF ZOT*.");
         print_message_formatted(" FROM THAT TIME HENCE, MANY\n"
 	                        "A BOLD YOUTH HAS VENTURED INTO THE WIZARD'S CASTLE. AS\n"
 	                        "OF NOW, *NONE* HAS EVER EMERGED VICTORIOUSLY! BEWARE!!\n\n");
