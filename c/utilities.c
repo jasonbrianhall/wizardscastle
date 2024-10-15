@@ -657,7 +657,7 @@ void capitalize_sentences(char* str) {
             } else {
                 str[i] = tolower((unsigned char)str[i]);
             }
-        } else if (str[i] == '.') {
+        } else if (str[i] == '.' || str[i] == '?' || str[i] == '!') {
             capitalize_next = true;
         } else if (!isspace((unsigned char)str[i])) {
             capitalize_next = false;
