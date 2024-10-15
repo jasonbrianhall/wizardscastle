@@ -23,8 +23,9 @@ void print_introduction(void)
         print_message("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
 	printStars();
 	print_message("\n");
-	print_message_formatted("MANY CYCLES AGO, IN THE KINGDOM OF N'DIC, THE GNOMIC\n"
-	                        "WIZARD ");
+	print_message_formatted("MANY CYCLES AGO, IN THE KINGDOM OF ");
+	print_message(          "N'Dic, the gnomic\n"
+	                        "wizard ");
 	print_message_formatted("ZOT FORGED HIS GREAT ");
 	print_message(          "*ORB OF POWER*. ");
 	print_message_formatted("HE SOON\n"

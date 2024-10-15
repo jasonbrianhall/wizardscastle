@@ -34,51 +34,51 @@ void end_game(Player *player, GameState *game)
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
 
     if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
-        print_message("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n", race_names[player->race - 1]);
+        print_message_formatted("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n", race_names[player->race - 1]);
         
         if (player->strength <= 0)
-            print_message("YOU DIED DUE TO LACK OF STRENGTH.\n\n");
+            print_message_formatted("YOU DIED DUE TO LACK OF STRENGTH.\n\n");
         else if (player->intelligence <= 0)
-            print_message("YOU DIED DUE TO LACK OF INTELLIGENCE.\n\n");
+            print_message_formatted("YOU DIED DUE TO LACK OF INTELLIGENCE.\n\n");
         else
-            print_message("YOU DIED DUE TO LACK OF DEXTERITY.\n\n");
+            print_message_formatted("YOU DIED DUE TO LACK OF DEXTERITY.\n\n");
 
-        print_message("AT THE TIME YOU DIED, YOU HAD :\n");
+        print_message_formatted("AT THE TIME YOU DIED, YOU HAD :\n");
     }
     else if (game->victory) {
-        print_message("CONGRATULATIONS!\n\n");
-        print_message("YOU LEFT THE CASTLE WITH THE ORB OF ZOT.\n\n");
-        print_message("AN INCREDIBLY GLORIOUS VICTORY!!\n\n");
-        print_message("IN ADDITION, YOU GOT OUT WITH THE FOLLOWING :\n");
+        print_message_formatted("CONGRATULATIONS!\n\n");
+        print_message_formatted("YOU LEFT THE CASTLE WITH THE ORB OF ZOT.\n\n");
+        print_message_formatted("AN INCREDIBLY GLORIOUS VICTORY!!\n\n");
+        print_message_formatted("IN ADDITION, YOU GOT OUT WITH THE FOLLOWING :\n");
     }
     else {
-        print_message("YOU LEFT THE CASTLE WITHOUT THE ORB OF ZOT.\n\n");
-        print_message("A LESS THAN AWE-INSPIRING DEFEAT.\n\n");
-        print_message("WHEN YOU LEFT THE CASTLE, YOU HAD :\n");
+        print_message_formatted("YOU LEFT THE CASTLE WITHOUT THE ORB OF ZOT.\n\n");
+        print_message_formatted("A LESS THAN AWE-INSPIRING DEFEAT.\n\n");
+        print_message_formatted("WHEN YOU LEFT THE CASTLE, YOU HAD :\n");
     }
 
     // List treasures
     for (int i = 0; i < TREASURE_COUNT; i++) {
         if (game->treasure[i]) {
-            print_message("%s\n", get_treasure_name(i));
+            print_message_formatted("%s\n", get_treasure_name(i));
         }
     }
 
     // Print equipment
-    print_message("%s AND %s", weapon_types[player->weapon_type], armor_types[player->armor_type]);
+    print_message_formatted("%s AND %s", weapon_types[player->weapon_type], armor_types[player->armor_type]);
     if (player->lamp_flag)
-        print_message(" AND A LAMP");
+        print_message_formatted(" AND A LAMP");
     print_message("\n");
 
     // Print flares and gold
-    print_message("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n", player->flares, player->gold);
+    print_message_formatted("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n", player->flares, player->gold);
 
     // Print Runestaff status
     if (player->runestaff_flag)
-        print_message("AND THE RUNESTAFF\n");
+        print_message_formatted("AND THE RUNESTAFF\n");
 
     // Print turn count
-    print_message("\nAND IT TOOK YOU %d TURNS!\n", game->turn_count);
+    print_message_formatted("\nAND IT TOOK YOU %d TURNS!\n", game->turn_count);
 
     printStars();
 }
@@ -256,44 +256,44 @@ void handle_treasure(Player *player, GameState *game, int room_content)
     int treasure_index = room_content - TREASURE_START;
     const char* treasure_name = get_treasure_name(treasure_index);
 
-    print_message("\nYOU FOUND %s!\n\n", treasure_name);
+    print_message_formatted("\nYOU FOUND %s!\n\n", treasure_name);
     
     game->treasure[treasure_index] = 1;
     player->treasure_count++;
-    print_message("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
+    print_message_formatted("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
 
     // Apply special effects of treasures
     switch (treasure_index) {
         case 0: // Ruby Red
-        	print_message("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n\n");
+        	print_message_formatted("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n\n");
 	    break;
         case 1: // Norn Stone
-	    print_message("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n\n");
+	    print_message_formatted("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n\n");
     	break;
         case 2: // Pale Pearl
-	    print_message("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n\n");
+	    print_message_formatted("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n\n");
         	break;
         case 3: // Opal Eye
-	    print_message("THE OPAL EYE WILL CURE BLINDNESS.\n");
+	    print_message_formatted("THE OPAL EYE WILL CURE BLINDNESS.\n");
         	if (player->blindness_flag) {
 	            player->blindness_flag = 0;
-	            print_message("YOUR BLINDNESS IS CURED!\n");
+	            print_message_formatted("YOUR BLINDNESS IS CURED!\n");
         	}
         	print_message("\n");
 	    break;
         case 4: // Green Gem
-	    print_message("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n\n");
+	    print_message_formatted("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n\n");
         	break;
         case 5: // Blue Flame
-	    print_message("THE BLUE FLAME WILL DISSOLVE BOOKS.\n\n");
+	    print_message_formatted("THE BLUE FLAME WILL DISSOLVE BOOKS.\n\n");
         	if (player->stickybook_flag) {
 	        player->stickybook_flag = 0;
-	        print_message("THE STICKY BOOK DISSOLVES!\n\n");
+	        print_message_formatted("THE STICKY BOOK DISSOLVES!\n\n");
         	}
 	    break;
         case 6: // Palantir
         case 7: // Silmaril
-	    print_message("ITS BEAUTY IS BEYOND COMPARE.\n\n");
+	    print_message_formatted("ITS BEAUTY IS BEYOND COMPARE.\n\n");
         	break;
     }
 
