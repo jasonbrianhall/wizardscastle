@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
 #define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
@@ -491,9 +492,10 @@ char get_user_input_yn()
     }
 }
 
-
-void print_message(const char *message)
+void print_message(const char *format, ...)
 {
-	printf("%s", message);
+    va_list args;
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
 }
-
