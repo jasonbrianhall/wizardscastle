@@ -257,13 +257,10 @@ void use_lamp(Player *player, GameState *game)
     
     mark_room_discovered(game, x, y, player->level);
     int room_content = get_room_content(game, x, y, player->level);
-    char symbol = get_room_symbol(room_content);
+    char room_desc[9];
+    get_room_description(room_content, room_desc);
 
-    print_message("\nThe lamp reveals: ");
-    char room_str[4] = " ? ";
-    room_str[1] = symbol;
-    print_message(room_str);
-    print_message("\n");
+    print_message("\nThe lamp reveals: %s\n", room_desc);
 }
 
 void use_flare(Player *player, GameState *game)
@@ -283,14 +280,13 @@ void use_flare(Player *player, GameState *game)
             
             mark_room_discovered(game, x, y, player->level);
             int room_content = get_room_content(game, x, y, player->level);
-            char symbol = get_room_symbol(room_content);
+            char room_desc[9];
+            get_room_description(room_content, room_desc);
 
             if (dx == 0 && dy == 0) {
-                print_message("[@]");
+                print_message("[YOU]   ");
             } else {
-                char room_str[4] = " ? ";
-                room_str[1] = symbol;
-                print_message(room_str);
+                print_message(room_desc);
             }
         }
         print_message("\n");
