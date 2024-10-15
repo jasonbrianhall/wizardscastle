@@ -115,7 +115,7 @@ bool main_game_loop(Player *player, GameState *game)
         //print_status(player, game);
         
         int room_content = get_room_content(game, player->x, player->y, player->level);
-        if (room_content == 102) {  // The Entrance
+        if (room_content == ENTRANCE) {  // The Entrance
             char message[100];
             snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
             print_message(message);
@@ -132,7 +132,7 @@ bool main_game_loop(Player *player, GameState *game)
                 print_message(message);
                 set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
             }
-            else if (room_content==108)
+            else if (room_content==FLARES)
             {
                 int flares_found = random_number(5);  // Random amount between 1 and 5
 
@@ -142,17 +142,49 @@ bool main_game_loop(Player *player, GameState *game)
                 set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
            }
            // Monsters
-           else if (room_content>=113 && room_content <=124)
+           else if (room_content>=MONSTER_START && room_content <=MONSTER_END)
            {
                fight_monster(player, game);
+               if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
+               {
+                   player->intelligence=player->temp_intelligence;
+                   player->temp_intelligence=0;
+               }
+               if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
+               {
+                   player->dexterity=player->temp_dexterity;
+                   player->temp_dexterity=0;
+               }
+               if (player->strength>18)
+               {
+                   player->strength=18;
+               }
+
+
            }
            // Vendors
-           else if (room_content==125)
+           else if (room_content==VENDOR)
            {
                handle_vendor(player, game);
+               if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
+               {
+                   player->intelligence=player->temp_intelligence;
+                   player->temp_intelligence=0;
+               }
+               if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
+               {
+                   player->dexterity=player->temp_dexterity;
+                   player->temp_dexterity=0;
+               }
+               if (player->strength>18)
+               {
+                   player->strength=18;
+                   player->temp_strength=0;
+               }
+
            }
            // Treasure
-           else if (room_content>=126 && room_content<=133)
+           else if (room_content>=TREASURE_START && room_content<=TREASURE_END)
            {
                 handle_treasure(player, game, room_content); 
            }
@@ -170,14 +202,7 @@ bool main_game_loop(Player *player, GameState *game)
             //print_message(message);
             switch (user_command[0]) {
                 case '\0':
-                    int room_content = get_room_content(game, player->x, player->y, player->level);
-                    if (room_content == VENDOR) {
-                         handle_vendor(player, game);
-                    } else if (room_content >= MONSTER_START && room_content <= MONSTER_END) {
-                        fight_monster(player, game);        
-                    } else {
-                        print_message("\n\nPlease enter a command.\n\n");
-                    }
+                    print_message("\n\nPlease enter a command.\n\n");
                     break;
 
                 case 'N': case 'S': case 'E': case 'W':
