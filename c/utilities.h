@@ -34,7 +34,6 @@ void discover_adjacent_rooms(GameState *game, Player *player);
 void move_player(Player *player, GameState *game, char direction);
 void display_map(GameState *game, Player *player);
 
-
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
 #define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)

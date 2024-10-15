@@ -70,8 +70,9 @@ void fight_monster(Player *player, GameState *game)
                     } else if (random_number(20) + player->dexterity <= random_number(20) + (3 * player->blindness_flag)) {
                         print_message("\nYOU MISSED, TOO BAD!\n");
                     } else {
-                        printf("\nYOU HIT THE EVIL %s!\n", enemy_name);
-                        enemy_strength -= player->weapon_type;
+                        temp=calculate_damage(player, enemy_strength, enemy_dexterity);
+                        printf("\nYOU HIT THE EVIL %s AND DID %i DAMAGE!\n", enemy_name, temp);
+                        enemy_strength -= temp;
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
                             printf("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
                             player->weapon_type = 0;
@@ -295,7 +296,7 @@ void fight_monster(Player *player, GameState *game)
         else if (random_number(7) + random_number(7) + random_number(7) + 3 * player->blindness_flag >= player->dexterity) {
             printf("THE %s ATTACKS\n", enemy_name);
             print_message("\nOUCH! HE HIT YOU!\n");
-            int damage = (enemy_strength / 2) + 1;
+            int damage = calculate_damage_enemy(player, enemy_strength, enemy_dexterity, (room_content-MONSTER_START)/3 +1 );
             
             // Apply armor reduction
             if (player->armor_type != 0) {
@@ -686,3 +687,70 @@ int calculate_death_spell(int caster_int, int caster_str, int caster_dex,
         return 1; // Spell fails, enemy lives
     }
 }
+
+int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
+    // Base damage from weapon
+    int base_damage = player->weapon_type;
+    
+    // Player's offensive bonuses
+    int strength_bonus = player->strength / 3;  // Every 3 points of strength adds 1 to damage
+    int dexterity_bonus = player->dexterity / 4;  // Every 4 points of dexterity adds 1 to damage
+    
+    // Enemy's defensive bonuses
+    int enemy_strength_defense = enemy_strength / 4;  // Every 4 points of enemy strength reduces damage by 1
+    int enemy_dexterity_defense = enemy_dexterity / 5;  // Every 5 points of enemy dexterity reduces damage by 1
+    
+    // Calculate initial damage
+    int total_damage = base_damage + strength_bonus + dexterity_bonus;
+    
+    // Reduce damage based on enemy stats
+    total_damage -= (enemy_strength_defense + enemy_dexterity_defense);
+    
+    // Add a random factor
+    int random_factor = random_number(5) - 2;  // -2 to +2 random adjustment
+    total_damage += random_factor;
+    if (total_damage<=0)
+    {
+        random_factor=random_number(2)-1;
+        total_damage=random_factor;
+    }
+
+    return total_damage;
+}
+
+int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexterity, int base_damage) {
+    
+    // Enemy's offensive bonuses
+    int strength_bonus = enemy_strength / 9;  // Every 9 points of strength adds 1 to damage
+    int dexterity_bonus = enemy_dexterity / 5;  // Every 5 points of dexterity adds 1 to damage
+    
+    // Player's defensive bonuses
+    int player_strength_defense = player->strength / 4;  // Every 4 points of player strength reduces damage by 1
+    int player_dexterity_defense = player->dexterity / 5;  // Every 5 points of player dexterity reduces damage by 1
+    
+    // Calculate initial damage
+    int total_damage = base_damage + strength_bonus + dexterity_bonus;
+    
+    // Reduce damage based on player stats
+    total_damage -= (player_strength_defense + player_dexterity_defense);
+    
+    // Add a random factor
+    int random_factor = random_number(5) - 2;  // -2 to +2 random adjustment
+    total_damage += random_factor;
+    
+    // Apply armor reduction if player has armor
+    if (player->armor_type != 0) {
+        total_damage -= player->armor_type;
+    }
+    if (total_damage<0)
+    {
+        random_factor=random_number(2)-1;
+        total_damage=random_factor;
+        total_damage=0;
+    }
+    
+    // Damage can be zero or negative (will be treated as zero)
+    return total_damage;
+}
+
+
