@@ -32,6 +32,10 @@ void fight_monster(Player *player, GameState *game)
         enemy_dexterity = room_content - MONSTER_START + 8;
         enemy_intelligence = room_content - MONSTER_START + 8;
     }
+    if (enemy_strength<=10)
+    {
+        enemy_strength=10;
+    }
 
     firststrike=calculate_first_strike(player->dexterity, player->intelligence, player->strength, enemy_dexterity, enemy_intelligence, enemy_strength);
     
@@ -298,19 +302,11 @@ void fight_monster(Player *player, GameState *game)
             print_message("\nOUCH! HE HIT YOU!\n");
             int damage = calculate_damage_enemy(player, enemy_strength, enemy_dexterity, (room_content-MONSTER_START)/3 +1 );
             
-            // Apply armor reduction
-            if (player->armor_type != 0) {
-                damage -= player->armor_type;
-                player->armor_points -= player->armor_type;
-                if (damage < 0) {
-                    player->armor_points -= damage;  // Absorb excess damage
-                    damage = 0;
-                }
-                if (player->armor_points < 0) {
-                    player->armor_points = 0;
-                    player->armor_type = 0;
-                    print_message("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
-                }
+            player->armor_points-=damage;
+            if (player->armor_points <= 0) {
+                player->armor_points = 0;
+                player->armor_type = 0;
+                print_message("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
             }
             
             player->strength -= damage;
@@ -694,11 +690,11 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
     
     // Player's offensive bonuses
     int strength_bonus = player->strength / 9;  // Every 9 points of strength adds 1 to damage
-    int dexterity_bonus = player->dexterity / 4;  // Every 4 points of dexterity adds 1 to damage
+    int dexterity_bonus = player->dexterity / 6;  // Every 6 points of dexterity adds 1 to damage
     
     // Enemy's defensive bonuses
     int enemy_strength_defense = enemy_strength / 9;  // Every 9 points of enemy strength reduces damage by 1
-    int enemy_dexterity_defense = enemy_dexterity / 5;  // Every 5 points of enemy dexterity reduces damage by 1
+    int enemy_dexterity_defense = enemy_dexterity / 6;  // Every 5 points of enemy dexterity reduces damage by 1
     
     // Calculate initial damage
     int total_damage = base_damage + strength_bonus + dexterity_bonus;
@@ -726,29 +722,28 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
 }
 
 int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexterity, int base_damage) {
-    
+    printf("BASE DAMAGE %i\n", base_damage);
     // Enemy's offensive bonuses
     int strength_bonus = enemy_strength / 9;  // Every 9 points of strength adds 1 to damage
-    int dexterity_bonus = enemy_dexterity / 5;  // Every 5 points of dexterity adds 1 to damage
+    int dexterity_bonus = enemy_dexterity / 6;  // Every 5 points of dexterity adds 1 to damage
     
     // Player's defensive bonuses
     int player_strength_defense = player->strength / 9;  // Every 4 points of player strength reduces damage by 1
-    int player_dexterity_defense = player->dexterity / 5;  // Every 5 points of player dexterity reduces damage by 1
+    int player_dexterity_defense = player->dexterity / 6;  // Every 5 points of player dexterity reduces damage by 1
     
     // Calculate initial damage
     int total_damage = base_damage + strength_bonus + dexterity_bonus;
-    
     // Reduce damage based on player stats
     total_damage -= (player_strength_defense + player_dexterity_defense);
-    
     // Add a random factor
     int random_factor = random_number(5) - 3;  // -2 to +2 random adjustment
     total_damage += random_factor;
-    
+
     // Apply armor reduction if player has armor
     if (player->armor_type != 0) {
         total_damage -= player->armor_type;
     }
+    
     if (total_damage<=0)
     {
         random_factor=random_number(3);
@@ -763,6 +758,7 @@ int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexteri
     }
     
     // Damage can be zero or negative (will be treated as zero)
+    printf("Returned value %i\n", total_damage);
     return total_damage;
 }
 
