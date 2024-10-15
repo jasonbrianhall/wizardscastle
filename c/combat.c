@@ -711,8 +711,15 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
     total_damage += random_factor;
     if (total_damage<=0)
     {
-        random_factor=random_number(2)-1;
-        total_damage=random_factor;
+        random_factor=random_number(3);
+        if (random_factor==1)
+        {
+           total_damage=random_factor;
+        }
+        else
+        {
+           total_damage=0;
+        }
     }
 
     return total_damage;
@@ -742,11 +749,17 @@ int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexteri
     if (player->armor_type != 0) {
         total_damage -= player->armor_type;
     }
-    if (total_damage<0)
+    if (total_damage<=0)
     {
-        random_factor=random_number(2)-1;
-        total_damage=random_factor;
-        total_damage=0;
+        random_factor=random_number(3);
+        if (random_factor==1)
+        {
+           total_damage=random_factor;
+        }
+        else
+        {
+           total_damage=0;
+        }
     }
     
     // Damage can be zero or negative (will be treated as zero)
