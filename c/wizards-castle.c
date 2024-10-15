@@ -23,13 +23,18 @@ void print_introduction(void)
         print_message("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
 	printStars();
 	print_message("\n");
-	print_message("MANY CYCLES AGO, IN THE KINGDOM OF N'DIC, THE GNOMIC\n");
-	print_message("WIZARD ZOT FORGED HIS GREAT *ORB OF POWER*. HE SOON\n");
-	print_message("VANISHED, LEAVING BEHIND HIS VAST SUBTERRANEAN CASTLE\n");
-	print_message("FILLED WITH ESURIENT MONSTERS, FABULOUS TREASURES, AND\n");
-	print_message("THE INCREDIBLE *ORB OF ZOT*. FROM THAT TIME HENCE, MANY\n");
-	print_message("A BOLD YOUTH HAS VENTURED INTO THE WIZARD'S CASTLE. AS\n");
-	print_message("OF NOW, *NONE* HAS EVER EMERGED VICTORIOUSLY! BEWARE!!\n\n");
+	print_message_formatted("MANY CYCLES AGO, IN THE KINGDOM OF N'DIC, THE GNOMIC\n"
+	                        "WIZARD ");
+	print_message_formatted("ZOT FORGED HIS GREAT ");
+	print_message(          "*ORB OF POWER*. ");
+	print_message_formatted("HE SOON\n"
+	                        "VANISHED, LEAVING BEHIND HIS VAST SUBTERRANEAN CASTLE\n"
+	                        "FILLED WITH ESURIENT MONSTERS, FABULOUS TREASURES, AND\n"
+                                "THE INCREDIBLE "); 
+        print_message(          "*ORB OF ZOT*.");
+        print_message_formatted(" FROM THAT TIME HENCE, MANY\n"
+	                        "A BOLD YOUTH HAS VENTURED INTO THE WIZARD'S CASTLE. AS\n"
+	                        "OF NOW, *NONE* HAS EVER EMERGED VICTORIOUSLY! BEWARE!!\n\n");
 
 }
 
@@ -500,21 +505,12 @@ void print_message_formatted(const char *format, ...) {
     char buffer[1024];  // Assuming a maximum length, adjust as needed
     vsnprintf(buffer, sizeof(buffer), format, args);
     
-    // Strip whitespace
-    char* stripped = strip(buffer);
-    if (stripped == NULL) {
-        va_end(args);
-        return;  // Memory allocation failed
-    }
-    
     // Capitalize sentences
-    capitalize_sentences(stripped);
+    capitalize_sentences(buffer);
     
     // Print the result
-    printf("%s", stripped);
+    printf("%s", buffer);
     
-    // Clean up
-    free(stripped);
     va_end(args);
 }
 

@@ -260,8 +260,10 @@ void use_lamp(Player *player, GameState *game)
     char room_desc[9];
     get_room_description(room_content, room_desc);
 
-    print_message("\nThe lamp reveals: %s\n", room_desc);
+    print_message("\nThe lamp reveals: ");
+    print_message_formatted("%s\n", room_desc);
 }
+
 
 void use_flare(Player *player, GameState *game)
 {
