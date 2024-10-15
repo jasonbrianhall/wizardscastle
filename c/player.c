@@ -113,7 +113,6 @@ void choose_sex(Player *player)
 void allocate_attributes(Player *player)
 {
     int other_points;
-    char user_input[10];
     int points_to_add;
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
 
@@ -133,8 +132,7 @@ void allocate_attributes(Player *player)
     // Allocate points to Strength
     while (other_points > 0) {
         print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
-        fgets(user_input, sizeof(user_input), stdin);
-        points_to_add = atoi(user_input);
+        points_to_add = get_user_input_number();
 
         if (points_to_add >= 0 && points_to_add <= other_points) {
             player->strength += points_to_add;
@@ -155,9 +153,7 @@ void allocate_attributes(Player *player)
     // Allocate points to Intelligence
     while (other_points > 0) {
         print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
-        fgets(user_input, sizeof(user_input), stdin);
-        points_to_add = atoi(user_input);
-
+        points_to_add = get_user_input_number();
         if (points_to_add >= 0 && points_to_add <= other_points) {
             player->intelligence += points_to_add;
             other_points -= points_to_add;
@@ -187,7 +183,7 @@ void allocate_attributes(Player *player)
 // Item and treasure functions
 void buy_equipment(Player *player)
 {
-    char user_input[10];
+    char user_input;
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
     const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
@@ -204,11 +200,8 @@ void buy_equipment(Player *player)
     print_message(          "(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
     
     do {
-        print_message_formatted("YOUR CHOICE:  ");
-        fgets(user_input, sizeof(user_input), stdin);
-        user_input[0] = toupper(user_input[0]);
-
-        switch(user_input[0]) {
+        user_input = get_user_input();
+        switch(user_input) {
             case 'P': player->armor_type = 3; cost = 30; break;
             case 'C': player->armor_type = 2; cost = 20; break;
             case 'L': player->armor_type = 1; cost = 10; break;
@@ -217,7 +210,6 @@ void buy_equipment(Player *player)
                 print_message_formatted("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
                 continue;
         }
-        break;
     } while (1);
 
     player->gold -= cost;
@@ -231,10 +223,9 @@ void buy_equipment(Player *player)
     
     do {
         print_message_formatted("YOUR CHOICE:  ");
-        fgets(user_input, sizeof(user_input), stdin);
-        user_input[0] = toupper(user_input[0]);
+        user_input = get_user_input();
 
-        switch(user_input[0]) {
+        switch(user_input) {
             case 'S': 
                 if (player->gold < 30) {
                     print_message_formatted("** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
@@ -253,7 +244,6 @@ void buy_equipment(Player *player)
                 print_message("** Try again, your choice must be S, M, D, or N.\n\n");
                 continue;
         }
-        break;
     } while (1);
 
     player->gold -= cost;
@@ -266,7 +256,7 @@ void buy_equipment(Player *player)
 
 void buy_lamp_and_flares(Player *player)
 {
-    char user_input_yn, user_input[10];
+    char user_input_yn;
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
 
     // Try to buy a lamp
@@ -294,24 +284,15 @@ void buy_lamp_and_flares(Player *player)
         print_message_formatted("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
         
         int flares_to_buy;
-        char *endptr;
         do {
-            fgets(user_input, sizeof(user_input), stdin);
-            user_input[strcspn(user_input, "\n")] = 0; // Remove newline
+            flares_to_buy=get_user_input_number();
 
             // Check if the input is "0" to explicitly buy no flares
-            if (strcmp(user_input, "0") == 0) {
+            if (flares_to_buy == 0) {
                 print_message_formatted("YOU CHOSE NOT TO BUY ANY FLARES.\n");
                 return;
-            }
-
-            // Convert input to integer and check for errors
-            flares_to_buy = strtol(user_input, &endptr, 10);
-
-            if (*endptr != '\0') {
-                print_message_formatted("** INVALID INPUT. PLEASE ENTER A NUMBER OR 0 TO BUY NO FLARES.\n");
             } else if (flares_to_buy < 0) {
-                print_message_formatted("** PLEASE ENTER A NON-NEGATIVE NUMBER.\n");
+                print_message_formatted("** PLEASE ENTER A POSITIVE NUMBER.\n");
             } else if (flares_to_buy > player->gold) {
                 print_message_formatted("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
             } else {
