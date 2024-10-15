@@ -56,14 +56,14 @@ bool main_game_loop(Player *player, GameState *game)
             // Lethargy curse (similar to line 1960 in BASIC)
             if (!game->treasure[0] && random_number(100) <= 5) {  // 5% chance if no Ruby Red
                 game->turn_count++;
-                printf("\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
+                print_message("\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
             }
 
             // Leech curse (similar to line 1965 in BASIC)
             if (!game->treasure[2] && random_number(100) <= 5) {  // 5% chance if no Pale Pearl
                 int gold_lost = random_number(5);
                 player->gold = (player->gold > gold_lost) ? player->gold - gold_lost : 0;
-                printf("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", gold_lost);
+                print_message("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", gold_lost);
             }
 
             // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
@@ -72,8 +72,8 @@ bool main_game_loop(Player *player, GameState *game)
                 player->x = random_number(8);
                 player->y = random_number(8);
                 player->level = random_number(8);
-                printf("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
-                printf("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n", player->x, player->y, player->level);
+                print_message("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
+                print_message("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n", player->x, player->y, player->level);
 
                 // If player was in an empty room, mark old room as unexplored
                 if (get_room_content(game, old_x, old_y, old_z) == EMPTY_ROOM) {
@@ -396,16 +396,16 @@ int get_user_input_number()
     char input[100];
 
     while (1) {
-        printf("Enter a number: ");
+        print_message("Enter a number: ");
         if (fgets(input, sizeof(input), stdin) == NULL) {
-            printf("Error reading input. Please try again.\n");
+            print_message("Error reading input. Please try again.\n");
             continue;
         }
 
         if (sscanf(input, "%d", &number) == 1) {
             return number;
         } else {
-            printf("Invalid input. Please enter a valid integer.\n");
+            print_message("Invalid input. Please enter a valid integer.\n");
         }
     }
 }

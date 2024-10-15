@@ -47,7 +47,7 @@ void fight_monster(Player *player, GameState *game)
     while (1) {
         if (firststrike==1)
         {
-            printf("\nYOU'RE FACING %s!\n\n", enemy_name);
+            print_message("\nYOU'RE FACING %s!\n\n", enemy_name);
             print_message("YOU MAY (A)TTACK OR (R)ETREAT.\n");
             if (can_bribe) {
                 print_message("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
@@ -56,10 +56,10 @@ void fight_monster(Player *player, GameState *game)
                 print_message("YOU CAN ALSO (C)AST A SPELL.\n");
             }
             print_message("\n");
-            printf("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
+            print_message("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
                    player->strength, player->dexterity, player->intelligence);
 
-            printf("THE ENEMIES STRENGTH IS %d, DEXTERITY IS %d, AND INTELLIGENCE IS %d.\n\n", 
+            print_message("THE ENEMIES STRENGTH IS %d, DEXTERITY IS %d, AND INTELLIGENCE IS %d.\n\n", 
                    enemy_strength, enemy_dexterity, enemy_intelligence);
 
 
@@ -68,17 +68,17 @@ void fight_monster(Player *player, GameState *game)
             switch (choice) {
                 case 'A':
                     if (player->weapon_type == 0) {
-                        printf("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
+                        print_message("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
                     } else if (player->stickybook_flag) {
                         print_message("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
                     } else if (random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity + (3 * player->blindness_flag)) {
                         print_message("\nYOU MISSED, TOO BAD!\n");
                     } else {
                         temp=calculate_damage(player, enemy_strength, enemy_dexterity);
-                        printf("\nYOU HIT THE EVIL %s AND DID %i DAMAGE!\n", enemy_name, temp);
+                        print_message("\nYOU HIT THE EVIL %s AND DID %i DAMAGE!\n", enemy_name, temp);
                         enemy_strength -= temp;
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
-                            printf("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
+                            print_message("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
                             player->weapon_type = 0;
                         }
                         if (enemy_strength <= 0) {
@@ -140,12 +140,12 @@ void fight_monster(Player *player, GameState *game)
             if (player->web_count == 0) {
                 print_message("\nTHE WEB JUST BROKE!\n");
             } else {
-                printf("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
+                print_message("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
                 continue;  // Skip the enemy's attack
             }
         }
         else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
-            printf("\nTHE %s ATTACKS!\n", enemy_name);
+            print_message("\nTHE %s ATTACKS!\n", enemy_name);
             dragon_fireball_attack(player, game);
             if (game->game_over) {
                 return;
@@ -173,21 +173,21 @@ void fight_monster(Player *player, GameState *game)
             {
                  case 1:
                      temp=random_number(max_increase);
-                     printf("THE %s CASTS HEAL AND GAINED %i STRENGTH POINTS\n", enemy_name, temp);
+                     print_message("THE %s CASTS HEAL AND GAINED %i STRENGTH POINTS\n", enemy_name, temp);
                      enemy_strength+=temp;
                      break;                         
                  case 2:
                      temp=random_number(max_increase);
-                     printf("THE %s CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", enemy_name, temp);
+                     print_message("THE %s CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", enemy_name, temp);
                      enemy_dexterity+=temp;
                      break;                         
                  case 3:
                      temp=random_number(max_increase);
-                     printf("THE %s CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", enemy_name, temp);
+                     print_message("THE %s CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", enemy_name, temp);
                      enemy_intelligence+=temp;
                      break;                         
                  case 4:
-                     printf("THE %s CASTS SILENCE; ", enemy_name);
+                     print_message("THE %s CASTS SILENCE; ", enemy_name);
                      base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
 
                      // Add a random factor (-10 to +10)
@@ -202,15 +202,15 @@ void fight_monster(Player *player, GameState *game)
 
                     // Determine if the spell succeeds
                     if (rand() % 100 < success_chance) {
-                         printf("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
+                         print_message("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
                          muted=1;
                     } else {
-                        printf("THE SPELL FAILED.  YOU SUCCESSFULLY RESISTED THE SPELL\n");
+                        print_message("THE SPELL FAILED.  YOU SUCCESSFULLY RESISTED THE SPELL\n");
                         muted=0; // Spell fails, can still cast
                     }
                     break;
                  case 5:
-                     printf("THE %s CASTS WEAKNESS!\n", enemy_name);
+                     print_message("THE %s CASTS WEAKNESS!\n", enemy_name);
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -223,22 +223,22 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         printf("YOU SUCCESSFULLY RESIST THE WEAKNESS SPELL!\n");
+                         print_message("YOU SUCCESSFULLY RESIST THE WEAKNESS SPELL!\n");
                      } else {
                          temp = random_number(max_increase);
-                         printf("THE SPELL HITS! YOU LOSE %i STRENGTH POINTS\n", temp);
+                         print_message("THE SPELL HITS! YOU LOSE %i STRENGTH POINTS\n", temp);
                          player->strength -= temp;
         
                          if (player->strength <= 0) {
                              player->strength = 0;
-                             printf("YOUR STRENGTH HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             print_message("YOUR STRENGTH HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
                              game->game_over = 1;
                              return;
                          }
                      }
                      break;   
                  case 6:
-                    printf("THE %s CASTS CLUMSY!\n", enemy_name);
+                    print_message("THE %s CASTS CLUMSY!\n", enemy_name);
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -251,22 +251,22 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         printf("YOU SUCCESSFULLY RESIST THE CLUMSY SPELL!\n");
+                         print_message("YOU SUCCESSFULLY RESIST THE CLUMSY SPELL!\n");
                      } else {
                          temp = random_number(max_increase);
-                         printf("THE SPELL HITS! YOU LOSE %i DEXTERITY POINTS\n", temp);
+                         print_message("THE SPELL HITS! YOU LOSE %i DEXTERITY POINTS\n", temp);
                          player->dexterity -= temp;
         
                          if (player->dexterity <= 0) {
                              player->dexterity = 0;
-                             printf("YOUR DEXTERITY HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             print_message("YOUR DEXTERITY HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
                              game->game_over = 1;
                              return;
                          }
                      }
                      break;
                  case 7:
-                    printf("THE %s CASTS MIND FOG!\n", enemy_name);
+                    print_message("THE %s CASTS MIND FOG!\n", enemy_name);
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -279,15 +279,15 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         printf("YOU SUCCESSFULLY RESIST THE MING FOG SPELL!\n");
+                         print_message("YOU SUCCESSFULLY RESIST THE MING FOG SPELL!\n");
                      } else {
                          temp = random_number(max_increase);
-                         printf("THE SPELL HITS! YOU LOSE %i INTELLIGENCE POINTS\n", temp);
+                         print_message("THE SPELL HITS! YOU LOSE %i INTELLIGENCE POINTS\n", temp);
                          player->intelligence -= temp;
         
                          if (player->intelligence <= 0) {
                              player->intelligence = 0;
-                             printf("YOUR INTELLIGENCE HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             print_message("YOUR INTELLIGENCE HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
                              game->game_over = 1;
                              return;
                          }
@@ -298,7 +298,7 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (enemy_attack_hits(player, enemy_dexterity)) {
-            printf("THE %s ATTACKS\n", enemy_name);
+            print_message("THE %s ATTACKS\n", enemy_name);
             print_message("\nOUCH! HE HIT YOU!\n");
             int damage = calculate_damage_enemy(player, enemy_strength, enemy_dexterity, (room_content-MONSTER_START)/3 +1 );
             
@@ -310,7 +310,7 @@ void fight_monster(Player *player, GameState *game)
             }
             
             player->strength -= damage;
-            printf("YOU TAKE %d DAMAGE!\n", damage);
+            print_message("YOU TAKE %d DAMAGE!\n", damage);
             
             if (player->strength <= 0) {
                 print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
@@ -318,7 +318,7 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         } else {
-            printf("THE %s ATTACKS\n", enemy_name);
+            print_message("THE %s ATTACKS\n", enemy_name);
             print_message("\nWHAT LUCK, HE MISSED YOU!\n");
         }
     }
@@ -326,10 +326,10 @@ void fight_monster(Player *player, GameState *game)
 
 void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name)
 {
-    printf("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
+    print_message("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
     
     if (random_number(5) == 1) {  // 20% chance of eating
-        printf("\nYOU SPEND AN HOUR EATING %s%s.\n", enemy_name, get_random_body_part());
+        print_message("\nYOU SPEND AN HOUR EATING %s%s.\n", enemy_name, get_random_body_part());
     }
 
     if (is_vendor) {
@@ -361,7 +361,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     }
 
     int gold_found = random_number(1000);
-    printf("\nYOU NOW GET HIS HOARD OF %d GP'S!\n", gold_found);
+    print_message("\nYOU NOW GET HIS HOARD OF %d GP'S!\n", gold_found);
     player->gold += gold_found;
 
     // Clear the room
@@ -380,7 +380,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
         treasure_index = random_number(8) - 1;
     }
 
-    printf("\nI WANT %s. WILL YOU GIVE IT TO ME? ", get_treasure_name(treasure_index));
+    print_message("\nI WANT %s. WILL YOU GIVE IT TO ME? ", get_treasure_name(treasure_index));
     char choice = get_user_input_yn();
 
     if (choice == 'Y') {
@@ -424,7 +424,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                     return 1;
                 }
                 player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
-                printf("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
+                print_message("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
                 return 0;
             case 'F':
                 player->strength--;
@@ -434,7 +434,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                     return 1;
                 }
                 int damage = random_number(7) + random_number(7);
-                printf("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
+                print_message("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
                 *enemy_strength -= damage;
                 if (*enemy_strength <= 0) {
                     handle_combat_victory(player, game, 0, enemy_name);
@@ -499,7 +499,7 @@ void dragon_fireball_attack(Player *player, GameState *game) {
     }
     
     int damage = random_number(10) + 5;  // 6 to 15 damage
-    printf("The fireball hits you for %d damage!\n", damage);
+    print_message("The fireball hits you for %d damage!\n", damage);
     
     // Apply armor reduction
     if (player->armor_type != 0) {
@@ -512,7 +512,7 @@ void dragon_fireball_attack(Player *player, GameState *game) {
             damage = 0;
         }
         
-        printf("Your armor absorbs %d damage.\n", armor_protection);
+        print_message("Your armor absorbs %d damage.\n", armor_protection);
         
         if (player->armor_points <= 0) {
             player->armor_points = 0;
@@ -522,7 +522,7 @@ void dragon_fireball_attack(Player *player, GameState *game) {
     }
     
     player->strength -= damage;
-    printf("You take %d final damage from the fireball!\n", damage);
+    print_message("You take %d final damage from the fireball!\n", damage);
     
     if (player->strength <= 0) {
         print_message("\nYOU HAVE BEEN INCINERATED BY THE DRAGON'S FIRE!  GOOD LUCK ADVENTURER.\n");
@@ -541,7 +541,7 @@ void balrog_flame_whip_attack(Player *player, GameState *game) {
     }
     
     int damage = random_number(8) + 4;  // 5 to 12 damage
-    printf("The flame whip strikes you for %d damage!\n", damage);
+    print_message("The flame whip strikes you for %d damage!\n", damage);
     
     // Apply armor reduction
     if (player->armor_type != 0) {
@@ -554,7 +554,7 @@ void balrog_flame_whip_attack(Player *player, GameState *game) {
             damage = 0;
         }
         
-        printf("Your armor absorbs %d damage.\n", armor_protection);
+        print_message("Your armor absorbs %d damage.\n", armor_protection);
         
         if (player->armor_points <= 0) {
             player->armor_points = 0;
@@ -564,7 +564,7 @@ void balrog_flame_whip_attack(Player *player, GameState *game) {
     }
     
     player->strength -= damage;
-    printf("You take %d final damage from the flame whip!\n", damage);
+    print_message("You take %d final damage from the flame whip!\n", damage);
     
     if (player->strength <= 0) {
         print_message("\nYOU HAVE BEEN INCINERATED BY THE BALROG'S FLAME WHIP!\n");
@@ -595,7 +595,7 @@ int cast_heal_spell(Player *player) {
     if (player->intelligence > 9) {
         int heal_amount = random_number(5); // 1-5 Points
         player->strength += heal_amount;
-        printf("YOUR HEALTH INCREASED BY %i POINTS.\n\n", heal_amount);
+        print_message("YOUR HEALTH INCREASED BY %i POINTS.\n\n", heal_amount);
         return 1;
     }
     return 0;
@@ -609,7 +609,7 @@ int cast_bright_spell(Player *player) {
             player->temp_intelligence=player->intelligence;
         }
         player->intelligence += bright_amount;
-        printf("YOUR INTELLIGENCE TEMPORARILY INCREASED BY %i POINTS.\n\n", bright_amount);
+        print_message("YOUR INTELLIGENCE TEMPORARILY INCREASED BY %i POINTS.\n\n", bright_amount);
         return 1;
     }
     return 0;
@@ -623,7 +623,7 @@ int cast_haste_spell(Player *player) {
             player->temp_dexterity=player->dexterity;
         }
         player->dexterity += haste_amount;
-        printf("YOUR DEXTERITY TEMPORARILY INCREASED BY %i POINTS.\n\n", haste_amount);
+        print_message("YOUR DEXTERITY TEMPORARILY INCREASED BY %i POINTS.\n\n", haste_amount);
         return 1;
     }
     return 0;
@@ -722,7 +722,7 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
 }
 
 int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexterity, int base_damage) {
-    printf("BASE DAMAGE %i\n", base_damage);
+    print_message("BASE DAMAGE %i\n", base_damage);
     // Enemy's offensive bonuses
     int strength_bonus = enemy_strength / 9;  // Every 9 points of strength adds 1 to damage
     int dexterity_bonus = enemy_dexterity / 6;  // Every 5 points of dexterity adds 1 to damage
@@ -758,7 +758,7 @@ int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexteri
     }
     
     // Damage can be zero or negative (will be treated as zero)
-    printf("Returned value %i\n", total_damage);
+    print_message("Returned value %i\n", total_damage);
     return total_damage;
 }
 

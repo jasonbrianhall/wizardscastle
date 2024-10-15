@@ -307,7 +307,7 @@ void open_chest(Player *player, GameState *game)
             print_message("KABOOM! IT EXPLODES!!\n");
             int damage = random_number(6);
             player->strength -= damage;
-            printf("You take %d damage.\n", damage);
+            print_message("You take %d damage.\n", damage);
             if (player->strength <= 0) {
                 print_message("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
                 game->game_over = 1;
@@ -318,7 +318,7 @@ void open_chest(Player *player, GameState *game)
         case 4:
             {
                 int gold = random_number(1000);
-                printf("find %d gold pieces!\n", gold);
+                print_message("find %d gold pieces!\n", gold);
                 player->gold += gold;
             }
             break;
@@ -386,12 +386,12 @@ void drink_from_pool(Player *player, GameState *game)
                     new_race = random_number(4);
                 } while (new_race == player->race);
                 player->race = new_race;
-                printf("become a %s.\n", get_race_name(player->race));
+                print_message("become a %s.\n", get_race_name(player->race));
             }
             break;
         case 8:
             player->sex = 1 - player->sex;  // Toggle between 0 and 1
-            printf("turn into a %s %s!\n", 
+            print_message("turn into a %s %s!\n", 
                    player->sex ? "MALE" : "FEMALE", 
                    get_race_name(player->race));
             break;
@@ -436,7 +436,7 @@ void teleport(Player *player, GameState *game)
     player->y = new_x;
     player->level = new_level;
 
-    printf("\nYou have teleported to (%d, %d) on level %d.\n", player->y, player->x, player->level);
+    print_message("\nYou have teleported to (%d, %d) on level %d.\n", player->y, player->x, player->level);
 
     // Check if the player teleported to the Orb of Zot
     if (player->x == game->orb_location[0] && 
@@ -473,11 +473,11 @@ void gaze_into_orb(Player *player, GameState *game)
             }
             break;
         case 2:
-            printf("yourself drinking from a pool and becoming %s!\n", 
+            print_message("yourself drinking from a pool and becoming %s!\n", 
                    get_monster_name(MONSTER_START + random_number(12) - 1));
             break;
         case 3:
-            printf("%s gazing back at you!\n", 
+            print_message("%s gazing back at you!\n", 
                    get_monster_name(MONSTER_START + random_number(12) - 1));
             break;
         case 4:
@@ -488,7 +488,7 @@ void gaze_into_orb(Player *player, GameState *game)
                 int content = get_room_content(game, x, y, z);
                 char room_desc[100];  // Adjust size as needed
                 get_room_description(content, room_desc);
-                printf("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
+                print_message("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
             }
             break;
         case 5:
@@ -503,7 +503,7 @@ void gaze_into_orb(Player *player, GameState *game)
                     y = random_number(8);
                     z = random_number(8);
                 }
-                printf("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
+                print_message("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
             }
             break;
         case 6:
@@ -529,7 +529,7 @@ void open_book(Player *player, GameState *game)
             print_message("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
             break;
         case 3:
-            printf("IT'S AN OLD COPY OF PLAY%s!\n", get_random_species());
+            print_message("IT'S AN OLD COPY OF PLAY%s!\n", get_random_species());
             break;
         case 4:
             print_message("IT'S A MANUAL OF DEXTERITY!\n");

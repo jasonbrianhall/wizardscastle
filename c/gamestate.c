@@ -34,7 +34,7 @@ void end_game(Player *player, GameState *game)
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
 
     if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
-        printf("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n", race_names[player->race - 1]);
+        print_message("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n", race_names[player->race - 1]);
         
         if (player->strength <= 0)
             print_message("YOU DIED DUE TO LACK OF STRENGTH.\n\n");
@@ -60,25 +60,25 @@ void end_game(Player *player, GameState *game)
     // List treasures
     for (int i = 0; i < TREASURE_COUNT; i++) {
         if (game->treasure[i]) {
-            printf("%s\n", get_treasure_name(i));
+            print_message("%s\n", get_treasure_name(i));
         }
     }
 
     // Print equipment
-    printf("%s AND %s", weapon_types[player->weapon_type], armor_types[player->armor_type]);
+    print_message("%s AND %s", weapon_types[player->weapon_type], armor_types[player->armor_type]);
     if (player->lamp_flag)
         print_message(" AND A LAMP");
     print_message("\n");
 
     // Print flares and gold
-    printf("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n", player->flares, player->gold);
+    print_message("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n", player->flares, player->gold);
 
     // Print Runestaff status
     if (player->runestaff_flag)
         print_message("AND THE RUNESTAFF\n");
 
     // Print turn count
-    printf("\nAND IT TOOK YOU %d TURNS!\n", game->turn_count);
+    print_message("\nAND IT TOOK YOU %d TURNS!\n", game->turn_count);
 
     printStars();
 }
@@ -218,7 +218,7 @@ int get_room_content(GameState *game, int x, int y, int level)
     if (index >= 0 && index < MAP_SIZE) {
         return game->location_map[index];
     }
-    printf("Invalid Room %i\n", index);
+    print_message("Invalid Room %i\n", index);
     return -1;  // Invalid room
 }
 
@@ -256,11 +256,11 @@ void handle_treasure(Player *player, GameState *game, int room_content)
     int treasure_index = room_content - TREASURE_START;
     const char* treasure_name = get_treasure_name(treasure_index);
 
-    printf("\nYOU FOUND %s!\n\n", treasure_name);
+    print_message("\nYOU FOUND %s!\n\n", treasure_name);
     
     game->treasure[treasure_index] = 1;
     player->treasure_count++;
-    printf("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
+    print_message("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
 
     // Apply special effects of treasures
     switch (treasure_index) {

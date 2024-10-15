@@ -141,10 +141,10 @@ void allocate_attributes(Player *player)
         other_points = 8;
     }
 
-    printf("OK, %s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n", race_names[player->race - 1]);
-    printf("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
+    print_message("OK, %s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n", race_names[player->race - 1]);
+    print_message("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
            player->strength, player->intelligence, player->dexterity);
-    printf("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n", other_points);
+    print_message("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n", other_points);
 
     // Allocate points to Strength
     while (other_points > 0) {
@@ -157,7 +157,7 @@ void allocate_attributes(Player *player)
             other_points -= points_to_add;
             break;
         } else {
-            printf("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
+            print_message("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
         }
     }
 
@@ -172,18 +172,18 @@ void allocate_attributes(Player *player)
             other_points -= points_to_add;
             break;
         } else {
-            printf("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
+            print_message("** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n", other_points);
         }
     }
 
     // Allocate remaining points to Dexterity
     if (other_points > 0) {
-        printf("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n", other_points);
+        print_message("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n", other_points);
         player->dexterity += other_points;
     }
 
     print_message("\nYOUR ATTRIBUTES ARE NOW:\n");
-    printf("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
+    print_message("STRENGTH = %d    INTELLIGENCE = %d    DEXTERITY = %d\n", 
            player->strength, player->intelligence, player->dexterity);
 }
 
@@ -201,7 +201,7 @@ void buy_equipment(Player *player)
     print_message("\nOK, ");
     print_message(race_names[player->race - 1]);
 
-    printf(", YOU HAVE %d GOLD PIECES (GP'S).\n\n", player->gold);
+    print_message(", YOU HAVE %d GOLD PIECES (GP'S).\n\n", player->gold);
     
     print_message("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
     print_message("PLATE<30> CHAINMAIL<20> LEATHER<10> NOTHING<0>\n\n");
@@ -217,7 +217,7 @@ void buy_equipment(Player *player)
             case 'L': player->armor_type = 1; cost = 10; break;
             case 'N': player->armor_type = 0; cost = 0; break;
             default:
-                printf("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
+                print_message("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
                 continue;
         }
         break;
@@ -261,9 +261,9 @@ void buy_equipment(Player *player)
 
     player->gold -= cost;
 
-    printf("\nYOU NOW HAVE %s ARMOR AND A %s.\n", 
+    print_message("\nYOU NOW HAVE %s ARMOR AND A %s.\n", 
            armor_types[player->armor_type], weapon_types[player->weapon_type]);
-    printf("YOU HAVE %d GOLD PIECES LEFT.\n", player->gold);
+    print_message("YOU HAVE %d GOLD PIECES LEFT.\n", player->gold);
 
 }
 
@@ -293,7 +293,7 @@ void buy_lamp_and_flares(Player *player)
 
    // Try to buy flares
     if (player->gold >= 1) {
-        printf("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n", race_names[player->race - 1], player->gold);
+        print_message("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n", race_names[player->race - 1], player->gold);
         print_message("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
         
         int flares_to_buy;
@@ -316,11 +316,11 @@ void buy_lamp_and_flares(Player *player)
             } else if (flares_to_buy < 0) {
                 print_message("** PLEASE ENTER A NON-NEGATIVE NUMBER.\n");
             } else if (flares_to_buy > player->gold) {
-                printf("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
+                print_message("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
             } else {
                 player->flares += flares_to_buy;
                 player->gold -= flares_to_buy;
-                printf("\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n", player->flares, player->gold);
+                print_message("\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n", player->flares, player->gold);
                 return;
             }
             print_message("HOW MANY FLARES DO YOU WANT? (OR ENTER 0 TO BUY NONE) ");
