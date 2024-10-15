@@ -56,11 +56,24 @@ void choose_race(Player *player)
 
         player->race = 0;
 
-        if (user_input == 'H') player->race = 1;  // Hobbit
-        else if (user_input== 'E') player->race = 2;  // Elf
-        else if (user_input == 'M') player->race = 3;  // Man/Human
-        else if (user_input == 'D') player->race = 4;  // Dwarf
-
+        switch (user_input) {
+            case 'H':
+                player->race = 1;  // Hobbit
+                break;
+            case 'E':
+                player->race = 2;  // Elf
+                break;
+            case 'M':
+                player->race = 3;  // Man/Human
+                break;
+            case 'D':
+                player->race = 4;  // Dwarf
+                break;
+            default:
+                // Handle invalid input if needed
+                break;
+            }
+            
         if (player->race > 0) {
             player->strength += 2 * player->race;
             player->dexterity -= 2 * player->race;
