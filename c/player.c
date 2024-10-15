@@ -363,7 +363,7 @@ void print_status(Player *player, GameState *game)
     // Print player race and attributes
     print_message("Race: ");
     print_message_formatted(get_race_name(player->race));
-    print_mesage("\n");
+    print_message("\n");
     snprintf(message, sizeof(message), "Strength: %d  Intelligence: %d  Dexterity: %d\n",
              player->strength, player->intelligence, player->dexterity);
     print_message(message);
