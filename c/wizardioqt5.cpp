@@ -82,9 +82,8 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override {
-        //cleanup();
+        quit();
         event->accept();
-        QApplication::exit(1);
     }
 
     bool eventFilter(QObject *obj, QEvent *event) override {
