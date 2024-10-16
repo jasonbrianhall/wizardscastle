@@ -52,6 +52,7 @@ clean:
 	rm *.zip || true
 	rm *.zip.*  || true
 	rm *.tar.gz || true
+	$(MAKE) -f $(QT_MAKEFILE) clean || true
 
 # Target to pull the DJGPP Docker image
 pull-djgpp:
@@ -85,7 +86,6 @@ rpm: clean
 	cp Makefile wizardscastle-$(VERSION)/
 	tar -czf wizardscastle-$(VERSION).tar.gz wizardscastle-$(VERSION)
 	rm -rf wizardscastle-$(VERSION)
-
 	# Move the source tarball to the SOURCES directory for rpmbuild
 	mkdir -p ~/rpmbuild/SOURCES
 	cp wizardscastle-$(VERSION).tar.gz ~/rpmbuild/SOURCES/

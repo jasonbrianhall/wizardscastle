@@ -180,6 +180,12 @@ WizardsCastleWindow* g_window = nullptr;
 
 extern "C" {
 
+bool parse_arguments(int argc, char* argv[])
+{
+    std::vector<std::string> args(argv + 1, argv + argc);
+    return std::find(args.begin(), args.end(), "--debug") != args.end();
+}
+
 void initialize_qt(int argc, char *argv[]) {
     static QApplication app(argc, argv);
     g_window = new WizardsCastleWindow();
