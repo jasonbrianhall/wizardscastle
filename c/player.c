@@ -52,8 +52,7 @@ void choose_race(Player *player)
     do {
         print_message_formatted("ALL RIGHT, BOLD ONE.\n");
         print_message          ("You may be an (E)lf, (D)warf, (M)an, or (H)obbit.\n\n");
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input=get_user_input();
+        user_input=get_user_input_custom_prompt("Your choice:  ");
 
         player->race = 0;
 
@@ -98,8 +97,7 @@ void choose_sex(Player *player)
 
     do {
         print_message_formatted("WHICH SEX DO YOU PREFER?\n\n");
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input=get_user_input();
+        user_input=get_user_input_custom_prompt("Your choice:  ");
 
         switch (user_input) {
             case 'M':
@@ -214,8 +212,8 @@ void buy_equipment(Player *player)
     print_message(          "(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
     
     do {
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input = get_user_input();
+        //print_message_formatted("YOUR CHOICE:  ");
+        user_input = get_user_input_custom_prompt("Your choice:  ");
         exittheloop=1;
         switch(user_input) {
             case 'P': player->armor_type = 3; cost = 30; break;
@@ -241,8 +239,8 @@ void buy_equipment(Player *player)
     print_message(          "(S)word<30> (M)ace<20> (D)agger<10> (N)othing<0>\n\n");
     
     do {
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input = get_user_input();
+        //print_message_formatted("YOUR CHOICE:  ");
+        user_input = get_user_input_custom_prompt("Your choice:  ");
         exittheloop=1;
         switch(user_input) {
             case 'S': 

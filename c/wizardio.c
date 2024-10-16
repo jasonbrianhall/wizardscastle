@@ -103,6 +103,48 @@ char get_user_input()
     }
 }
 
+char get_user_input_custom_prompt(char *prompt)
+{
+    char input[100];  // Buffer to store user input
+    char command;
+
+    while (1) {
+        print_message("%s", prompt);
+        
+        // Get user input
+        if (fgets(input, sizeof(input), stdin) == NULL) {
+            // Handle input error or EOF
+            print_message_formatted("Error reading input. Please try again.\n");
+            continue;
+        }
+
+        // Remove newline character if present
+        input[strcspn(input, "\n")] = 0;
+
+        // Convert input to uppercase
+        for (int i = 0; input[i]; i++) {
+            input[i] = toupper((unsigned char)input[i]);
+        }
+
+        // Check if input is empty
+        if (strlen(input) == 0) {
+            print_message_formatted("Please enter a command.\n");
+            continue;
+        }
+
+        // Get the first character of the input
+        command = input[0];
+
+        // Check if it's a valid command
+        if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
+            return command;
+        } else {
+            print_message("Invalid command. Type 'H' for help.\n");
+        }
+    }
+}
+
+
 char get_user_input_yn()
 {
     char input[100];  // Buffer to store user input

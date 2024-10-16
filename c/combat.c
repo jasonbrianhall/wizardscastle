@@ -48,13 +48,14 @@ void fight_monster(Player *player, GameState *game)
     while (1) {
         if (firststrike==1)
         {
-            print_message_formatted("\nYOU'RE FACING A %s!\n\n", enemy_name);
-            print_message_formatted("YOU MAY (A)TTACK OR (R)ETREAT.\n");
+            print_message("\nYou're facing a "; 
+            print_message_formatted("%s!\n\n", enemy_name);
+            print_message("You may (A)ttack or (R)etreat.\n");
             if (can_bribe) {
-                print_message_formatted("YOU CAN ALSO ATTEMPT A (B)RIBE.\n");
+                print_message("You can also attempt a (B)ribe.\n");
             }
             if (muted==0 && ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14))  {
-                print_message_formatted("YOU CAN ALSO (C)AST A SPELL.\n");
+                print_message("You can also (C)ast a spell.\n");
             }
             print_message_formatted("\n");
             print_message_formatted("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
@@ -64,7 +65,7 @@ void fight_monster(Player *player, GameState *game)
                    enemy_strength, enemy_dexterity, enemy_intelligence);
 
 
-            choice = get_user_input();
+            choice = get_user_input_custom_prompt("Fight command:  ");
 
             switch (choice) {
                 case 'A':
@@ -76,7 +77,8 @@ void fight_monster(Player *player, GameState *game)
                         print_message_formatted("\nYOU MISSED, TOO BAD!\n");
                     } else {
                         temp=calculate_damage(player, enemy_strength, enemy_dexterity);
-                        print_message_formatted("\nYOU HIT THE EVIL %s AND DID %i DAMAGE!\n", enemy_name, temp);
+                        print_message("\nYou hit the evil ");
+                        print_message_formatted("%s AND DID %i DAMAGE!\n", enemy_name, temp);
                         enemy_strength -= temp;
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
                             print_message_formatted("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
@@ -416,7 +418,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
         print_message_formatted("    (B)RIGHT - Temporarily increases your intelligence \n");
     }
     print_message_formatted("\n");
-    char spell = get_user_input();
+    char spell = get_user_input_custom_prompt("Which Spell:  ");
     for (;;) {
         switch (spell) {
             case 'W':

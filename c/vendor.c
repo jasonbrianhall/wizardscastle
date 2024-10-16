@@ -20,7 +20,7 @@ void handle_vendor(Player *player, GameState *game)
     char choice;
     do {
         print_message("\nDo you want to (T)rade, (A)ttack, or (I)gnore the vendor?\n");
-        choice = get_user_input();
+        choice = get_user_input_custom_prompt("?  ");
 
         switch(choice) {
             case 'T':
@@ -44,10 +44,7 @@ void trade_with_vendor(Player *player, GameState *game)
     for (int i = 0; i < TREASURE_COUNT; i++) {
         if (game->treasure[i]) {
             int offer = random_number(1500) * (i + 1);
-            char message[100];
-            snprintf(message, sizeof(message), "Do you want to sell %s for %d GP? (Y/N) ", 
-                     get_treasure_name(i), offer);
-            print_message(message);
+            print_message("Do you want to sell %s for %d GP? (Y/N) ", get_treasure_name(i), offer);
             
             if (get_user_input_yn() == 'Y') {
                 player->gold += offer;
