@@ -103,38 +103,157 @@ void initialize_qt(int argc, char *argv[]) {
 }
 
 const char* get_user_input_main() {
-    g_window->clearInput();
-    while (g_window->inputIsEmpty()) {
-        QCoreApplication::processEvents();
+    static std::string input;
+    static const char* dr_command = "DR";
+
+    while (true) {
+        print_message("ENTER YOUR COMMAND: ");
+        
+        g_window->clearInput();
+        while (g_window->inputIsEmpty()) {
+            QCoreApplication::processEvents();
+        }
+        
+        input = g_window->getLastInput();
+        
+        // Remove newline character if present
+        input.erase(std::remove(input.begin(), input.end(), '\n'), input.end());
+        
+        // Convert input to uppercase
+        std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        
+        // Check if input is empty
+        if (input.empty()) {
+            return input.c_str();  // Return empty string
+        }
+        
+        // Get the first character
+        char firstChar = input[0];
+        
+        // Validate commands
+        if (firstChar == 'D' && input.length() > 1 && input[1] == 'R') {
+            return dr_command;  // Return "DR" for DRINK
+        } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
+            return input.c_str();  // Return the single letter command
+        } else {
+            print_message("Invalid command. Type 'H' for help.\n");
+        }
     }
-    static std::string input = g_window->getLastInput();
-    return input.c_str();
 }
 
 int get_user_input_number() {
-    const char* input = get_user_input_main();
-    return atoi(input);
+    while (true) {
+        print_message_formatted("Enter a number: ");
+        
+        g_window->clearInput();
+        while (g_window->inputIsEmpty()) {
+            QCoreApplication::processEvents();
+        }
+        
+        std::string input = g_window->getLastInput();
+        
+        try {
+            return std::stoi(input);
+        } catch (const std::invalid_argument&) {
+            print_message_formatted("Invalid input. Please enter a valid integer.\n");
+        } catch (const std::out_of_range&) {
+            print_message_formatted("Input out of range. Please enter a smaller number.\n");
+        }
+    }
 }
 
 char get_user_input() {
-    g_window->setWaitingForSpecificInput(true, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    while (g_window->isWaitingForSpecificInput()) {
-        QCoreApplication::processEvents();
+    while (true) {
+        print_message_formatted("ENTER YOUR COMMAND: ");
+        
+        g_window->clearInput();
+        while (g_window->inputIsEmpty()) {
+            QCoreApplication::processEvents();
+        }
+        
+        std::string input = g_window->getLastInput();
+        
+        // Convert input to uppercase
+        std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        
+        // Check if input is empty
+        if (input.empty()) {
+            print_message_formatted("Please enter a command.\n");
+            continue;
+        }
+        
+        // Get the first character of the input
+        char command = input[0];
+        
+        // Check if it's a valid command
+        if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
+            return command;
+        } else {
+            print_message("Invalid command. Type 'H' for help.\n");
+        }
     }
-    return g_window->getLastInput()[0];
 }
 
 char get_user_input_custom_prompt(char* prompt) {
-    print_message(prompt);
-    return get_user_input();
+    while (true) {
+        print_message("%s", prompt);
+        
+        g_window->clearInput();
+        while (g_window->inputIsEmpty()) {
+            QCoreApplication::processEvents();
+        }
+        
+        std::string input = g_window->getLastInput();
+        
+        // Convert input to uppercase
+        std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        
+        // Check if input is empty
+        if (input.empty()) {
+            print_message_formatted("Please enter a command.\n");
+            continue;
+        }
+        
+        // Get the first character of the input
+        char command = input[0];
+        
+        // Check if it's a valid command
+        if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
+            return command;
+        } else {
+            print_message("Invalid command. Type 'H' for help.\n");
+        }
+    }
 }
 
 char get_user_input_yn() {
-    g_window->setWaitingForSpecificInput(true, "YN");
-    while (g_window->isWaitingForSpecificInput()) {
-        QCoreApplication::processEvents();
+    while (true) {
+        g_window->clearInput();
+        while (g_window->inputIsEmpty()) {
+            QCoreApplication::processEvents();
+        }
+        
+        std::string input = g_window->getLastInput();
+        
+        // Convert input to uppercase
+        std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        
+        // Check if input is empty
+        if (input.empty()) {
+            print_message("Please Enter Y or N.\n");
+            continue;
+        }
+        
+        // Get the first character of the input
+        char command = input[0];
+        
+        // Check if it's a valid command
+        if (strchr("YN", command) != NULL) {
+            return command;
+        } else {
+            print_message("Invalid command. Please enter Y or N.\n");
+        }
     }
-    return g_window->getLastInput()[0];
 }
 
 void print_message(const char *format, ...) {
