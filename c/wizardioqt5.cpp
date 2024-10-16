@@ -251,6 +251,7 @@ void close_qt(WizardsCastleWindow* window) {
         window->close();
         delete window;
     }
+    exit(1);
 }
 
 const char* get_user_input_main() {
