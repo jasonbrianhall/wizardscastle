@@ -260,7 +260,7 @@ const char* get_user_input_main() {
         }
         
         input = g_window->getLastInput();
-        
+        print_message("%s\n", input);
         // Remove newline character if present
         input.erase(std::remove(input.begin(), input.end(), '\n'), input.end());
         
@@ -287,9 +287,8 @@ const char* get_user_input_main() {
 }
 
 int get_user_input_number() {
+    int data;
     while (true) {
-        print_message_formatted("Enter a number: ");
-        
         g_window->clearInput();
         while (g_window->inputIsEmpty()) {
             QCoreApplication::processEvents();
@@ -298,7 +297,9 @@ int get_user_input_number() {
         std::string input = g_window->getLastInput();
         
         try {
-            return std::stoi(input);
+           data = std::stoi(input);
+           print_message("%d\n", data);  // Assuming print_message is similar to printf
+           return data;
         } catch (const std::invalid_argument&) {
             print_message_formatted("Invalid input. Please enter a valid integer.\n");
         } catch (const std::out_of_range&) {
@@ -349,7 +350,7 @@ char get_user_input_custom_prompt(char* prompt) {
         }
         
         std::string input = g_window->getLastInput();
-        
+
         // Convert input to uppercase
         std::transform(input.begin(), input.end(), input.begin(), ::toupper);
         
@@ -361,6 +362,7 @@ char get_user_input_custom_prompt(char* prompt) {
         
         // Get the first character of the input
         char command = input[0];
+        print_message("%c\n", input[0], input);
         
         // Check if it's a valid command
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
