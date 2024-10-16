@@ -1,6 +1,7 @@
 #include "player.h"
 #include "wizards-castle.h"
 #include "utilities.h"
+#include "wizardio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,8 +52,7 @@ void choose_race(Player *player)
     do {
         print_message_formatted("ALL RIGHT, BOLD ONE.\n");
         print_message          ("You may be an (E)lf, (D)warf, (M)an, or (H)obbit.\n\n");
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input=get_user_input();
+        user_input=get_user_input_custom_prompt("Your choice:  ");
 
         player->race = 0;
 
@@ -97,8 +97,7 @@ void choose_sex(Player *player)
 
     do {
         print_message_formatted("WHICH SEX DO YOU PREFER?\n\n");
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input=get_user_input();
+        user_input=get_user_input_custom_prompt("Your choice:  ");
 
         switch (user_input) {
             case 'M':
@@ -200,7 +199,7 @@ void buy_equipment(Player *player)
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
     const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
-    int cost;
+    int cost, exittheloop;
     char message[100];
 
     // Buy Armor
@@ -213,17 +212,22 @@ void buy_equipment(Player *player)
     print_message(          "(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
     
     do {
-        user_input = get_user_input();
+        //print_message_formatted("YOUR CHOICE:  ");
+        user_input = get_user_input_custom_prompt("Your choice:  ");
+        exittheloop=1;
         switch(user_input) {
             case 'P': player->armor_type = 3; cost = 30; break;
             case 'C': player->armor_type = 2; cost = 20; break;
             case 'L': player->armor_type = 1; cost = 10; break;
             case 'N': player->armor_type = 0; cost = 0; break;
             default:
-                print_message_formatted("\n** ARE YOU A %s OR A FOOL? TRY AGAIN.\n\n", race_names[player->race - 1]);
+                print_message("\n** Are you a ");
+                print_message_formatted("%s or a fool?  Try again.\n\n", race_names[player->race - 1]);
+                exittheloop=0;
                 continue;
+                
         }
-    } while (1);
+    } while (exittheloop==0);
 
     player->gold -= cost;
     player->armor_points = player->armor_type * 7;
@@ -232,12 +236,12 @@ void buy_equipment(Player *player)
     snprintf(message, sizeof(message), "\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
     print_message_formatted(message);
     print_message_formatted("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
-    print_message_formatted("SWORD<30> MACE<20> DAGGER<10> NOTHING<0>\n\n");
+    print_message(          "(S)word<30> (M)ace<20> (D)agger<10> (N)othing<0>\n\n");
     
     do {
-        print_message_formatted("YOUR CHOICE:  ");
-        user_input = get_user_input();
-
+        //print_message_formatted("YOUR CHOICE:  ");
+        user_input = get_user_input_custom_prompt("Your choice:  ");
+        exittheloop=1;
         switch(user_input) {
             case 'S': 
                 if (player->gold < 30) {
@@ -254,10 +258,13 @@ void buy_equipment(Player *player)
             case 'D': player->weapon_type = 1; cost = 10; break;
             case 'N': player->weapon_type = 0; cost = 0; break;
             default:
-                print_message("** Try again, your choice must be S, M, D, or N.\n\n");
+                print_message("** Poor ");
+                print_message_formatted("%s ", race_names[player->race - 1]);
+                print_message(", try again, your choice must be S, M, D, or N.\n\n");
+                exittheloop=0;
                 continue;
         }
-    } while (1);
+    } while (exittheloop==0);
 
     player->gold -= cost;
 
