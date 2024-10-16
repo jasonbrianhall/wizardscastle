@@ -260,7 +260,6 @@ const char* get_user_input_main() {
         }
         
         input = g_window->getLastInput();
-        print_message("%s\n", input);
         // Remove newline character if present
         input.erase(std::remove(input.begin(), input.end(), '\n'), input.end());
         
@@ -269,17 +268,22 @@ const char* get_user_input_main() {
         
         // Check if input is empty
         if (input.empty()) {
+            print_message("\n");
             return input.c_str();  // Return empty string
         }
         
         // Get the first character
         char firstChar = input[0];
-        
+
         // Validate commands
         if (firstChar == 'D' && input.length() > 1 && input[1] == 'R') {
+            print_message("DR\n", input[0]);
             return dr_command;  // Return "DR" for DRINK
         } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
+            print_message("%c\n", firstChar);
+
             return input.c_str();  // Return the single letter command
+
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
         }
@@ -330,7 +334,7 @@ char get_user_input() {
         
         // Get the first character of the input
         char command = input[0];
-        
+        print_message("%c\n", command);
         // Check if it's a valid command
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
             return command;
