@@ -142,8 +142,18 @@ void print_message(const char *format, ...) {
     va_start(args, format);
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), format, args);
-    g_window->appendToOutput(QString::fromUtf8(buffer));
     va_end(args);
+
+    QString message = QString::fromUtf8(buffer);
+    message = message.replace("\n", " ").replace(QRegularExpression("\\s+"), " ").trimmed();
+    
+    if (!message.isEmpty() && !message.endsWith('.') && !message.endsWith('?') && !message.endsWith('!')) {
+        message += " ";
+    } else {
+        message += "\n";
+    }
+
+    g_window->appendToOutput(message);
 }
 
 void print_message_formatted(const char *format, ...) {
@@ -151,17 +161,21 @@ void print_message_formatted(const char *format, ...) {
     va_start(args, format);
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
     
     QString message = QString::fromUtf8(buffer);
     message = message.toUpper();
-    QStringList sentences = message.split(QRegularExpression("(?<=[.!?])\\s+"), Qt::SkipEmptyParts);
+    
+    QStringList sentences = message.split(QRegularExpression("[.!?]\\s*"), Qt::SkipEmptyParts);
     for (QString& sentence : sentences) {
         sentence = sentence.trimmed();
         if (!sentence.isEmpty()) {
             sentence[0] = sentence[0].toUpper();
+            sentence = sentence.toLower();
         }
     }
-    message = sentences.join(" ");
+    
+    message = sentences.join(". ").trimmed() + "\n";
     
     g_window->appendToOutput(message);
 }
