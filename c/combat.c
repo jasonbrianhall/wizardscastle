@@ -724,7 +724,6 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
 }
 
 int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexterity, int base_damage) {
-    print_message_formatted("BASE DAMAGE %i\n", base_damage);
     // Enemy's offensive bonuses
     int strength_bonus = enemy_strength / 9;  // Every 9 points of strength adds 1 to damage
     int dexterity_bonus = enemy_dexterity / 6;  // Every 5 points of dexterity adds 1 to damage

@@ -238,7 +238,7 @@ void buy_equipment(Player *player)
     snprintf(message, sizeof(message), "\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
     print_message_formatted(message);
     print_message_formatted("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
-    print_message_formatted("SWORD<30> MACE<20> DAGGER<10> NOTHING<0>\n\n");
+    print_message(          "(S)word<30> (M)ace<20> (D)agger<10> (N)othing<0>\n\n");
     
     do {
         print_message_formatted("YOUR CHOICE:  ");
@@ -262,7 +262,7 @@ void buy_equipment(Player *player)
             default:
                 print_message("** Poor ");
                 print_message_formatted("%s ", race_names[player->race - 1]);
-                print_message("try again, your choice must be S, M, D, or N.\n\n");
+                print_message(", try again, your choice must be S, M, D, or N.\n\n");
                 exittheloop=0;
                 continue;
         }

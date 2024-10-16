@@ -124,9 +124,8 @@ bool main_game_loop(Player *player, GameState *game)
         
         int room_content = get_room_content(game, player->x, player->y, player->level);
         if (room_content == ENTRANCE) {  // The Entrance
-            char message[100];
-            snprintf(message, sizeof(message), "OK, %s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
-            print_message_formatted(message);
+            print_message("Ok, ");
+            print_message_formatted("%s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
         } else if (room_content >= EMPTY_ROOM && room_content <= TREASURE_END) {
             char message[100];
             snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - EMPTY_ROOM]);
