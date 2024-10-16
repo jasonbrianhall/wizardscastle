@@ -1,6 +1,11 @@
 #ifndef WIZARDIO_H
 #define WIZARDIO_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #include <stdbool.h>
 
 // Input functions
@@ -17,5 +22,10 @@ void printStars(void);
 void capitalize_sentences(char *str);
 
 char get_user_input_custom_prompt(char *prompt);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif // WIZARDIO_H

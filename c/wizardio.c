@@ -1,3 +1,5 @@
+#ifndef QT5
+
 #include "wizardio.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -209,3 +211,5 @@ void print_message(const char *format, ...)
     vprintf(format, args);
     va_end(args);
 }
+
+#endif
