@@ -2,6 +2,7 @@
 #include "combat.h"
 #include "player.h"
 #include "gamestate.h"
+#include "wizardio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

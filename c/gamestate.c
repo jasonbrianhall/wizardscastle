@@ -1,9 +1,11 @@
-#include "gamestate.h"
-#include "utilities.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include "gamestate.h"
+#include "utilities.h"
+#include "wizardio.h"
 
 // Game ending functions
 int check_game_over(Player *player, GameState *game) {

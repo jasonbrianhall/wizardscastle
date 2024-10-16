@@ -1,6 +1,7 @@
 #include "combat.h"
 #include "gamestate.h"
 #include "utilities.h"
+#include "wizardio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

@@ -1,10 +1,11 @@
-#include "vendor.h"
-#include "utilities.h"
-#include "combat.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
+#include "vendor.h"
+#include "utilities.h"
+#include "combat.h"
+#include "wizardio.h"
 
 void handle_vendor(Player *player, GameState *game)
 {

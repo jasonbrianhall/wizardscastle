@@ -1,6 +1,7 @@
 #include "player.h"
 #include "wizards-castle.h"
 #include "utilities.h"
+#include "wizardio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

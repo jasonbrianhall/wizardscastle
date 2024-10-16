@@ -5,6 +5,7 @@
 #include "wizards-castle.h"
 #include "player.h"
 #include "gamestate.h"
+#include "wizardio.h"
 
 int main(int argc, char *argv[])
 {

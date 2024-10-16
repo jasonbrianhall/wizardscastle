@@ -110,21 +110,8 @@ typedef struct {
 void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
-
-
-
 // Utility functions
 void display_map(GameState *game, Player *player);
 void print_help();
-
-// Input/Output functions
-char get_user_input();
-const char *get_user_input_main();
-char get_user_input_yn();
-
-void print_message(const char *format, ...);
-void print_message_formatted(const char *format, ...);
-
-int get_user_input_number();
 
 #endif 
