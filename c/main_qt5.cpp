@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include "wizardioqt5.h"
 
 bool parse_arguments(int argc, char* argv[])
 {
@@ -19,9 +20,6 @@ extern "C" {
 #include "vendor.h"
 #include "wizardio.h"
 }
-
-// Declare the initialize_qt function from wizardioqt5.cpp
-extern "C" void initialize_qt(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
 {

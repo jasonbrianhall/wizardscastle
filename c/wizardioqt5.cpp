@@ -27,6 +27,15 @@ public:
 
         outputText = new QTextEdit(this);
         outputText->setReadOnly(true);
+        
+        // Set a monospaced font for the output text
+        QFont monoFont("Consolas", 10);  // You can adjust the size as needed
+        if (!monoFont.exactMatch()) {
+            // Fallback to a generic monospace font if Consolas is not available
+            monoFont.setStyleHint(QFont::Monospace);
+        }
+        outputText->setFont(monoFont);
+        
         layout->addWidget(outputText);
 
         inputLine = new QLineEdit(this);
