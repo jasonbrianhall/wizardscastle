@@ -12,6 +12,8 @@ TARGET = wizardscastle
 DOS_TARGET = wizard.exe
 WINDOWS_TARGET = wizard_windows.exe
 
+
+
 # Compiler flags
 CFLAGS = -Wall -Wextra
 DEBUGFLAGS = -g -fsanitize=address
@@ -31,6 +33,18 @@ CSDPMI_URL = http://na.mirror.garr.it/mirrors/djgpp/current/v2misc/csdpmi7b.zip
 # Get current user and group IDs
 USER_ID = $(shell id -u)
 GROUP_ID = $(shell id -g)
+
+QMAKE = qmake
+QT_MAKEFILE = Makefile.qt
+QT_PRO = wizard_castle_qt5.pro
+
+# Add a new target for the Qt version
+qt: $(QT_MAKEFILE)
+	$(MAKE) -f $(QT_MAKEFILE)
+
+# Rule to generate the Qt Makefile
+$(QT_MAKEFILE): $(QT_PRO)
+	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
 
 # Default target
 all: $(TARGET)
