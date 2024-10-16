@@ -105,10 +105,11 @@ WizardsCastleWindow* g_window = nullptr;
 
 extern "C" {
 
-void initialize_qt(int argc, char *argv[]) {
+WizardsCastleWindow* initialize_qt(int argc, char *argv[]) {
     static QApplication app(argc, argv);
     g_window = new WizardsCastleWindow();
     g_window->show();
+    return g_window;
 }
 
 const char* get_user_input_main() {
