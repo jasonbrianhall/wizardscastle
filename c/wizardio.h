@@ -14,7 +14,8 @@ void print_message(const char *format, ...);
 void print_message_formatted(const char *format, ...);
 void printStars(void);
 
-// Utility function (you might want to move this to a separate utility file later)
 void capitalize_sentences(char *str);
+
+char get_user_input_custom_prompt(char *prompt);
 
 #endif // WIZARDIO_H

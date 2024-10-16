@@ -48,7 +48,7 @@ void fight_monster(Player *player, GameState *game)
     while (1) {
         if (firststrike==1)
         {
-            print_message("\nYou're facing a "; 
+            print_message("\nYou're facing a "); 
             print_message_formatted("%s!\n\n", enemy_name);
             print_message("You may (A)ttack or (R)etreat.\n");
             if (can_bribe) {
