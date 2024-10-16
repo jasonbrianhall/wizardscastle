@@ -23,7 +23,7 @@ extern "C" {
 
 int main(int argc, char *argv[])
 {
-    initialize_qt(argc, argv);
+    WizardsCastleWindow* new_window=initialize_qt(argc, argv);
 
     Player player;
     GameState game;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
         playagain = main_game_loop(&player, &game);
     }
-
+    close_qt(new_window);
     return 0;
 }
 

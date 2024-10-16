@@ -112,6 +112,13 @@ WizardsCastleWindow* initialize_qt(int argc, char *argv[]) {
     return g_window;
 }
 
+void close_qt(WizardsCastleWindow* window) {
+    if (window) {
+        window->close();
+        delete window;
+    }
+}
+
 const char* get_user_input_main() {
     static std::string input;
     static const char* dr_command = "DR";
