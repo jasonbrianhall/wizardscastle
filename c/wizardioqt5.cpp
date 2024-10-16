@@ -17,7 +17,7 @@ class WizardsCastleWindow : public QMainWindow {
 
 public:
     WizardsCastleWindow(QWidget *parent = nullptr)
-        : QMainWindow(parent)
+        : QMainWindow(parent), waitingForSpecificInput(false)
     {
         setWindowTitle("Wizard's Castle");
         resize(800, 600);
@@ -38,7 +38,8 @@ public:
     }
 
     void appendToOutput(const QString& text) {
-        outputText->append(text);
+        outputText->moveCursor(QTextCursor::End);
+        outputText->insertPlainText(text);
         outputText->verticalScrollBar()->setValue(outputText->verticalScrollBar()->maximum());
     }
 
@@ -54,18 +55,41 @@ public:
 
     void clearInput() {
         inputLine->clear();
+        lastInput.clear();
+    }
+
+    void setWaitingForSpecificInput(bool waiting, const std::string& validInputs) {
+        waitingForSpecificInput = waiting;
+        this->validInputs = validInputs;
+    }
+
+    bool isWaitingForSpecificInput() const {
+        return waitingForSpecificInput;
     }
 
 private slots:
     void processInput() {
-        lastInput = inputLine->text().toUpper().toStdString();
+        QString input = inputLine->text().toUpper();
         inputLine->clear();
+
+        if (waitingForSpecificInput) {
+            if (validInputs.find(input[0].toLatin1()) != std::string::npos) {
+                lastInput = input[0].toLatin1();
+                waitingForSpecificInput = false;
+            } else {
+                appendToOutput(QString("Please enter one of the following: %1\n").arg(QString::fromStdString(validInputs)));
+            }
+        } else {
+            lastInput = input.toStdString();
+        }
     }
 
 private:
     QTextEdit *outputText;
     QLineEdit *inputLine;
     std::string lastInput;
+    bool waitingForSpecificInput;
+    std::string validInputs;
 };
 
 WizardsCastleWindow* g_window = nullptr;
@@ -93,8 +117,11 @@ int get_user_input_number() {
 }
 
 char get_user_input() {
-    const char* input = get_user_input_main();
-    return input[0];
+    g_window->setWaitingForSpecificInput(true, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    while (g_window->isWaitingForSpecificInput()) {
+        QCoreApplication::processEvents();
+    }
+    return g_window->getLastInput()[0];
 }
 
 char get_user_input_custom_prompt(char* prompt) {
@@ -103,14 +130,11 @@ char get_user_input_custom_prompt(char* prompt) {
 }
 
 char get_user_input_yn() {
-    print_message("Enter Y or N: ");
-    while (true) {
-        char input = get_user_input();
-        if (input == 'Y' || input == 'N') {
-            return input;
-        }
-        print_message("Please enter Y or N: ");
+    g_window->setWaitingForSpecificInput(true, "YN");
+    while (g_window->isWaitingForSpecificInput()) {
+        QCoreApplication::processEvents();
     }
+    return g_window->getLastInput()[0];
 }
 
 void print_message(const char *format, ...) {
