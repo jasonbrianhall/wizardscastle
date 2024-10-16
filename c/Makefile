@@ -60,7 +60,6 @@ pull-djgpp:
 pull-mingw:
 	docker pull $(MINGW_IMAGE)
 
-
 # Target to download CSDPMI
 get-csdpmi:
 	wget $(CSDPMI_URL)
@@ -94,4 +93,19 @@ rpm: clean
 	# Build the RPM using the existing spec file
 	rpmbuild -ba -D 'debug_package %{nil}' wizardscastle.spec
 
-.PHONY: all debug clean pull-djgpp get-csdpmi msdos run-msdos
+# Qt-specific variables and targets
+QMAKE = qmake
+QT_MAKEFILE = Makefile.qt
+QT_PRO = wizard_castle_qt5.pro
+
+qt: $(QT_MAKEFILE)
+	$(MAKE) -f $(QT_MAKEFILE)
+
+$(QT_MAKEFILE): $(QT_PRO)
+	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
+
+clean-qt:
+	[ -f $(QT_MAKEFILE) ] && $(MAKE) -f $(QT_MAKEFILE) clean || true
+	rm -f $(QT_MAKEFILE)
+
+.PHONY: all debug clean pull-djgpp get-csdpmi msdos run-msdos rpm qt clean-qt windows pull-mingw
