@@ -357,8 +357,11 @@ void print_help()
     print_message          ("BLUE FLAME  - Dissolves Books    NORN STONE  - Pretty\n");
     print_message          ("PALANTIR    - Pretty             SILMARIL    - Pretty\n\n");
 
+    #ifndef WIZARDIOQT5_H  // Don't do this if QT5
     print_message_formatted("PRESS ENTER TO CONTINUE...");
+
     while (getchar() != '\n');  // Wait for Enter key
+    #endif
 }
 
 
