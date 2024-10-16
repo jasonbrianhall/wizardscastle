@@ -13,6 +13,8 @@
 #include <QCloseEvent>
 #include "wizardio.h"
 
+#define USE_QT
+
 class WizardsCastleWindow : public QMainWindow {
     Q_OBJECT
 
