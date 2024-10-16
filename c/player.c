@@ -214,6 +214,7 @@ void buy_equipment(Player *player)
     print_message(          "(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
     
     do {
+        print_message_formatted("YOUR CHOICE:  ");
         user_input = get_user_input();
         switch(user_input) {
             case 'P': player->armor_type = 3; cost = 30; break;

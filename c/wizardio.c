@@ -10,7 +10,7 @@ const char* get_user_input_main() {
     static char dr_command[] = "DR";  // Static buffer for "DR" command
 
     while (1) {
-        print_message("ENTER YOUR COMMAND: ");
+        //print_message("ENTER YOUR COMMAND: ");
         // Get user input
         if (fgets(input, sizeof(input), stdin) == NULL) {
             print_message_formatted("Error reading input. Please try again.\n");
@@ -47,7 +47,7 @@ int get_user_input_number()
     char input[100];
 
     while (1) {
-        print_message_formatted("Enter a number: ");
+        //print_message_formatted("Enter a number: ");
         if (fgets(input, sizeof(input), stdin) == NULL) {
             print_message_formatted("Error reading input. Please try again.\n");
             continue;
@@ -68,7 +68,7 @@ char get_user_input()
     char command;
 
     while (1) {
-        print_message_formatted("ENTER YOUR COMMAND: ");
+        //print_message_formatted("ENTER YOUR COMMAND: ");
         
         // Get user input
         if (fgets(input, sizeof(input), stdin) == NULL) {
@@ -95,7 +95,7 @@ char get_user_input()
         command = input[0];
 
         // Check if it's a valid command
-        if (strchr("1234567890ABCDEFGHILMNOQRSTUWY", command) != NULL) {
+        if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
             return command;
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
