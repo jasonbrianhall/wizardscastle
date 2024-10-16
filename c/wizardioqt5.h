@@ -2,6 +2,15 @@
 #define WIZARDIOQT5_H
 
 #include <QMainWindow>
+extern "C" {
+#include "wizards-castle.h"
+#include "player.h"
+#include "gamestate.h"
+#include "utilities.h"
+#include "combat.h"
+#include "vendor.h"
+#include "wizardio.h"
+}
 
 class WizardsCastleWindow : public QMainWindow {
     Q_OBJECT
