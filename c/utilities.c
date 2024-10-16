@@ -170,7 +170,7 @@ const char* get_treasure_name(int index)
 // New helper function to get abbreviated room descriptions
 void get_room_description(int room_content, char *desc)
 {
-    char full_desc[100];
+    char full_desc[10];
     switch (room_content) {
         case EMPTY_ROOM:  strncpy(full_desc, "EMPTY   \0", 9); break;
         case ENTRANCE:    strncpy(full_desc, "ENTRANCE\0", 9); break;
@@ -207,7 +207,7 @@ void get_room_description(int room_content, char *desc)
         case SILMARIL:    strncpy(full_desc,"SILMARIL\0", 9); break;
         default:         strncpy(full_desc, "   ??   \0",9); break;
     }
-    strncpy(desc, full_desc, 9);
+    strncpy(desc, full_desc, 10);
 }
 
 char get_room_symbol(int room_content)
