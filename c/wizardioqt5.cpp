@@ -174,11 +174,10 @@ WizardsCastleWindow* g_window = nullptr;
 
 extern "C" {
 
-WizardsCastleWindow* initialize_qt(int argc, char *argv[]) {
+void initialize_qt(int argc, char *argv[]) {
     static QApplication app(argc, argv);
     g_window = new WizardsCastleWindow();
     g_window->show();
-    return g_window;
 }
 
 void close_qt(WizardsCastleWindow* window) {
