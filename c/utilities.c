@@ -299,11 +299,11 @@ void open_chest(Player *player, GameState *game)
 {
     print_message_formatted("\nYou open the chest and ");
 
-    int event = random_number(4);
+    int event = random_number(4), damage, gold;
     switch(event) {
         case 1:
             print_message_formatted("KABOOM! IT EXPLODES!!\n");
-            int damage = random_number(6);
+            damage = random_number(6);
             player->strength -= damage;
             print_message_formatted("You take %d damage.\n", damage);
             if (player->strength <= 0) {
@@ -315,7 +315,7 @@ void open_chest(Player *player, GameState *game)
         case 2:
         case 4:
             {
-                int gold = random_number(1000);
+                gold = random_number(1000);
                 print_message_formatted("find %d gold pieces!\n", gold);
                 player->gold += gold;
             }
@@ -583,7 +583,7 @@ void display_map(GameState *game, Player *player)
                 print_message("  [YOU] ");
             } else if (is_room_discovered(game, x, y, player->level)) {
                 int room_content = get_room_content(game, x, y, player->level);
-                char room_str[9] = "        \0";
+                char room_str[10] = "        \0";
                 get_room_description(room_content, room_str);
                 print_message(room_str);
             } else {

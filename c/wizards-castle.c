@@ -361,8 +361,10 @@ void print_help()
     while (getchar() != '\n');  // Wait for Enter key
 }
 
-char* get_user_input_main() {
-    static char input[100];  // Buffer to store user input
+const char* get_user_input_main() {
+    static char input[100];  // Static buffer to store user input
+    static char dr_command[] = "DR";  // Static buffer for "DR" command
+
     while (1) {
         print_message("ENTER YOUR COMMAND: ");
         // Get user input
@@ -374,19 +376,17 @@ char* get_user_input_main() {
         input[strcspn(input, "\n")] = '\0';
         // Convert input to uppercase
         for (int i = 0; input[i]; i++) {
-            input[i] = toupper((unsigned char)input[i]);
+            input[i] = (char)toupper((unsigned char)input[i]);
         }
         // Check if input is empty
         if (input[0] == '\0') {
-            return "\0";
-            //print_message_formatted("\n\nPlease enter a command.\n\n");
-            //continue;
+            return input;  // Return empty string
         }
         // Get the first character
         char firstChar = input[0];
         // Validate commands
         if (firstChar == 'D' && input[1] == 'R') {
-            return "DR";  // Return "DR" for DRINK
+            return dr_command;  // Return "DR" for DRINK
         } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
             return input;  // Return the single letter command
         } else {
@@ -394,6 +394,7 @@ char* get_user_input_main() {
         }
     }
 }
+
 
 
 int get_user_input_number() 

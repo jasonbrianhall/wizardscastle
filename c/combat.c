@@ -397,6 +397,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
 
 int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enemy_intelligence, int *enemy_dexterity, const char *enemy_name)
 {
+    int damage;
     print_message_formatted("\nWHICH SPELL\n");
     if(player->intelligence >=14)
     {
@@ -433,7 +434,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                     game->game_over = 1;
                     return 1;
                 }
-                int damage = random_number(7) + random_number(7);
+                damage = random_number(7) + random_number(7);
                 print_message_formatted("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
                 *enemy_strength -= damage;
                 if (*enemy_strength <= 0) {

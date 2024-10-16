@@ -119,7 +119,7 @@ void print_help();
 
 // Input/Output functions
 char get_user_input();
-char *get_user_input_main();
+const char *get_user_input_main();
 char get_user_input_yn();
 
 void print_message(const char *format, ...);
