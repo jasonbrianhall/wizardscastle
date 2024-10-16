@@ -44,12 +44,6 @@ int main(int argc, char *argv[])
             buy_equipment(&player);
             buy_lamp_and_flares(&player);
         } else {
-            // Debug mode setup (as in your original main.c)
-            // ...
-        }
-
-
-        if (debug_mode) {
             // Debug mode: Set player as male elf with max attributes and equipment
             player.race = 2;  // Elf
             player.sex = 1;   // Male
