@@ -11,8 +11,10 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QCloseEvent>
+#include <QMenuBar>
 #include <QWheelEvent>
 #include "wizardio.h"
+#include <cstdlib>
 
 #define USE_QT
 
@@ -28,6 +30,8 @@ public:
 
         QWidget *centralWidget = new QWidget(this);
         QVBoxLayout *layout = new QVBoxLayout(centralWidget);
+
+        createMenus();
 
         outputText = new QTextEdit(this);
         outputText->setReadOnly(true);
@@ -78,8 +82,9 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override {
-        cleanup();
+        //cleanup();
         event->accept();
+        QApplication::exit(1);
     }
 
     bool eventFilter(QObject *obj, QEvent *event) override {
@@ -99,6 +104,11 @@ protected:
     }
 
 private slots:
+    void quit() {
+        close();
+        QApplication::exit(1);
+        std::exit(1);
+    }
     void processInput() {
         QString input = inputLine->text().toUpper();
         inputLine->clear();
@@ -136,6 +146,17 @@ private:
     bool waitingForSpecificInput;
     std::string validInputs;
     int fontSize;
+
+    void createMenus() {
+        QMenuBar *menuBar = new QMenuBar(this);
+        setMenuBar(menuBar);
+
+        QMenu *fileMenu = menuBar->addMenu(tr("&File"));
+        QAction *quitAction = new QAction(tr("&Quit"), this);
+        quitAction->setShortcuts(QKeySequence::Quit);
+        connect(quitAction, &QAction::triggered, this, &WizardsCastleWindow::quit);
+        fileMenu->addAction(quitAction);
+    }
 
     void updateFont() {
         QFont monoFont("Consolas", fontSize);
