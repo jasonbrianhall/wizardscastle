@@ -11,6 +11,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QCloseEvent>
+#include <QWheelEvent>
 #include "wizardio.h"
 
 #define USE_QT
@@ -20,7 +21,7 @@ class WizardsCastleWindow : public QMainWindow {
 
 public:
     WizardsCastleWindow(QWidget *parent = nullptr)
-        : QMainWindow(parent), waitingForSpecificInput(false)
+        : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10)
     {
         setWindowTitle("Wizard's Castle");
         resize(800, 600);
@@ -31,13 +32,7 @@ public:
         outputText = new QTextEdit(this);
         outputText->setReadOnly(true);
         
-        // Set a monospaced font for the output text
-        QFont monoFont("Consolas", 10);  // You can adjust the size as needed
-        if (!monoFont.exactMatch()) {
-            // Fallback to a generic monospace font if Consolas is not available
-            monoFont.setStyleHint(QFont::Monospace);
-        }
-        outputText->setFont(monoFont);
+        updateFont();
         
         layout->addWidget(outputText);
 
@@ -47,6 +42,8 @@ public:
         setCentralWidget(centralWidget);
 
         connect(inputLine, &QLineEdit::returnPressed, this, &WizardsCastleWindow::processInput);
+
+        outputText->installEventFilter(this);
     }
 
     void appendToOutput(const QString& text) {
@@ -81,11 +78,24 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override {
-        // Perform cleanup operations here
         cleanup();
-        
-        // Accept the close event
         event->accept();
+    }
+
+    bool eventFilter(QObject *obj, QEvent *event) override {
+        if (obj == outputText && event->type() == QEvent::Wheel) {
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+            if (wheelEvent->modifiers() & Qt::ControlModifier) {
+                const int delta = wheelEvent->angleDelta().y();
+                if (delta > 0) {
+                    increaseFontSize();
+                } else if (delta < 0) {
+                    decreaseFontSize();
+                }
+                return true;
+            }
+        }
+        return QMainWindow::eventFilter(obj, event);
     }
 
 private slots:
@@ -105,16 +115,37 @@ private slots:
         }
     }
 
+    void increaseFontSize() {
+        if (fontSize < 24) {
+            fontSize++;
+            updateFont();
+        }
+    }
+
+    void decreaseFontSize() {
+        if (fontSize > 6) {
+            fontSize--;
+            updateFont();
+        }
+    }
+
 private:
     QTextEdit *outputText;
     QLineEdit *inputLine;
     std::string lastInput;
     bool waitingForSpecificInput;
     std::string validInputs;
+    int fontSize;
+
+    void updateFont() {
+        QFont monoFont("Consolas", fontSize);
+        if (!monoFont.exactMatch()) {
+            monoFont.setStyleHint(QFont::Monospace);
+        }
+        outputText->setFont(monoFont);
+    }
 
     void cleanup() {
-        // Add any necessary cleanup code here
-        // For example, saving game state, closing files, releasing resources, etc.
         appendToOutput("Cleaning up and closing Wizard's Castle. Goodbye!\n");
     }
 };
