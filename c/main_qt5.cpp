@@ -4,12 +4,6 @@
 #include <algorithm>
 #include "wizardioqt5.h"
 
-bool parse_arguments(int argc, char* argv[])
-{
-    std::vector<std::string> args(argv + 1, argv + argc);
-    return std::find(args.begin(), args.end(), "--debug") != args.end();
-}
-
 // Include C header files
 extern "C" {
 #include "wizards-castle.h"
