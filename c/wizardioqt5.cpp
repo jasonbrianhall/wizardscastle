@@ -10,6 +10,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QRegularExpression>
+#include <QCloseEvent>
 #include "wizardio.h"
 
 class WizardsCastleWindow : public QMainWindow {
@@ -76,6 +77,15 @@ public:
         return waitingForSpecificInput;
     }
 
+protected:
+    void closeEvent(QCloseEvent *event) override {
+        // Perform cleanup operations here
+        cleanup();
+        
+        // Accept the close event
+        event->accept();
+    }
+
 private slots:
     void processInput() {
         QString input = inputLine->text().toUpper();
@@ -99,6 +109,12 @@ private:
     std::string lastInput;
     bool waitingForSpecificInput;
     std::string validInputs;
+
+    void cleanup() {
+        // Add any necessary cleanup code here
+        // For example, saving game state, closing files, releasing resources, etc.
+        appendToOutput("Cleaning up and closing Wizard's Castle. Goodbye!\n");
+    }
 };
 
 WizardsCastleWindow* g_window = nullptr;
@@ -113,6 +129,7 @@ WizardsCastleWindow* initialize_qt(int argc, char *argv[]) {
 }
 
 void close_qt(WizardsCastleWindow* window) {
+    printf("Quit");
     if (window) {
         window->close();
         delete window;
