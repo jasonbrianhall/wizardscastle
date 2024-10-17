@@ -24,7 +24,6 @@ extern "C" {
 #endif
 
 void initialize_qt(int argc, char *argv[]);
-void close_qt(WizardsCastleWindow* window);
 
 // Declare other extern "C" functions here
 

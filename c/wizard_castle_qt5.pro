@@ -13,6 +13,7 @@ SOURCES += \
     utilities.c \
     combat.c \
     vendor.c
+    save_load.c
 
 HEADERS += \
     wizardio.h \
@@ -23,5 +24,6 @@ HEADERS += \
     combat.h \
     vendor.h
     combat.c
+    save_load.h
 
 TARGET = wizards_castle_qt5
