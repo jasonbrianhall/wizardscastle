@@ -120,6 +120,14 @@ bool load_game(const char *filename, Player *player, GameState *game) {
                 fprintf(debug_file, "location_map[%i]=%d\n", i, game->discovered_rooms[i]);
             }
             fprintf(debug_file, "Finished parsing location_map, read %d elements\n", MAP_SIZE);
+            fprintf(debug_file, "Start debugging\n");
+            for (int i=0;i<MAP_SIZE;i++)
+            {
+                 fprintf(debug_file, "discovered_rooms[%i]=%d\n", i, game->discovered_rooms[i] );
+            }
+            fprintf(debug_file, "End debugging\n");
+
+
         }
         else if (strncmp(line, "treasure:", strlen("treasure:")) == 0) {
             fprintf(debug_file, "Parsing Treasure\n");
@@ -143,7 +151,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
                 fprintf(debug_file, "Error parsing orb_location\n");
             }
         }
-        else if (strncmp(line, "runestaff_location:", strlen("runestaff_location") == 0) {
+        else if (strncmp(line, "runestaff_location:", strlen("runestaff_location")) == 0) {
             fprintf(debug_file, "Parsing runestaff_location\n");
             if (sscanf(line + 19, "%d %d %d", &game->runestaff_location[0], &game->runestaff_location[1], &game->runestaff_location[2]) == 3) {
                 fprintf(debug_file, "Parsed runestaff_location: %d %d %d\n", game->runestaff_location[0], game->runestaff_location[1], game->runestaff_location[2]);
