@@ -176,6 +176,17 @@ private slots:
         } else {
             QMessageBox::warning(this, tr("Load Failed"), tr("Failed to load the game. The file might be corrupted or incompatible."));
         }
+        
+        
+        int playAgain = 1;
+        while (playAgain) {
+            playAgain = main_game_loop(g_player, g_game);
+            if (playAgain) {
+                // If the player wants to play again after finishing, start a new game
+                emit newGameRequested();
+                break;
+            }
+        }
         //display_map(g_game, g_player);
         /*for(int x=0;x<MAP_SIZE;x++)
         {
