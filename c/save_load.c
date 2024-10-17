@@ -85,7 +85,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
         return false;
     }
 
-    char line[1024];
+    char line[32768];
     char key[50];
     int value;
 
