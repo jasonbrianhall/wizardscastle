@@ -95,12 +95,6 @@ signals:
     void programExit();
 
 protected:
-    void closeEvent(QCloseEvent *event) override {
-        QMessageBox::information(this, "Close Event", "A close event has occurred.");
-        event->accept();
-        emit programExit();
-    }
-
     bool eventFilter(QObject *obj, QEvent *event) override {
         if (obj == outputText && event->type() == QEvent::Wheel) {
             QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
@@ -241,13 +235,6 @@ void initialize_qt(int argc, char *argv[]) {
     QApplication* app = new QApplication(argc, argv);
     g_window = new WizardsCastleWindow();
     g_window->show();
-
-    Player player;
-    GameState game;
-    bool playagain = true;
-    bool debug_mode = false;
-    int q;
-   
 
     app->exec();
     delete g_window;
