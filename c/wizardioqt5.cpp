@@ -17,8 +17,6 @@
 #include <QStyle>
 #include "wizardio.h"
 #include <cstdlib>
-#include <QThread>
-#include <atomic>
 
 extern "C" {
 #include "wizards-castle.h"
@@ -30,72 +28,12 @@ extern "C" {
 #include "wizardio.h"
 }
 
-class GameThread : public QThread {
-    Q_OBJECT
-
-public:
-    GameThread(bool debug_mode) : debug_mode(debug_mode), should_exit(false) {}
-
-    void run() override {
-        Player player;
-        GameState game;
-        bool playagain = true;
-
-        while (playagain && !should_exit) 
-        {
-            initialize_player(&player);
-            print_introduction();
-
-            if (!debug_mode) {
-                choose_race(&player);
-                print_message("\n");
-                choose_sex(&player);
-                allocate_attributes(&player);
-                buy_equipment(&player);
-                buy_lamp_and_flares(&player);
-            } else {
-                // Debug mode setup
-                player.race = 2;  // Elf
-                player.sex = 1;   // Male
-                player.strength = 18;
-                player.intelligence = 18;
-                player.dexterity = 18;
-                player.gold = 10000;
-                player.flares = 1000;
-                player.lamp_flag = 1;
-                player.runestaff_flag = 1;
-                player.weapon_type = 3;  // Sword
-                player.armor_type = 3;   // Plate
-                player.armor_points = 21;
-
-                print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
-                print_message("DEBUG MODE: You have a Sword and Plate armor.\n");
-                print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
-                print_message("DEBUG MODE: All rooms are discovered\n");
-            }
-
-            generate_castle(&game);
-
-            playagain = main_game_loop(&player, &game);
-        }
-    }
-
-    void requestExit() {
-        should_exit = true;
-    }
-
-private:
-    bool debug_mode;
-    std::atomic<bool> should_exit;
-};
-
 class WizardsCastleWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    WizardsCastleWindow(bool debug_mode, QWidget *parent = nullptr)
-        : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10),
-          gameThread(new GameThread(debug_mode))
+    WizardsCastleWindow(QWidget *parent = nullptr)
+        : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10)
     {
         setWindowTitle("Wizard's Castle");
         resize(800, 600);
@@ -121,7 +59,6 @@ public:
 
         outputText->installEventFilter(this);
         setColorScheme("White and Black");
-        gameThread->start();
     }
 
     void appendToOutput(const QString& text) {
@@ -153,19 +90,16 @@ public:
     bool isWaitingForSpecificInput() const {
         return waitingForSpecificInput;
     }
-    
-    ~WizardsCastleWindow() {
-        if (gameThread->isRunning()) {
-            gameThread->requestExit();
-            gameThread->wait();
-        }
-        delete gameThread;
-    }
 
 signals:
     void programExit();
 
 protected:
+    void closeEvent(QCloseEvent *event) override {
+        event->accept();
+        emit programExit();
+    }
+
     bool eventFilter(QObject *obj, QEvent *event) override {
         if (obj == outputText && event->type() == QEvent::Wheel) {
             QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
@@ -246,7 +180,6 @@ private:
     bool waitingForSpecificInput;
     std::string validInputs;
     int fontSize;
-    GameThread *gameThread;
 
 
     void createMenus() {
@@ -305,14 +238,64 @@ bool parse_arguments(int argc, char* argv[])
 
 void initialize_qt(int argc, char *argv[]) {
     QApplication* app = new QApplication(argc, argv);
-    bool debug_mode = parse_arguments(argc, argv);
-    g_window = new WizardsCastleWindow(debug_mode);
+    g_window = new WizardsCastleWindow();
     g_window->show();
 
-    int result = app->exec();
+    Player player;
+    GameState game;
+    bool debug_mode = parse_arguments(argc, argv);
+    int q, playagain=1;
+
+    while (playagain) 
+    {
+        initialize_player(&player);
+        print_introduction();
+
+        if (!debug_mode) {
+            choose_race(&player);
+            print_message("\n");
+            choose_sex(&player);
+            allocate_attributes(&player);
+            buy_equipment(&player);
+            buy_lamp_and_flares(&player);
+        } else {
+            // Debug mode setup
+            player.race = 2;  // Elf
+            player.sex = 1;   // Male
+            player.strength = 18;
+            player.intelligence = 18;
+            player.dexterity = 18;
+            player.gold = 10000;
+            player.flares = 1000;
+            player.lamp_flag = 1;
+            player.runestaff_flag = 1;
+            player.weapon_type = 3;  // Sword
+            player.armor_type = 3;   // Plate
+            player.armor_points = 21;
+
+            print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
+            print_message("DEBUG MODE: You have a Sword and Plate armor.\n");
+            print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
+            print_message("DEBUG MODE: All rooms are discovered\n");
+        }
+
+        generate_castle(&game);
+
+        if (debug_mode) {
+            print_message("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 
+                   game.orb_location[1], game.orb_location[0], game.orb_location[2]);
+            for (q = 0; q < MAP_SIZE; q++) {
+                game.discovered_rooms[q] = 1;  // 0 means undiscovered
+            }
+        }
+
+        playagain = main_game_loop(&player, &game);
+    }   
+
+    //app->exec();
     delete g_window;
     delete app;
-    exit(result);
+
 }
 
 const char* get_user_input_main() {
