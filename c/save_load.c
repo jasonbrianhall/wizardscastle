@@ -139,10 +139,11 @@ bool load_game(const char *filename, Player *player, GameState *game) {
                 ptr++;
 
                 sscanf(ptr, "%d", &game->discovered_rooms[i]);
-                fprintf(debug_file, "treasure[%i]=%d\n", i, game->discovered_rooms[i]);
+                fprintf(debug_file, "treasure[%i]=%d\n", i, game->treasure[i]);
             }
             fprintf(debug_file, "Finished parsing location_map, read %d elements\n", TREASURE_START-TREASURE_END);
         }
+
         else if (strncmp(line, "orb_location:", strlen("orb_location:")) == 0) {
             fprintf(debug_file, "Parsing orb_location\n");
             if (sscanf(line + 13, "%d %d %d", &game->orb_location[0], &game->orb_location[1], &game->orb_location[2]) == 3) {
@@ -199,6 +200,11 @@ bool load_game(const char *filename, Player *player, GameState *game) {
             fprintf(debug_file, "Unrecognized line format: %s", line);
         }
     }
+            for (int i=0;i<MAP_SIZE;i++)
+            {
+                 fprintf(debug_file, "discovered_rooms_final[%i]=%d\n", i, game->discovered_rooms[i] );
+            }
+            fprintf(debug_file, "End debugging\n");
 
     fclose(file);
     fprintf(debug_file, "File closed. Load complete.\n");
