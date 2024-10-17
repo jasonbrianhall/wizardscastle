@@ -88,6 +88,10 @@ public:
         lastInput.clear();
     }
 
+    void clearOutput() {
+        outputText->clear();
+    }
+
     void setWaitingForSpecificInput(bool waiting, const std::string& validInputs) {
         waitingForSpecificInput = waiting;
         this->validInputs = validInputs;
@@ -316,6 +320,7 @@ WizardsCastleWindow* g_window = nullptr;
 
 extern "C" {
 
+
 bool parse_arguments(int argc, char* argv[])
 {
     std::vector<std::string> args(argv + 1, argv + argc);
@@ -336,7 +341,7 @@ void initialize_qt(int argc, char *argv[]) {
     int q, playagain=1;
 
         auto startNewGame = [&]() {
-        print_message("\n");
+        g_window->clearOutput();
         initialize_player(&player);
         generate_castle(&game);
         print_introduction();
