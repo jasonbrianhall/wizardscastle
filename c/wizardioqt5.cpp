@@ -30,6 +30,10 @@ extern "C" {
 #include "save_load.h"
 }
 
+    Player* g_player = nullptr;
+    GameState* g_game = nullptr;
+
+
 class WizardsCastleWindow : public QMainWindow {
     Q_OBJECT
 
@@ -132,9 +136,14 @@ private slots:
             return;
         }
 
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Game"), "", tr("Wizard's Castle Save (*.wcs);;All Files (*)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Game"), "", tr("Wizard's Castle Save (*.wcs)"));
         if (fileName.isEmpty()) {
             return;
+        }
+
+        // Ensure the file has a .wcs extension
+        if (!fileName.endsWith(".wcs", Qt::CaseInsensitive)) {
+            fileName += ".wcs";
         }
 
         if (save_game(fileName.toStdString().c_str(), g_player, g_game)) {
@@ -225,8 +234,6 @@ private:
     bool waitingForSpecificInput;
     std::string validInputs;
     int fontSize;
-    Player* g_player = nullptr;
-    GameState* g_game = nullptr;
 
 
     void createMenus() {
