@@ -2,21 +2,15 @@
 #include <QMainWindow>
 #include <QTextEdit>
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QLineEdit>
+#include <QThread>
 #include <QTimer>
-#include <QMessageBox>
 #include <QScrollBar>
-#include <QString>
-#include <QTextStream>
-#include <QRegularExpression>
 #include <QCloseEvent>
-#include <QMenuBar>
-#include <QWheelEvent>
-#include <QActionGroup>
-#include <QStyle>
-#include "wizardio.h"
+#include <QMessageBox>
+#include <atomic>
 #include <cstdlib>
+#include <cstdarg>
 
 extern "C" {
 #include "wizards-castle.h"
@@ -28,26 +22,80 @@ extern "C" {
 #include "wizardio.h"
 }
 
+std::atomic<bool> g_gameFinished(false);
+
+class GameThread : public QThread {
+public:
+    void run() override {
+        Player player;
+        GameState game;
+        bool playagain = true;
+        bool debug_mode = false;
+        int q;
+
+        while (playagain) 
+        {
+            initialize_player(&player);
+            print_introduction();
+
+            if (!debug_mode) {
+                choose_race(&player);
+                print_message("\n");
+                choose_sex(&player);
+                allocate_attributes(&player);
+                buy_equipment(&player);
+                buy_lamp_and_flares(&player);
+            } else {
+                // Debug mode setup
+                player.race = 2;  // Elf
+                player.sex = 1;   // Male
+                player.strength = 18;
+                player.intelligence = 18;
+                player.dexterity = 18;
+                player.gold = 10000;
+                player.flares = 1000;
+                player.lamp_flag = 1;
+                player.runestaff_flag = 1;
+                player.weapon_type = 3;  // Sword
+                player.armor_type = 3;   // Plate
+                player.armor_points = 21; // Max armor points for Plate armor
+
+                print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
+                print_message("DEBUG MODE: You have a Sword and Plate armor.\n");
+                print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
+                print_message("DEBUG MODE: All rooms are discovered\n");
+            }
+
+            generate_castle(&game);
+
+            if (debug_mode) {
+                print_message("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 
+                       game.orb_location[1], game.orb_location[0], game.orb_location[2]);
+                for (q = 0; q < MAP_SIZE; q++) {
+                    game.discovered_rooms[q] = 1;  // 0 means undiscovered
+                }
+            }
+
+            playagain = main_game_loop(&player, &game);
+        }
+
+        g_gameFinished = true;
+    }
+};
+
 class WizardsCastleWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    WizardsCastleWindow(QWidget *parent = nullptr)
-        : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10)
-    {
+    WizardsCastleWindow(QWidget *parent = nullptr) : QMainWindow(parent) {
         setWindowTitle("Wizard's Castle");
         resize(800, 600);
 
         QWidget *centralWidget = new QWidget(this);
         QVBoxLayout *layout = new QVBoxLayout(centralWidget);
 
-        createMenus();
-
         outputText = new QTextEdit(this);
         outputText->setReadOnly(true);
-        
-        updateFont();
-        
         layout->addWidget(outputText);
 
         inputLine = new QLineEdit(this);
@@ -57,14 +105,31 @@ public:
 
         connect(inputLine, &QLineEdit::returnPressed, this, &WizardsCastleWindow::processInput);
 
-        outputText->installEventFilter(this);
-        setColorScheme("White and Black");
+        gameThread = new GameThread();
+        gameThread->start();
+
+        QTimer *timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, this, &WizardsCastleWindow::checkGameFinished);
+        timer->start(100);  // Check every 100 ms
+    }
+
+    ~WizardsCastleWindow() {
+        if (gameThread->isRunning()) {
+            gameThread->terminate();
+            gameThread->wait();
+        }
+        delete gameThread;
     }
 
     void appendToOutput(const QString& text) {
         outputText->moveCursor(QTextCursor::End);
         outputText->insertPlainText(text);
         outputText->verticalScrollBar()->setValue(outputText->verticalScrollBar()->maximum());
+    }
+
+    void clearInput() {
+        inputLine->clear();
+        lastInput.clear();
     }
 
     bool inputIsEmpty() const {
@@ -77,154 +142,29 @@ public:
         return input;
     }
 
-    void clearInput() {
-        inputLine->clear();
-        lastInput.clear();
-    }
-
-    void setWaitingForSpecificInput(bool waiting, const std::string& validInputs) {
-        waitingForSpecificInput = waiting;
-        this->validInputs = validInputs;
-    }
-
-    bool isWaitingForSpecificInput() const {
-        return waitingForSpecificInput;
-    }
-
-signals:
-    void programExit();
-
 protected:
     void closeEvent(QCloseEvent *event) override {
-        QMessageBox::information(this, "Close Event", "A close event has occurred.");
+        QMessageBox::information(this, "Close Event", "A close event has occurred. The program will now exit.");
         event->accept();
-        emit programExit();
-    }
-
-    bool eventFilter(QObject *obj, QEvent *event) override {
-        if (obj == outputText && event->type() == QEvent::Wheel) {
-            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
-            if (wheelEvent->modifiers() & Qt::ControlModifier) {
-                const int delta = wheelEvent->angleDelta().y();
-                if (delta > 0) {
-                    increaseFontSize();
-                } else if (delta < 0) {
-                    decreaseFontSize();
-                }
-                return true;
-            }
-        }
-        return QMainWindow::eventFilter(obj, event);
     }
 
 private slots:
-
-
-    void setColorScheme(const QString &scheme) {
-        QPalette palette;
-        if (scheme == "Commodore 64") {
-            palette.setColor(QPalette::Base, Qt::black);
-            palette.setColor(QPalette::Text, QColor(0, 255, 0)); // Green text
-        } else if (scheme == "Blue and White") {
-            palette.setColor(QPalette::Base, QColor(0, 0, 255)); // Blue background
-            palette.setColor(QPalette::Text, Qt::white);
-        } else if (scheme == "Black and White") {
-            palette.setColor(QPalette::Base, Qt::black);
-            palette.setColor(QPalette::Text, Qt::white);
-        } else if (scheme == "White and Black") {
-            palette.setColor(QPalette::Base, Qt::white);
-            palette.setColor(QPalette::Text, Qt::black);
-        } else { // Default
-            palette = QApplication::style()->standardPalette();
-        }
-        outputText->setPalette(palette);
-        inputLine->setPalette(palette);
-    }
-    
-    void quit() {
-        close();
-    }
     void processInput() {
-        QString input = inputLine->text().toUpper();
+        lastInput = inputLine->text().toStdString();
         inputLine->clear();
-
-        if (waitingForSpecificInput) {
-            if (validInputs.find(input[0].toLatin1()) != std::string::npos) {
-                lastInput = input[0].toLatin1();
-                waitingForSpecificInput = false;
-            } else {
-                appendToOutput(QString("Please enter one of the following: %1\n").arg(QString::fromStdString(validInputs)));
-            }
-        } else {
-            lastInput = input.toStdString();
-        }
     }
 
-    void increaseFontSize() {
-        if (fontSize < 24) {
-            fontSize++;
-            updateFont();
-        }
-    }
-
-    void decreaseFontSize() {
-        if (fontSize > 6) {
-            fontSize--;
-            updateFont();
+    void checkGameFinished() {
+        if (g_gameFinished) {
+            close();
         }
     }
 
 private:
     QTextEdit *outputText;
     QLineEdit *inputLine;
+    GameThread *gameThread;
     std::string lastInput;
-    bool waitingForSpecificInput;
-    std::string validInputs;
-    int fontSize;
-
-
-    void createMenus() {
-        QMenuBar *menuBar = new QMenuBar(this);
-        setMenuBar(menuBar);
-
-        QMenu *fileMenu = menuBar->addMenu(tr("&File"));
-        QAction *quitAction = new QAction(tr("&Quit"), this);
-        quitAction->setShortcuts(QKeySequence::Quit);
-        connect(quitAction, &QAction::triggered, this, &WizardsCastleWindow::quit);
-        fileMenu->addAction(quitAction);
-
-        QMenu *optionsMenu = menuBar->addMenu(tr("&Options"));
-        QMenu *colorSchemeMenu = optionsMenu->addMenu(tr("&Color Scheme"));
-
-        QActionGroup *colorSchemeGroup = new QActionGroup(this);
-        colorSchemeGroup->setExclusive(true);
-
-        QStringList schemes = {"Default", "Commodore 64", "Blue and White", "Black and White", "White and Black"};
-        for (const QString &scheme : schemes) {
-            QAction *schemeAction = new QAction(scheme, this);
-            schemeAction->setCheckable(true);
-            colorSchemeMenu->addAction(schemeAction);
-            colorSchemeGroup->addAction(schemeAction);
-            connect(schemeAction, &QAction::triggered, [this, scheme]() {
-                setColorScheme(scheme);
-            });
-            if (scheme == "Default") {
-                schemeAction->setChecked(true);
-            }
-        }
-    }
-
-    void updateFont() {
-        QFont monoFont("Consolas", fontSize);
-        if (!monoFont.exactMatch()) {
-            monoFont.setStyleHint(QFont::Monospace);
-        }
-        outputText->setFont(monoFont);
-    }
-
-    void cleanup() {
-        appendToOutput("Cleaning up and closing Wizard's Castle. Goodbye!\n");
-    }
 };
 
 WizardsCastleWindow* g_window = nullptr;
@@ -238,21 +178,12 @@ bool parse_arguments(int argc, char* argv[])
 }
 
 void initialize_qt(int argc, char *argv[]) {
-    QApplication* app = new QApplication(argc, argv);
+    QApplication app(argc, argv);
     g_window = new WizardsCastleWindow();
     g_window->show();
-
-    Player player;
-    GameState game;
-    bool playagain = true;
-    bool debug_mode = false;
-    int q;
-   
-
-    app->exec();
+    app.exec();
     delete g_window;
-    delete app;
-
+    g_window = nullptr;
 }
 
 const char* get_user_input_main() {
@@ -268,30 +199,21 @@ const char* get_user_input_main() {
         }
         
         input = g_window->getLastInput();
-        // Remove newline character if present
-        input.erase(std::remove(input.begin(), input.end(), '\n'), input.end());
-        
-        // Convert input to uppercase
         std::transform(input.begin(), input.end(), input.begin(), ::toupper);
         
-        // Check if input is empty
         if (input.empty()) {
             print_message("\n");
-            return input.c_str();  // Return empty string
+            return input.c_str();
         }
         
-        // Get the first character
         char firstChar = input[0];
 
-        // Validate commands
         if (firstChar == 'D' && input.length() > 1 && input[1] == 'R') {
-            print_message("DR\n", input[0]);
-            return dr_command;  // Return "DR" for DRINK
+            print_message("DR\n");
+            return dr_command;
         } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
             print_message("%c\n", firstChar);
-
-            return input.c_str();  // Return the single letter command
-
+            return input.c_str();
         } else {
             print_message("Invalid command. Type 'H' for help.\n");
         }
@@ -310,7 +232,7 @@ int get_user_input_number() {
         
         try {
            data = std::stoi(input);
-           print_message("%d\n", data);  // Assuming print_message is similar to printf
+           print_message("%d\n", data);
            return data;
         } catch (const std::invalid_argument&) {
             print_message_formatted("Invalid input. Please enter a valid integer.\n");
@@ -330,20 +252,16 @@ char get_user_input() {
         }
         
         std::string input = g_window->getLastInput();
-        
-        // Convert input to uppercase
         std::transform(input.begin(), input.end(), input.begin(), ::toupper);
         
-        // Check if input is empty
         if (input.empty()) {
             print_message_formatted("Please enter a command.\n");
             continue;
         }
         
-        // Get the first character of the input
         char command = input[0];
         print_message("%c\n", command);
-        // Check if it's a valid command
+        
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
             return command;
         } else {
@@ -362,21 +280,16 @@ char get_user_input_custom_prompt(char* prompt) {
         }
         
         std::string input = g_window->getLastInput();
-
-        // Convert input to uppercase
         std::transform(input.begin(), input.end(), input.begin(), ::toupper);
         
-        // Check if input is empty
         if (input.empty()) {
             print_message_formatted("Please enter a command.\n");
             continue;
         }
         
-        // Get the first character of the input
         char command = input[0];
-        print_message("%c\n", input[0], input);
+        print_message("%c\n", command);
         
-        // Check if it's a valid command
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
             return command;
         } else {
@@ -393,20 +306,15 @@ char get_user_input_yn() {
         }
         
         std::string input = g_window->getLastInput();
-        
-        // Convert input to uppercase
         std::transform(input.begin(), input.end(), input.begin(), ::toupper);
         
-        // Check if input is empty
         if (input.empty()) {
             print_message("Please Enter Y or N.\n");
             continue;
         }
         
-        // Get the first character of the input
         char command = input[0];
         
-        // Check if it's a valid command
         if (strchr("YN", command) != NULL) {
             return command;
         } else {
@@ -422,8 +330,9 @@ void print_message(const char *format, ...) {
     vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
 
-    QString message = QString::fromUtf8(buffer);
-    g_window->appendToOutput(message);
+    if (g_window) {
+        g_window->appendToOutput(QString::fromUtf8(buffer));
+    }
 }
 
 void print_message_formatted(const char *format, ...) {
@@ -432,12 +341,13 @@ void print_message_formatted(const char *format, ...) {
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), format, args);
     
-    capitalize_sentences(buffer);  // Use the function from utilities.c
+    capitalize_sentences(buffer);
     
     va_end(args);
     
-    QString message = QString::fromUtf8(buffer);
-    g_window->appendToOutput(message);
+    if (g_window) {
+        g_window->appendToOutput(QString::fromUtf8(buffer));
+    }
 }
 
 } // end of extern "C"
