@@ -12,32 +12,32 @@ bool save_game(const char *filename, const Player *player, const GameState *game
     }
 
     // Save Player structure
-    fprintf(file, "race:%d;\n", player->race);
-    fprintf(file, "sex:%d;\n", player->sex);
-    fprintf(file, "strength:%d;\n", player->strength);
-    fprintf(file, "temp_strength:%d;\n", player->temp_strength);
-    fprintf(file, "intelligence:%d;\n", player->intelligence);
-    fprintf(file, "temp_intelligence:%d;\n", player->temp_intelligence);
-    fprintf(file, "dexterity:%d;\n", player->dexterity);
-    fprintf(file, "temp_dexterity:%d;\n", player->temp_dexterity);
-    fprintf(file, "gold:%d;\n", player->gold);
-    fprintf(file, "flares:%d;\n", player->flares);
-    fprintf(file, "armor_type:%d;\n", player->armor_type);
-    fprintf(file, "armor_points:%d;\n", player->armor_points);
-    fprintf(file, "weapon_type:%d;\n", player->weapon_type);
-    fprintf(file, "lamp_flag:%d;\n", player->lamp_flag);
-    fprintf(file, "x:%d;\n", player->x);
-    fprintf(file, "y:%d;\n", player->y);
-    fprintf(file, "level:%d;\n", player->level);
-    fprintf(file, "runestaff_flag:%d;\n", player->runestaff_flag);
-    fprintf(file, "orb_flag:%d;\n", player->orb_flag);
-    fprintf(file, "book_flag:%d;\n", player->book_flag);
-    fprintf(file, "blindness_flag:%d;\n", player->blindness_flag);
-    fprintf(file, "stickybook_flag:%d;\n", player->stickybook_flag);
-    fprintf(file, "has_runestaff:%d;\n", player->has_runestaff);
-    fprintf(file, "has_orb:%d;\n", player->has_orb);
-    fprintf(file, "treasure_count:%d;\n", player->treasure_count);
-    fprintf(file, "web_count:%d;\n", player->web_count);
+    fprintf(file, "race: %d;\n", player->race);
+    fprintf(file, "sex: %d;\n", player->sex);
+    fprintf(file, "strength: %d;\n", player->strength);
+    fprintf(file, "temp_strength: %d;\n", player->temp_strength);
+    fprintf(file, "intelligence: %d;\n", player->intelligence);
+    fprintf(file, "temp_intelligence: %d;\n", player->temp_intelligence);
+    fprintf(file, "dexterity: %d;\n", player->dexterity);
+    fprintf(file, "temp_dexterity: %d;\n", player->temp_dexterity);
+    fprintf(file, "gold: %d;\n", player->gold);
+    fprintf(file, "flares: %d;\n", player->flares);
+    fprintf(file, "armor_type: %d;\n", player->armor_type);
+    fprintf(file, "armor_points: %d;\n", player->armor_points);
+    fprintf(file, "weapon_type: %d;\n", player->weapon_type);
+    fprintf(file, "lamp_flag: %d;\n", player->lamp_flag);
+    fprintf(file, "x: %d;\n", player->x);
+    fprintf(file, "y: %d;\n", player->y);
+    fprintf(file, "level: %d;\n", player->level);
+    fprintf(file, "runestaff_flag: %d;\n", player->runestaff_flag);
+    fprintf(file, "orb_flag: %d;\n", player->orb_flag);
+    fprintf(file, "book_flag: %d;\n", player->book_flag);
+    fprintf(file, "blindness_flag: %d;\n", player->blindness_flag);
+    fprintf(file, "stickybook_flag: %d;\n", player->stickybook_flag);
+    fprintf(file, "has_runestaff: %d;\n", player->has_runestaff);
+    fprintf(file, "has_orb: %d;\n", player->has_orb);
+    fprintf(file, "treasure_count: %d;\n", player->treasure_count);
+    fprintf(file, "web_count: %d;\n", player->web_count);
 
     // Save GameState structure
     fprintf(file, "location_map:");
@@ -53,7 +53,7 @@ bool save_game(const char *filename, const Player *player, const GameState *game
     fprintf(file, ";\n");
 
     fprintf(file, "treasure:");
-    for (int i = 0; i < TREASURE_END-TREASURE_START; i++) {
+    for (int i = 0; i <= TREASURE_END-TREASURE_START; i++) {
         fprintf(file, " %d", game->treasure[i]);
     }
     fprintf(file, ";\n");
