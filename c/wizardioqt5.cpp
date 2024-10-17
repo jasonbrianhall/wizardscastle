@@ -13,6 +13,8 @@
 #include <QCloseEvent>
 #include <QMenuBar>
 #include <QWheelEvent>
+#include <QActionGroup>
+#include <QStyle>
 #include "wizardio.h"
 #include <cstdlib>
 
@@ -111,6 +113,29 @@ protected:
     }
 
 private slots:
+
+
+    void setColorScheme(const QString &scheme) {
+        QPalette palette;
+        if (scheme == "Commodore 64") {
+            palette.setColor(QPalette::Base, Qt::black);
+            palette.setColor(QPalette::Text, QColor(0, 255, 0)); // Green text
+        } else if (scheme == "Blue and White") {
+            palette.setColor(QPalette::Base, QColor(0, 0, 255)); // Blue background
+            palette.setColor(QPalette::Text, Qt::white);
+        } else if (scheme == "Black and White") {
+            palette.setColor(QPalette::Base, Qt::black);
+            palette.setColor(QPalette::Text, Qt::white);
+        } else if (scheme == "White and Black") {
+            palette.setColor(QPalette::Base, Qt::white);
+            palette.setColor(QPalette::Text, Qt::black);
+        } else { // Default
+            palette = QApplication::style()->standardPalette();
+        }
+        outputText->setPalette(palette);
+        inputLine->setPalette(palette);
+    }
+    
     void quit() {
         close();
     }
@@ -152,6 +177,7 @@ private:
     std::string validInputs;
     int fontSize;
 
+
     void createMenus() {
         QMenuBar *menuBar = new QMenuBar(this);
         setMenuBar(menuBar);
@@ -161,6 +187,26 @@ private:
         quitAction->setShortcuts(QKeySequence::Quit);
         connect(quitAction, &QAction::triggered, this, &WizardsCastleWindow::quit);
         fileMenu->addAction(quitAction);
+
+        QMenu *optionsMenu = menuBar->addMenu(tr("&Options"));
+        QMenu *colorSchemeMenu = optionsMenu->addMenu(tr("&Color Scheme"));
+
+        QActionGroup *colorSchemeGroup = new QActionGroup(this);
+        colorSchemeGroup->setExclusive(true);
+
+        QStringList schemes = {"Default", "Commodore 64", "Blue and White", "Black and White", "White and Black"};
+        for (const QString &scheme : schemes) {
+            QAction *schemeAction = new QAction(scheme, this);
+            schemeAction->setCheckable(true);
+            colorSchemeMenu->addAction(schemeAction);
+            colorSchemeGroup->addAction(schemeAction);
+            connect(schemeAction, &QAction::triggered, [this, scheme]() {
+                setColorScheme(scheme);
+            });
+            if (scheme == "Default") {
+                schemeAction->setChecked(true);
+            }
+        }
     }
 
     void updateFont() {
