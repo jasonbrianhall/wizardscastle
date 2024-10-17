@@ -97,7 +97,7 @@ signals:
 protected:
     void closeEvent(QCloseEvent *event) override {
         event->accept();
-        emit programExit();
+        std::exit(0);
     }
 
     bool eventFilter(QObject *obj, QEvent *event) override {
