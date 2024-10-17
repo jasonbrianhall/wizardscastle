@@ -301,12 +301,16 @@ void initialize_qt(int argc, char *argv[]) {
 
     Player player;
     GameState game;
+
+    g_window->setGamePointers(&player, &game);
+
     bool debug_mode = parse_arguments(argc, argv);
     int q, playagain=1;
 
     while (playagain) 
     {
         initialize_player(&player);
+        generate_castle(&game);
         print_introduction();
 
         if (!debug_mode) {
@@ -336,8 +340,6 @@ void initialize_qt(int argc, char *argv[]) {
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered\n");
         }
-
-        generate_castle(&game);
 
         if (debug_mode) {
             print_message("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 

@@ -12,7 +12,7 @@ SOURCES += \
     gamestate.c \
     utilities.c \
     combat.c \
-    vendor.c
+    vendor.c \
     save_load.c
 
 HEADERS += \
@@ -22,8 +22,8 @@ HEADERS += \
     gamestate.h \
     utilities.h \
     combat.h \
-    vendor.h
-    combat.c
+    vendor.h \
+    combat.c \
     save_load.h
 
 TARGET = wizards_castle_qt5
