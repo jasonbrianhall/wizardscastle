@@ -58,6 +58,7 @@ public:
         connect(inputLine, &QLineEdit::returnPressed, this, &WizardsCastleWindow::processInput);
 
         outputText->installEventFilter(this);
+        setColorScheme("White and Black");
     }
 
     void appendToOutput(const QString& text) {
