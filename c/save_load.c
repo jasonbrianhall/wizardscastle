@@ -1,6 +1,8 @@
 #include "wizards-castle.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "wizardio.h"
 
 bool save_game(const char *filename, const Player *player, const GameState *game) {
     FILE *file = fopen(filename, "w");
@@ -69,8 +71,16 @@ bool save_game(const char *filename, const Player *player, const GameState *game
 }
 
 bool load_game(const char *filename, Player *player, GameState *game) {
+    FILE *debug_file = fopen("load_game_debug.log", "w");
+    if (debug_file == NULL) {
+        return false;  // Unable to open debug file
+    }
+
+    fprintf(debug_file, "Attempting to load game from file: %s\n", filename);
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
+        fprintf(debug_file, "Error: Unable to open file for reading.\n");
+        fclose(debug_file);
         return false;
     }
 
@@ -79,7 +89,87 @@ bool load_game(const char *filename, Player *player, GameState *game) {
     int value;
 
     while (fgets(line, sizeof(line), file)) {
-        if (sscanf(line, "%[^:]:%d;", key, &value) == 2) {
+        fprintf(debug_file, "Reading line: %s", line);
+        
+        // Handle array types
+        if (strncmp(line, "location_map:", 13) == 0) {
+            fprintf(debug_file, "Parsing location_map\n");
+            char *ptr = line + 13;
+            int i = 0;
+            while (*ptr != ';' && i < MAP_SIZE) {
+                if (sscanf(ptr, "%d", &game->location_map[i]) == 1) {
+                    fprintf(debug_file, "location_map[%d] = %d\n", i, game->location_map[i]);
+                    i++;
+                }
+                ptr = strchr(ptr, ' ');
+                if (ptr == NULL) break;
+                ptr++;
+            }
+            // If we haven't filled the array, continue reading the next line
+            while (i < MAP_SIZE && fgets(line, sizeof(line), file)) {
+                ptr = line;
+                while (*ptr != ';' && i < MAP_SIZE) {
+                    if (sscanf(ptr, "%d", &game->location_map[i]) == 1) {
+                        fprintf(debug_file, "location_map[%d] = %d\n", i, game->location_map[i]);
+                        i++;
+                    }
+                    ptr = strchr(ptr, ' ');
+                    if (ptr == NULL) break;
+                    ptr++;
+                }
+                if (strchr(line, ';')) break;
+            }
+            fprintf(debug_file, "Finished parsing location_map, read %d elements\n", i);
+        }
+        else if (strncmp(line, "discovered_rooms:", 17) == 0) {
+            fprintf(debug_file, "Parsing discovered_rooms\n");
+            char *ptr = line + 17;
+            int i = 0;
+            while (*ptr != ';' && i < MAP_SIZE) {
+                if (sscanf(ptr, "%d", &game->discovered_rooms[i]) == 1) {
+                    fprintf(debug_file, "discovered_rooms[%d] = %d\n", i, game->discovered_rooms[i]);
+                    i++;
+                }
+                ptr = strchr(ptr, ' ');
+                if (ptr == NULL) break;
+                ptr++;
+            }
+            fprintf(debug_file, "Finished parsing discovered_rooms, read %d elements\n", i);
+        }
+        else if (strncmp(line, "treasure:", 9) == 0) {
+            fprintf(debug_file, "Parsing treasure\n");
+            char *ptr = line + 9;
+            int i = 0;
+            while (*ptr != ';' && i < TREASURE_COUNT) {
+                if (sscanf(ptr, "%d", &game->treasure[i]) == 1) {
+                    fprintf(debug_file, "treasure[%d] = %d\n", i, game->treasure[i]);
+                    i++;
+                }
+                ptr = strchr(ptr, ' ');
+                if (ptr == NULL) break;
+                ptr++;
+            }
+            fprintf(debug_file, "Finished parsing treasure, read %d elements\n", i);
+        }
+        else if (strncmp(line, "orb_location:", 13) == 0) {
+            fprintf(debug_file, "Parsing orb_location\n");
+            if (sscanf(line + 13, "%d %d %d", &game->orb_location[0], &game->orb_location[1], &game->orb_location[2]) == 3) {
+                fprintf(debug_file, "Parsed orb_location: %d %d %d\n", game->orb_location[0], game->orb_location[1], game->orb_location[2]);
+            } else {
+                fprintf(debug_file, "Error parsing orb_location\n");
+            }
+        }
+        else if (strncmp(line, "runestaff_location:", 19) == 0) {
+            fprintf(debug_file, "Parsing runestaff_location\n");
+            if (sscanf(line + 19, "%d %d %d", &game->runestaff_location[0], &game->runestaff_location[1], &game->runestaff_location[2]) == 3) {
+                fprintf(debug_file, "Parsed runestaff_location: %d %d %d\n", game->runestaff_location[0], game->runestaff_location[1], game->runestaff_location[2]);
+            } else {
+                fprintf(debug_file, "Error parsing runestaff_location\n");
+            }
+        }
+        // Handle non-array types
+        else if (sscanf(line, "%[^:]: %d;", key, &value) == 2) {
+            fprintf(debug_file, "Parsed key: %s, value: %d\n", key, value);
             if (strcmp(key, "race") == 0) player->race = value;
             else if (strcmp(key, "sex") == 0) player->sex = value;
             else if (strcmp(key, "strength") == 0) player->strength = value;
@@ -111,37 +201,15 @@ bool load_game(const char *filename, Player *player, GameState *game) {
             else if (strcmp(key, "game_over") == 0) game->game_over = value;
             else if (strcmp(key, "victory") == 0) game->victory = value;
             else if (strcmp(key, "vendor_attacked") == 0) game->vendor_attacked = value;
-        } else if (strncmp(line, "location_map:", 13) == 0) {
-            char *ptr = line + 13;
-            for (int i = 0; i < MAP_SIZE; i++) {
-                sscanf(ptr, "%d", &game->location_map[i]);
-                ptr = strchr(ptr, ' ');
-                if (ptr == NULL) break;
-                ptr++;
-            }
-        } else if (strncmp(line, "discovered_rooms:", 17) == 0) {
-            char *ptr = line + 17;
-            for (int i = 0; i < MAP_SIZE; i++) {
-                sscanf(ptr, "%d", &game->discovered_rooms[i]);
-                ptr = strchr(ptr, ' ');
-                if (ptr == NULL) break;
-                ptr++;
-            }
-        } else if (strncmp(line, "treasure:", 9) == 0) {
-            char *ptr = line + 9;
-            for (int i = 0; i < TREASURE_COUNT; i++) {
-                sscanf(ptr, "%d", &game->treasure[i]);
-                ptr = strchr(ptr, ' ');
-                if (ptr == NULL) break;
-                ptr++;
-            }
-        } else if (strncmp(line, "orb_location:", 13) == 0) {
-            sscanf(line + 13, "%d %d %d", &game->orb_location[0], &game->orb_location[1], &game->orb_location[2]);
-        } else if (strncmp(line, "runestaff_location:", 19) == 0) {
-            sscanf(line + 19, "%d %d %d", &game->runestaff_location[0], &game->runestaff_location[1], &game->runestaff_location[2]);
+            else fprintf(debug_file, "Unknown key: %s\n", key);
+        }
+        else {
+            fprintf(debug_file, "Unrecognized line format: %s", line);
         }
     }
 
     fclose(file);
+    fprintf(debug_file, "File closed. Load complete.\n");
+    fclose(debug_file);
     return true;
 }
