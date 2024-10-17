@@ -111,7 +111,6 @@ void print_introduction(void);
 // Returns True or False if the player wants to play again
 bool main_game_loop(Player *player, GameState *game);
 // Utility functions
-void display_map(GameState *game, Player *player);
 void print_help();
 
 #endif 

@@ -355,7 +355,7 @@ void print_status(Player *player, GameState *game)
 
     // Print player position
     snprintf(message, sizeof(message), "Location: Level %d, Room (%d, %d)\n",
-             player->level, player->y, player->x);
+             player->level, player->x, player->y);
     print_message(message);
 
     // Print player inventory

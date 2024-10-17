@@ -249,7 +249,10 @@ void mark_room_discovered(GameState *game, int x, int y, int level)
 
 int is_room_discovered(GameState *game, int x, int y, int level)
 {
+    //print_message("is room discovered %i %i %i %i", level, x, y CALCULATE_ROOM_INDEX(level, x, y));
     int index = CALCULATE_ROOM_INDEX(level, x, y);
+    
+    //print_message("Discovered %i, %i\n\n", CALCULATE_ROOM_INDEX(level, x, y), game->discovered_rooms[index]);
     return game->discovered_rooms[index];
 }
 

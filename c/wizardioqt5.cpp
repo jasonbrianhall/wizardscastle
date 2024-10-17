@@ -17,6 +17,7 @@
 #include <QStyle>
 #include "wizardio.h"
 #include <cstdlib>
+#include <QFileDialog>
 
 extern "C" {
 #include "wizards-castle.h"
@@ -26,7 +27,12 @@ extern "C" {
 #include "combat.h"
 #include "vendor.h"
 #include "wizardio.h"
+#include "save_load.h"
 }
+
+    Player* g_player = nullptr;
+    GameState* g_game = nullptr;
+
 
 class WizardsCastleWindow : public QMainWindow {
     Q_OBJECT
@@ -91,8 +97,14 @@ public:
         return waitingForSpecificInput;
     }
 
+    void setGamePointers(Player* player, GameState* game) {
+        g_player = player;
+        g_game = game;
+    }
+
 signals:
     void programExit();
+    void gameStateChanged();
 
 protected:
     void closeEvent(QCloseEvent *event) override {
@@ -118,6 +130,53 @@ protected:
 
 private slots:
 
+    void saveGame() {
+        if (!g_player || !g_game) {
+            QMessageBox::warning(this, tr("Save Failed"), tr("No active game to save."));
+            return;
+        }
+
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Game"), "", tr("Wizard's Castle Save (*.wcs)"));
+        if (fileName.isEmpty()) {
+            return;
+        }
+
+        // Ensure the file has a .wcs extension
+        if (!fileName.endsWith(".wcs", Qt::CaseInsensitive)) {
+            fileName += ".wcs";
+        }
+
+        if (save_game(fileName.toStdString().c_str(), g_player, g_game)) {
+            QMessageBox::information(this, tr("Game Saved"), tr("Your game has been saved successfully."));
+        } else {
+            QMessageBox::warning(this, tr("Save Failed"), tr("Failed to save the game. Please try again."));
+        }
+    }
+
+    void loadGame() {
+        if (!g_player || !g_game) {
+            QMessageBox::warning(this, tr("Load Failed"), tr("Cannot load game at this time."));
+            return;
+        }
+
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Load Game"), "", tr("Wizard's Castle Save (*.wcs);;All Files (*)"));
+        if (fileName.isEmpty()) {
+            return;
+        }
+
+        if (load_game(fileName.toStdString().c_str(), g_player, g_game)) {
+            QMessageBox::information(this, tr("Game Loaded"), tr("Your game has been loaded successfully."));
+            // You might want to trigger an update of the UI here
+            emit gameStateChanged();
+        } else {
+            QMessageBox::warning(this, tr("Load Failed"), tr("Failed to load the game. The file might be corrupted or incompatible."));
+        }
+        //display_map(g_game, g_player);
+        /*for(int x=0;x<MAP_SIZE;x++)
+        {
+             print_message("%i %i\n", x, g_game->discovered_rooms[x]);
+        }*/
+    }
 
     void setColorScheme(const QString &scheme) {
         QPalette palette;
@@ -187,6 +246,17 @@ private:
         setMenuBar(menuBar);
 
         QMenu *fileMenu = menuBar->addMenu(tr("&File"));
+        QAction *saveAction = new QAction(tr("&Save Game"), this);
+        saveAction->setShortcut(QKeySequence::Save);
+        connect(saveAction, &QAction::triggered, this, &WizardsCastleWindow::saveGame);
+        fileMenu->addAction(saveAction);
+
+        QAction *loadAction = new QAction(tr("&Load Game"), this);
+        loadAction->setShortcut(QKeySequence::Open);
+        connect(loadAction, &QAction::triggered, this, &WizardsCastleWindow::loadGame);
+        fileMenu->addAction(loadAction);
+
+        fileMenu->addSeparator();
         QAction *quitAction = new QAction(tr("&Quit"), this);
         quitAction->setShortcuts(QKeySequence::Quit);
         connect(quitAction, &QAction::triggered, this, &WizardsCastleWindow::quit);
@@ -243,12 +313,16 @@ void initialize_qt(int argc, char *argv[]) {
 
     Player player;
     GameState game;
+
+    g_window->setGamePointers(&player, &game);
+
     bool debug_mode = parse_arguments(argc, argv);
     int q, playagain=1;
 
     while (playagain) 
     {
         initialize_player(&player);
+        generate_castle(&game);
         print_introduction();
 
         if (!debug_mode) {
@@ -278,8 +352,6 @@ void initialize_qt(int argc, char *argv[]) {
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered\n");
         }
-
-        generate_castle(&game);
 
         if (debug_mode) {
             print_message("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 
