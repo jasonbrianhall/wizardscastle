@@ -320,7 +320,9 @@ private:
         QActionGroup *colorSchemeGroup = new QActionGroup(this);
         colorSchemeGroup->setExclusive(true);
 
-        QStringList schemes = {"Default", "Commodore 64", "Blue and White", "Black and White", "White and Black"};
+        QStringList schemes = {"Default", "Commodore 64", "Blue and White", "Black and White", "White and Black",
+                       "Solarized Light", "Solarized Dark", "Monokai", "Gruvbox Light", "Gruvbox Dark", "Nord"};
+
         for (const QString &scheme : schemes) {
             QAction *schemeAction = new QAction(scheme, this);
             schemeAction->setCheckable(true);
