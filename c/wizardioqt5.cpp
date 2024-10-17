@@ -105,6 +105,7 @@ public:
 signals:
     void programExit();
     void gameStateChanged();
+    void newGameRequested();
 
 protected:
     void closeEvent(QCloseEvent *event) override {
@@ -176,6 +177,16 @@ private slots:
         {
              print_message("%i %i\n", x, g_game->discovered_rooms[x]);
         }*/
+    }
+    
+    void newGame() {
+        // Ask for confirmation before starting a new game
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "New Game", "Are you sure you want to start a new game? Any unsaved progress will be lost.",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            emit newGameRequested();
+        }
     }
 
     void setColorScheme(const QString &scheme) {
@@ -251,6 +262,11 @@ private:
         connect(saveAction, &QAction::triggered, this, &WizardsCastleWindow::saveGame);
         fileMenu->addAction(saveAction);
 
+        QAction *newGameAction = new QAction(tr("&New Game"), this);
+        newGameAction->setShortcut(QKeySequence::New);
+        connect(newGameAction, &QAction::triggered, this, &WizardsCastleWindow::newGame);
+        fileMenu->addAction(newGameAction);
+
         QAction *loadAction = new QAction(tr("&Load Game"), this);
         loadAction->setShortcut(QKeySequence::Open);
         connect(loadAction, &QAction::triggered, this, &WizardsCastleWindow::loadGame);
@@ -319,8 +335,8 @@ void initialize_qt(int argc, char *argv[]) {
     bool debug_mode = parse_arguments(argc, argv);
     int q, playagain=1;
 
-    while (playagain) 
-    {
+        auto startNewGame = [&]() {
+        print_message("\n");
         initialize_player(&player);
         generate_castle(&game);
         print_introduction();
@@ -362,8 +378,18 @@ void initialize_qt(int argc, char *argv[]) {
         }
 
         playagain = main_game_loop(&player, &game);
-    }   
+    };
+   QObject::connect(g_window, &WizardsCastleWindow::newGameRequested, startNewGame);
 
+    // Start the initial game
+    startNewGame();
+
+    while (playagain) {
+        playagain = main_game_loop(&player, &game);
+        if (playagain) {
+            startNewGame();
+        }
+    }
     //app->exec();
     delete g_window;
     delete app;
