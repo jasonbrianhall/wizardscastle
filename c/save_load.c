@@ -53,7 +53,7 @@ bool save_game(const char *filename, const Player *player, const GameState *game
     fprintf(file, ";\n");
 
     fprintf(file, "treasure:");
-    for (int i = 0; i < TREASURE_COUNT; i++) {
+    for (int i = 0; i < TREASURE_END-TREASURE_START; i++) {
         fprintf(file, " %d", game->treasure[i]);
     }
     fprintf(file, ";\n");
@@ -109,7 +109,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
         }
         else if (strncmp(line, "discovered_rooms:", 17) == 0) {
             fprintf(debug_file, "Parsing discovered rooms\n");
-            char *ptr = line +13;
+            char *ptr = line +17;
             for(int i=0;i<MAP_SIZE;i++)
             {
                 ptr = strchr(ptr, ' ');
@@ -123,7 +123,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
         }
         else if (strncmp(line, "treasure:", 9) == 0) {
             fprintf(debug_file, "Parsing Treasure\n");
-            char *ptr = line +13;
+            char *ptr = line +strlen("treasure:");
             for(int i=0;i<TREASURE_END-TREASURE_START;i++)
             {
                 ptr = strchr(ptr, ' ');
@@ -131,7 +131,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
                 ptr++;
 
                 sscanf(ptr, "%d", &game->discovered_rooms[i]);
-                fprintf(debug_file, "location_map[%i]=%d\n", i, game->discovered_rooms[i]);
+                fprintf(debug_file, "treasure[%i]=%d\n", i, game->discovered_rooms[i]);
             }
             fprintf(debug_file, "Finished parsing location_map, read %d elements\n", TREASURE_START-TREASURE_END);
         }
