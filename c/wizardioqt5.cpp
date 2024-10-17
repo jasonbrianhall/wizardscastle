@@ -261,15 +261,18 @@ private:
         setMenuBar(menuBar);
 
         QMenu *fileMenu = menuBar->addMenu(tr("&File"));
-        QAction *saveAction = new QAction(tr("&Save Game"), this);
-        saveAction->setShortcut(QKeySequence::Save);
-        connect(saveAction, &QAction::triggered, this, &WizardsCastleWindow::saveGame);
-        fileMenu->addAction(saveAction);
 
         QAction *newGameAction = new QAction(tr("&New Game"), this);
         newGameAction->setShortcut(QKeySequence::New);
         connect(newGameAction, &QAction::triggered, this, &WizardsCastleWindow::newGame);
         fileMenu->addAction(newGameAction);
+
+
+        QAction *saveAction = new QAction(tr("&Save Game"), this);
+        saveAction->setShortcut(QKeySequence::Save);
+        connect(saveAction, &QAction::triggered, this, &WizardsCastleWindow::saveGame);
+        fileMenu->addAction(saveAction);
+
 
         QAction *loadAction = new QAction(tr("&Load Game"), this);
         loadAction->setShortcut(QKeySequence::Open);
