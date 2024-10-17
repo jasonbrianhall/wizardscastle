@@ -95,6 +95,17 @@ Warning: Engaging in this sorcery may result in unanticipated magical side effec
 
 So grab your staff (or keyboard), and may the RPM gods smile upon your endeavor!
 
+
+6. Summon the GUI version (Linux wizards only):
+
+```
+make qt
+```
+
+🎨 Behold! The Wizard's Castle now appears in glorious technicolor! (Well, at least more colors than just white-on-black; also supports green on black.)
+
+⚠️ Warning: This enchantment currently only works in the realm of Linux. We're still deciphering the arcane scrolls needed to make it appear in the Windows dimension. Stay tuned, Windows wizards!
+
 #### Embarking on Your Quest
 
 Launch your adventure:
