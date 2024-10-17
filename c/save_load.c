@@ -4,6 +4,7 @@
 #include <string.h>
 #include "wizardio.h"
 
+
 bool save_game(const char *filename, const Player *player, const GameState *game) {
     FILE *file = fopen(filename, "w");
     if (file == NULL) {
@@ -94,62 +95,45 @@ bool load_game(const char *filename, Player *player, GameState *game) {
         // Handle array types
         if (strncmp(line, "location_map:", 13) == 0) {
             fprintf(debug_file, "Parsing location_map\n");
-            char *ptr = line + 13;
-            int i = 0;
-            while (*ptr != ';' && i < MAP_SIZE) {
-                if (sscanf(ptr, "%d", &game->location_map[i]) == 1) {
-                    fprintf(debug_file, "location_map[%d] = %d\n", i, game->location_map[i]);
-                    i++;
-                }
+            char *ptr = line +13;
+            for(int i=0;i<MAP_SIZE;i++)
+            {
                 ptr = strchr(ptr, ' ');
                 if (ptr == NULL) break;
                 ptr++;
+
+                sscanf(ptr, "%d", &game->location_map[i]);
+                fprintf(debug_file, "location_map[%i]=%d\n", i, game->location_map[i]);
             }
-            // If we haven't filled the array, continue reading the next line
-            while (i < MAP_SIZE && fgets(line, sizeof(line), file)) {
-                ptr = line;
-                while (*ptr != ';' && i < MAP_SIZE) {
-                    if (sscanf(ptr, "%d", &game->location_map[i]) == 1) {
-                        fprintf(debug_file, "location_map[%d] = %d\n", i, game->location_map[i]);
-                        i++;
-                    }
-                    ptr = strchr(ptr, ' ');
-                    if (ptr == NULL) break;
-                    ptr++;
-                }
-                if (strchr(line, ';')) break;
-            }
-            fprintf(debug_file, "Finished parsing location_map, read %d elements\n", i);
+            fprintf(debug_file, "Finished parsing location_map, read %d elements\n", MAP_SIZE);
         }
         else if (strncmp(line, "discovered_rooms:", 17) == 0) {
-            fprintf(debug_file, "Parsing discovered_rooms\n");
-            char *ptr = line + 17;
-            int i = 0;
-            while (*ptr != ';' && i < MAP_SIZE) {
-                if (sscanf(ptr, "%d", &game->discovered_rooms[i]) == 1) {
-                    fprintf(debug_file, "discovered_rooms[%d] = %d\n", i, game->discovered_rooms[i]);
-                    i++;
-                }
+            fprintf(debug_file, "Parsing discovered rooms\n");
+            char *ptr = line +13;
+            for(int i=0;i<MAP_SIZE;i++)
+            {
                 ptr = strchr(ptr, ' ');
                 if (ptr == NULL) break;
                 ptr++;
+
+                sscanf(ptr, "%d", &game->discovered_rooms[i]);
+                fprintf(debug_file, "location_map[%i]=%d\n", i, game->discovered_rooms[i]);
             }
-            fprintf(debug_file, "Finished parsing discovered_rooms, read %d elements\n", i);
+            fprintf(debug_file, "Finished parsing location_map, read %d elements\n", MAP_SIZE);
         }
         else if (strncmp(line, "treasure:", 9) == 0) {
-            fprintf(debug_file, "Parsing treasure\n");
-            char *ptr = line + 9;
-            int i = 0;
-            while (*ptr != ';' && i < TREASURE_COUNT) {
-                if (sscanf(ptr, "%d", &game->treasure[i]) == 1) {
-                    fprintf(debug_file, "treasure[%d] = %d\n", i, game->treasure[i]);
-                    i++;
-                }
+            fprintf(debug_file, "Parsing Treasure\n");
+            char *ptr = line +13;
+            for(int i=0;i<TREASURE_END-TREASURE_START;i++)
+            {
                 ptr = strchr(ptr, ' ');
                 if (ptr == NULL) break;
                 ptr++;
+
+                sscanf(ptr, "%d", &game->discovered_rooms[i]);
+                fprintf(debug_file, "location_map[%i]=%d\n", i, game->discovered_rooms[i]);
             }
-            fprintf(debug_file, "Finished parsing treasure, read %d elements\n", i);
+            fprintf(debug_file, "Finished parsing location_map, read %d elements\n", TREASURE_START-TREASURE_END);
         }
         else if (strncmp(line, "orb_location:", 13) == 0) {
             fprintf(debug_file, "Parsing orb_location\n");
