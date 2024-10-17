@@ -138,7 +138,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
                 if (ptr == NULL) break;
                 ptr++;
 
-                sscanf(ptr, "%d", &game->discovered_rooms[i]);
+                sscanf(ptr, "%d", &game->treasure[i]);
                 fprintf(debug_file, "treasure[%i]=%d\n", i, game->treasure[i]);
             }
             fprintf(debug_file, "Finished parsing location_map, read %d elements\n", TREASURE_START-TREASURE_END);
