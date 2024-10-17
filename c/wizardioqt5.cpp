@@ -171,7 +171,7 @@ private slots:
         } else {
             QMessageBox::warning(this, tr("Load Failed"), tr("Failed to load the game. The file might be corrupted or incompatible."));
         }
-        display_map(g_game, g_player);
+        //display_map(g_game, g_player);
         /*for(int x=0;x<MAP_SIZE;x++)
         {
              print_message("%i %i\n", x, g_game->discovered_rooms[x]);
