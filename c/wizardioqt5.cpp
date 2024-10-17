@@ -206,21 +206,39 @@ private slots:
 
     void setColorScheme(const QString &scheme) {
         QPalette palette;
-        if (scheme == "Commodore 64") {
-            palette.setColor(QPalette::Base, Qt::black);
-            palette.setColor(QPalette::Text, QColor(0, 255, 0)); // Green text
-        } else if (scheme == "Blue and White") {
-            palette.setColor(QPalette::Base, QColor(0, 0, 255)); // Blue background
-            palette.setColor(QPalette::Text, Qt::white);
-        } else if (scheme == "Black and White") {
-            palette.setColor(QPalette::Base, Qt::black);
-            palette.setColor(QPalette::Text, Qt::white);
-        } else if (scheme == "White and Black") {
-            palette.setColor(QPalette::Base, Qt::white);
-            palette.setColor(QPalette::Text, Qt::black);
-        } else { // Default
-            palette = QApplication::style()->standardPalette();
-        }
+    if (scheme == "Commodore 64") {
+        palette.setColor(QPalette::Base, Qt::black);
+        palette.setColor(QPalette::Text, QColor(0, 255, 0)); // Green text
+    } else if (scheme == "Blue and White") {
+        palette.setColor(QPalette::Base, QColor(0, 0, 255)); // Blue background
+        palette.setColor(QPalette::Text, Qt::white);
+    } else if (scheme == "Black and White") {
+        palette.setColor(QPalette::Base, Qt::black);
+        palette.setColor(QPalette::Text, Qt::white);
+    } else if (scheme == "White and Black") {
+        palette.setColor(QPalette::Base, Qt::white);
+        palette.setColor(QPalette::Text, Qt::black);
+    } else if (scheme == "Solarized Light") {
+        palette.setColor(QPalette::Base, QColor(253, 246, 227)); // Light beige
+        palette.setColor(QPalette::Text, QColor(101, 123, 131)); // Dark gray-blue
+    } else if (scheme == "Solarized Dark") {
+        palette.setColor(QPalette::Base, QColor(0, 43, 54));     // Dark blue-gray
+        palette.setColor(QPalette::Text, QColor(131, 148, 150)); // Light gray-blue
+    } else if (scheme == "Monokai") {
+        palette.setColor(QPalette::Base, QColor(39, 40, 34));    // Dark gray
+        palette.setColor(QPalette::Text, QColor(248, 248, 242)); // Off-white
+    } else if (scheme == "Gruvbox Light") {
+        palette.setColor(QPalette::Base, QColor(251, 241, 199)); // Light tan
+        palette.setColor(QPalette::Text, QColor(60, 56, 54));    // Dark gray
+    } else if (scheme == "Gruvbox Dark") {
+        palette.setColor(QPalette::Base, QColor(40, 40, 40));    // Dark gray
+        palette.setColor(QPalette::Text, QColor(235, 219, 178)); // Light tan
+    } else if (scheme == "Nord") {
+        palette.setColor(QPalette::Base, QColor(46, 52, 64));    // Dark blue-gray
+        palette.setColor(QPalette::Text, QColor(216, 222, 233)); // Light gray-blue
+    } else { // Default
+        palette = QApplication::style()->standardPalette();
+    }
         outputText->setPalette(palette);
         inputLine->setPalette(palette);
     }
