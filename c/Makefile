@@ -106,13 +106,15 @@ MINGW_QT_MAKEFILE = Makefile.qtwin64
 QT_PRO = wizard_castle_qt5.pro
 
 qt: $(QT_MAKEFILE)
+	$(MAKE) -f $(QT_MAKEFILE) clean
 	$(MAKE) -f $(QT_MAKEFILE)
 
 $(QT_MAKEFILE): $(QT_PRO)
 	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
 
 qt-windows: 
-	$(MINGW_QMAKE) CONFIG+=static -o $(MINGW_QT_MAKEFILE)
+	$(MINGW_QMAKE) CONFIG+=static CONFIG+=release -o $(MINGW_QT_MAKEFILE)
+	make -f $(MINGW_QT_MAKEFILE) clean
 	make -f $(MINGW_QT_MAKEFILE)
 
 
