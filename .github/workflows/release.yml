@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-release:
-    runs-on: fedora-latest
+    runs-on: ubuntu-latest
     container:
       image: fedora:latest
 
