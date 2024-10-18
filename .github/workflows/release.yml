@@ -21,7 +21,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget
+        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget qt5-qtbase-devel mingw64-qt5-qmake make mingw64-qt5-qtbase mingw64-gcc-c++
 
     - name: Build RPM
       run: |
@@ -44,8 +44,11 @@ jobs:
       run: |
         pushd c
         x86_64-w64-mingw32-gcc *.c -o wizard_windows.exe
+        mingw64-qmake-qt5 -o Makefile.qt-windows
+        make -f Makefile.qt-windows
         echo "Checking if executable was created:"
         ls -l wizard_windows.exe
+        ls -l *.exe
         popd
 
     - name: Build MS-DOS version
