@@ -9,9 +9,9 @@ on:
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-latest
+    runs-on: fedora-latest
     container:
-      image: fedora:38
+      image: fedora:latest
 
     steps:
     - uses: actions/checkout@v2
