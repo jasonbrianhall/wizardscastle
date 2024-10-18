@@ -565,8 +565,8 @@ void display_map(GameState *game, Player *player)
     print_message("\n=== MAP OF LEVEL ");
     char level_str[3], number_str[3];
     snprintf(level_str, sizeof(level_str), "%d", player->level);
-    print_message_formatted(level_str);
-    print_message_formatted(" ===\n\n");
+    print_message(level_str);
+    print_message(" ===\n\n");
 
     // Print top border with column coordinates
     print_message("       1        2        3        4        5        6        7        8     \n");
@@ -599,7 +599,7 @@ void display_map(GameState *game, Player *player)
     }
 
     // Print bottom border
-    print_message_formatted("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+    print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     #ifdef MSDOS
     print_message("PRESS ENTER TO CONTINUE...");
