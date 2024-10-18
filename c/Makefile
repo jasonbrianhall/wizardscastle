@@ -112,7 +112,7 @@ $(QT_MAKEFILE): $(QT_PRO)
 	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
 
 qt-windows: 
-	$(MINGW_QMAKE) -o $(MINGW_QT_MAKEFILE)
+	$(MINGW_QMAKE) CONFIG+=static -o $(MINGW_QT_MAKEFILE)
 	make -f $(MINGW_QT_MAKEFILE)
 
 
