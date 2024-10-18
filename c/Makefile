@@ -25,12 +25,17 @@ MINGW_IMAGE = mdashnet/mingw  # MinGW for Windows
 # Compiler for Windows (MinGW)
 MINGW_CC = x86_64-w64-mingw32-gcc
 
+QT_WINDOWS_IMAGE = fedora:38
+
 # Correct CSDPMI URL
 CSDPMI_URL = http://na.mirror.garr.it/mirrors/djgpp/current/v2misc/csdpmi7b.zip
 
 # Get current user and group IDs
 USER_ID = $(shell id -u)
 GROUP_ID = $(shell id -g)
+
+# Docker volume for yum cache
+YUM_CACHE_VOLUME = wizard-castle-yum-cache
 
 # Default target
 all: $(TARGET)
@@ -95,6 +100,7 @@ rpm: clean
 
 # Qt-specific variables and targets
 QMAKE = qmake
+MINGW_QMAKE = mingw64-qmake-qt5 
 QT_MAKEFILE = Makefile.qt
 QT_PRO = wizard_castle_qt5.pro
 
@@ -103,6 +109,15 @@ qt: $(QT_MAKEFILE)
 
 $(QT_MAKEFILE): $(QT_PRO)
 	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
+
+pull-qt-windows:
+	docker pull $(QT_WINDOWS_IMAGE)
+
+qt-windows: pull-qt-windows
+	docker run --rm -v $(PWD):/src -v $(YUM_CACHE_VOLUME):/var/cache/yum $(QT_WINDOWS_IMAGE) /bin/sh -c "\
+		cd /src && \
+		yum install -y mingw64-qt5-qmake make mingw64-qt5-qtbase mingw64-gcc-c++ && \
+		$(MINGW_QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)"
 
 clean-qt:
 	[ -f $(QT_MAKEFILE) ] && $(MAKE) -f $(QT_MAKEFILE) clean || true
