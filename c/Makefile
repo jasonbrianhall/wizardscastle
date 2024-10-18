@@ -117,7 +117,8 @@ qt-windows: pull-qt-windows
 	docker run --rm -v $(PWD):/src -v $(YUM_CACHE_VOLUME):/var/cache/yum $(QT_WINDOWS_IMAGE) /bin/sh -c "\
 		cd /src && \
 		yum install -y mingw64-qt5-qmake make mingw64-qt5-qtbase mingw64-gcc-c++ && \
-		$(MINGW_QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)"
+		$(MINGW_QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)" \ 
+	        make -f $(QT_MAKEFILE)
 
 clean-qt:
 	[ -f $(QT_MAKEFILE) ] && $(MAKE) -f $(QT_MAKEFILE) clean || true
