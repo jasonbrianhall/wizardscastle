@@ -102,6 +102,7 @@ rpm: clean
 QMAKE = qmake
 MINGW_QMAKE = mingw64-qmake-qt5 
 QT_MAKEFILE = Makefile.qt
+MINGW_QT_MAKEFILE = Makefile.qtwin64
 QT_PRO = wizard_castle_qt5.pro
 
 qt: $(QT_MAKEFILE)
@@ -110,15 +111,14 @@ qt: $(QT_MAKEFILE)
 $(QT_MAKEFILE): $(QT_PRO)
 	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
 
-pull-qt-windows:
-	docker pull $(QT_WINDOWS_IMAGE)
+qt-windows: $(MINGW_QT_MAKEFILE)
+	$(MAKE) -f $(MINGW_QT_MAKEFILE)
 
-qt-windows: pull-qt-windows
-	docker run --rm -v $(PWD):/src -v $(YUM_CACHE_VOLUME):/var/cache/yum $(QT_WINDOWS_IMAGE) /bin/sh -c "\
-		cd /src && \
-		yum install -y mingw64-qt5-qmake make mingw64-qt5-qtbase mingw64-gcc-c++ && \
-		$(MINGW_QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)" \ 
-	        make -f $(QT_MAKEFILE)
+$(MINGW_QT_MAKEFILE): $(QT_PRO)
+	$(MINGW_QMAKE) -o $(MINGW_QT_MAKEFILE) $(QT_PRO)
+
+
+
 
 clean-qt:
 	[ -f $(QT_MAKEFILE) ] && $(MAKE) -f $(QT_MAKEFILE) clean || true
