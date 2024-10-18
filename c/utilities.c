@@ -578,7 +578,7 @@ void display_map(GameState *game, Player *player)
         print_message(number_str);
 
         for (int y = 1; y <= 8; y++) {
-            print_message_formatted("|");
+            print_message("|");
             if (x == player->x && y == player->y) {
                 print_message("  [YOU] ");
             } else if (is_room_discovered(game, x, y, player->level)) {
