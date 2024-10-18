@@ -21,7 +21,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget qt-devel mingw64-qt5-qmake make mingw64-qt5-qtbase mingw64-gcc-c++
+        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget
 
     - name: Build RPM
       run: |
@@ -44,8 +44,6 @@ jobs:
       run: |
         pushd c
         x86_64-w64-mingw32-gcc *.c -o wizard_windows.exe
-        mingw64-qmake-qt5 -o Makefile.qt-windows
-        make -f Makefile.qt-windows
         echo "Checking if executable was created:"
         ls -l wizard_windows.exe
         ls -l *.exe
@@ -68,10 +66,7 @@ jobs:
       run: |
         pushd c
         make
-        qmake -o Makefile.qt wizard_castle_qt5.pro
-        make  -f Makefile.qt
         mkdir -p wizardscastle-linux
-        cp wizards_castle_qt5 wizardscastle-linux/
         cp wizardscastle      wizardscastle-linux/
         tar -czf wizardscastle-linux.tar.gz wizardscastle-linux
         rm -rf wizardscastle-linux
