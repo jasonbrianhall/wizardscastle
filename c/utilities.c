@@ -575,7 +575,7 @@ void display_map(GameState *game, Player *player)
     for (int x = 1; x <= 8; x++) {
         // Print row coordinate
         snprintf(number_str, sizeof(number_str), "%d", x);
-        print_message_formatted(number_str);
+        print_message(number_str);
 
         for (int y = 1; y <= 8; y++) {
             print_message_formatted("|");
