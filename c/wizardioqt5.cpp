@@ -62,7 +62,7 @@ public:
         inputLine = new QLineEdit(this);
         leftLayout->addWidget(inputLine);
 
-        mainLayout->addWidget(leftWidget, 2);  // Left side takes 2/3 of the space
+        mainLayout->addWidget(leftWidget, 1);  // Left side takes 2/3 of the space
 
         // Create the map display
         mapDisplay = new QTextEdit(this);
