@@ -111,11 +111,9 @@ qt: $(QT_MAKEFILE)
 $(QT_MAKEFILE): $(QT_PRO)
 	$(QMAKE) -o $(QT_MAKEFILE) $(QT_PRO)
 
-qt-windows: $(MINGW_QT_MAKEFILE)
-	$(MAKE) -f $(MINGW_QT_MAKEFILE)
-
-$(MINGW_QT_MAKEFILE): $(QT_PRO)
-	$(MINGW_QMAKE) -o $(MINGW_QT_MAKEFILE) $(QT_PRO)
+qt-windows: 
+	mingw64-qmake-qt5 -o Makefile.win32
+	make -f Makefile.win32
 
 
 
