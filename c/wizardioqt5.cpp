@@ -42,10 +42,13 @@ public:
         : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10)
     {
         setWindowTitle("Wizard's Castle");
-        resize(800, 600);
+        resize(1280, 768);  // Increased width to accommodate the map
 
         QWidget *centralWidget = new QWidget(this);
-        QVBoxLayout *layout = new QVBoxLayout(centralWidget);
+        QHBoxLayout *mainLayout = new QHBoxLayout(centralWidget);
+
+        QWidget *leftWidget = new QWidget(this);
+        QVBoxLayout *leftLayout = new QVBoxLayout(leftWidget);
 
         createMenus();
 
@@ -54,18 +57,99 @@ public:
         
         updateFont();
         
-        layout->addWidget(outputText);
+        leftLayout->addWidget(outputText);
 
         inputLine = new QLineEdit(this);
-        layout->addWidget(inputLine);
+        leftLayout->addWidget(inputLine);
+
+        mainLayout->addWidget(leftWidget, 2);  // Left side takes 2/3 of the space
+
+        // Create the map display
+        mapDisplay = new QTextEdit(this);
+        mapDisplay->setReadOnly(true);
+        mapDisplay->setFont(QFont("Courier", 10));  // Use a monospace font for the map
+        mainLayout->addWidget(mapDisplay, 1);  // Right side (map) takes 1/3 of the space
 
         setCentralWidget(centralWidget);
 
         connect(inputLine, &QLineEdit::returnPressed, this, &WizardsCastleWindow::processInput);
-
+        mapUpdateTimer = new QTimer(this);
+        connect(mapUpdateTimer, &QTimer::timeout, this, &WizardsCastleWindow::updateMap);
+        mapUpdateTimer->start(1000);  // Update every 1000 ms (1 second)
         outputText->installEventFilter(this);
         setColorScheme("White and Black");
     }
+
+void display_map2(GameState *game, Player *player)
+{
+    print_message2("\n=== MAP OF LEVEL ");
+    char level_str[3], number_str[3];
+    snprintf(level_str, sizeof(level_str), "%d", player->level);
+    print_message2(level_str);
+    print_message2(" ===\n\n");
+
+    // Print top border with column coordinates
+    print_message2("       1        2        3        4        5        6        7        8     \n");
+    print_message2("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+
+    for (int x = 1; x <= 8; x++) {
+        // Print row coordinate
+        snprintf(number_str, sizeof(number_str), "%d", x);
+        print_message2(number_str);
+
+        for (int y = 1; y <= 8; y++) {
+            print_message2("|");
+            if (x == player->x && y == player->y) {
+                print_message2("  [YOU] ");
+            } else if (is_room_discovered(game, x, y, player->level)) {
+                int room_content = get_room_content(game, x, y, player->level);
+                char room_str[10] = "        \0";
+                get_room_description(room_content, room_str);
+                print_message2(room_str);
+            } else {
+                print_message2("????????");
+            }
+        }
+        print_message2("|\n");
+
+        // Print horizontal border between rows
+        if (x < 8) {
+            print_message2("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        }
+    }
+
+    // Print bottom border
+    print_message2("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+
+    // Map is too large for the default font for MS-DOS (Same Information is available in help)
+    print_message2("\nLEGEND:\n");
+    print_message2("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
+    print_message2("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
+    print_message2("GOLD     = Gold Pieces     FLARES   = Flares\n");
+    print_message2("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
+    print_message2("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
+    print_message2("MONSTER  = Monster Name    VENDOR   = Vendor\n");
+    print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
+    print_message2("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+}
+
+void print_message2(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    char buffer[1024];
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    QString message = QString::fromUtf8(buffer);
+    appendToMap(message);
+}
+
+    void appendToMap(const QString& text) {
+        mapDisplay->moveCursor(QTextCursor::End);
+        mapDisplay->insertPlainText(text);
+        mapDisplay->verticalScrollBar()->setValue(outputText->verticalScrollBar()->maximum());
+    }
+
 
     void appendToOutput(const QString& text) {
         outputText->moveCursor(QTextCursor::End);
@@ -135,6 +219,13 @@ protected:
 
 private slots:
 
+    void updateMap() {
+        if (g_player && g_game) {
+            mapDisplay->clear();  // Clear the previous map
+            display_map2(g_game, g_player);
+        }
+    }
+    
     void saveGame() {
         if (!g_player || !g_game) {
             QMessageBox::warning(this, tr("Save Failed"), tr("No active game to save."));
@@ -279,6 +370,8 @@ private slots:
 private:
     QTextEdit *outputText;
     QLineEdit *inputLine;
+    QTextEdit *mapDisplay; 
+    QTimer *mapUpdateTimer;
     std::string lastInput;
     bool waitingForSpecificInput;
     std::string validInputs;
