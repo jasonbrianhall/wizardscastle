@@ -104,7 +104,9 @@ make qt
 
 🎨 Behold! The Wizard's Castle now appears in glorious technicolor! (Well, at least more colors than just white-on-black; also supports green on black.)
 
-⚠️ Warning: This enchantment currently only works in the realm of Linux. We're still deciphering the arcane scrolls needed to make it appear in the Windows dimension. Stay tuned, Windows wizards!
+⚠️ Warning: This enchantment currently only works in the realm of Linux. We're still deciphering the arcane scrolls needed to make it appear in the Windows dimension. Stay tuned, Windows wizards.
+
+⚠️ Arcane Warning for Windows Wizards: While the spell to create the Windows artifact (executable) can be cast (make qt-windows), the resulting enchantment is unstable. It requires a hefty grimoire of DLL scrolls (over 300MB!) and may still grumble about missing components of the Qt realm. We're working on a more potent incantation to condense this magic into a single, portable artifact. Until then, Linux remains the most stable dimension for this particular enchantment. Fear not, for we continue our mystical research!
 
 #### Embarking on Your Quest
 
