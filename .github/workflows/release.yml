@@ -11,7 +11,7 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     container:
-      image: fedora:latest
+      image: fedora:38
 
     steps:
     - uses: actions/checkout@v2
@@ -65,8 +65,11 @@ jobs:
       run: |
         pushd c
         make
+        qmake -o Makefile.qt wizard_castle_qt5.pro
+        make  -f Makefile.qt
         mkdir -p wizardscastle-linux
-        cp wizardscastle wizardscastle-linux/
+        cp wizards_castle_qt5 wizardscastle-linux/
+        cp wizardscastle      wizardscastle-linux/
         tar -czf wizardscastle-linux.tar.gz wizardscastle-linux
         rm -rf wizardscastle-linux
         popd
