@@ -715,6 +715,8 @@ int get_user_input_number() {
     int data;
     while (true) {
         g_window->clearInput();
+        print_message("Enter a number: ");
+
         while (g_window->inputIsEmpty()) {
             QCoreApplication::processEvents();
         }

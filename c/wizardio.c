@@ -49,7 +49,7 @@ int get_user_input_number()
     char input[100];
 
     while (1) {
-        print_message_formatted("Enter a number: ");
+        print_message("Enter a number: ");
         if (fgets(input, sizeof(input), stdin) == NULL) {
             print_message_formatted("Error reading input. Please try again.\n");
             continue;
