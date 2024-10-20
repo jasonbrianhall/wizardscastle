@@ -90,79 +90,79 @@ void display_map2(GameState *game, Player *player)
         switch(currentRoom) {
             case ENTRANCE:
                 mapDisplay->append(AsciiArt::ENTRANCE_AA);
-                mapDisplay->append("\nYou are at the entrance.");
+                mapDisplay->append("\nYou are at the entrance.\n");
                 break;
             case STAIRS_UP:
                 mapDisplay->append(AsciiArt::STAIRSUP_AA);
-                mapDisplay->append("\nYou found stairs going up.");
+                mapDisplay->append("\nYou found stairs going up.\n");
                 break;
             case STAIRS_DOWN:
                 mapDisplay->append(AsciiArt::STAIRSUP_AA);
-                mapDisplay->append("\nYou found stairs going down.");
+                mapDisplay->append("\nYou found stairs going down.\n");
                 break;
             case POOL:
                 mapDisplay->append(AsciiArt::POOL_AA);
-                mapDisplay->append("\nYou found a pool.");
+                mapDisplay->append("\nYou found a pool.\n");
                 break;
             case CHEST:
                 mapDisplay->append(AsciiArt::CHEST_AA);
-                mapDisplay->append("\nYou found a chest");
+                mapDisplay->append("\nYou found a chest.\n");
                 break;
             case CRYSTAL_ORB:
                 mapDisplay->append(AsciiArt::CRYSTALORB_AA);
-                mapDisplay->append("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.");
+                mapDisplay->append("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");
                 break;
             case BOOK:
                 mapDisplay->append(AsciiArt::BOOK_AA);
-                mapDisplay->append("\nYou've found an old book.");
+                mapDisplay->append("\nYou've found an old book.\n");
                 break;
             case KOBOLD:
                 mapDisplay->append(AsciiArt::KOBOLD_AA);
-                mapDisplay->append("\nYou've encountered a Kobold!");
+                mapDisplay->append("\nYou've encountered a Kobold!\n");
                 break;
             case ORC:
                 mapDisplay->append(AsciiArt::ORC_AA);
-                mapDisplay->append("\nYou've encountered an Orc!");
+                mapDisplay->append("\nYou've encountered an Orc!\n");
                 break;
             case WOLF:
                 mapDisplay->append(AsciiArt::WOLF_AA);
-                mapDisplay->append("\nYou've encountered a Wolf!");
+                mapDisplay->append("\nYou've encountered a Wolf!\n");
                 break;
             case GOBLIN:
                 mapDisplay->append(AsciiArt::GOBLIN_AA);
-                mapDisplay->append("\nYou've encountered an Orc!");
+                mapDisplay->append("\nYou've encountered an Orc!\n");
                 break;
             case OGRE:
                 mapDisplay->append(AsciiArt::OGRE_AA);
-                mapDisplay->append("\nYou've encountered an Ogre!");
+                mapDisplay->append("\nYou've encountered an Ogre!\n");
                 break;
             case TROLL:
                 mapDisplay->append(AsciiArt::TROLL_AA);
-                mapDisplay->append("\nYou've encountered a Troll!");
+                mapDisplay->append("\nYou've encountered a Troll!\n");
                 break;
             case BEAR:
                 mapDisplay->append(AsciiArt::BEAR_AA);
-                mapDisplay->append("\nYou've encountered a Bear!");
+                mapDisplay->append("\nYou've encountered a Bear!\n");
                 break;
             case MINOTAUR:
                 mapDisplay->append(AsciiArt::MINOTAUR_AA);
-                mapDisplay->append("\nYou've encountered a Minotaur!");
+                mapDisplay->append("\nYou've encountered a Minotaur!\n");
                 break;
             case GARGOYLE:
                 mapDisplay->append(AsciiArt::GARGOYLE_AA);
-                mapDisplay->append("\nYou've encountered a Gargoyle!");
+                mapDisplay->append("\nYou've encountered a Gargoyle!\n");
                 break;
             case CHIMERA:
                 mapDisplay->append(AsciiArt::CHIMERA_AA);
-                mapDisplay->append("\nYou've encountered a Chimera!");
+                mapDisplay->append("\nYou've encountered a Chimera!\n");
                 break;
             case DRAGON:
                 mapDisplay->append(AsciiArt::DRAGON_AA);
-                mapDisplay->append("\nYou've encountered a Dragon!");
+                mapDisplay->append("\nYou've encountered a Dragon!\n");
                 break;
             case BALROG:
                 mapDisplay->append(AsciiArt::BALROG_AA);
-                mapDisplay->append("\nYou've encountered a Balrog!");
+                mapDisplay->append("\nYou've encountered a Balrog!\n");
                 break;
        }
     }
