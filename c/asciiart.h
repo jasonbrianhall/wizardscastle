@@ -5,7 +5,7 @@
 
 namespace AsciiArt {
 
-const QString BALROG = R"(
+const QString BALROG_AA = R"(
                         )  (
                      (   ) )
                       ) ( (

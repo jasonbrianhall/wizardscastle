@@ -83,6 +83,21 @@ public:
 
 void display_map2(GameState *game, Player *player)
 {
+    int currentRoom = get_room_content(game, player->x, player->y, player->level);
+    
+    if ((currentRoom>=MONSTER_START && currentRoom<=MONSTER_END) || currentRoom==VENDOR)
+    {
+        switch(currentRoom) {
+            case BALROG:
+                mapDisplay->append(AsciiArt::BALROG_AA);
+                mapDisplay->append("\nYou've encountered a Balrog!");
+                break;
+            default:
+                mapDisplay->append(AsciiArt::BALROG_AA);
+                mapDisplay->append("\nYou've encountered a Balrog!");
+                break;
+       }
+    }
     print_message2("\n=== MAP OF LEVEL ");
     //char level_str[3], number_str[3];
     print_message2("%d", player->level);
