@@ -10,6 +10,7 @@
 
 // Room type definitions
 #define EMPTY_ROOM 101
+#define ROOM_START 102
 #define ENTRANCE 102
 #define STAIRS_UP 103
 #define STAIRS_DOWN 104
@@ -41,6 +42,7 @@
 #define MONSTER_END 124
 
 #define VENDOR 125
+#define ROOM_END 125
 
 // Treasures (126-133)
 #define TREASURE_START  126
@@ -53,6 +55,7 @@
 #define PALANTIR        132
 #define SILMARIL        133
 #define TREASURE_END    133
+
 
 #define HOBBIT 1
 #define ELF    2        

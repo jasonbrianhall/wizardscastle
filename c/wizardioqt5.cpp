@@ -85,14 +85,35 @@ void display_map2(GameState *game, Player *player)
 {
     int currentRoom = get_room_content(game, player->x, player->y, player->level);
     
-    if ((currentRoom>=MONSTER_START && currentRoom<=MONSTER_END) || currentRoom==VENDOR)
+    if (currentRoom >= ROOM_START && currentRoom <= ROOM_END)
     {
         switch(currentRoom) {
-            case BALROG:
-                mapDisplay->append(AsciiArt::BALROG_AA);
-                mapDisplay->append("\nYou've encountered a Balrog!");
+            case ENTRANCE:
+                mapDisplay->append(AsciiArt::ENTRANCE_AA);
+                mapDisplay->append("\nYou are at the entrance.");
                 break;
-            default:
+            case STAIRS_UP:
+                mapDisplay->append(AsciiArt::STAIRSUP_AA);
+                mapDisplay->append("\nYou found stairs going up.");
+                break;
+            case STAIRS_DOWN:
+                mapDisplay->append(AsciiArt::STAIRSUP_AA);
+                mapDisplay->append("\nYou found stairs going down.");
+                break;
+            case POOL:
+                mapDisplay->append(AsciiArt::POOL_AA);
+                mapDisplay->append("\nYou found a pool.");
+                break;
+            case CHEST:
+                mapDisplay->append(AsciiArt::CHEST_AA);
+                mapDisplay->append("\nYou found a chest");
+                break;
+            case CRYSTAL_ORB:
+                mapDisplay->append(AsciiArt::CHEST_AA);
+                mapDisplay->append("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.");
+                break;
+
+            case BALROG:
                 mapDisplay->append(AsciiArt::BALROG_AA);
                 mapDisplay->append("\nYou've encountered a Balrog!");
                 break;
