@@ -44,6 +44,7 @@ bool main_game_loop(Player *player, GameState *game)
 {
     char user_command[100];
     int game_over = 0;
+    int currentgold;
     const char *room_contents[] = {
         "AN EMPTY ROOM", "THE ENTRANCE", "STAIRS GOING UP", "STAIRS GOING DOWN",
         "A POOL", "A CHEST", "GOLD PIECES", "FLARES", "A WARP", "A SINKHOLE",
@@ -69,8 +70,9 @@ bool main_game_loop(Player *player, GameState *game)
             // Leech curse (similar to line 1965 in BASIC)
             if (!game->treasure[2] && random_number(100) <= 5) {  // 5% chance if no Pale Pearl
                 int gold_lost = random_number(5);
+                currentgold=player->gold;
                 player->gold = (player->gold > gold_lost) ? player->gold - gold_lost : 0;
-                print_message_formatted("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", gold_lost);
+                print_message_formatted("\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n", currentgold-player->gold);
             }
 
             // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
