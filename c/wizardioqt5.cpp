@@ -124,6 +124,10 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append(AsciiArt::ORC_AA);
                 mapDisplay->append("\nYou've encountered an Orc!");
                 break;
+            case WOLF:
+                mapDisplay->append(AsciiArt::WOLF_AA);
+                mapDisplay->append("\nYou've encountered an Orc!");
+                break;
                 
             case BALROG:
                 mapDisplay->append(AsciiArt::BALROG_AA);

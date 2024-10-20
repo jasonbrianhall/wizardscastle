@@ -187,7 +187,7 @@ void get_room_description(int room_content, char *desc)
         case KOBOLD:      strncpy(full_desc,"KOBOLD  \0",9); break;
         case ORC:         strncpy(full_desc,"ORC     \0",9); break;
         case WOLF:        strncpy(full_desc,"WOLF    \0",9); break;
-        case GOBLIN:      strncpy(full_desc,"ORC     \0",9); break;
+        case GOBLIN:      strncpy(full_desc,"GOBLIN  \0",9); break;
         case OGRE:        strncpy(full_desc,"OGRE    \0",9); break;
         case TROLL:       strncpy(full_desc,"TROLL   \0",9); break;
         case BEAR:        strncpy(full_desc,"BEAR    \0",9); break;
