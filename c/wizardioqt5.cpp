@@ -156,12 +156,10 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append(AsciiArt::CHIMERA_AA);
                 mapDisplay->append("\nYou've encountered a Chimera!");
                 break;
-/*            case DRAGON:
+            case DRAGON:
                 mapDisplay->append(AsciiArt::DRAGON_AA);
                 mapDisplay->append("\nYou've encountered a Dragon!");
                 break;
-*/
-                
             case BALROG:
                 mapDisplay->append(AsciiArt::BALROG_AA);
                 mapDisplay->append("\nYou've encountered a Balrog!");
