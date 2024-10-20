@@ -116,7 +116,15 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append(AsciiArt::BOOK_AA);
                 mapDisplay->append("\nYou've found an old book.");
                 break;
-
+            case KOBOLD:
+                mapDisplay->append(AsciiArt::KOBOLD_AA);
+                mapDisplay->append("\nYou've encountered a Kobold!");
+                break;
+            case ORC:
+                mapDisplay->append(AsciiArt::ORC_AA);
+                mapDisplay->append("\nYou've encountered an Orc!");
+                break;
+                
             case BALROG:
                 mapDisplay->append(AsciiArt::BALROG_AA);
                 mapDisplay->append("\nYou've encountered a Balrog!");
