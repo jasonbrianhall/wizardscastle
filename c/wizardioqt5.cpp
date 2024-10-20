@@ -164,6 +164,11 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append(AsciiArt::BALROG_AA);
                 mapDisplay->append("\nYou've encountered a Balrog!\n");
                 break;
+            case VENDOR:
+                mapDisplay->append(AsciiArt::VENDOR_AA);
+                mapDisplay->append("\nYou've encountered a Vendor!\n");
+                break;
+
        }
     }
     print_message2("\n=== MAP OF LEVEL ");
@@ -214,6 +219,55 @@ void display_map2(GameState *game, Player *player)
     print_message2("MONSTER  = Monster Name    VENDOR   = Vendor\n");
     print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
     print_message2("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+
+    print_message2("\n=== PLAYER STATUS ===\n");
+
+    // Print player race and attributes
+    print_message2("Race: ");
+    print_message2(get_race_name(player->race));
+    print_message2("\n");
+    print_message2("Strength: %d  Intelligence: %d  Dexterity: %d\n", player->strength, player->intelligence, player->dexterity);
+
+    // Print player position
+    print_message2("Location: Level %d, Room (%d, %d)\n", player->level, player->x, player->y);
+
+    // Print player inventory
+    print_message2("Gold Pieces: %d  Flares: %d\n", player->gold, player->flares);
+
+    // Print armor and weapon
+    const char* armor_types[] = {"No Armor", "Leather", "Chainmail", "Plate"};
+    const char* weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword"};
+    print_message2("Armor: %s  Weapon: %s\n", armor_types[player->armor_type], weapon_types[player->weapon_type]);
+    // Print special items
+
+    print_message2("Special Items: ");
+    if (player->lamp_flag) print_message2("Lamp ");
+    if (player->runestaff_flag) print_message2("Runestaff ");
+    if (player->orb_flag) print_message2("Orb of Zot ");
+    print_message2("\n");
+
+    // Print curses or blessings
+    print_message2("Status Effects: ");
+    if (player->blindness_flag) print_message2("Blind ");
+    if (player->stickybook_flag) print_message2("Sticky Book ");
+    print_message2("\n");
+
+    // Print number of treasures
+    print_message2("Treasures Found: %d\n", player->treasure_count);
+
+    for (int i=0; i<TREASURE_END-TREASURE_START; i++)
+    {
+        if(game->treasure[i]==1)
+        {
+        	print_message2("     ");
+        	print_message2(get_treasure_name(i));
+        	print_message2("\n");
+        }
+    }
+
+    print_message2("======================\n\n");
+
+
 }
 
 void print_message2(const char *format, ...) {
