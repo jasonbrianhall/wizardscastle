@@ -144,6 +144,19 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append(AsciiArt::BEAR_AA);
                 mapDisplay->append("\nYou've encountered a Bear!");
                 break;
+            case MINOTAUR:
+                mapDisplay->append(AsciiArt::MINOTAUR_AA);
+                mapDisplay->append("\nYou've encountered a Minotaur!");
+                break;
+            case GARGOYLE:
+                mapDisplay->append(AsciiArt::GARGOYLE_AA);
+                mapDisplay->append("\nYou've encountered a Gargoyle!");
+                break;
+            case CHIMERA:
+                mapDisplay->append(AsciiArt::CHIMERA_AA);
+                mapDisplay->append("\nYou've encountered a Chimera!");
+                break;
+
                 
             case BALROG:
                 mapDisplay->append(AsciiArt::BALROG_AA);
