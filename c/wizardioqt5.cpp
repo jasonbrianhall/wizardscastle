@@ -330,8 +330,11 @@ private slots:
     } else { // Default
         palette = QApplication::style()->standardPalette();
     }
+        inputLine->setPalette(palette);
         outputText->setPalette(palette);
         inputLine->setPalette(palette);
+        mapDisplay->setPalette(palette);
+
     }
     
     void quit() {
