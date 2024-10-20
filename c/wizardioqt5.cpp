@@ -126,7 +126,23 @@ void display_map2(GameState *game, Player *player)
                 break;
             case WOLF:
                 mapDisplay->append(AsciiArt::WOLF_AA);
+                mapDisplay->append("\nYou've encountered a Wolf!");
+                break;
+            case GOBLIN:
+                mapDisplay->append(AsciiArt::GOBLIN_AA);
                 mapDisplay->append("\nYou've encountered an Orc!");
+                break;
+            case OGRE:
+                mapDisplay->append(AsciiArt::OGRE_AA);
+                mapDisplay->append("\nYou've encountered an Ogre!");
+                break;
+            case TROLL:
+                mapDisplay->append(AsciiArt::TROLL_AA);
+                mapDisplay->append("\nYou've encountered a Troll!");
+                break;
+            case BEAR:
+                mapDisplay->append(AsciiArt::BEAR_AA);
+                mapDisplay->append("\nYou've encountered a Bear!");
                 break;
                 
             case BALROG:
