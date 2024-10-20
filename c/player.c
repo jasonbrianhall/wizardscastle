@@ -143,7 +143,7 @@ void allocate_attributes(Player *player)
 
     // Allocate points to Strength
     while (other_points > 0) {
-        print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH? ");
+        print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR STRENGTH?\n\n");
         points_to_add = get_user_input_number();
 
         if (points_to_add >= 0 && points_to_add <= other_points) {
@@ -164,7 +164,7 @@ void allocate_attributes(Player *player)
 
     // Allocate points to Intelligence
     while (other_points > 0) {
-        print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE? ");
+        print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR INTELLIGENCE?\n\n");
         points_to_add = get_user_input_number();
         if (points_to_add >= 0 && points_to_add <= other_points) {
             player->intelligence += points_to_add;
