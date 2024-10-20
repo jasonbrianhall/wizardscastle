@@ -16,6 +16,7 @@
 #include <QActionGroup>
 #include <QStyle>
 #include "wizardio.h"
+#include "asciiart.h"
 #include <cstdlib>
 #include <QFileDialog>
 
@@ -83,19 +84,18 @@ public:
 void display_map2(GameState *game, Player *player)
 {
     print_message2("\n=== MAP OF LEVEL ");
-    char level_str[3], number_str[3];
-    snprintf(level_str, sizeof(level_str), "%d", player->level);
-    print_message2(level_str);
+    //char level_str[3], number_str[3];
+    print_message2("%d", player->level);
     print_message2(" ===\n\n");
 
     // Print top border with column coordinates
-    print_message2("       1        2        3        4        5        6        7        8     \n");
-    print_message2("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+    print_message2("      1        2        3        4        5        6        7        8     \n");
+    print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     for (int x = 1; x <= 8; x++) {
         // Print row coordinate
-        snprintf(number_str, sizeof(number_str), "%d", x);
-        print_message2(number_str);
+        //snprintf(number_str, sizeof(number_str), "%d", x);
+        print_message2("%d", x);
 
         for (int y = 1; y <= 8; y++) {
             print_message2("|");
@@ -114,12 +114,12 @@ void display_map2(GameState *game, Player *player)
 
         // Print horizontal border between rows
         if (x < 8) {
-            print_message2("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+            print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
         }
     }
 
     // Print bottom border
-    print_message2("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+    print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
     // Map is too large for the default font for MS-DOS (Same Information is available in help)
     print_message2("\nLEGEND:\n");
