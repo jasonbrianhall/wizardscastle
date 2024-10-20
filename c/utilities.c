@@ -287,9 +287,9 @@ void use_flare(Player *player, GameState *game)
             get_room_description(room_content, room_desc);
 
             if (dx == 0 && dy == 0) {
-                print_message_formatted("[YOU]   ");
+                print_message_formatted("  [YOU]   ");
             } else {
-                print_message_formatted(room_desc);
+                print_message_formatted(" %s ", room_desc);
             }
         }
         print_message_formatted("\n");
