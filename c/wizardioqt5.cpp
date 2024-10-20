@@ -109,8 +109,12 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append("\nYou found a chest");
                 break;
             case CRYSTAL_ORB:
-                mapDisplay->append(AsciiArt::CHEST_AA);
+                mapDisplay->append(AsciiArt::CRYSTALORB_AA);
                 mapDisplay->append("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.");
+                break;
+            case BOOK:
+                mapDisplay->append(AsciiArt::BOOK_AA);
+                mapDisplay->append("\nYou've found an old book.");
                 break;
 
             case BALROG:
