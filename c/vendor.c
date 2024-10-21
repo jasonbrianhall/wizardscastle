@@ -249,7 +249,11 @@ void buy_armor(Player *player)
                 {
 
                     print_message_formatted("\nYOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
-                    player->armor_points = player->armor_type*7;
+                    player->armor_points*=2;
+                    if (player->armor_points>=50)
+                    {
+                        player->armor_points=50;
+                    }
                 }
             } else {
                 print_message("Not enough gold for Leather Armor.\n");
@@ -269,7 +273,11 @@ void buy_armor(Player *player)
                 else
                 {
                     print_message("\nYOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
-                    player->armor_points = player->armor_type*7;
+                    player->armor_points*=2;
+                    if (player->armor_points>=50)
+                    {
+                        player->armor_points=50;
+                    }
                 }
             } else {
                 print_message_formatted("Not enough gold for Chainmail.\n");
@@ -289,7 +297,7 @@ void buy_armor(Player *player)
                 else
                 {
                     print_message_formatted("YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
-                    player->armor_points = player->armor_type*2;
+                    player->armor_points*=2;
                     if(player->armor_points>50)
                     {                   
                          player->armor_points=50;
