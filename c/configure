@@ -111,7 +111,7 @@ else
     echo "If you want to enable Qt build, please install Qt5 development packages."
     case $DISTRO in
         ubuntu|debian)
-            echo "To install Qt5, run: sudo apt-get install qt5-default"
+            echo "To install Qt5, run: sudo apt-get install qtbase5-dev"
             ;;
         fedora|rhel|centos)
             echo "To install Qt5, run: sudo dnf install qt5-devel"
