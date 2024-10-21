@@ -143,6 +143,10 @@ void fight_monster(Player *player, GameState *game)
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;
+                            if (enemy_strength <= 0) {
+                                handle_combat_victory(player, game, is_vendor, enemy_name);
+                                return;
+                            }
                         }
                         else 
                         {
