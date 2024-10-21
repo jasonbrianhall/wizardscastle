@@ -65,6 +65,10 @@ void fight_monster(Player *player, GameState *game)
             if (player->race == HOBBIT) {
                 print_message("You can also (T)hrow a stone.\n");
             }  
+            if (player->race == ELF && player->intelligence>=8) {
+                print_message("You can also (S)hoot a magical bow with extremely high accuracy.\n");
+            }  
+
             print_message_formatted("\n");
             print_message_formatted("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
                    player->strength, player->dexterity, player->intelligence);
@@ -136,6 +140,27 @@ void fight_monster(Player *player, GameState *game)
                         continue;  // Skip enemy's turn if player couldn't cast a spell
                     }
                     break;
+                case 'S':  // Shoot magical bows
+                    if (player->race == ELF && player->intelligence>=8) 
+                    {
+                        if (random_number(5) >= 4 || random_number(5) >= 4 || random_number(19-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
+                        {
+                            temp = random_number(3);  // 1-3 damage
+                            print_message_formatted("You pull out your magical bow and hit the enemy for %d damage!\n", temp);
+                            enemy_strength-=temp;
+                            if (enemy_strength <= 0) {
+                                handle_combat_victory(player, game, is_vendor, enemy_name);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                             print_message("Your aim isn't true and you miss the enemy.\n");
+                             break;
+                        }
+                    }
+                    print_message("You don't have any magical arrows.\n");
+                    continue;
                 case 'T':
                     if (player->race == HOBBIT) 
                     {
@@ -151,14 +176,14 @@ void fight_monster(Player *player, GameState *game)
                         }
                         else 
                         {
-                             print_message_formatted("Your thrown stone misses the enemy.\n");
+                             print_message("Your thrown stone misses the enemy.\n");
                         }
                     }
                     else
                     {
                          print_message("Do you look like a hobbit?  You can't cast stones.\n");
                     }
-                    break;
+                    continue;
                 default:
                     print_message_formatted("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                     continue;
