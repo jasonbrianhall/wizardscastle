@@ -392,7 +392,7 @@ void drink_from_pool(Player *player, GameState *game)
             {
                 int new_race;
                 do {
-                    new_race = random_number(4);
+                    new_race = random_number(5);
                 } while (new_race == player->race);
                 player->race = new_race;
                 print_message_formatted("become a %s.\n", get_race_name(player->race));
