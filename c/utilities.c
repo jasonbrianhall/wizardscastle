@@ -520,7 +520,7 @@ void open_book(Player *player, GameState *game)
     switch(effect) {
         case 1:
             print_message_formatted("FLASH! OH NO! YOU ARE NOW A BLIND ");
-            print_message_formatted(player->race == 3 ? "HUMAN" : "CREATURE");
+            print_message_formatted(player->race == HUMAN ? "HUMAN" : "CREATURE");
             print_message_formatted("!\n");
             player->blindness_flag = 1;
             break;
