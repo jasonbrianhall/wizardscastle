@@ -139,7 +139,8 @@ void fight_monster(Player *player, GameState *game)
                 case 'T':
                     if (player->race == HOBBIT) 
                     {
-                        if (random_number(5) == 1 || random_number(5) == 1) {  // 20% chance to hit but two chances at it
+                        temp=19-(min(18, player->dexterity));
+                        if (random_number(5) == 1 || random_number(5) == 1 || random_number(19-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;
