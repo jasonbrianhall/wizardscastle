@@ -116,7 +116,7 @@ qt-windows:
 	$(MINGW_QMAKE) CONFIG+=static CONFIG+=release -o $(MINGW_QT_MAKEFILE)
 	make -f $(MINGW_QT_MAKEFILE) clean
 	make -f $(MINGW_QT_MAKEFILE)
-	cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/*.dll release
+	#cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/*.dll release
 
 
 
