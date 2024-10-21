@@ -109,12 +109,12 @@ void trade_with_vendor(Player *player, GameState *game)
                     }
                     else
                     {
-                        print_message_formatted("\nYOU ARE ALREADY HERCULES\n");
+                        print_message_formatted("\n%s, YOU ARE ALREADY HERCULES\n", player->sex == MALE ? "SIR" : "MA'AM");
                     }
                 }
                 else
                 {
-                    print_message_formatted("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
+                    print_message_formatted("\n%s YOU ARE TOO POOR TO BUY A STRENGTH POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             case '2':
@@ -127,12 +127,12 @@ void trade_with_vendor(Player *player, GameState *game)
                     }
                     else
                     {
-                        print_message_formatted("\nYOU ARE ALREADY A GENIUS ... GENIUS\n");
+                        print_message_formatted("\n%s, YOU ARE ALREADY A GENIUS ... GENIUS\n", player->sex == MALE ? "SIR" : "MA'AM");
                     }
                 }
                 else
                 {
-                    print_message_formatted("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
+                    print_message_formatted("\n%s YOU ARE TOO POOR TO BUY A STRENGTH POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             case '3':
@@ -145,18 +145,18 @@ void trade_with_vendor(Player *player, GameState *game)
                     }
                     else
                     {
-                        print_message_formatted("\nYOU ARE ALREADY NIMBLE ... GENIUS\n");
+                        print_message_formatted("\n%s, YOU ARE ALREADY NIMBLE ... GENIUS\n", player->sex == MALE ? "SIR" : "MA'AM");
                     }
                 }
                 else
                 {
-                    print_message_formatted("\nYOU ARE TOO POOR TO BUY A STRENGTH POTION\n");
+                    print_message_formatted("\n%s, YOU ARE TOO POOR TO BUY A STRENGTH POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             case '4':
                 if (player->gold<1250)
                 {
-                    print_message_formatted("\nYOU DO NOT HAVE ENOUGH GOLD TO BUY ARMOR!\n");
+                    print_message_formatted("\n%s, YOU DO NOT HAVE ENOUGH GOLD TO BUY ARMOR!\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 else
                 {
@@ -166,7 +166,7 @@ void trade_with_vendor(Player *player, GameState *game)
             case '5':
                 if (player->gold<1250)
                 {
-                    print_message_formatted("\nYOU DO NOT HAVE ENOUGH GOLD TO BUY WEAPONS!\n");
+                    print_message_formatted("\n%s, YOU DO NOT HAVE ENOUGH GOLD TO BUY WEAPONS!\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 else
                 {
@@ -179,10 +179,10 @@ void trade_with_vendor(Player *player, GameState *game)
                     player->gold -= 1000;
                     print_message_formatted("You bought a lamp!\n");
                 } else if (player->lamp_flag) {
-                    print_message("\nYou already have a lamp!\n");
+                    print_message_formatted("\n%s, You already have a lamp!\n", player->sex == MALE ? "SIR" : "MA'AM");
                     continue;
                 } else {
-                    print_message("\nYou don't have enough gold for a lamp.\n");
+                    print_message_formatted("\n%s, You don't have enough gold for a lamp.\n", player->sex == MALE ? "SIR" : "MA'AM");
                     continue;
                 }
                 break;
@@ -197,7 +197,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 } else if (!player->blindness_flag) {
                     print_message("You're not blind. No need for this service.\n");
                 } else {
-                    print_message("You don't have enough gold to cure blindness.\n");
+                    print_message_formatted("%s, You don't have enough gold to cure blindness.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             
@@ -209,7 +209,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 } else if (!player->stickybook_flag) {
                     print_message_formatted("You don't have a sticky book. No need for this service.\n");
                 } else {
-                    print_message_formatted("You don't have enough gold to remove the sticky book.\n");
+                    print_message_formatted("%s, You don't have enough gold to remove the sticky book.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             case '0':
