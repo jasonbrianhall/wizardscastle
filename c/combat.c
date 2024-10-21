@@ -59,13 +59,13 @@ void fight_monster(Player *player, GameState *game)
             if (can_bribe) {
                 print_message("You can also attempt a (B)ribe.\n");
             }
-            if (muted==0 && ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14))  {
+            if (muted==0 && ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF || player->race == DROW)) || player->intelligence>14))  {
                 print_message("You can also (C)ast a spell.\n");
             }
             if (player->race == HOBBIT) {
                 print_message("You can also (T)hrow a stone.\n");
             }  
-            if (player->race == ELF && player->intelligence>=8) {
+            if ((player->race == ELF || player->race == DROW) && player->intelligence>=8) {
                 print_message("You can also (S)hoot a magical bow with extremely high accuracy.\n");
             }  
 
@@ -143,7 +143,7 @@ void fight_monster(Player *player, GameState *game)
                     can_bribe = 0;
                     break;
                 case 'C':
-                    if (muted==0 && ((player->intelligence >= 10 && (player->race == ELF || player->race == DWARF)) || player->intelligence > 14)) {
+                    if (muted==0 && ((player->intelligence >= 10 && (player->race == ELF || player->race == DWARF || player->race == DROW)) || player->intelligence > 14)) {
                         // Player can cast a spell
                         if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
                             if (game->game_over)
@@ -162,7 +162,7 @@ void fight_monster(Player *player, GameState *game)
                     }
                     break;
                 case 'S':  // Shoot magical bows
-                    if (player->race == ELF && player->intelligence>=8) 
+                    if ((player->race == ELF || player->race == DROW) && player->intelligence>=8) 
                     {
                         if (random_number(5) >= 4 || random_number(5) >= 4 || random_number(24-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
                         {
@@ -185,7 +185,7 @@ void fight_monster(Player *player, GameState *game)
                 case 'T':
                     if (player->race == HOBBIT) 
                     {
-                        if (random_number(5) == 1 || random_number(5) == 1 || random_number(24-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
+                        if (random_number(6) == 1 || random_number(6) == 1 || random_number(24-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;
@@ -483,16 +483,15 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
         print_message_formatted("    (W)EB - Casts a magical web that prevents a monster from attacking\n");
         print_message_formatted("    (F)IREBALL - Casts a Fireball at the enemy\n");
     }
-    if(player->intelligence>=14 && player->race == DWARF)
+    if(player->intelligence>=14 && (player->race == DWARF || player->race == DROW))
     {
         print_message(          "   S(T)one Skin; improves your armor at the cost of one strength and intelligence points\n");
-        print_message_formatted("    (F)IREBALL - Casts a Fireball at the enemy\n");
     }    
     if (player->intelligence >= 16)
     {
         print_message_formatted("    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
     }
-    if ((player->race == ELF || player->race == DWARF) && player->intelligence>=10)
+    if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
     {
         print_message_formatted("    (H)EAL - Permanently heals you (but maxes out at 18 after combat); costs one intelligence points\n");
         print_message_formatted("    (S)PEED - Temporarily increases your dexterity\n");
@@ -543,7 +542,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                     return 1;
                 }
             case 'H':
-                if (player->race == ELF || player->race == DWARF)
+                if (player->race == ELF || player->race == DROW || player->race == DWARF)
                 {
                     cast_heal_spell(player);
                     return 0;
@@ -551,7 +550,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
             case 'S':
-                if (player->race == ELF || player->race == DWARF)
+                if (player->race == ELF || player->race == DROW || player->race == DWARF)
                 {
                     cast_haste_spell(player);
                     return 0;
@@ -559,7 +558,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
             case 'B':
-                if (player->race == ELF || player->race == DWARF)
+                if (player->race == ELF || player->race == DROW || player->race == DWARF)
                 {
                     cast_bright_spell(player);
                     return 0;
@@ -567,7 +566,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
             case 'T':
-                if (player->race == DWARF)
+                if (player->race == DWARF || player->race == DROW)
                 {
                     cast_stone_skin_spell(player);
                     return 0;

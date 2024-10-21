@@ -17,7 +17,7 @@ const char* get_random_body_part()
 
 const char* get_random_species()
 {
-    const char* body_parts[] = {"ELF", "HUMAN", "DWARF", "HOBBIT"};
+    const char* body_parts[] = {"ELF", "HUMAN", "DWARF", "HOBBIT", "DROW"};
     return body_parts[random_number(4) - 1];
 }
 

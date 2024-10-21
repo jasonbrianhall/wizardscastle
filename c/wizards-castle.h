@@ -61,6 +61,7 @@
 #define ELF    2        
 #define HUMAN  3
 #define DWARF  4
+#define DROW   5  // Dark Elf
 
 #define FEMALE 0  // No special abilities; just Aesthetic
 #define MALE 1

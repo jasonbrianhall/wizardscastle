@@ -224,7 +224,7 @@ void display_map2(GameState *game, Player *player)
 
     // Print player race and attributes
     print_message2("Race: ");
-    print_message2(get_race_name(player->race));
+    print_message2_formatted(get_race_name(player->race));
     print_message2("   Sex: "); 
     if (player->sex==FEMALE)
     {
@@ -291,6 +291,21 @@ void print_message2(const char *format, ...) {
     QString message = QString::fromUtf8(buffer);
     appendToMap(message);
 }
+
+void print_message2_formatted(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    char buffer[1024];
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    
+    capitalize_sentences(buffer);  // Use the function from utilities.c
+    
+    va_end(args);
+    
+    QString message = QString::fromUtf8(buffer);
+    appendToMap(message);
+}
+
 
     void appendToMap(const QString& text) {
         mapDisplay->moveCursor(QTextCursor::End);

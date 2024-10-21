@@ -45,13 +45,13 @@ void initialize_player(Player *player)
 // Player creation and attribute functions
 void choose_race(Player *player)
 {
-    const char *races[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *races[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
     char user_input;
     int valid_choice = 0;
 
     do {
         print_message_formatted("ALL RIGHT, BOLD ONE.\n");
-        print_message          ("You may be an (E)lf, (D)warf, (M)an, or (H)obbit.\n\n");
+        print_message          ("You may be an (E)lf, (D)warf, (M)an, (H)obbit, or D(R)ow (Dark Elf).\n\n");
         user_input=get_user_input_custom_prompt("Your choice:  ");
 
         player->race = 0;
@@ -69,6 +69,10 @@ void choose_race(Player *player)
             case 'D':
                 player->race = 4;  // Dwarf
                 break;
+            case 'R':
+                player->race = 5;  // Dwarf
+                break;
+
             default:
                 // Handle invalid input if needed
                 break;
@@ -77,8 +81,12 @@ void choose_race(Player *player)
         if (player->race > 0) {
             player->strength += 2 * player->race;
             player->dexterity -= 2 * player->race;
-            if (player->race == 2) {  // Elf gets extra points
+            if (player->race == 2 || player->race==5) {  // Elf gets extra points
                 player->intelligence += 4;
+            }
+            if(player->race==5) // Give Dark Elves 4 extra dexterity
+            {
+                 player->dexterity+=4;
             }
             print_message(           "You have chosen to be a ");
             print_message_formatted("%s\n", races[player->race - 1]);
@@ -93,7 +101,7 @@ void choose_sex(Player *player)
 {
     char user_input;
     int valid_choice = 0;
-    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
 
     do {
         print_message_formatted("WHICH SEX DO YOU PREFER?\n\n");
@@ -126,7 +134,7 @@ void allocate_attributes(Player *player)
 {
     int other_points;
     int points_to_add;
-    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
 
     // Set other_points based on race
     if (player->race == 1) { // Hobbit
@@ -196,7 +204,7 @@ void allocate_attributes(Player *player)
 void buy_equipment(Player *player)
 {
     char user_input;
-    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
     const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
     int cost, exittheloop;
@@ -277,7 +285,7 @@ void buy_equipment(Player *player)
 void buy_lamp_and_flares(Player *player)
 {
     char user_input_yn;
-    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
 
     // Try to buy a lamp
     if (player->gold >= 20 && !player->lamp_flag) {
@@ -334,6 +342,7 @@ const char* get_race_name(int race)
         case 2: return "ELF\0";
         case 3: return "HUMAN";
         case 4: return "DWARF";
+        case 5: return "DARK ELF";
         default: return "UNKNOWN";
     }
 }

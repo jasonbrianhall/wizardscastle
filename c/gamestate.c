@@ -31,7 +31,7 @@ void end_game(Player *player, GameState *game)
 {
     printStars();
     
-    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
+    const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
     const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE", "STONE"};
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD", "EXCALIBUR"};
 
