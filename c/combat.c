@@ -23,7 +23,7 @@ void fight_monster(Player *player, GameState *game)
     player->temp_intelligence=0;
     player->temp_dexterity=0;
     
-    if (player->race == HOBBIT && random_number(10) == 1) {
+    if (!is_vendor && player->race == HOBBIT && (random_number(10) == 1 || random_number(24 - player->dexterity)==1)) {
         print_message("Using your hobbit stealth (and the fact that you are very short), you sneak past the %s!\n", enemy_name);
         return;  // End combat successfully
     }
