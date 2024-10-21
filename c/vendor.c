@@ -287,7 +287,7 @@ void buy_armor(Player *player)
                     }
                 }
             } else {
-                print_message("Not enough gold for Leather Armor.\n");
+                print_message("%s, Not enough gold for Leather Armor.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 return;
             }
             break;
@@ -311,7 +311,7 @@ void buy_armor(Player *player)
                     }
                 }
             } else {
-                print_message_formatted("Not enough gold for Chainmail.\n");
+                print_message_formatted("%s, Not enough gold for Chainmail.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 return;
             }
             break;
@@ -336,14 +336,14 @@ void buy_armor(Player *player)
                 }
                 
             } else {
-                print_message("Not enough gold for Plate Armor.\n");
+                print_message("%s, Not enough gold for Plate Armor.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 return;
             }
             break;
         case '4':
             return;
         default:
-            print_message_formatted("Invalid choice. No armor purchased.\n");
+            print_message_formatted("%s, Invalid choice. No armor purchased.\n", player->sex == MALE ? "SIR" : "MA'AM");
             return;
     }
 }
