@@ -28,21 +28,22 @@ jobs:
 
     - name: Build application
       run: |
-        cd c; dir /s /b; qmake wizard_castle.pro
-        nmake
+        cd c
+        qmake -o Makefile.win wizard_castle.pro
+        nmake -f Makefile.win
 
     - name: Run windeployqt
       run: |
-        windeployqt.exe wizards_castle_qt5
+        cd c
+        windeployqt.exe wizards_castle_qt5.exe
 
     - name: Package application
       run: |
         mkdir win_package
-        move wizards_castle_qt5 win_package\
-        move *.dll win_package\
-        move platforms win_package\
-        move styles win_package\
-        # Add any additional files your application needs
+        move c\wizards_castle_qt5.exe win_package\
+        move c\*.dll win_package\
+        move c\platforms win_package\
+        move c\styles win_package\
         Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
 
     - name: Upload artifact
