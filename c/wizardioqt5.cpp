@@ -97,7 +97,7 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append("\nYou found stairs going up.\n");
                 break;
             case STAIRS_DOWN:
-                mapDisplay->append(AsciiArt::STAIRSUP_AA);
+                mapDisplay->append(AsciiArt::STAIRSDOWN_AA);
                 mapDisplay->append("\nYou found stairs going down.\n");
                 break;
             case POOL:
@@ -225,6 +225,15 @@ void display_map2(GameState *game, Player *player)
     // Print player race and attributes
     print_message2("Race: ");
     print_message2(get_race_name(player->race));
+    print_message2("   Sex: "); 
+    if (player->sex==FEMALE)
+    {
+        print_message2("Female");
+    }
+    else
+    {
+        print_message2("Male");
+    }
     print_message2("\n");
     print_message2("Strength: %d  Intelligence: %d  Dexterity: %d\n", player->strength, player->intelligence, player->dexterity);
 
