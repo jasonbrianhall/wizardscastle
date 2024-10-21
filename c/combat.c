@@ -253,9 +253,9 @@ void fight_monster(Player *player, GameState *game)
                  case 'L':  // Rally
                      if (player->race == HUMAN && rally_used==0) {
                          int rally_bonus = random_number(2) + 1;
-                         player->temp_strength = player->strength;
-                         player->temp_intelligence = player->intelligence;
-                         player->temp_dexterity = player->dexterity;
+                         player->temp_strength = player->strength+1;
+                         player->temp_intelligence = player->intelligence+1;
+                         player->temp_dexterity = player->dexterity+1;
                          player->strength += rally_bonus;
                          player->dexterity+= rally_bonus;
                          player->intelligence += rally_bonus;

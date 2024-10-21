@@ -38,10 +38,13 @@ void handle_vendor(Player *player, GameState *game)
     } while (1);
 }
 
+// To do; make option choices more dynamic;  Like only offer stuff they can afford and put the numbers in order
 void trade_with_vendor(Player *player, GameState *game)
 {
     // Offer to buy treasures
-    for (int i = 0; i < TREASURE_COUNT; i++) {
+    int i=0;
+    //int optionchoice=7;
+    for (i = 0; i < TREASURE_COUNT; i++) {
         if (game->treasure[i]) {
             int offer = random_number(1500) * (i + 1);
             print_message("Do you want to sell %s for %d GP? (Y/N) ", get_treasure_name(i), offer);
@@ -81,6 +84,7 @@ void trade_with_vendor(Player *player, GameState *game)
     // Offer to sell items if player has enough gold
     while (player->gold >= 10) {
         print_message_formatted("\n\nWhat would you like to buy?\n");
+        print_message("    0. Nothing more\n\n");
         print_message("    1. Improve Strength (1000 GP)\n");
         print_message("    2. Improve Intelligence (1000 GP)\n");
         print_message("    3. Improve Dexterity (1000 GP)\n");
@@ -88,7 +92,16 @@ void trade_with_vendor(Player *player, GameState *game)
         print_message("    5. Weapon (1250-2000 GP)\n");
         print_message("    6. Lamp (1000 GP)\n");
         print_message("    7. Flares (10 GP)\n");
-        print_message("    8. Nothing more\n\n");
+        // Add new options for curing blindness and removing sticky book
+        
+        if (player->blindness_flag) {
+                print_message("    8. Cure Blindness (1000 GP)\n");
+        }
+        if (player->stickybook_flag) {
+            print_message("    9. Remove Sticky Book (1000 GP)\n");
+        }
+
+        
 
         char purchase_choice = get_user_input();
         switch(purchase_choice) {
@@ -172,10 +185,10 @@ void trade_with_vendor(Player *player, GameState *game)
                     player->gold -= 1000;
                     print_message_formatted("You bought a lamp!\n");
                 } else if (player->lamp_flag) {
-                    print_message_formatted("\nYou already have a lamp!\n");
+                    print_message("\nYou already have a lamp!\n");
                     continue;
                 } else {
-                    print_message_formatted("\nYou don't have enough gold for a lamp.\n");
+                    print_message("\nYou don't have enough gold for a lamp.\n");
                     continue;
                 }
                 break;
@@ -183,8 +196,32 @@ void trade_with_vendor(Player *player, GameState *game)
                 buy_flares(player);
                 break;
             case '8':
+                if (player->blindness_flag && player->gold >= 1000) {
+                    player->blindness_flag = 0;
+                    player->gold -= 1000;
+                    print_message("Your blindness has been cured!\n");
+                } else if (!player->blindness_flag) {
+                    print_message("You're not blind. No need for this service.\n");
+                } else {
+                    print_message("You don't have enough gold to cure blindness.\n");
+                }
+                break;
+            
+            case '9':
+                if (player->stickybook_flag && player->gold >= 1000) {
+                    player->stickybook_flag = 0;
+                    player->gold -= 1000;
+                    print_message_formatted("The sticky book has been removed from your hand!\n");
+                } else if (!player->stickybook_flag) {
+                    print_message_formatted("You don't have a sticky book. No need for this service.\n");
+                } else {
+                    print_message_formatted("You don't have enough gold to remove the sticky book.\n");
+                }
+                break;
+            case '0':
                 print_message_formatted("\nOK FINE, DON'T TRADE\n");
                 return;
+
             default:
                 print_message_formatted("Invalid choice.\n");
                 continue;
