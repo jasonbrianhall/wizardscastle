@@ -494,7 +494,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     }
     if ((player->race == ELF || player->race == DWARF) && player->intelligence>=10)
     {
-        print_message_formatted("    (H)EAL - Permanently heals you (but maxes out at 18 after combat)\n");
+        print_message_formatted("    (H)EAL - Permanently heals you (but maxes out at 18 after combat); costs one intelligence points\n");
         print_message_formatted("    (S)PEED - Temporarily increases your dexterity\n");
         print_message_formatted("    (B)RIGHT - Temporarily increases your intelligence \n");
     }
@@ -689,6 +689,7 @@ int cast_heal_spell(Player *player) {
     if (player->intelligence > 9) {
         int heal_amount = random_number(5); // 1-5 Points
         player->strength += heal_amount;
+        player->intelligence -=1;
         print_message_formatted("YOUR HEALTH INCREASED BY %i POINTS.\n\n", heal_amount);
         return 1;
     }
@@ -704,7 +705,15 @@ int cast_stone_skin_spell(Player *player)
              player->armor_type+=1;
              player->intelligence-=1;
              player->strength-=1;
-             print_message("Your armor has improved!!!");
+             player->armor_points=21;
+             if(player->armor_type==0)
+             {
+                 print_message("Your armor has improved!!!");
+             }
+             else
+             {
+                 print_message("Magical armor has now appeared.");
+             }
         }
         else
         {
