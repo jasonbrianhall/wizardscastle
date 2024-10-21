@@ -207,7 +207,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     player->gold -= 1000;
                     print_message_formatted("The sticky book has been removed from your hand!\n");
                 } else if (!player->stickybook_flag) {
-                    print_message_formatted("You don't have a sticky book. No need for this service.\n");
+                    print_message_formatted("%s, You don't have a sticky book. No need for this service.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 } else {
                     print_message_formatted("%s, You don't have enough gold to remove the sticky book.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
