@@ -279,7 +279,7 @@ void buy_armor(Player *player)
                 else
                 {
 
-                    print_message_formatted("\nYOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
+                    print_message_formatted("\n%s, YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n", player->sex == MALE ? "SIR" : "MA'AM");
                     player->armor_points*=2;
                     if (player->armor_points>=50)
                     {
@@ -303,7 +303,7 @@ void buy_armor(Player *player)
                 }
                 else
                 {
-                    print_message("\nYOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
+                    print_message("\n%s, YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n", player->sex == MALE ? "SIR" : "MA'AM");
                     player->armor_points*=2;
                     if (player->armor_points>=50)
                     {
@@ -327,7 +327,7 @@ void buy_armor(Player *player)
                 }
                 else
                 {
-                    print_message_formatted("YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
+                    print_message_formatted("%s, YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n", player->sex == MALE ? "SIR" : "MA'AM");
                     player->armor_points*=2;
                     if(player->armor_points>50)
                     {                   
@@ -368,10 +368,10 @@ void buy_weapon(Player *player)
                 }
                 else
                 {
-                    print_message_formatted("YOUR WEAPON IS ALREADY SUPERIOR!\n");
+                    print_message_formatted("%s, YOUR WEAPON IS ALREADY SUPERIOR!\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
             } else {
-                print_message_formatted("Not enough gold for a Dagger.\n");
+                print_message_formatted("%s, Not enough gold for a Dagger.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 return;
             }
             break;
@@ -386,10 +386,10 @@ void buy_weapon(Player *player)
                 }
                 else
                 {
-                    print_message_formatted("YOUR WEAPON IS ALREADY SUPERIOR!\n");
+                    print_message_formatted("%s, YOUR WEAPON IS ALREADY SUPERIOR!\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }                
             } else {
-                print_message_formatted("Not enough gold for a Mace.\n");
+                print_message_formatted("%s, Not enough gold for a Mace.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 return;
             }
             break;
@@ -403,18 +403,18 @@ void buy_weapon(Player *player)
                 }
                 else
                 {
-                    print_message_formatted("YOUR WEAPON IS ALREADY SUPERIOR!\n");                
+                    print_message_formatted("%s, YOUR WEAPON IS ALREADY SUPERIOR!\n", player->sex == MALE ? "SIR" : "MA'AM");                
                 }
                 
             } else {
-                print_message_formatted("Not enough gold for a Sword.\n");
+                print_message_formatted("%s, Not enough gold for a Sword.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 return;
             }
             break;
         case '4':
             return;
         default:
-            print_message_formatted("Invalid choice. No weapon purchased.\n");
+            print_message_formatted("%s, Invalid choice. No weapon purchased.\n", player->sex == MALE ? "SIR" : "MA'AM");
             return;
     }
     
