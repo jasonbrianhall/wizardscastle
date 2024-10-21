@@ -209,8 +209,14 @@ void fight_monster(Player *player, GameState *game)
                         }
                         else
                         {
-                             print_message("You pull out your magic bow and ... you miss the enemy.  Your aim wasn't true.\n");
-                             break;
+                           if (player->race == ELF)
+                           {
+                               print_message("Despite your elven skill, your arrow misses its mark. Even the best archers have off days.\n");
+                           }
+                           else
+                           {
+                               print_message("You pull out your magic bow and... you miss the enemy. Your aim wasn't true.\n");
+                           }                        
                         }
                     }
                     print_message("You don't have any magical arrows.\n");
