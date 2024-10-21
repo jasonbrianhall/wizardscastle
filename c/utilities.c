@@ -238,7 +238,12 @@ void use_lamp(Player *player, GameState *game)
         print_message_formatted("You don't have a lamp!\n");
         return;
     }
-
+    
+    if (player->blindness_flag == 1)
+    {
+        print_message_formatted("You are blind, you can't use a lamp!\n");
+        return;
+    }
     print_message_formatted("Which direction do you want to shine the lamp? (N/S/E/W) ");
     char direction = get_user_input();
     int dx = 0, dy = 0;
@@ -270,6 +275,11 @@ void use_flare(Player *player, GameState *game)
 {
     if (player->flares <= 0) {
         print_message_formatted("You don't have any flares!\n");
+        return;
+    }
+    if (player->blindness_flag == 1)
+    {
+        print_message_formatted("You are blind, you can't use flares!\n");
         return;
     }
 
