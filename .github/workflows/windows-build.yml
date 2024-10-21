@@ -46,7 +46,7 @@ jobs:
         Compress-Archive -Path win_package -DestinationPath win_package.zip
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: windows-app
         path: win_package.zip
