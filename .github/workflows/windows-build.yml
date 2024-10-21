@@ -25,10 +25,14 @@ jobs:
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
+      with:
+        toolset: 14.29
 
     - name: Build application
       run: |
         cd c
+        echo "QMAKE_CXXFLAGS_RELEASE -= -O2" >> wizard_castle_qt5.pro
+        echo "QMAKE_CXXFLAGS_RELEASE += -Od" >> wizard_castle_qt5.pro
         qmake -o Makefile.win wizard_castle_qt5.pro
         nmake -f Makefile.win
 
