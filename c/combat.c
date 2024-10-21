@@ -187,8 +187,20 @@ void fight_monster(Player *player, GameState *game)
                     {
                         if (random_number(5) >= 4 || random_number(5) >= 4 || random_number(24-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
                         {
-                            temp = random_number(3);  // 1-3 damage
-                            print_message_formatted("You pull out your magical bow and hit the enemy for %d damage!\n", temp);
+                            if (player->race == DROW && random_number(8) == 1) {  // 12.5% chance
+                                temp = random_number(4)+1;  // 2-5 damage
+                                print_message("Dark Elf Precision! Your strike finds a vital spot!  You hit the enemy for %d damage!\n", temp);
+                            }
+                            else if (player->race == ELF)
+                            {
+                               temp = random_number(3) + 1;  // 2-4 damage
+                               print_message("With elven grace, your arrow flies true! You hit the enemy for %d damage!\n", temp);
+                            }
+                            else
+                            {
+                                temp = random_number(3);  // 1-3 damage
+                                print_message_formatted("You pull out your magical bow and hit the enemy for %d damage!\n", temp);
+                            }
                             enemy_strength-=temp;
                             if (enemy_strength <= 0) {
                                 handle_combat_victory(player, game, is_vendor, enemy_name);
