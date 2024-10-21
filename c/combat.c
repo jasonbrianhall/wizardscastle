@@ -15,7 +15,7 @@ void fight_monster(Player *player, GameState *game)
     int enemy_strength, enemy_dexterity, enemy_intelligence, muted=0, spellcasted, temp, base_chance, success_chance, random_factor, avoidance_chance;
     int can_bribe = 1;
     const char *enemy_name = is_vendor ? "VENDOR" : get_monster_name(room_content);
-    int firststrike;  
+    int firststrike, chance;  
     char choice;
     int max_increase;
     player->web_count=0;
@@ -116,7 +116,9 @@ void fight_monster(Player *player, GameState *game)
                         temp=calculate_damage(player, enemy_strength, enemy_dexterity);
 
                         // 20% chance of a critical hit as a Dwarf.
-                        if (player->race == DWARF && random_number(5) == 1) {  // 20% chance
+                        chance = player->blindness_flag == 1 ? 9 : 5;
+
+                        if (player->race == DWARF && random_number(chance) == 1) {  // 20% chance
                             int extra_damage = random_number(player->strength / 3);
                             temp+=extra_damage;
                             print_message("You land a mighty blow on the ");
@@ -192,9 +194,13 @@ void fight_monster(Player *player, GameState *game)
                 case 'S':  // Shoot magical bows
                     if ((player->race == ELF || player->race == DROW) && player->intelligence>=8) 
                     {
-                        if (random_number(5) >= 4 || random_number(5) >= 4 || random_number(24-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
+                        chance = player->blindness_flag == 1 ? 4 : 5;
+
+                        if (random_number(chance) >= 4 || random_number(chance) >= 4 || random_number(24-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
                         {
-                            if (player->race == DROW && random_number(8) == 1) {  // 12.5% chance
+                            chance = player->blindness_flag == 1 ? 12 : 8;
+
+                            if (player->race == DROW && random_number(chance) == 1) {  // 12.5% chance
                                 temp = random_number(4)+1;  // 2-5 damage
                                 print_message("Dark Elf Precision! Your strike finds a vital spot!  You hit the enemy for %d damage!\n", temp);
                             }
@@ -232,7 +238,8 @@ void fight_monster(Player *player, GameState *game)
                 case 'T':
                     if (player->race == HOBBIT) 
                     {
-                        if (random_number(6) == 1 || random_number(6) == 1 || random_number(24-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
+                        chance = player->blindness_flag == 1 ? 9 : 6;
+                        if (random_number(chance) == 1 || random_number(chance) == 1 || random_number(24-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;

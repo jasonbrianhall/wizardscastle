@@ -37,8 +37,8 @@ int main(int argc, char *argv[])
             buy_lamp_and_flares(&player);
         } else {
             // Debug mode: Set player as male elf with max attributes and equipment
-            player.race = 2;  // Elf
-            player.sex = 1;   // Male
+            player.race = ELF;  // Elf
+            player.sex = MALE;   // Male
             player.strength = 18;
             player.intelligence = 18;
             player.dexterity = 18;
