@@ -691,6 +691,7 @@ int calculate_death_spell(int caster_int, int caster_str, int caster_dex,
 int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
     // Base damage from weapon
     int base_damage = player->weapon_type;
+    int weapon_bonus;  
     
     // Player's offensive bonuses
     int strength_bonus = player->strength / 9;  // Every 9 points of strength adds 1 to damage
@@ -709,6 +710,20 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
     // Add a random factor
     int random_factor = random_number(5) - 3;  // -2 to +2 random adjustment
     total_damage += random_factor;
+
+    if (player->race == HOBBIT && random_number(10) == 1) {  // 10% chance
+        print_message("Lucky Strike! You found a weak spot!\n");
+        total_damage *= 2;  // Double the damage
+    }
+    
+    if (player->race == HUMAN) {
+        weapon_bonus = random_number(3)-1;  // 0-2 extra damage
+        total_damage += weapon_bonus;
+        if (weapon_bonus > 0) {
+            print_message_formatted("Your weapon mastery deals %d extra damage!\n", weapon_bonus);
+        }
+    }
+    
     if (total_damage<=0)
     {
         random_factor=random_number(3);
