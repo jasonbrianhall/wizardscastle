@@ -217,7 +217,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 return;
 
             default:
-                print_message_formatted("Invalid choice.\n");
+                print_message_formatted("*** %s, Invalid choice. ***\n", player->sex == MALE ? "SIR" : "MA'AM");
                 continue;
         }
 
