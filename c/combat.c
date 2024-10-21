@@ -28,6 +28,27 @@ void fight_monster(Player *player, GameState *game)
         return;  // End combat successfully
     }
     
+    if (!is_vendor && player->race == DROW && (random_number(12) == 1 || random_number(26 - player->dexterity)==1)) {
+        print_message("Using your Drow stealth, you slip past the %s unnoticed!\n", enemy_name);
+        return;  // End combat successfully
+    }  
+
+    if (!is_vendor && player->race == ELF && (random_number(13) == 1 || random_number(27 - player->dexterity)==1)) {
+        print_message("Using your legendary Elf stealth, you slip past the %s unnoticed!\n", enemy_name);
+        return;  // End combat successfully
+    }  
+
+    if (!is_vendor && player->race == HUMAN && (random_number(14) == 1 || random_number(27 - player->dexterity)==1)) {
+        print_message("You slip past the %s unnoticed!\n", enemy_name);
+        return;  // End combat successfully
+    }  
+
+    if (!is_vendor && player->race == DWARF && (random_number(15) == 1 || random_number(26 - player->dexterity) == 1)) {
+        print_message("Using your Dwarven... er, 'aerodynamic' build, you somehow manage to roll past the %s unnoticed. Who knew being stout had its advantages?\n", enemy_name);
+        return;  // End combat successfully
+    }
+
+    
     // Set enemy stats based on room content
     if (is_vendor) {
         enemy_strength = 15;
