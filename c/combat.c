@@ -23,6 +23,11 @@ void fight_monster(Player *player, GameState *game)
     player->temp_intelligence=0;
     player->temp_dexterity=0;
     
+    if (player->race == HOBBIT && random_number(10) == 1) {
+        print_message("Using your hobbit stealth (and the fact that you are very short), you sneak past the %s!\n", enemy_name);
+        return;  // End combat successfully
+    }
+    
     // Set enemy stats based on room content
     if (is_vendor) {
         enemy_strength = 15;
@@ -57,6 +62,9 @@ void fight_monster(Player *player, GameState *game)
             if (muted==0 && ((player->intelligence > 9 && (player->race == DWARF || player->race == ELF)) || player->intelligence>14))  {
                 print_message("You can also (C)ast a spell.\n");
             }
+            if (player->race == HOBBIT) {
+                print_message("You can also (T)hrow a stone.\n");
+            }  
             print_message_formatted("\n");
             print_message_formatted("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
                    player->strength, player->dexterity, player->intelligence);
@@ -126,6 +134,24 @@ void fight_monster(Player *player, GameState *game)
                         // Player cannot cast a spell
                         print_message_formatted("\n** YOU CAN'T CAST A SPELL NOW!\n");
                         continue;  // Skip enemy's turn if player couldn't cast a spell
+                    }
+                    break;
+                case 'T':
+                    if (player->race == HOBBIT) 
+                    {
+                        if (random_number(5) == 1) {  // 20% chance to hit
+                            temp = random_number(3);  // 1-3 damage
+                            print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
+                            enemy_strength  -= temp;
+                        }
+                        else 
+                        {
+                             print_message_formatted("Your thrown stone misses the enemy.\n");
+                        }
+                    }
+                    else
+                    {
+                         print_message("Do you look like a hobbit?  You can't cast stones.\n");
                     }
                     break;
                 default:
