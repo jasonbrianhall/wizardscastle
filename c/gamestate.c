@@ -32,8 +32,8 @@ void end_game(Player *player, GameState *game)
     printStars();
     
     const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF"};
-    const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
-    const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
+    const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE", "STONE"};
+    const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD", "EXCALIBUR"};
 
     if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
         print_message_formatted("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n", race_names[player->race - 1]);

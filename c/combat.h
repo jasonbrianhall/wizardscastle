@@ -15,6 +15,8 @@ const char* get_monster_name(int room_content);
 int cast_heal_spell(Player *player);
 int cast_bright_spell(Player *player);
 int cast_haste_spell(Player *player);
+int cast_stone_skin_spell(Player *player);
+
 int calculate_first_strike(int player_dex, int player_int, int player_str, int enemy_dex, int enemy_int, int enemy_str);
 int calculate_death_spell(int caster_int, int caster_str, int caster_dex, int target_int, int target_str, int target_dex);
 int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity);

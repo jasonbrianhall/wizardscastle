@@ -358,8 +358,8 @@ void print_status(Player *player, GameState *game)
     print_message("Gold Pieces: %d  Flares: %d\n", player->gold, player->flares);
 
     // Print armor and weapon
-    const char* armor_types[] = {"No Armor", "Leather", "Chainmail", "Plate"};
-    const char* weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword"};
+    const char* armor_types[] = {"No Armor", "Leather", "Chainmail", "Plate", "Stone"};
+    const char* weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword", "Excalibur"};
     print_message("Armor: %s  Weapon: %s\n", armor_types[player->armor_type], weapon_types[player->weapon_type]);
     // Print special items
 
@@ -374,6 +374,8 @@ void print_status(Player *player, GameState *game)
     if (player->blindness_flag) print_message_formatted("Blind ");
     if (player->stickybook_flag) print_message_formatted("Sticky Book ");
     print_message_formatted("\n");
+
+    print_message("Armor points: %d\n", player->armor_points);
 
     // Print number of treasures
     print_message("Treasures Found: %d\n", player->treasure_count);

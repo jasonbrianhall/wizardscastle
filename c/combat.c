@@ -484,6 +484,11 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
         print_message_formatted("    (W)EB - Casts a magical web that prevents a monster from attacking\n");
         print_message_formatted("    (F)IREBALL - Casts a Fireball at the enemy\n");
     }
+    if(player->intelligence>=14 && player->race == DWARF)
+    {
+        print_message(          "   S(T)one Skin; improves your armor at the cost of one strength and intelligence points\n");
+        print_message_formatted("    (F)IREBALL - Casts a Fireball at the enemy\n");
+    }    
     if (player->intelligence >= 16)
     {
         print_message_formatted("    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
@@ -562,6 +567,15 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 }
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
+            case 'T':
+                if (player->race == DWARF)
+                {
+                    cast_stone_skin_spell(player);
+                    return 0;
+                }
+                print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+                break;
+
                 
             default:
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
@@ -681,6 +695,31 @@ int cast_heal_spell(Player *player) {
     }
     return 0;
 }
+
+int cast_stone_skin_spell(Player *player)
+{
+    if(player->intelligence>=14)
+    {
+        if(player->armor_type<4)
+        {
+             player->armor_type+=1;
+             player->armor_points*=2;
+             if(player->armor_points>50)
+             {
+                 player->armor_points=50;
+             }
+             player->intelligence-=1;
+             player->strength-=1;
+        }
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+
+}
+
 
 int cast_bright_spell(Player *player) {
     if (player->intelligence > 9) {
@@ -879,5 +918,6 @@ int enemy_attack_hits(Player *player, int enemy_dexterity) {
     // Return 1 if the attack hits, 0 if it misses
     return (roll <= hit_chance) ? 1 : 0;
 }
+
 
 
