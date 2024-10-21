@@ -32,15 +32,6 @@ jobs:
       run: |
         cd c
         qmake -o Makefile.win wizard_castle_qt5.pro
-        # Create a PowerShell script to remove /WX flag
-        @'
-        $content = Get-Content Makefile.win
-        $content = $content -replace '/WX', ''
-        $content | Set-Content Makefile.win
-        '@ > remove-wx.ps1
-        # Run the script to modify Makefile.win
-        powershell -File remove-wx.ps1
-        # Now build with the modified Makefile
         nmake -f Makefile.win
 
     - name: Run windeployqt
