@@ -129,8 +129,11 @@ void fight_monster(Player *player, GameState *game)
                         }
                         enemy_strength -= temp;
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
-                            print_message_formatted("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
-                            player->weapon_type = 0;
+                            if (player->weapon_type < 4 || random_number(8) == 1) // Excalibur can break but it's rare
+                            {
+                                print_message_formatted("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
+                                player->weapon_type = 0;
+                            }
                         }
                         if (enemy_strength <= 0) {
                             handle_combat_victory(player, game, is_vendor, enemy_name);
