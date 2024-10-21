@@ -28,7 +28,7 @@ jobs:
 
     - name: Build application
       run: |
-        cd c; qmake wizard_castle.pro
+        cd c; dir /s /b; qmake wizard_castle.pro
         nmake
 
     - name: Run windeployqt
