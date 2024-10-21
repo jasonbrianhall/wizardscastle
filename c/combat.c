@@ -703,14 +703,20 @@ int cast_stone_skin_spell(Player *player)
         if(player->armor_type<4)
         {
              player->armor_type+=1;
-             player->armor_points*=2;
-             if(player->armor_points>50)
-             {
-                 player->armor_points=50;
-             }
              player->intelligence-=1;
              player->strength-=1;
+             print_message("Your armor has improved!!!");
         }
+        else
+        {
+             print_message("You can't improve your armor.");
+        }
+        player->armor_points*=2;
+        if(player->armor_points>50)
+        {
+            player->armor_points=50;
+        }
+
         return 1;
     }
     else

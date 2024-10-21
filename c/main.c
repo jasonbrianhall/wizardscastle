@@ -46,13 +46,13 @@ int main(int argc, char *argv[])
             player.flares = 1000;
             player.lamp_flag = 1;
             player.runestaff_flag = 1;
-            player.weapon_type = 3;  // Sword
-            player.armor_type = 3;   // Plate (assuming this is the best armor, equivalent to "Shield")
-            player.armor_points = 21; // Max armor points for Plate armor
+            player.weapon_type = 4;  // Sword
+            player.armor_type = 4;   // Plate (assuming this is the best armor, equivalent to "Shield")
+            player.armor_points = 42; // Max armor points for Plate armor
 
 
             print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
-            print_message("DEBUG MODE: You have a Sword and Plate armor.\n");
+            print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered\n");
 

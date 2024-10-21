@@ -52,6 +52,19 @@ void trade_with_vendor(Player *player, GameState *game)
                 player->treasure_count--;
                 print_message_formatted("Sold!\n");
             }
+            else
+            {
+               if (random_number(8)==1 && player->weapon_type<4)
+               {
+                   print_message("I'll give you an extremely rare offer; sell %s for Excalibur? (Y/N) ", get_treasure_name(i), offer);
+                   if (get_user_input_yn() == 'Y') {
+                       game->treasure[i] = 0;
+                       player->treasure_count--;
+                       player->weapon_type=4;
+                   }        
+               }
+                 
+            }
         }
     }
 
@@ -266,7 +279,11 @@ void buy_armor(Player *player)
                 else
                 {
                     print_message_formatted("YOUR ARMOR IS ALREADY SUPERIOR BUT I WILL REPAIR YOUR ARMOR!!!   ON THE HOUSE\n\n");
-                    player->armor_points = player->armor_type*7;
+                    player->armor_points = player->armor_type*2;
+                    if(player->armor_points>50)
+                    {                   
+                         player->armor_points=50;
+                    }
                 }
                 
             } else {
