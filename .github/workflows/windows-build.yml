@@ -28,25 +28,25 @@ jobs:
 
     - name: Build application
       run: |
-        cd c; qmake -f wizard_castle.pro
+        cd c; qmake wizard_castle.pro
         nmake
 
     - name: Run windeployqt
       run: |
-        windeployqt.exe your_app.exe
+        windeployqt.exe wizards_castle_qt5
 
     - name: Package application
       run: |
         mkdir win_package
-        move your_app.exe win_package\
+        move wizards_castle_qt5 win_package\
         move *.dll win_package\
         move platforms win_package\
         move styles win_package\
         # Add any additional files your application needs
-        Compress-Archive -Path win_package -DestinationPath win_package.zip
+        Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: windows-app
-        path: win_package.zip
+        name: Wizards-Castle-Windows
+        path: wizards_castle_windows.zip
