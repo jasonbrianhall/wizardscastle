@@ -4,6 +4,15 @@ CONFIG += c++11
 
 DEFINES += QT5
 
+# MSVC-specific configurations
+msvc {
+    QMAKE_CXXFLAGS += /MP /Zc:preprocessor /wd4819
+    QMAKE_CFLAGS += /MP /Zc:preprocessor /wd4819
+    DEFINES += _CRT_SECURE_NO_WARNINGS
+    CONFIG += force_debug_info
+    CONFIG -= incremental
+}
+
 SOURCES += \
     main_qt5.cpp \
     wizardioqt5.cpp \
@@ -23,7 +32,6 @@ HEADERS += \
     utilities.h \
     combat.h \
     vendor.h \
-    combat.c \
     save_load.h
 
 TARGET = wizards_castle_qt5
