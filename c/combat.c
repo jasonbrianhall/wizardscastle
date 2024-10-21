@@ -118,7 +118,7 @@ void fight_monster(Player *player, GameState *game)
                     if (player->race==HOBBIT)
                     {
                          // Hobbits are sneaky and more able to escape.
-                         temp=random_number(19-min(18, player->dexterity));
+                         temp=player->dexterity/6;
                     }
                     if (random_number(20) + player->dexterity + temp > random_number(20) + enemy_dexterity) {
                         print_message("\nYou have escaped!\n");
@@ -164,7 +164,7 @@ void fight_monster(Player *player, GameState *game)
                 case 'S':  // Shoot magical bows
                     if (player->race == ELF && player->intelligence>=8) 
                     {
-                        if (random_number(5) >= 4 || random_number(5) >= 4 || random_number(19-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
+                        if (random_number(5) >= 4 || random_number(5) >= 4 || random_number(24-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
                         {
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You pull out your magical bow and hit the enemy for %d damage!\n", temp);
@@ -185,8 +185,7 @@ void fight_monster(Player *player, GameState *game)
                 case 'T':
                     if (player->race == HOBBIT) 
                     {
-                        temp=19-(min(18, player->dexterity));
-                        if (random_number(5) == 1 || random_number(5) == 1 || random_number(19-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
+                        if (random_number(5) == 1 || random_number(5) == 1 || random_number(24-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;
