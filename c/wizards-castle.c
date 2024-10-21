@@ -139,7 +139,7 @@ bool main_game_loop(Player *player, GameState *game)
                 char message[100];
                 snprintf(message, sizeof(message), "%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
                 print_message_formatted(message);
-                set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
+                set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);  // Empty the room
             }
             else if (room_content==FLARES)
             {
@@ -148,7 +148,7 @@ bool main_game_loop(Player *player, GameState *game)
                 player->flares += flares_found;
                 snprintf(message, sizeof(message), "%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
                 print_message_formatted(message);
-                set_room_content(game, player->x, player->y, player->level, 101);  // Empty the room
+                set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);  // Empty the room
            }
            // Monsters
            else if (room_content>=MONSTER_START && room_content <=MONSTER_END)

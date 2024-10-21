@@ -551,7 +551,7 @@ void open_book(Player *player, GameState *game)
     }
     
     // Remove the book from the room
-    set_room_content(game, player->x, player->y, player->level, 101);  // Empty room
+    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);  // Empty room
 }
 
 void discover_adjacent_rooms(GameState *game, Player *player)
