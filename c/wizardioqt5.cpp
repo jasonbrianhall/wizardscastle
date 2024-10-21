@@ -171,57 +171,65 @@ void display_map2(GameState *game, Player *player)
 
        }
     }
-    print_message2("\n=== MAP OF LEVEL ");
-    //char level_str[3], number_str[3];
-    print_message2("%d", player->level);
-    print_message2(" ===\n\n");
+    if(player->blindness_flag == 0)
+    {
+        print_message2("\n=== MAP OF LEVEL ");
+        //char level_str[3], number_str[3];
+        print_message2("%d", player->level);
+        print_message2(" ===\n\n");
 
-    // Print top border with column coordinates
-    print_message2("      1        2        3        4        5        6        7        8     \n");
-    print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        // Print top border with column coordinates
+        print_message2("      1        2        3        4        5        6        7        8     \n");
+        print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
-    for (int x = 1; x <= 8; x++) {
-        // Print row coordinate
-        //snprintf(number_str, sizeof(number_str), "%d", x);
-        print_message2("%d", x);
+        for (int x = 1; x <= 8; x++) {
+            // Print row coordinate
+            //snprintf(number_str, sizeof(number_str), "%d", x);
+            print_message2("%d", x);
 
-        for (int y = 1; y <= 8; y++) {
-            print_message2("|");
-            if (x == player->x && y == player->y) {
-                print_message2("  [YOU] ");
-            } else if (is_room_discovered(game, x, y, player->level)) {
-                int room_content = get_room_content(game, x, y, player->level);
-                char room_str[10] = "        \0";
-                get_room_description(room_content, room_str);
-                print_message2(room_str);
-            } else {
-                print_message2("????????");
-            }
-        }
-        print_message2("|\n");
+            for (int y = 1; y <= 8; y++) {
+                print_message2("|");
+                if (x == player->x && y == player->y) {
+                    print_message2("  [YOU] ");
+                } else if (is_room_discovered(game, x, y, player->level)) {
+                    int room_content = get_room_content(game, x, y, player->level);
+                    char room_str[10] = "        \0";
+                    get_room_description(room_content, room_str);
+                    print_message2(room_str);
+                } else {
+                    print_message2("????????");
+                }
+             }
+             print_message2("|\n");
 
-        // Print horizontal border between rows
-        if (x < 8) {
-            print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
-        }
+             // Print horizontal border between rows
+             if (x < 8) {
+                 print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+             }
+         }
+
+         // Print bottom border
+         print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+
+         // Map is too large for the default font for MS-DOS (Same Information is available in help)
+         print_message2("\nLEGEND:\n");
+         print_message2("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
+         print_message2("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
+         print_message2("GOLD     = Gold Pieces     FLARES   = Flares\n");
+         print_message2("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
+         print_message2("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
+         print_message2("MONSTER  = Monster Name    VENDOR   = Vendor\n");
+         print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
+         print_message2("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+
+         print_message2("\n=== PLAYER STATUS ===\n");
     }
-
-    // Print bottom border
-    print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
-
-    // Map is too large for the default font for MS-DOS (Same Information is available in help)
-    print_message2("\nLEGEND:\n");
-    print_message2("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");
-    print_message2("POOL     = Magic Pool      CHEST    = Treasure Chest\n");
-    print_message2("GOLD     = Gold Pieces     FLARES   = Flares\n");
-    print_message2("WARP     = Warp/Orb        SINKHOLE = Sinkhole\n");
-    print_message2("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
-    print_message2("MONSTER  = Monster Name    VENDOR   = Vendor\n");
-    print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
-    print_message2("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
-
-    print_message2("\n=== PLAYER STATUS ===\n");
-
+    else
+    {
+         print_message2("\nBlind %s can't see maps.\n", get_race_name(player->race));
+    }
+    
+    
     // Print player race and attributes
     print_message2("Race: ");
     print_message2_formatted(get_race_name(player->race));
