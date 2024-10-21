@@ -19,7 +19,7 @@ This repository is your gateway to multiple realms of the Wizard's Castle:
 
 - **📖 Immersive Text-Based Gameplay**: Experience the thrill of old-school RPGs with modern twists.
 - **🎲 Randomly Generated Castles**: Every game promises a unique adventure with 🗺️ 512 rooms to explore; each with 🐻 Monsters, 🧞 Vendors, 🪄 Rune staff, 💰 Gold, ⚡ Flares, 💎 Mystical Treasures, and more.
-- **🧝‍♂️ Diverse Character Races**: Choose your alter ego - 👤 Human, 🧝 Elf, 🧑 Hobbit, or 🧔 Dwarf - each with unique traits.
+- **🧝‍♂️ Diverse Character Races**: Choose your alter ego - 👤 Human, 🧝 Elf, 🧑 Hobbit, 🧔 Dwarf,  or a 🧛 Dark Elf (Drow) - each with unique traits.
 - **⚔️ Strategic Combat**: Face fearsome foes from sneaky Kobolds to mighty Dragons 🐉. Use your wits and weapons wisely!
 - **🔮 Magic and Mystery**: Cast powerful spells 🪄, drink from enchanted pools 🌊, and uncover ancient treasures 💎.
 - **💰 Vendor Interactions**: Barter with the castle's enigmatic merchant. What secrets might they hold?
