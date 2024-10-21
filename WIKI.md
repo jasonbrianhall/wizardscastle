@@ -61,6 +61,7 @@ Choose from four races, each with unique starting attributes:
 - Elf
 - Human
 - Dwarf
+- Dark Elf (Drow)
 
 ### Leveling and Progression
 
@@ -74,11 +75,13 @@ Weapons:
 - Dagger
 - Mace
 - Sword
+- Excalibur (not purchasable)
 
 Armor:
 - Leather
 - Chainmail
 - Plate
+- Stone (not purchasable)
 
 ### Magical Items
 
@@ -104,10 +107,11 @@ Enemies range from weak to strong:
 - Kobold, Orc, Wolf, Goblin, Ogre, Troll, Bear, Minotaur, Gargoyle, Chimera, Balrog, Dragon
 - Gargoyles and Dragons can break weapons so be careful
 - You can not attack monsters with your bare hands or if you have a book stuck to your hand
+- Some enemies have magical powers like Kobolds, Balrogs, and Dragons
 
 ### Combat System
 
-Combat is turn-based. You can choose to attack, retreat, attempt to bribe, or cast a spell (if your intelligence is high enough).
+Combat is turn-based. You can choose to attack, retreat, attempt to bribe, or cast a spell (if your intelligence is high enough).  Species may have unique attacks which will change as the game is developed.
 
 ## Magic and Spells
 
@@ -116,6 +120,9 @@ Combat is turn-based. You can choose to attack, retreat, attempt to bribe, or ca
 - Web: Immobilizes the enemy
 - Fireball: Deals damage
 - Deathspell: Instantly kills the enemy (or you, if it fails)
+- Heal (increases strength at a cost of 1 intelligence points)
+- Bright (temporarily increases intelligence)
+- Haste (temporarily increases dexterity)
 
 ### Casting Mechanics
 
