@@ -383,7 +383,7 @@ void fight_monster(Player *player, GameState *game)
             int damage = calculate_damage_enemy(player, enemy_strength, enemy_dexterity, (room_content-MONSTER_START)/3 +1 );
             
             player->armor_points-=damage;
-            if (player->armor_points <= 0) {
+            if (player->armor_type>0 && player->armor_points <= 0) {
                 player->armor_points = 0;
                 player->armor_type = 0;
                 print_message_formatted("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
