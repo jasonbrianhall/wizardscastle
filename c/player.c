@@ -259,7 +259,7 @@ void buy_equipment(Player *player)
                 player->weapon_type = 3; cost = 30; break;
             case 'M': 
                 if (player->gold < 20) {
-                    print_message_formatted("** SORRY SIR, I'M AFRAID I DON'T GIVE CREDIT!\n\n");
+                    print_message_formatted("** SORRY %s, I'M AFRAID I DON'T GIVE CREDIT!\n\n",  player->sex == MALE ? "SIR" : "MA'AM");
                     continue;
                 }
                 player->weapon_type = 2; cost = 20; break;
