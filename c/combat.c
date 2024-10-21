@@ -225,6 +225,7 @@ void fight_monster(Player *player, GameState *game)
                                print_message("You pull out your magic bow and... you miss the enemy. Your aim wasn't true.\n");
                            }                        
                         }
+                        break;
                     }
                     print_message("You don't have any magical arrows.\n");
                     continue;
