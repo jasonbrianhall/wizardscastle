@@ -513,7 +513,7 @@ void gaze_into_orb(Player *player, GameState *game)
 
 void open_book(Player *player, GameState *game)
 {
-    int effect = random_number(6);
+    int effect = random_number(7);
     
     print_message_formatted("YOU OPEN THE BOOK AND ");
     
@@ -543,6 +543,11 @@ void open_book(Player *player, GameState *game)
             print_message_formatted("NOW YOU ARE UNABLE TO DRAW YOUR WEAPON!\n");
             player->stickybook_flag = 1;
             break;
+        case 7:
+            print_message_formatted("IT'S A MANUAL OF INTELLIGENCE!\n");
+            player->intelligence = 18;
+            break;
+
     }
     
     // Remove the book from the room
