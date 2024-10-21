@@ -399,10 +399,17 @@ void drink_from_pool(Player *player, GameState *game)
             }
             break;
         case 8:
-            player->sex = 1 - player->sex;  // Toggle between 0 and 1
-            print_message_formatted("turn into a %s %s!\n", 
-                   player->sex ? "MALE" : "FEMALE", 
-                   get_race_name(player->race));
+            if (player->sex == MALE)
+            {
+                player->sex = FEMALE;
+                print_message_formatted("become a female %s.\n", get_race_name(player->race));
+            }
+            else
+            {
+                player->x = MALE;
+                print_message_formatted("become a male %s.\n", get_race_name(player->race));
+            }
+            
             break;
     }
 
