@@ -301,7 +301,7 @@ void buy_lamp_and_flares(Player *player)
             } else if (user_input_yn == 'N') {
                 break;
             } else {
-                print_message_formatted("** PLEASE ANSWER YES OR NO.\n");
+                print_message("** %s, PLEASE ANSWER YES OR NO.\n", player->sex == MALE ? "SIR" : "MA'AM");
             }
         } while (1);
     }
@@ -320,7 +320,7 @@ void buy_lamp_and_flares(Player *player)
                 print_message_formatted("YOU CHOSE NOT TO BUY ANY FLARES.\n");
                 return;
             } else if (flares_to_buy < 0) {
-                print_message_formatted("** PLEASE ENTER A POSITIVE NUMBER.\n");
+                print_message_formatted("** %s, PLEASE ENTER A POSITIVE NUMBER.\n", player->sex == MALE ? "SIR" : "MA'AM");
             } else if (flares_to_buy > player->gold) {
                 print_message_formatted("** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n", player->gold);
             } else {
