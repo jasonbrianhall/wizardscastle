@@ -519,7 +519,8 @@ void gaze_into_orb(Player *player, GameState *game)
                     y = random_number(8);
                     z = random_number(8);
                 }
-                print_message_formatted("***THE ORB OF ZOT*** at (%d,%d) Level %d!\n", x, y, z);
+                print_message("***THE ORB OF ZOT*** at (%d,%d) ", x, y);
+                print_message("Level %d!\n", z);
             }
             break;
         case 6:
