@@ -176,7 +176,7 @@ void fight_monster(Player *player, GameState *game)
                         }
                         else
                         {
-                             print_message("Your aim isn't true and you miss the enemy.\n");
+                             print_message("You pull out your magic bow and ... you miss the enemy.  Your aim wasn't true.\n");
                              break;
                         }
                     }

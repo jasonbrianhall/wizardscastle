@@ -348,6 +348,15 @@ void print_status(Player *player, GameState *game)
     // Print player race and attributes
     print_message("Race: ");
     print_message_formatted(get_race_name(player->race));
+    print_message("   Sex: "); 
+    if (player->sex==FEMALE)
+    {
+        print_message("Female");
+    }
+    else
+    {
+        print_message("Male");
+    }
     print_message("\n");
     print_message("Strength: %d  Intelligence: %d  Dexterity: %d\n", player->strength, player->intelligence, player->dexterity);
 

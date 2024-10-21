@@ -62,6 +62,10 @@
 #define HUMAN  3
 #define DWARF  4
 
+#define FEMALE 0
+#define MALE 1
+
+
 // Structures
 typedef struct {
     int race:4;
