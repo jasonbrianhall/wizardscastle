@@ -89,8 +89,19 @@ void fight_monster(Player *player, GameState *game)
                         print_message_formatted("\nYOU MISSED, TOO BAD!\n");
                     } else {
                         temp=calculate_damage(player, enemy_strength, enemy_dexterity);
-                        print_message("\nYou hit the evil ");
-                        print_message_formatted("%s AND DID %i DAMAGE!\n", enemy_name, temp);
+
+                        // 20% chance of a critical hit as a Dwarf.
+                        if (player->race == DWARF && random_number(5) == 1) {  // 20% chance
+                            int extra_damage = random_number(player->strength / 3);
+                            temp+=extra_damage;
+                            print_message("You land a mighty blow on the ");
+                            print_message_formatted("%s, dealing %d extra damage!  Total damage was %d.\n", enemy_name, extra_damage, temp);
+                        }
+                        else
+                        {
+                            print_message("\nYou hit the evil ");
+                            print_message_formatted("%s AND DID %i DAMAGE!\n", enemy_name, temp);
+                        }
                         enemy_strength -= temp;
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
                             print_message_formatted("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
@@ -103,8 +114,18 @@ void fight_monster(Player *player, GameState *game)
                     }
                     break;
                 case 'R':
-                    if (random_number(20) + player->dexterity > random_number(20) + enemy_dexterity) {
-                        print_message_formatted("\nYOU HAVE ESCAPED!\n");
+                    temp=0;
+                    if (player->race==HOBBIT)
+                    {
+                         // Hobbits are sneaky and more able to escape.
+                         temp=random_number(19-min(18, player->dexterity));
+                    }
+                    if (random_number(20) + player->dexterity + temp > random_number(20) + enemy_dexterity) {
+                        print_message("\nYou have escaped!\n");
+                        if (player->race==HOBBIT)
+                        {
+                            print_message("Hobbitsons are sneaky.\n");
+                        }
                         move_player_randomly(player, game);
                         return;
                     } else {
