@@ -70,7 +70,7 @@ void fight_monster(Player *player, GameState *game)
     {
         print_message_formatted("ENEMY GETS FIRST STRIKE\n\n");
     }
-
+    int rally_used=0;
     while (1) {
         if (firststrike==1)
         {
@@ -89,6 +89,10 @@ void fight_monster(Player *player, GameState *game)
             if ((player->race == ELF || player->race == DROW) && player->intelligence>=8) {
                 print_message("You can also (S)hoot a magical bow with extremely high accuracy.\n");
             }  
+
+           if (player->race == HUMAN && rally_used == 0) {
+                print_message("You can also Ra(L)ly.\n");
+           }       
 
             print_message_formatted("\n");
             print_message_formatted("YOUR STRENGTH IS %d, YOUR DEXTERITY IS %d, AND YOUR INTELLIGENCE IS %d.\n", 
@@ -243,6 +247,24 @@ void fight_monster(Player *player, GameState *game)
                          print_message("Do you look like a hobbit?  You can't cast stones.\n");
                     }
                     continue;
+                 case 'L':  // Rally
+                     if (player->race == HUMAN && rally_used==0) {
+                         int rally_bonus = random_number(2) + 1;
+                         player->temp_strength = player->strength;
+                         player->temp_intelligence = player->intelligence;
+                         player->temp_dexterity = player->dexterity;
+                         player->strength += rally_bonus;
+                         player->dexterity+= rally_bonus;
+                         player->intelligence += rally_bonus;
+                         print_message("You rally your spirit, gaining %d to all stats temporarily!\n", rally_bonus);
+                         rally_used=1;
+                         break;
+                     } else if (player->race != HUMAN) {
+                         print_message("Only humans can use Rally.\n");
+                     } else {
+                         print_message("You've already used Rally this battle.\n");
+                     }
+                     continue;
                 default:
                     print_message_formatted("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
                     continue;
