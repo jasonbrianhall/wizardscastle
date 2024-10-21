@@ -1,4 +1,4 @@
-name: Qt 5.12 MSVC Windows Build
+name: Qt 5.12 MSVC 2022 Windows Build
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        toolset: 14.16
+        arch: x64
 
     - name: Build application
       run: |
@@ -53,4 +53,3 @@ jobs:
       with:
         name: Wizards-Castle-Windows
         path: wizards_castle_windows.zip
-
