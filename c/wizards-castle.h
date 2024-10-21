@@ -62,7 +62,7 @@
 #define HUMAN  3
 #define DWARF  4
 
-#define FEMALE 0
+#define FEMALE 0  // No special abilities; just Aesthetic
 #define MALE 1
 
 
