@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: fedora:latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      date: ${{ steps.date.outputs.date }}
 
     steps:
     - uses: actions/checkout@v2
@@ -30,17 +33,14 @@ jobs:
     - name: Build RPM
       run: |
         pushd c
-        # Create the source tarball
         mkdir -p wizardscastle-1.0
         cp *.c wizardscastle-1.0/
         cp *.h wizardscastle-1.0/
         cp Makefile wizardscastle-1.0/
         tar -czf wizardscastle-1.0.tar.gz wizardscastle-1.0
         rm -rf wizardscastle-1.0
-        # Move the source tarball to the SOURCES directory for rpmbuild
         mkdir -p ~/rpmbuild/SOURCES
         cp wizardscastle-1.0.tar.gz ~/rpmbuild/SOURCES/
-        # Build the RPM using the existing spec file
         rpmbuild -ba -D 'debug_package %{nil}' wizardscastle.spec
         popd
 
@@ -114,6 +114,46 @@ jobs:
         draft: false
         prerelease: false
 
+    - name: Upload RPM Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.find_rpm.outputs.rpm_path }}
+        asset_name: ${{ steps.find_rpm.outputs.rpm_filename }}
+        asset_content_type: application/x-rpm
+    
+    - name: Upload Windows Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./c/wizard_windows.exe
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-windows.exe
+        asset_content_type: application/octet-stream
+    
+    - name: Upload DOS Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./wizard.zip
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-dos.zip
+        asset_content_type: application/zip
+    
+    - name: Upload Linux Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./c/wizardscastle-linux.tar.gz
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-linux.tar.gz
+        asset_content_type: application/gzip
+
   build-qt-windows:
     runs-on: windows-latest
     needs: build-and-release
@@ -170,47 +210,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ needs.build-and-release.outputs.upload_url }}
         asset_path: ./wizards_castle_qt_windows.zip
-        asset_name: wizardscastle-${{ steps.date.outputs.date }}-qt-windows.zip
+        asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-qt-windows.zip
         asset_content_type: application/zip
-
-    - name: Upload RPM Package
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.find_rpm.outputs.rpm_path }}
-        asset_name: ${{ steps.find_rpm.outputs.rpm_filename }}
-        asset_content_type: application/x-rpm
-    
-    - name: Upload Windows Binary
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./c/wizard_windows.exe
-        asset_name: wizardscastle-${{ steps.date.outputs.date }}-windows.exe
-        asset_content_type: application/octet-stream
-    
-    - name: Upload DOS Package
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./wizard.zip
-        asset_name: wizardscastle-${{ steps.date.outputs.date }}-dos.zip
-        asset_content_type: application/zip
-    
-    - name: Upload Linux Package
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./c/wizardscastle-linux.tar.gz
-        asset_name: wizardscastle-${{ steps.date.outputs.date }}-linux.tar.gz
-        asset_content_type: application/gzip
