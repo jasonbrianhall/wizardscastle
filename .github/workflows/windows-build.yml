@@ -44,37 +44,56 @@ jobs:
       working-directory: c
       run: |
         echo Current directory: %CD%
-        
-        REM Set compiler flags for release build
         set CL=/MP1 /MD /O2 /Zi /W3 /WX- /diagnostics:column
-        
-        REM Configure with qmake
         qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=release"
-        
-        REM Build with nmake
         nmake
 
-    - name: Run windeployqt
+    - name: Show build output
       shell: cmd
       working-directory: c
-      continue-on-error: true
       run: |
-        "%QtToolsPath%\windeployqt.exe" wizards_castle_qt5.exe
+        echo Build directory contents:
+        dir /s /b
+        echo.
+        echo Release directory (if exists):
+        if exist release dir /s /b release
+        echo.
+        echo Debug directory (if exists):
+        if exist debug dir /s /b debug
 
-    - name: Package application
+    - name: Package any available artifacts
       shell: cmd
-      continue-on-error: true
       run: |
         mkdir win_package
-        move c\wizards_castle_qt5.exe win_package\
-        move c\*.dll win_package\
-        move c\platforms win_package\
-        move c\styles win_package\
-        powershell Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
+        echo Checking for built files...
+        
+        if exist c\release\wizards_castle_qt5.exe (
+          echo Found release exe
+          move c\release\wizards_castle_qt5.exe win_package\
+        ) else if exist c\wizards_castle_qt5.exe (
+          echo Found exe in root
+          move c\wizards_castle_qt5.exe win_package\
+        ) else (
+          echo No exe found
+        )
+        
+        if exist c\*.dll move c\*.dll win_package\
+        if exist c\platforms move c\platforms win_package\
+        if exist c\styles move c\styles win_package\
+        
+        dir win_package
+        
+        if exist win_package\*.* (
+          powershell Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
+        ) else (
+          echo No files to package
+          exit 0
+        )
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
-      if: always()
+      if: hashFiles('wizards_castle_windows.zip') != ''
       with:
         name: Wizards-Castle-Windows
         path: wizards_castle_windows.zip
+
