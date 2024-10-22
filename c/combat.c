@@ -315,7 +315,7 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (room_content == BALROG && random_number(5) == 1) {
-            balrog_flame_whip_attack(player, game);
+            balrog_flame_whip_attack(player, game, enemy_strength, enemy_dexterity);
             if (game->game_over) {
                 return;
             }
@@ -792,38 +792,59 @@ void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength,
     }
 }
 
-void balrog_flame_whip_attack(Player *player, GameState *game) {
-
+void balrog_flame_whip_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
     print_message_formatted("\nThe Balrog lashes out with its flame whip!\n");
     
-    // Dexterity-based avoidance check
-    if (random_number(20) + player->dexterity > random_number(20) + 18) {  // Balrog has very high dexterity
+    // Dexterity-based avoidance check using enemy stats
+    int hit_chance = 50;
+    hit_chance += (enemy_dexterity - 10) * 2;     // Dexterity bonus
+    hit_chance += (enemy_strength - 10);          // Strength bonus for whip control
+    hit_chance -= (player->dexterity - 10) * 2;   // Player's dodge chance
+    hit_chance += 15 * player->blindness_flag;    // Blindness penalty
+    
+    // Ensure hit chance is within reasonable bounds
+    if (hit_chance < 10) hit_chance = 10;    // Balrog minimum accuracy
+    if (hit_chance > 90) hit_chance = 90;    // Always a chance to dodge
+    
+    if (random_number(100) > hit_chance) {
         print_message_formatted("You narrowly avoid the searing flames!\n");
         return;
     }
     
-    int damage = random_number(8) + 4;  // 5 to 12 damage
-    print_message_formatted("The flame whip strikes you for %d damage!\n", damage);
+    // Base damage calculation
+    int damage = random_number(8) + 4;  // 5-12 base damage
     
-    // Apply armor reduction
+    // Add Balrog's strength bonus
+    damage += enemy_strength / 9;    // Strength bonus like normal attacks
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    print_message_formatted("The flame whip strikes you for %d initial damage!\n", damage);
+    
+    // Apply armor reduction if player has armor
     if (player->armor_type != 0) {
-        int armor_protection = player->armor_type + random_number(3)-1;
-        damage -= (armor_protection + random_number(3)-1);
+        int armor_protection = player->armor_type + random_number(3) - 1;
+        damage -= armor_protection;
+        player->armor_points -= (armor_protection * 2);  // Double armor damage from fire
         
-        player->armor_points -= armor_protection;
         if (damage < 0) {
             player->armor_points += damage;  // Adjust for overkill protection
             damage = 0;
         }
         
-        print_message_formatted("Your armor absorbs %d damage.\n", armor_protection);
+        print_message_formatted("Your armor absorbs %d damage but is severely damaged!\n", armor_protection);
         
         if (player->armor_points <= 0) {
             player->armor_points = 0;
             player->armor_type = 0;
-            print_message_formatted("YOUR ARMOR HAS BEEN MELTED BY THE BALROG'S FLAME WHIP!  GOOD LUCK ADVENTURER.\n");
+            print_message_formatted("YOUR ARMOR HAS BEEN MELTED BY THE BALROG'S FLAME WHIP!\n");
         }
     }
+    
+    // Ensure minimum damage
+    if (damage < 1) damage = 1;  // Balrog's whip always does at least 1 damage
     
     player->strength -= damage;
     print_message_formatted("You take %d final damage from the flame whip!\n", damage);
