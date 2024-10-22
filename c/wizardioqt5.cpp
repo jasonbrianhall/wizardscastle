@@ -611,6 +611,7 @@ private:
             monoFont.setStyleHint(QFont::Monospace);
         }
         outputText->setFont(monoFont);
+        //mapDisplay->setFont(monoFont);
     }
 
     void cleanup() {
