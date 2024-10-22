@@ -18,6 +18,7 @@
 #include "wizardio.h"
 #include "asciiart.h"
 #include <cstdlib>
+#include <stdexcept>
 #include <QFileDialog>
 
 extern "C" {
