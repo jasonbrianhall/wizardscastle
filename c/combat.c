@@ -309,7 +309,7 @@ void fight_monster(Player *player, GameState *game)
         }
         else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
             print_message_formatted("\nTHE %s ATTACKS!\n", enemy_name);
-            dragon_fireball_attack(player, game);
+            dragon_fireball_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
             if (game->game_over) {
                 return;
             }
@@ -723,43 +723,71 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
 }
 
 
-void dragon_fireball_attack(Player *player, GameState *game) {
+void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity, int enemy_intelligence) {
     print_message_formatted("\nThe dragon breathes a massive fireball at you!\n");
     
-    // Dexterity-based avoidance check
-    if (random_number(20) + player->dexterity > random_number(20) + 15) {  // Dragon has high dexterity
-        print_message_formatted("You manage to dodge the fireball!\n");
+    // Calculate hit chance using enemy stats
+    int hit_chance = 50;
+    hit_chance += (enemy_dexterity - 10) * 2;     // Dexterity bonus
+    hit_chance += (enemy_intelligence - 10);       // Intelligence bonus for magical attack
+    hit_chance -= (player->dexterity - 10) * 2;   // Player's dodge chance
+    hit_chance += 15 * player->blindness_flag;    // Blindness penalty
+    
+    // Ensure hit chance is within reasonable bounds
+    if (hit_chance < 10) hit_chance = 10;    // Dragons are more accurate with fireballs
+    if (hit_chance > 90) hit_chance = 90;    // Always a chance to dodge
+    
+    // Avoidance check
+    if (random_number(100) > hit_chance) {
+        print_message_formatted("You manage to dodge the scorching flames!\n");
         return;
     }
     
-    int damage = random_number(10) + 5;  // 6 to 15 damage
-    print_message_formatted("The fireball hits you for %d damage!\n", damage);
+    // Base damage calculation
+    int damage = random_number(6) + random_number(6);  // 2-12 base damage
     
-    // Apply armor reduction
+    // Add dragon's strength and intelligence bonuses
+    damage += enemy_strength / 9;    // Strength bonus like normal attacks
+    damage += enemy_intelligence / 6; // Intelligence bonus for magical attack
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    print_message_formatted("The fireball hits you for %d initial damage!\n", damage);
+    
+    // Apply armor reduction if player has armor
     if (player->armor_type != 0) {
-        int armor_protection = player->armor_type + random_number(3)-1;
+        int armor_protection = player->armor_type + random_number(3) - 1;
+        
+        // Fireballs are more effective against armor
+        armor_protection = armor_protection / 2;  // Only half armor protection vs fire
+        
         damage -= armor_protection;
-        player->armor_points -= armor_protection;
+        player->armor_points -= (armor_protection * 2);  // Double armor damage from fire
         
         if (damage < 0) {
             player->armor_points += damage;  // Adjust for overkill protection
             damage = 0;
         }
         
-        print_message_formatted("Your armor absorbs %d damage.\n", armor_protection);
+        print_message_formatted("Your armor partially protects you, absorbing %d damage but taking extra wear!\n", armor_protection);
         
         if (player->armor_points <= 0) {
             player->armor_points = 0;
             player->armor_type = 0;
-            print_message_formatted("YOUR ARMOR HAS BEEN DESTROYED BY THE DRAGON'S FIRE!\n");
+            print_message_formatted("YOUR ARMOR HAS BEEN MELTED BY THE DRAGON'S FIRE!\n");
         }
     }
+    
+    // Ensure minimum damage
+    if (damage < 1) damage = 1;  // Dragon's fire always does at least 1 damage
     
     player->strength -= damage;
     print_message_formatted("You take %d final damage from the fireball!\n", damage);
     
     if (player->strength <= 0) {
-        print_message_formatted("\nYOU HAVE BEEN INCINERATED BY THE DRAGON'S FIRE!  GOOD LUCK ADVENTURER.\n");
+        print_message_formatted("\nYOU HAVE BEEN INCINERATED BY THE DRAGON'S FIRE! YOUR ADVENTURE ENDS HERE.\n");
         game->game_over = 1;
     }
 }
