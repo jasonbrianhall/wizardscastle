@@ -45,25 +45,26 @@ jobs:
       run: |
         echo Current directory: %CD%
         
-        REM Set compiler flags
-        set CL=/MP1 /MDd /Od /RTC1 /Zi /W3 /WX- /diagnostics:column
+        REM Set compiler flags with increased stack size and MD runtime
+        set CL=/MD /O2 /Oi /GL /MP1 /Zi /STACK:8388608
+        set LINK=/STACK:8388608
         
-        REM Generate Makefile with qmake
-        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug" "QMAKE_CXXFLAGS+=-MTd"
+        REM Configure with qmake
+        qmake wizard_castle_qt5.pro -spec win32-msvc ^
+        "QMAKE_CXXFLAGS+=/MD" ^
+        "QMAKE_CXXFLAGS+=/F8388608" ^
+        "QMAKE_LFLAGS+=/STACK:8388608"
         if errorlevel 1 (
           echo qmake failed
           dir
           exit /b 1
         )
         
-        REM Show generated Makefile
-        type Makefile
-        
-        REM Build debug target specifically
-        nmake debug
+        REM Build with nmake
+        nmake
         if errorlevel 1 (
           echo Build failed with error level %ERRORLEVEL%
-          nmake debug > build_log.txt 2>&1
+          nmake > build_log.txt 2>&1
           type build_log.txt
           exit /b 1
         )
@@ -72,7 +73,7 @@ jobs:
       shell: cmd
       working-directory: c
       run: |
-        "%QtToolsPath%\windeployqt.exe" --debug wizards_castle_qt5.exe
+        "%QtToolsPath%\windeployqt.exe" wizards_castle_qt5.exe
 
     - name: Package application
       shell: cmd
