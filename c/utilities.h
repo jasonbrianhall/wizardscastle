@@ -6,8 +6,8 @@
 // Function prototypes
 int random_number(int max_value);
 void move_player_randomly(Player *player, GameState *game);
-const char* get_random_body_part();
-const char* get_random_species();
+const char* get_random_body_part(void);
+const char* get_random_species(void);
 int min(int a, int b);
 void printStars(void);
 const char* get_weapon_name(int weapon_type);
