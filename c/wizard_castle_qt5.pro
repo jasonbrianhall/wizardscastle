@@ -1,6 +1,6 @@
 QT += core gui widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 DEFINES += QT5
 
