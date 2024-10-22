@@ -6,38 +6,92 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  BUILD_CONFIGURATION: Release
+  QT_VERSION: '5.15.2'
+  # Add specific MSVC compiler settings
+  CL_MPcount: 1        # Limit parallel compilation
+  MAKEFLAGS: -j1       # Limit parallel make jobs
+  MSBUILDDISABLENODEREUSE: 1  # Prevent potential MSVC memory issues
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v2
-
+    - uses: actions/checkout@v3
+    
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: '5.15.2'
+        version: ${{ env.QT_VERSION }}
         host: 'windows'
         target: 'desktop'
         arch: 'win64_msvc2019_64'
         tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        dir: ${{ runner.temp }}
         cache: true
+        setup-python: false
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
+        toolset: 14.29    # Specify exact MSVC toolset version
+        uwp: false        # Disable UWP - only need desktop
+        spectre: true     # Enable Spectre mitigations
+
+    - name: Configure MSVC Memory Settings
+      shell: pwsh
+      run: |
+        # Increase pagefile size to handle large compilations
+        Get-CimInstance Win32_PageFileSetting | Set-CimInstance -Property @{InitialSize = 16384; MaximumSize = 32768}
+        
+        # Disable virus scanning for build directory
+        Add-MpPreference -ExclusionPath ${{ runner.temp }}\build
+
+    - name: Print Qt and MSVC Information
+      run: |
+        qmake -v
+        cl.exe
+        echo "INCLUDE paths:"
+        echo %INCLUDE%
+
+    - name: Set Qt Environment Variables
+      shell: bash
+      run: |
+        echo "QTDIR=${{ runner.temp }}/Qt/${{ env.QT_VERSION }}/msvc2019_64" >> $GITHUB_ENV
+        echo "QtToolsPath=${{ runner.temp }}/Qt/${{ env.QT_VERSION }}/msvc2019_64/bin" >> $GITHUB_ENV
+
+    - name: Create build directory
+      run: mkdir -p ${{ runner.temp }}\build
 
     - name: Build application
+      working-directory: c
       run: |
-        cd c
-        qmake -o Makefile.win wizard_castle_qt5.pro
-        nmake -f Makefile.win
-
+        echo "Current directory: $($PWD.Path)"
+        echo "Available memory:"
+        wmic OS get FreePhysicalMemory,FreeVirtualMemory,FreeSpaceInPagingFiles
+        
+        # Use specific compiler flags to improve stability
+        set CL=/MP1 /Zm200 /FS
+        qmake -o Makefile.win wizard_castle_qt5.pro "CONFIG+=debug_and_release build_all"
+        
+        # Build with detailed output and error logging
+        nmake -f Makefile.win /NOLOGO /K
+        if %ERRORLEVEL% NEQ 0 (
+          echo "Build failed. Compiler output:"
+          type compiler_output.log
+          exit /b %ERRORLEVEL%
+        )
+        
     - name: Run windeployqt
+      working-directory: c
       run: |
-        cd c
-        windeployqt.exe wizards_castle_qt5.exe
+        ${{ env.QtToolsPath }}\windeployqt.exe --release wizards_castle_qt5.exe
 
     - name: Package application
       run: |
