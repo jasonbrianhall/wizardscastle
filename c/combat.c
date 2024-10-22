@@ -83,7 +83,9 @@ void fight_monster(Player *player, GameState *game)
             if (muted == 0 && (
                 (player->intelligence >= 14) || // Base intelligence requirement for all races
                 ((player->race == DWARF || player->race == ELF || player->race == DROW) && player->intelligence >= 10) || // Special races with lower requirement
-                (player->race == HOBBIT && player->intelligence >= 11) // Hobbit specific requirement
+                (player->race == HOBBIT && player->intelligence >= 11)  || // Hobbit specific requirement
+                (player->race == HUMAN && player->intelligence >= 12) // Paladin Magic
+
             )) {
                 print_message("You can also (C)ast a spell.\n");
             }
@@ -137,7 +139,7 @@ void fight_monster(Player *player, GameState *game)
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
                             if (player->weapon_type < 4 || random_number(8) == 1) // Excalibur can break but it's rare
                             {
-                                print_message_formatted("\nOH NO! YOUR %s BROKE!\n", get_weapon_name(player->weapon_type));
+                                print_message_formatted("\nOh no! Your %s broke!\n", get_weapon_name(player->weapon_type));
                                 player->weapon_type = 0;
                             }
                         }
@@ -180,7 +182,9 @@ void fight_monster(Player *player, GameState *game)
                    if (muted == 0 && (
                        (player->intelligence >= 14) || // Base intelligence requirement for all races
                        ((player->race == DWARF || player->race == ELF || player->race == DROW) && player->intelligence >= 10) || // Special races with lower requirement
-                       (player->race == HOBBIT && player->intelligence >= 11) // Hobbit specific requirement
+                       (player->race == HOBBIT && player->intelligence >= 11) || // Hobbit specific requirement
+                       (player->race == HUMAN && player->intelligence >= 12) // Paladin Magic
+
                    )) {
                         // Player can cast a spell
                         if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
@@ -581,6 +585,11 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     {
        print_message(           "    (M)ischief Hobbit Magic with Chaos Effect\n");
     }
+    if ((player->race == HUMAN ) && player->intelligence>=12)
+    {
+       print_message(           "    (P)aladin Strike - Channel divine energy into a powerful magical attack\n\n");
+    }
+
     print_message_formatted("\n");
     char spell = get_user_input_custom_prompt("Which Spell:  ");
     for (;;) {
@@ -680,7 +689,33 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 }
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
-
+            case 'P':  // Paladin Strike for Humans
+                if (player->race == HUMAN && player->intelligence >= 12)
+                {
+                    damage = random_number(6) + random_number(6);  // 2-12 base damage
+                    
+                    // Bonus damage based on strength
+                    damage += player->strength / 4;  // Additional 0-4 damage based on strength
+                    
+                    print_message_formatted("\nDivine energy surges through your weapon!\n");
+                    
+                    if (random_number(6) == 6) {  // Critical hit chance
+                        damage *= 2;
+                        print_message_formatted("Critical Strike! The divine power courses through you!\n");
+                    }
+                    
+                    print_message_formatted("Your Paladin Strike deals %d damage!\n", damage);
+                    *enemy_strength -= damage;
+                    player->intelligence -= 1;
+                    
+                    if (*enemy_strength <= 0) {
+                        print_message_formatted("The divine power vanquishes your foe!\n");
+                        return 1;
+                    }
+                    return 0;
+                }
+                print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+                break;
             default:
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
         }
