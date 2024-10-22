@@ -20,11 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-      with:
-        vs-version: '[17.0,18.0)'
-
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
@@ -37,50 +32,35 @@ jobs:
         cache: true
         setup-python: false
 
-    - name: Setup Visual Studio Environment
-      shell: cmd
-      run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        set > %GITHUB_ENV%
-        where cl.exe
-        cl.exe /? > nul
-
-    - name: Verify Environment
-      shell: cmd
-      run: |
-        echo PATH=%PATH%
-        echo INCLUDE=%INCLUDE%
-        echo LIB=%LIB%
-        where cl.exe
-        where nmake.exe
-        where qmake.exe
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        toolset: 14.29
+        spectre: false
 
     - name: Build application
       shell: cmd
       working-directory: c
       run: |
         echo Current directory: %CD%
-        dir
         
-        REM Verify compiler access
-        echo Testing cl.exe...
-        where cl.exe
+        REM Set more conservative compiler flags
+        set CL=/MP1 /MDd /Od /RTC1 /Zi /W3 /WX- /diagnostics:column
         
-        REM Run qmake with full path and debug output
-        echo Running qmake...
-        "%QtToolsPath%\qmake.exe" -d wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug"
+        REM Configure with qmake
+        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug"
         if errorlevel 1 (
           echo qmake failed
-          type qmake.log
+          dir
           exit /b 1
         )
         
         REM Build with nmake
-        echo Running nmake...
-        nmake /NOLOGO
+        nmake -f Makefile
         if errorlevel 1 (
-          echo nmake failed
-          type error.log
+          echo Build failed with error level %ERRORLEVEL%
+          type Makefile
           exit /b 1
         )
 
