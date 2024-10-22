@@ -129,7 +129,7 @@ const QString VENDOR_AA =
 #else
 
 const QString ENTRANCE_AA = 
-"_____________________\n"
+"    _____________________\n"
 "   /        EXIT         \\\n"
 "  /     ___________       \\\n"
 " /     |  _______  |       \\\n"
