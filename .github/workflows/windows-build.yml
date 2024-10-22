@@ -39,7 +39,7 @@ jobs:
       run: |
         cd c
         qmake -o Makefile wizard_castle_qt5.pro
-        nmake
+        nmake VERBOSE=1
  
     - name: Run windeployqt
       run: |
