@@ -320,7 +320,9 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         }
-        else if ((room_content == KOBOLD && random_number(4)==1) || (room_content == DRAGON && random_number(3)==1))
+        else if ((room_content == KOBOLD && random_number(4)==1) || 
+                 (room_content == DRAGON && random_number(3)==1) ||
+                 (room_content == TROLL && random_number(2)==1))  // Trolls have 50% chance to regenerate
         {
             spellcasted=random_number(7);
             switch (room_content)
@@ -330,6 +332,10 @@ void fight_monster(Player *player, GameState *game)
                     break;
                 case DRAGON:
                     max_increase=5;
+                    break;
+                case TROLL:
+                    max_increase=4;  // Trolls have strong regeneration
+                    spellcasted=1;   // Trolls can only heal, not cast other spells
                     break;
             }
             switch (spellcasted)
