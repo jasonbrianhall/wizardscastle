@@ -39,9 +39,8 @@ jobs:
       run: |
         cd c
         qmake -o Makefile wizard_castle_qt5.pro
-        set CL=/MP
-        jom
-
+        nmake
+ 
     - name: Run windeployqt
       run: |
         cd c
