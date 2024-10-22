@@ -63,7 +63,9 @@ jobs:
         "QMAKE_CXXFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-"
         
         REM Build with jom
-        jom -j1 VERBOSE=1
+        dir wizardioqt5.cpp
+        jom -j1 VERBOSE=1 2>&1
+        #jom -j1 VERBOSE=1
 
     - name: Show build output
       shell: cmd
