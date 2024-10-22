@@ -560,8 +560,8 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     print_message_formatted("\nWHICH SPELL\n");
     if(player->intelligence >=14)
     {
-        print_message_formatted("    (W)EB - Casts a magical web that prevents a monster from attacking\n");
-        print_message_formatted("    (F)IREBALL - Casts a Fireball at the enemy\n");
+        print_message(          "    (W)EB - Casts a magical web that prevents a monster from attacking\n");
+        print_message(          "    (F)IREBALL - Casts a Fireball at the enemy\n");
     }
     if(player->intelligence>=14 && (player->race == DWARF || player->race == DROW))
     {
@@ -569,17 +569,17 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     }    
     if (player->intelligence >= 16)
     {
-        print_message_formatted("    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
+        print_message(          "    (D)EATHSPELL - Casts a Deathspell; be warned you may die\n");
     }
     if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
     {
-        print_message_formatted("    (H)EAL - Permanently heals you (but maxes out at 18 after combat); costs one intelligence points\n");
-        print_message_formatted("    (S)PEED - Temporarily increases your dexterity\n");
-        print_message_formatted("    (B)RIGHT - Temporarily increases your intelligence \n");
+        print_message(          "    (H)EAL - Permanently heals you (but maxes out at 18 after combat); costs one intelligence points\n");
+        print_message           "    (S)PEED - Temporarily increases your dexterity\n");
+        print_message(          "    (B)RIGHT - Temporarily increases your intelligence \n");
     }
     if ((player->race == HOBBIT ) && player->intelligence>=11)
     {
-       print_message_formatted("    (M)ischief Hobbit Magic with Chaos Effect\n");
+       print_message(           "    (M)ischief Hobbit Magic with Chaos Effect\n");
     }
     print_message_formatted("\n");
     char spell = get_user_input_custom_prompt("Which Spell:  ");
