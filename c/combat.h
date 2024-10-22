@@ -10,6 +10,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name);
 int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enemy_intelligence, int *enemy_dexterity, const char *enemy_name);
 void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity, int enemy_intelligence);
 void balrog_flame_whip_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void troll_crushing_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 const char* get_monster_name(int room_content);
 
 int cast_heal_spell(Player *player);

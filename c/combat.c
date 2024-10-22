@@ -314,6 +314,12 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         }
+        else if (room_content == TROLL && random_number(4) == 1) {  // 25% chance for crushing attack
+            troll_crushing_attack(player, game, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+           }
+        }
         else if (room_content == BALROG && random_number(5) == 1) {
             balrog_flame_whip_attack(player, game, enemy_strength, enemy_dexterity);
             if (game->game_over) {
@@ -1200,5 +1206,72 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
     *enemy_strength -= total_damage;
     
     return total_damage;  // Return total damage dealt for any additional processing
+}
+
+void troll_crushing_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message_formatted("\nThe Troll swings its massive fists in a crushing attack!\n");
+    
+    // Dexterity-based avoidance check
+    int hit_chance = 50;
+    hit_chance += (enemy_dexterity - 10) * 2;     // Dexterity bonus
+    hit_chance += (enemy_strength - 10);          // Strength bonus for powerful attack
+    hit_chance -= (player->dexterity - 10) * 2;   // Player's dodge chance
+    hit_chance += 15 * player->blindness_flag;    // Blindness penalty
+    
+    // Trolls are strong but somewhat clumsy
+    if (hit_chance < 10) hit_chance = 10;
+    if (hit_chance > 85) hit_chance = 85;
+    
+    if (random_number(100) > hit_chance) {
+        print_message_formatted("You manage to dodge the Troll's mighty swing!\n");
+        return;
+    }
+    
+    // Base damage calculation
+    int damage = random_number(6) + 2;  // 3-8 base damage
+    
+    // Add Troll's strength bonus
+    damage += enemy_strength / 8;    // Trolls get better strength bonus for crushing
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    print_message_formatted("The crushing blow hits you for %d initial damage!\n", damage);
+    
+    // Apply and damage armor if present
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type + random_number(2);  // 1-2 random bonus
+        damage -= armor_protection;
+        
+        // Trolls damage armor more with crushing blows
+        player->armor_points -= (armor_protection * 3);  // Triple armor damage from crushing
+        
+        if (damage < 0) {
+            player->armor_points += damage;  // Adjust for overkill protection
+            damage = 0;
+        }
+        
+        print_message_formatted("Your armor absorbs %d damage but is severely dented!\n", armor_protection);
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message_formatted("YOUR ARMOR HAS BEEN CRUSHED AND DESTROYED!\n");
+        }
+    }
+    
+    if (damage <= 0) {
+        print_message_formatted("Your defenses completely absorbed the attack!\n");
+        return;
+    }
+    
+    player->strength -= damage;
+    print_message_formatted("You take %d final damage from the crushing attack!\n", damage);
+    
+    if (player->strength <= 0) {
+        print_message_formatted("\nTHE TROLL HAS CRUSHED YOU INTO PASTE!\n");
+        game->game_over = 1;
+    }
 }
 
