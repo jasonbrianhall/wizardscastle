@@ -502,6 +502,23 @@ void fight_monster(Player *player, GameState *game)
             print_message_formatted("THE %s ATTACKS\n", enemy_name);
             print_message_formatted("\nWHAT LUCK, HE MISSED YOU!\n");
         }
+        // Catch all for enemy deaths for one offs
+        if (enemy_intelligence<=0)
+        {
+            print_message_formatted("THE %s has died from lack of intelligence.\n", enemy_name);
+            return;
+        }
+        if (enemy_strength<=0)
+        {
+            print_message_formatted("THE %s has died from lack of strength.\n", enemy_name);
+            return;
+        }
+        if (enemy_dexterity<=0)
+        {
+            print_message_formatted("THE %s has died from lack of dexterity.\n", enemy_name);
+            return;
+        }
+        
     }
 }
 
