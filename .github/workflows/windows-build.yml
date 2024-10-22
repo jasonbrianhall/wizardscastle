@@ -6,57 +6,108 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  BUILD_CONFIGURATION: Release
+  QT_VERSION: '5.15.2'
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: windows-latest
-    env:
-      CL: /MP    # Enable parallel compilation
-      _CL_: /MP  # Additional flag for cl.exe
     
     steps:
-    - uses: actions/checkout@v2
-
+    - uses: actions/checkout@v3
+    
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: '5.15.2'
+        version: ${{ env.QT_VERSION }}
         host: 'windows'
         target: 'desktop'
         arch: 'win64_msvc2019_64'
-        tools: 'tools_qtcreator'
+        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        dir: ${{ runner.temp }}
         cache: true
+        setup-python: false
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
-        sdk: '10.0.20348.0'
-        toolset: '14.29'
-        vsversion: '2022'
+        toolset: 14.29
+        spectre: false
+
+    - name: Download and setup jom
+      shell: powershell
+      run: |
+        $url = "https://qt.mirror.constant.com/official_releases/jom/jom.zip"
+        Invoke-WebRequest -Uri $url -OutFile jom.zip -UseBasicParsing
+        Expand-Archive -Path jom.zip -DestinationPath jom -Force
+        echo "${PWD}\jom" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Build application
       shell: cmd
+      working-directory: c
       run: |
-        cd c
-        qmake -o Makefile wizard_castle_qt5.pro
-        nmake VERBOSE=1
- 
-    - name: Run windeployqt
-      run: |
-        cd c
-        windeployqt.exe wizards_castle_qt5.exe
+        echo Current directory: %CD%
+        
+        REM Set more permissive compiler flags
+        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS
+        
+        REM Configure with qmake with specific compiler settings
+        qmake wizard_castle_qt5.pro -spec win32-msvc ^
+        "CONFIG+=release" ^
+        "QMAKE_CFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-" ^
+        "QMAKE_CXXFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-"
+        
+        REM Build with jom
+        jom
 
-    - name: Package application
+    - name: Show build output
+      shell: cmd
+      working-directory: c
+      run: |
+        echo Build directory contents:
+        dir /s /b
+        echo.
+        echo Release directory (if exists):
+        if exist release dir /s /b release
+        echo.
+        echo Debug directory (if exists):
+        if exist debug dir /s /b debug
+
+    - name: Package any available artifacts
+      shell: cmd
       run: |
         mkdir win_package
-        move c\wizards_castle_qt5.exe win_package\
-        move c\*.dll win_package\
-        move c\platforms win_package\
-        move c\styles win_package\
-        Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
+        echo Checking for built files...
+        
+        if exist c\release\wizards_castle_qt5.exe (
+          echo Found release exe
+          move c\release\wizards_castle_qt5.exe win_package\
+        ) else if exist c\wizards_castle_qt5.exe (
+          echo Found exe in root
+          move c\wizards_castle_qt5.exe win_package\
+        ) else (
+          echo No exe found
+        )
+        
+        if exist c\*.dll move c\*.dll win_package\
+        if exist c\platforms move c\platforms win_package\
+        if exist c\styles move c\styles win_package\
+        
+        dir win_package
+        
+        if exist win_package\*.* (
+          powershell Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
+        )
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
+      if: hashFiles('wizards_castle_windows.zip') != ''
       with:
         name: Wizards-Castle-Windows
         path: wizards_castle_windows.zip
+

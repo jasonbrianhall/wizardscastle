@@ -1,0 +1,87 @@
+name: Qt5 MSVC Windows Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  BUILD_CONFIGURATION: Release
+  QT_VERSION: '5.15.2'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
+        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        dir: ${{ runner.temp }}
+        cache: true
+        setup-python: false
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        toolset: 14.29
+        spectre: false
+
+    - name: Build application
+      shell: cmd
+      working-directory: c
+      run: |
+        echo Current directory: %CD%
+        
+        REM Set more conservative compiler flags
+        set CL=/MP1 /MDd /Od /RTC1 /Zi /W3 /WX- /diagnostics:column
+        
+        REM Configure with qmake
+        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug"
+        if errorlevel 1 (
+          echo qmake failed
+          dir
+          exit /b 1
+        )
+        
+        REM Build with nmake
+        nmake -f Makefile
+        if errorlevel 1 (
+          echo Build failed with error level %ERRORLEVEL%
+          type Makefile
+          exit /b 1
+        )
+
+    - name: Run windeployqt
+      shell: cmd
+      working-directory: c
+      run: |
+        "%QtToolsPath%\windeployqt.exe" --debug wizards_castle_qt5.exe
+
+    - name: Package application
+      shell: cmd
+      run: |
+        mkdir win_package
+        move c\wizards_castle_qt5.exe win_package\
+        move c\*.dll win_package\
+        move c\platforms win_package\
+        move c\styles win_package\
+        powershell Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Wizards-Castle-Windows
+        path: wizards_castle_windows.zip
