@@ -374,7 +374,7 @@ protected:
     }
 
     bool eventFilter(QObject *obj, QEvent *event) override {
-        if (obj == outputText && event->type() == QEvent::Wheel) {
+        if ((obj == outputText || obj == mapDisplay) && event->type() == QEvent::Wheel)
             QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
             if (wheelEvent->modifiers() & Qt::ControlModifier) {
                 const int delta = wheelEvent->angleDelta().y();
@@ -611,6 +611,7 @@ private:
             monoFont.setStyleHint(QFont::Monospace);
         }
         outputText->setFont(monoFont);
+        mapDisplay->setFont(monofont);
     }
 
     void cleanup() {
