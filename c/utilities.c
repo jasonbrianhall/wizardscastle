@@ -131,7 +131,7 @@ void move_player_randomly(Player *player, GameState *game)
 }
 
 // Helper function for minimum of two integers
-int min(int a, int b)
+int get_minimum(int a, int b)
 {
     if (a < b)
         return a;
@@ -360,7 +360,7 @@ void drink_from_pool(Player *player, GameState *game)
     int effect = random_number(8);
     switch(effect) {
         case 1:
-            player->strength = min(18, player->strength + random_number(3));
+            player->strength = get_minimum(18, player->strength + random_number(3));
             print_message_formatted("feel STRONGER.\n");
             break;
         case 2:
@@ -372,7 +372,7 @@ void drink_from_pool(Player *player, GameState *game)
             }
             break;
         case 3:
-            player->intelligence = min(18, player->intelligence + random_number(3));
+            player->intelligence = get_minimum(18, player->intelligence + random_number(3));
             print_message_formatted("feel SMARTER.\n");
             break;
         case 4:
@@ -384,7 +384,7 @@ void drink_from_pool(Player *player, GameState *game)
             }
             break;
         case 5:
-            player->dexterity = min(18, player->dexterity + random_number(3));
+            player->dexterity = get_minimum(18, player->dexterity + random_number(3));
             print_message_formatted("feel NIMBLER.\n");
             break;
         case 6:

@@ -208,7 +208,7 @@ void fight_monster(Player *player, GameState *game)
                     {
                         chance = player->blindness_flag == 1 ? 4 : 5;
 
-                        if (random_number(chance) >= 4 || random_number(chance) >= 4 || random_number(24-min(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
+                        if (random_number(chance) >= 4 || random_number(chance) >= 4 || random_number(24-get_minimum(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
                         {
                             chance = player->blindness_flag == 1 ? 12 : 8;
 
@@ -251,7 +251,7 @@ void fight_monster(Player *player, GameState *game)
                     if (player->race == HOBBIT) 
                     {
                         chance = player->blindness_flag == 1 ? 9 : 6;
-                        if (random_number(chance) == 1 || random_number(chance) == 1 || random_number(24-min(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
+                        if (random_number(chance) == 1 || random_number(chance) == 1 || random_number(24-get_minimum(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;
@@ -544,11 +544,11 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         print_message_formatted("A SWORD\n");
         player->weapon_type = 3;
         print_message_formatted("A STRENGTH POTION\n");
-        player->strength = min(player->strength + random_number(6), 18);
+        player->strength = get_minimum(player->strength + random_number(6), 18);
         print_message_formatted("AN INTELLIGENCE POTION\n");
-        player->intelligence = min(player->intelligence + random_number(6), 18);
+        player->intelligence = get_minimum(player->intelligence + random_number(6), 18);
         print_message_formatted("A DEXTERITY POTION\n");
-        player->dexterity = min(player->dexterity + random_number(6), 18);
+        player->dexterity = get_minimum(player->dexterity + random_number(6), 18);
         if (!player->lamp_flag) {
             print_message_formatted("A LAMP\n");
             player->lamp_flag = 1;

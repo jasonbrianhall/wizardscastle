@@ -104,7 +104,7 @@ void trade_with_vendor(Player *player, GameState *game)
 		{
                     if (player->strength < 18)
                     {
-                        player->strength = min(player->strength + random_number(6), 18);
+                        player->strength = get_minimum(player->strength + random_number(6), 18);
                         player->gold -= 1000;
                     }
                     else
@@ -122,7 +122,7 @@ void trade_with_vendor(Player *player, GameState *game)
 		{
                     if (player->intelligence < 18)
                     {
-                        player->intelligence = min(player->strength + random_number(6), 18);
+                        player->intelligence = get_minimum(player->strength + random_number(6), 18);
                         player->gold -= 1000;
                     }
                     else
@@ -140,7 +140,7 @@ void trade_with_vendor(Player *player, GameState *game)
 		{
                     if (player->dexterity < 18)
                     {
-                        player->dexterity = min(player->strength + random_number(6), 18);
+                        player->dexterity = get_minimum(player->strength + random_number(6), 18);
                         player->gold -= 1000;
                     }
                     else
