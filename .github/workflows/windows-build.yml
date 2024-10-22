@@ -30,14 +30,14 @@ jobs:
 
     - name: Build application
       run: |
+        cd c
         qmake -o Makefile wizard_castle_qt5.pro
-        jom
-      working-directory: ./c
+        nmake
 
     - name: Run windeployqt
       run: |
+        cd c
         windeployqt.exe wizards_castle_qt5.exe
-      working-directory: ./c
 
     - name: Package application
       run: |
@@ -53,3 +53,4 @@ jobs:
       with:
         name: Wizards-Castle-Windows
         path: wizards_castle_windows.zip
+
