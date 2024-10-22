@@ -45,22 +45,26 @@ jobs:
       run: |
         echo Current directory: %CD%
         
-        REM Set more conservative compiler flags
+        REM Set compiler flags
         set CL=/MP1 /MDd /Od /RTC1 /Zi /W3 /WX- /diagnostics:column
         
-        REM Configure with qmake
-        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug"
+        REM Generate Makefile with qmake
+        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug" "QMAKE_CXXFLAGS+=-MTd"
         if errorlevel 1 (
           echo qmake failed
           dir
           exit /b 1
         )
         
-        REM Build with nmake
-        nmake -f Makefile
+        REM Show generated Makefile
+        type Makefile
+        
+        REM Build debug target specifically
+        nmake debug
         if errorlevel 1 (
           echo Build failed with error level %ERRORLEVEL%
-          type Makefile
+          nmake debug > build_log.txt 2>&1
+          type build_log.txt
           exit /b 1
         )
 
