@@ -7,6 +7,10 @@ on:
   schedule:
     - cron: '0 0 1 */1 *'  # Runs at 00:00 on the 1st of every month
 
+env:
+  BUILD_CONFIGURATION: Release
+  QT_VERSION: '5.15.2'
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -109,6 +113,67 @@ jobs:
         release_name: Release ${{ steps.date.outputs.date }}-${{ steps.date.outputs.unique_id }}
         draft: false
         prerelease: false
+
+  build-qt-windows:
+    runs-on: windows-latest
+    needs: build-and-release
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
+        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        dir: ${{ runner.temp }}
+        cache: true
+        setup-python: false
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        toolset: 14.29
+        spectre: false
+
+    - name: Build Qt application
+      shell: cmd
+      working-directory: c
+      run: |
+        echo Current directory: %CD%
+        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS /diagnostics:column /errorReport:send
+        qmake wizard_castle_qt5.pro
+        nmake
+
+    - name: Package Qt artifacts
+      shell: cmd
+      run: |
+        mkdir win_package
+        if exist c\release\wizards_castle_qt5.exe (
+          copy c\release\wizards_castle_qt5.exe win_package\
+          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizards_castle_qt5.exe
+        ) else if exist c\wizards_castle_qt5.exe (
+          copy c\wizards_castle_qt5.exe win_package\
+          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizards_castle_qt5.exe
+        ) else (
+          echo No exe found
+          exit 1
+        )
+        powershell Compress-Archive -Path win_package\* -DestinationPath wizards_castle_qt_windows.zip
+
+    - name: Upload Qt Windows Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./wizards_castle_qt_windows.zip
+        asset_name: wizardscastle-${{ steps.date.outputs.date }}-qt-windows.zip
+        asset_content_type: application/zip
 
     - name: Upload RPM Package
       uses: actions/upload-release-asset@v1
