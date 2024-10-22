@@ -9,9 +9,7 @@ on:
 env:
   BUILD_CONFIGURATION: Release
   QT_VERSION: '5.15.2'
-  # Remove MAKEFLAGS since it's causing issues with NMAKE
-  CL_MPcount: 1
-  MSBUILDDISABLENODEREUSE: 1
+  VSVERSION: '2022'
 
 permissions:
   contents: read
@@ -23,6 +21,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-version: '[17.0,18.0)'
+        
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
@@ -35,22 +38,39 @@ jobs:
         cache: true
         setup-python: false
 
-    - name: Setup MSVC
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
-        toolset: 14.29
-        spectre: false
-
-    - name: Create build directory
+    - name: Setup Visual Studio Environment
       shell: cmd
-      run: mkdir "%RUNNER_TEMP%\build"
+      run: |
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        set >> %GITHUB_ENV%
+
+    - name: Verify Visual Studio Setup
+      shell: cmd
+      run: |
+        where cl.exe
+        where nmake.exe
+        cl.exe /? > nul
+        if errorlevel 1 (
+          echo CL.exe not working properly
+          exit /b 1
+        )
+        nmake /? > nul
+        if errorlevel 1 (
+          echo NMAKE.exe not working properly
+          exit /b 1
+        )
 
     - name: Set Qt Environment Variables
       shell: cmd
       run: |
         echo QTDIR=%RUNNER_TEMP%\Qt\%QT_VERSION%\msvc2019_64>> %GITHUB_ENV%
         echo QtToolsPath=%RUNNER_TEMP%\Qt\%QT_VERSION%\msvc2019_64\bin>> %GITHUB_ENV%
+        
+    - name: Create build directory
+      shell: cmd
+      run: |
+        mkdir build
+        cd build
 
     - name: Build application
       shell: cmd
@@ -58,21 +78,23 @@ jobs:
       run: |
         echo Current directory: %CD%
         
-        REM Set compiler flags
-        set CL=/MP1 /Zm200 /FS
+        REM Ensure we're using the right compiler
+        where cl.exe
         
         REM Configure with qmake
-        qmake -o Makefile wizard_castle_qt5.pro CONFIG+=release
+        qmake -v
+        qmake ..\wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=release"
         if errorlevel 1 (
           echo qmake failed
           exit /b 1
         )
         
-        REM Build with nmake (without any -j flag)
-        nmake
+        REM Build with nmake
+        echo Running nmake...
+        nmake /NOLOGO
         if errorlevel 1 (
-          echo nmake failed
-          type nmake.log
+          echo nmake failed with error level %ERRORLEVEL%
+          dir /s /b
           exit /b 1
         )
 
@@ -80,7 +102,7 @@ jobs:
       shell: cmd
       working-directory: c
       run: |
-        "%QtToolsPath%\windeployqt.exe" wizards_castle_qt5.exe
+        "%QtToolsPath%\windeployqt.exe" --release wizards_castle_qt5.exe
 
     - name: Package application
       shell: cmd
