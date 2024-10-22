@@ -54,13 +54,12 @@ jobs:
         echo Current directory: %CD%
         
         REM Set more permissive compiler flags
-        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS
-        
+        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS /diagnostics:column
+ 
         REM Configure with qmake with specific compiler settings
         qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=release" "QMAKE_CFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-" "QMAKE_CXXFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-"
         
         REM Build with jom
-        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS /showIncludes
         jom
 
     - name: Show build output
