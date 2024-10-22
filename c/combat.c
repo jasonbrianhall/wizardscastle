@@ -320,6 +320,12 @@ void fight_monster(Player *player, GameState *game)
                 return;
            }
         }
+        else if (room_content == CHIMERA && random_number(3) == 1) {  // 33% chance for special attack
+            chimera_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
+            if (game->game_over) {
+                return;
+            }
+        }
         else if (room_content == MINOTAUR && random_number(4) == 1) {  // 25% chance for charge attack
             minotaur_charge_attack(player, game, enemy_strength, enemy_dexterity);
             if (game->game_over) {
@@ -1373,6 +1379,184 @@ void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength,
     
     if (player->strength <= 0) {
         print_message_formatted("\nTHE MINOTAUR'S CHARGE HAS GORED YOU TO DEATH!\n");
+        game->game_over = 1;
+    }
+}
+
+void chimera_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity, int enemy_intelligence) {
+    // Randomly choose which head attacks
+    int head = random_number(3);
+    
+    switch(head) {
+        case 1:  // Lion head - Rending attack
+            print_message_formatted("\nThe Chimera's lion head lunges with razor-sharp fangs!\n");
+            
+            int hit_chance = 50;
+            hit_chance += (enemy_dexterity - 10) * 2;
+            hit_chance += (enemy_strength - 10);
+            hit_chance -= (player->dexterity - 10) * 2;
+            hit_chance += 15 * player->blindness_flag;
+            
+            if (hit_chance < 10) hit_chance = 10;
+            if (hit_chance > 85) hit_chance = 85;
+            
+            if (random_number(100) > hit_chance) {
+                print_message_formatted("You evade the lion's fierce bite!\n");
+                return;
+            }
+            
+            int damage = random_number(6) + random_number(6);  // 2-12 damage
+            damage += enemy_strength / 8;
+            
+            int player_defense = player->strength / 9 + player->dexterity / 6;
+            damage -= player_defense;
+            
+            if (player->armor_type != 0) {
+                int armor_protection = player->armor_type + random_number(2);
+                damage -= armor_protection;
+                player->armor_points -= armor_protection;
+                
+                if (damage < 0) {
+                    player->armor_points += damage;
+                    damage = 0;
+                }
+                
+                print_message_formatted("Your armor absorbs %d damage!\n", armor_protection);
+                
+                if (player->armor_points <= 0) {
+                    player->armor_points = 0;
+                    player->armor_type = 0;
+                    print_message_formatted("YOUR ARMOR HAS BEEN TORN APART!\n");
+                }
+            }
+            
+            if (damage <= 0) {
+                print_message_formatted("Your defenses absorbed the attack!\n");
+                return;
+            }
+            
+            player->strength -= damage;
+            print_message_formatted("The lion's bite deals %d damage!\n", damage);
+            break;
+            
+        case 2:  // Dragon/Goat head - Fire breath
+            print_message_formatted("\nThe Chimera's dragon head breathes fire!\n");
+            
+            hit_chance = 50;
+            hit_chance += (enemy_dexterity - 10) * 2;
+            hit_chance += (enemy_intelligence - 10);
+            hit_chance -= (player->dexterity - 10) * 2;
+            hit_chance += 15 * player->blindness_flag;
+            
+            if (hit_chance < 10) hit_chance = 10;
+            if (hit_chance > 85) hit_chance = 85;
+            
+            if (random_number(100) > hit_chance) {
+                print_message_formatted("You dodge the gout of flame!\n");
+                return;
+            }
+            
+            damage = random_number(4) + random_number(4);  // 2-8 damage (weaker than dragon)
+            damage += enemy_intelligence / 8;
+            
+            player_defense = player->strength / 9 + player->dexterity / 6;
+            damage -= player_defense;
+            
+            if (player->armor_type != 0) {
+                int armor_protection = player->armor_type;  // No random bonus vs fire
+                damage -= armor_protection / 2;  // Armor less effective vs fire
+                player->armor_points -= armor_protection * 2;  // Fire damages armor more
+                
+                if (damage < 0) {
+                    player->armor_points += damage;
+                    damage = 0;
+                }
+                
+                print_message_formatted("Your armor partially protects against the flames but takes extra damage!\n");
+                
+                if (player->armor_points <= 0) {
+                    player->armor_points = 0;
+                    player->armor_type = 0;
+                    print_message_formatted("YOUR ARMOR HAS BEEN MELTED!\n");
+                }
+            }
+            
+            if (damage <= 0) {
+                print_message_formatted("Your defenses absorbed the flames!\n");
+                return;
+            }
+            
+            player->strength -= damage;
+            print_message_formatted("The flames deal %d damage!\n", damage);
+            break;
+            
+        case 3:  // Snake head - Poison bite
+            print_message_formatted("\nThe Chimera's serpent head strikes with venomous fangs!\n");
+            
+            hit_chance = 50;
+            hit_chance += (enemy_dexterity - 10) * 2;
+            hit_chance -= (player->dexterity - 10) * 2;
+            hit_chance += 15 * player->blindness_flag;
+            
+            if (hit_chance < 10) hit_chance = 10;
+            if (hit_chance > 90) hit_chance = 90;  // Snake head more accurate
+            
+            if (random_number(100) > hit_chance) {
+                print_message_formatted("You avoid the serpent's strike!\n");
+                return;
+            }
+            
+            damage = random_number(4);  // 1-4 initial damage
+            
+            player_defense = player->strength / 9 + player->dexterity / 6;
+            damage -= player_defense;
+            
+            if (player->armor_type != 0) {
+                int armor_protection = player->armor_type + random_number(2);
+                damage -= armor_protection;
+                player->armor_points -= 1;  // Minimal armor damage from bite
+                
+                if (damage < 0) {
+                    damage = 0;
+                }
+                
+                print_message_formatted("Your armor absorbs %d damage!\n", armor_protection);
+            }
+            
+            // Poison effect occurs even if initial damage was blocked
+            if (random_number(4) != 1) {  // 75% chance of poison
+                int poison_damage = random_number(3);  // 1-3 additional damage
+                print_message_formatted("The venom burns through your veins for %d additional damage!\n", poison_damage);
+                damage += poison_damage;
+                
+                if (random_number(3) == 1) {  // 33% chance of stat reduction
+                    print_message_formatted("The poison weakens you!\n");
+                    player->strength -= 1;
+                }
+            }
+            
+            if (damage <= 0) {
+                print_message_formatted("The bite didn't penetrate your defenses!\n");
+                return;
+            }
+            
+            player->strength -= damage;
+            print_message_formatted("The poisonous bite deals %d total damage!\n", damage);
+            break;
+    }
+    
+    if (player->strength <= 0) {
+        switch(head) {
+            case 1:
+                print_message_formatted("\nTHE CHIMERA'S LION HEAD HAS TORN YOU APART!\n");
+                break;
+            case 2:
+                print_message_formatted("\nTHE CHIMERA'S FLAMES HAVE REDUCED YOU TO ASH!\n");
+                break;
+            case 3:
+                print_message_formatted("\nTHE CHIMERA'S VENOM HAS STOPPED YOUR HEART!\n");
+                break;
+        }
         game->game_over = 1;
     }
 }
