@@ -320,6 +320,12 @@ void fight_monster(Player *player, GameState *game)
                 return;
            }
         }
+        else if (room_content == MINOTAUR && random_number(4) == 1) {  // 25% chance for charge attack
+            minotaur_charge_attack(player, game, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                 return;
+            }
+        }
         else if (room_content == BALROG && random_number(5) == 1) {
             balrog_flame_whip_attack(player, game, enemy_strength, enemy_dexterity);
             if (game->game_over) {
@@ -1271,6 +1277,85 @@ void troll_crushing_attack(Player *player, GameState *game, int enemy_strength, 
     
     if (player->strength <= 0) {
         print_message_formatted("\nTHE TROLL HAS CRUSHED YOU INTO PASTE!\n");
+        game->game_over = 1;
+    }
+}
+
+void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message_formatted("\nThe Minotaur lowers its horns and charges at you!\n");
+    
+    // Charging is hard to dodge due to momentum
+    int hit_chance = 60;  // Higher base chance due to charging momentum
+    hit_chance += (enemy_dexterity - 10) * 2;     
+    hit_chance += (enemy_strength - 10);          // Strength helps control the charge
+    hit_chance -= (player->dexterity - 10) * 1;   // Harder to dodge (only 1x multiplier)
+    hit_chance += 15 * player->blindness_flag;    
+    
+    if (hit_chance < 10) hit_chance = 10;
+    if (hit_chance > 85) hit_chance = 85;
+    
+    if (random_number(100) > hit_chance) {
+        print_message_formatted("You dive out of the way of the charging Minotaur!\n");
+        print_message_formatted("The Minotaur slams into the wall, briefly stunning itself!\n");
+        enemy_dexterity -= 1;  // Minotaur is briefly less effective after a miss
+        return;
+    }
+    
+    // Charge damage calculation
+    int damage = random_number(8) + random_number(8);  // 2-16 base damage for a powerful charge
+    
+    // Add Minotaur's strength bonus
+    damage += enemy_strength / 8;    // Better strength bonus for charging
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    print_message_formatted("The charge hits you for %d initial damage!\n", damage);
+    
+    // Apply and damage armor if present
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type + random_number(2);
+        damage -= armor_protection;
+        
+        // Charging does significant armor damage
+        player->armor_points -= (armor_protection * 2);
+        
+        if (damage < 0) {
+            player->armor_points += damage;
+            damage = 0;
+        }
+        
+        print_message_formatted("Your armor absorbs %d damage but is badly dented!\n", armor_protection);
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message_formatted("YOUR ARMOR HAS BEEN SHATTERED BY THE MINOTAUR'S CHARGE!\n");
+        }
+    }
+    
+    if (damage <= 0) {
+        print_message_formatted("Your defenses absorbed the charge attack!\n");
+        return;
+    }
+    
+    player->strength -= damage;
+    print_message_formatted("You take %d final damage from the charge!\n", damage);
+    
+    // Chance to stun (temporarily reduce dexterity)
+    if (random_number(3) == 1) {  // 33% chance to stun
+        int stun_amount = random_number(3);  // 1-3 dexterity reduction
+        if (player->temp_dexterity == 0) {
+            player->temp_dexterity = player->dexterity;  // Store original dexterity
+        }
+        player->dexterity -= stun_amount;
+        if (player->dexterity < 3) player->dexterity = 3;  // Don't reduce below 3
+        print_message_formatted("The impact leaves you stunned! You lose %d dexterity points!\n", stun_amount);
+    }
+    
+    if (player->strength <= 0) {
+        print_message_formatted("\nTHE MINOTAUR'S CHARGE HAS GORED YOU TO DEATH!\n");
         game->game_over = 1;
     }
 }

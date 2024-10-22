@@ -11,6 +11,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
 void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity, int enemy_intelligence);
 void balrog_flame_whip_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 void troll_crushing_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 const char* get_monster_name(int room_content);
 
 int cast_heal_spell(Player *player);
