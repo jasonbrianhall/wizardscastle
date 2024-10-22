@@ -39,14 +39,6 @@ jobs:
         toolset: 14.29
         spectre: false
 
-    - name: Download and setup jom
-      shell: powershell
-      run: |
-        $url = "https://qt.mirror.constant.com/official_releases/jom/jom.zip"
-        Invoke-WebRequest -Uri $url -OutFile jom.zip -UseBasicParsing
-        Expand-Archive -Path jom.zip -DestinationPath jom -Force
-        echo "${PWD}\jom" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
     - name: Build application
       shell: cmd
       working-directory: c
@@ -58,9 +50,7 @@ jobs:
  
         REM Configure with qmake with specific compiler settings
         qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=release" "QMAKE_CFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-" "QMAKE_CXXFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-"
-        
-        REM Build with jom
-        jom
+        nmake        
 
     - name: Show build output
       shell: cmd
