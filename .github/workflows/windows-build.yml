@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      CL: /MP    # Enable parallel compilation
+      _CL_: /MP  # Additional flag for cl.exe
     
     steps:
     - uses: actions/checkout@v2
@@ -20,19 +23,24 @@ jobs:
         host: 'windows'
         target: 'desktop'
         arch: 'win64_msvc2019_64'
-        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        tools: 'tools_qtcreator'
         cache: true
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
+        sdk: '10.0.20348.0'
+        toolset: '14.29'
+        vsversion: '2022'
 
     - name: Build application
+      shell: cmd
       run: |
         cd c
         qmake -o Makefile wizard_castle_qt5.pro
-        nmake
+        set CL=/MP
+        jom
 
     - name: Run windeployqt
       run: |
@@ -53,4 +61,3 @@ jobs:
       with:
         name: Wizards-Castle-Windows
         path: wizards_castle_windows.zip
-
