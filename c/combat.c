@@ -1064,16 +1064,38 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     print_message_formatted("Blast %d: PING! Enemy loses 1 intelligence and takes %d damage\n", i+1, damage);
                     break;
                 case 4:
-                    player->intelligence+=1;
-                    print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, damage);
+                    if(player->intelligence<18)
+                    {
+                         player->intelligence+=1;
+                         print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, damage);
+                    }
+                    else
+                    {
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had not effect.\n", i+1, damage);
+                    }
                     break;
                 case 5:
-                    player->strength+=1;
-                    print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, damage);
+                    if(player->strength<18)
+                    {
+                        player->strength+=1;
+                        print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, damage);
+                    }
+                    else
+                    {
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had not effect.\n", i+1, damage);
+                    }                    
                     break;
                 case 6:
-                    player->dexterity+=1;
-                    print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, damage);
+                    if(player->dexterity->18)
+                    {
+                         player->dexterity+=1;
+                        print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, damage);
+                    }
+                    else
+                    {
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had not effect.\n", i+1, damage);
+                    }
+                    
                     break;
 
 
