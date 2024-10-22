@@ -9,10 +9,9 @@ on:
 env:
   BUILD_CONFIGURATION: Release
   QT_VERSION: '5.15.2'
-  # Add specific MSVC compiler settings
-  CL_MPcount: 1        # Limit parallel compilation
-  MAKEFLAGS: -j1       # Limit parallel make jobs
-  MSBUILDDISABLENODEREUSE: 1  # Prevent potential MSVC memory issues
+  CL_MPcount: 1
+  MAKEFLAGS: -j1
+  MSBUILDDISABLENODEREUSE: 1
 
 permissions:
   contents: read
@@ -40,9 +39,9 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
-        toolset: 14.29    # Specify exact MSVC toolset version
-        uwp: false        # Disable UWP - only need desktop
-        spectre: true     # Enable Spectre mitigations
+        toolset: 14.29
+        # Remove spectre flag since it's causing issues
+        spectre: false
 
     - name: Configure MSVC Memory Settings
       shell: pwsh
@@ -53,12 +52,14 @@ jobs:
         # Disable virus scanning for build directory
         Add-MpPreference -ExclusionPath ${{ runner.temp }}\build
 
-    - name: Print Qt and MSVC Information
+    - name: Print Build Environment Information
       run: |
         qmake -v
         cl.exe
         echo "INCLUDE paths:"
         echo %INCLUDE%
+        echo "Visual Studio Installation Path:"
+        echo %VSINSTALLDIR%
 
     - name: Set Qt Environment Variables
       shell: bash
@@ -76,7 +77,7 @@ jobs:
         echo "Available memory:"
         wmic OS get FreePhysicalMemory,FreeVirtualMemory,FreeSpaceInPagingFiles
         
-        # Use specific compiler flags to improve stability
+        # Use specific compiler flags but remove spectre-related flags
         set CL=/MP1 /Zm200 /FS
         qmake -o Makefile.win wizard_castle_qt5.pro "CONFIG+=debug_and_release build_all"
         
