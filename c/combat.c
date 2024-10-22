@@ -569,6 +569,10 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
         print_message_formatted("    (S)PEED - Temporarily increases your dexterity\n");
         print_message_formatted("    (B)RIGHT - Temporarily increases your intelligence \n");
     }
+    if ((player->race == HOBBIT ) && player->intelligence>=11)
+    {
+       print_message_formatted("    (M)ischief Hobbit Magic with Chaos Effect\n");
+    }
     print_message_formatted("\n");
     char spell = get_user_input_custom_prompt("Which Spell:  ");
     for (;;) {
@@ -614,7 +618,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                     return 1;
                 }
             case 'H':
-                if (player->race == ELF || player->race == DROW || player->race == DWARF)
+                if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
                 {
                     cast_heal_spell(player);
                     return 0;
@@ -622,7 +626,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
             case 'S':
-                if (player->race == ELF || player->race == DROW || player->race == DWARF)
+                if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
                 {
                     cast_haste_spell(player);
                     return 0;
@@ -630,7 +634,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
             case 'B':
-                if (player->race == ELF || player->race == DROW || player->race == DWARF)
+                if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
                 {
                     cast_bright_spell(player);
                     return 0;
@@ -638,15 +642,37 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
             case 'T':
-                if (player->race == DWARF || player->race == DROW)
+                if ((player->race == DWARF || player->race == DROW) && player->intelligence>=14)
                 {
                     cast_stone_skin_spell(player);
                     return 0;
                 }
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
                 break;
+            case 'M':  // Mischief Blast for Hobbits
+                if (player->race == HOBBIT && player->intelligence >= 11)
+                {
+                    cast_mischief_blast(enemy_strength, enemy_dexterity, enemy_intelligence);
+                    player->intelligence -= 1;
+                    
+                    if (*enemy_strength <= 0) {
+                        print_message_formatted("Your chaotic magic overwhelms the enemy!  They have died from lack of strength!\n");
+                        return 1;
+                    }
+                    if (*enemy_dexterity <= 0) {
+                        print_message_formatted("Your chaotic magic overwhelms the enemy!  They have died from lack of dexterity\n");
+                        return 1;
+                    }
+                    if (*enemy_intelligence <= 0) {
+                        print_message_formatted("Your chaotic magic overwhelms the enemy!  They have died from lack of intelligence\n");
+                        return 1;
+                    }
 
-                
+                    return 0;
+                }
+                print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+                break;
+
             default:
                 print_message_formatted("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
         }
@@ -804,7 +830,6 @@ int cast_stone_skin_spell(Player *player)
     }
 
 }
-
 
 int cast_bright_spell(Player *player) {
     if (player->intelligence > 9) {
@@ -1004,5 +1029,42 @@ int enemy_attack_hits(Player *player, int enemy_dexterity) {
     return (roll <= hit_chance) ? 1 : 0;
 }
 
-
+int cast_mischief_blast(int *enemy_strength, int *enemy_dexterity, int *enemy_intelligence) {
+    int blast_count = random_number(3);  // 1-3 blasts
+    int total_damage = 0;
+    int damage;
+    
+    print_message_formatted("\nYou channel chaotic hobbit magic!\n");
+    print_message_formatted("You unleash %d magical blasts!\n", blast_count);
+    
+    for (int i = 0; i < blast_count; i++) {
+        damage = random_number(4);  // 1-4 damage per blast
+        
+        // Each blast has a special effect chance
+        if (random_number(4) == 1) {
+            switch(random_number(3)) {
+                case 1:
+                    damage *= 2;
+                    print_message_formatted("Blast %d: BOOM! Double damage! (%d damage)\n", i+1, damage);
+                    break;
+                case 2:
+                    *enemy_dexterity -= 1;
+                    print_message_formatted("Blast %d: ZAP! Enemy loses 1 dexterity and takes %d damage\n", i+1, damage);
+                    break;
+                case 3:
+                    *enemy_intelligence -= 1;
+                    print_message_formatted("Blast %d: PING! Enemy loses 1 intelligence and takes %d damage\n", i+1, damage);
+                    break;
+            }
+        } else {
+            print_message_formatted("Blast %d: Deals %d damage\n", i+1, damage);
+        }
+        total_damage += damage;
+    }
+    
+    print_message_formatted("\nTotal damage dealt: %d\n", total_damage);
+    *enemy_strength -= total_damage;
+    
+    return total_damage;  // Return total damage dealt for any additional processing
+}
 
