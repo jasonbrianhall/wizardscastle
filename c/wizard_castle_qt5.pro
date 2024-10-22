@@ -10,9 +10,11 @@ msvc {
     QMAKE_CFLAGS += /MP /Zc:preprocessor /wd4819
     DEFINES += _CRT_SECURE_NO_WARNINGS
     CONFIG += force_debug_info
-    QMAKE_CXXFLAGS_RELEASE -= -EHsc    
     CONFIG -= incremental
-
+    
+    # Add these lines to force more verbose error output
+    QMAKE_CXXFLAGS += /W4 /WX /diagnostics:caret,column
+    QMAKE_LFLAGS += /WX 
 }
 
 SOURCES += \
