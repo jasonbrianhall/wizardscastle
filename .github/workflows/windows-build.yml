@@ -9,7 +9,6 @@ on:
 env:
   BUILD_CONFIGURATION: Release
   QT_VERSION: '5.15.2'
-  VSVERSION: '2022'
 
 permissions:
   contents: read
@@ -21,11 +20,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-      with:
-        vs-version: '[17.0,18.0)'
-        
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
@@ -38,39 +32,27 @@ jobs:
         cache: true
         setup-python: false
 
-    - name: Setup Visual Studio Environment
-      shell: cmd
-      run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        set >> %GITHUB_ENV%
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        toolset: 14.29
+        spectre: false
 
-    - name: Verify Visual Studio Setup
+    - name: Configure System
       shell: cmd
       run: |
-        where cl.exe
-        where nmake.exe
-        cl.exe /? > nul
-        if errorlevel 1 (
-          echo CL.exe not working properly
-          exit /b 1
-        )
-        nmake /? > nul
-        if errorlevel 1 (
-          echo NMAKE.exe not working properly
-          exit /b 1
-        )
+        REM Increase pagefile size
+        wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=16384,MaximumSize=32768
+        
+        REM Disable Windows Defender for build directory
+        powershell -Command Add-MpPreference -ExclusionPath D:\a\wizardscastle
 
     - name: Set Qt Environment Variables
       shell: cmd
       run: |
         echo QTDIR=%RUNNER_TEMP%\Qt\%QT_VERSION%\msvc2019_64>> %GITHUB_ENV%
         echo QtToolsPath=%RUNNER_TEMP%\Qt\%QT_VERSION%\msvc2019_64\bin>> %GITHUB_ENV%
-        
-    - name: Create build directory
-      shell: cmd
-      run: |
-        mkdir build
-        cd build
 
     - name: Build application
       shell: cmd
@@ -78,23 +60,24 @@ jobs:
       run: |
         echo Current directory: %CD%
         
-        REM Ensure we're using the right compiler
-        where cl.exe
+        REM Set conservative compiler flags
+        set CL=/MP1 /O1 /Zi /W3 /WX- /diagnostics:column /sdl /Zc:inline /D_WINDOWS /D UNICODE /D_UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:referenceBinding /Gd /FC
         
-        REM Configure with qmake
-        qmake -v
-        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=release"
+        REM Configure with qmake with conservative options
+        qmake wizard_castle_qt5.pro -spec win32-msvc "CONFIG+=debug" "QMAKE_CXXFLAGS+=/Od" "QMAKE_CXXFLAGS_RELEASE+=/Od"
         if errorlevel 1 (
           echo qmake failed
+          dir
           exit /b 1
         )
         
-        REM Build with nmake
-        echo Running nmake...
+        REM Build with nmake showing commands
         nmake /NOLOGO
         if errorlevel 1 (
           echo nmake failed with error level %ERRORLEVEL%
-          dir /s /b
+          type NUL > error.log
+          nmake /NOLOGO > error.log 2>&1
+          type error.log
           exit /b 1
         )
 
@@ -102,7 +85,7 @@ jobs:
       shell: cmd
       working-directory: c
       run: |
-        "%QtToolsPath%\windeployqt.exe" --release wizards_castle_qt5.exe
+        "%QtToolsPath%\windeployqt.exe" --debug wizards_castle_qt5.exe
 
     - name: Package application
       shell: cmd
