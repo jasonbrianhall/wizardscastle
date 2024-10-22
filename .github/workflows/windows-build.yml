@@ -40,26 +40,11 @@ jobs:
       with:
         arch: x64
         toolset: 14.29
-        # Remove spectre flag since it's causing issues
         spectre: false
 
-    - name: Configure MSVC Memory Settings
-      shell: pwsh
-      run: |
-        # Increase pagefile size to handle large compilations
-        Get-CimInstance Win32_PageFileSetting | Set-CimInstance -Property @{InitialSize = 16384; MaximumSize = 32768}
-        
-        # Disable virus scanning for build directory
-        Add-MpPreference -ExclusionPath ${{ runner.temp }}\build
-
-    - name: Print Build Environment Information
-      run: |
-        qmake -v
-        cl.exe
-        echo "INCLUDE paths:"
-        echo %INCLUDE%
-        echo "Visual Studio Installation Path:"
-        echo %VSINSTALLDIR%
+    - name: Create build directory
+      shell: cmd
+      run: mkdir "%RUNNER_TEMP%\build"
 
     - name: Set Qt Environment Variables
       shell: bash
@@ -67,41 +52,43 @@ jobs:
         echo "QTDIR=${{ runner.temp }}/Qt/${{ env.QT_VERSION }}/msvc2019_64" >> $GITHUB_ENV
         echo "QtToolsPath=${{ runner.temp }}/Qt/${{ env.QT_VERSION }}/msvc2019_64/bin" >> $GITHUB_ENV
 
-    - name: Create build directory
-      run: mkdir -p ${{ runner.temp }}\build
-
     - name: Build application
+      shell: cmd
       working-directory: c
       run: |
-        echo "Current directory: $($PWD.Path)"
-        echo "Available memory:"
-        wmic OS get FreePhysicalMemory,FreeVirtualMemory,FreeSpaceInPagingFiles
+        echo Current directory: %CD%
         
-        # Use specific compiler flags but remove spectre-related flags
+        REM Set compiler flags
         set CL=/MP1 /Zm200 /FS
-        qmake -o Makefile.win wizard_castle_qt5.pro "CONFIG+=debug_and_release build_all"
         
-        # Build with detailed output and error logging
-        nmake -f Makefile.win /NOLOGO /K
+        REM Configure and build
+        qmake -o Makefile.win wizard_castle_qt5.pro CONFIG+=debug_and_release
         if %ERRORLEVEL% NEQ 0 (
-          echo "Build failed. Compiler output:"
-          type compiler_output.log
+          echo qmake failed
           exit /b %ERRORLEVEL%
         )
         
+        nmake -f Makefile.win
+        if %ERRORLEVEL% NEQ 0 (
+          echo Build failed
+          exit /b %ERRORLEVEL%
+        )
+
     - name: Run windeployqt
+      shell: cmd
       working-directory: c
       run: |
-        ${{ env.QtToolsPath }}\windeployqt.exe --release wizards_castle_qt5.exe
+        "%QtToolsPath%\windeployqt.exe" --release wizards_castle_qt5.exe
 
     - name: Package application
+      shell: cmd
       run: |
         mkdir win_package
         move c\wizards_castle_qt5.exe win_package\
         move c\*.dll win_package\
         move c\platforms win_package\
         move c\styles win_package\
-        Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
+        powershell Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
