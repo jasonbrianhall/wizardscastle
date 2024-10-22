@@ -7,7 +7,7 @@ namespace AsciiArt {
 
 const QString ENTRANCE_AA = R"(
     _____________________
-   /                     \
+   /        EXIT         \
   /     ___________       \
  /     |  _______  |       \
 |      | |       | |        |
