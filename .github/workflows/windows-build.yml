@@ -45,15 +45,11 @@ jobs:
       run: |
         echo Current directory: %CD%
         
-        REM Set compiler flags with increased stack size and MD runtime
-        set CL=/MD /O2 /Oi /GL /MP1 /Zi /STACK:8388608
-        set LINK=/STACK:8388608
+        REM Set compiler flags trying to handle stack overflow
+        set CL=/MP1 /MDd /Od /RTC1 /Zi /W3 /WX- /diagnostics:column /F8388608
         
         REM Configure with qmake
-        qmake wizard_castle_qt5.pro -spec win32-msvc ^
-        "QMAKE_CXXFLAGS+=/MD" ^
-        "QMAKE_CXXFLAGS+=/F8388608" ^
-        "QMAKE_LFLAGS+=/STACK:8388608"
+        qmake wizard_castle_qt5.pro -spec win32-msvc
         if errorlevel 1 (
           echo qmake failed
           dir
@@ -64,8 +60,7 @@ jobs:
         nmake
         if errorlevel 1 (
           echo Build failed with error level %ERRORLEVEL%
-          nmake > build_log.txt 2>&1
-          type build_log.txt
+          type Makefile
           exit /b 1
         )
 
