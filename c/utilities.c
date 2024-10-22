@@ -225,9 +225,7 @@ char get_room_symbol(int room_content)
         case SINKHOLE: return 'S';  // Sinkhole
         case CRYSTAL_ORB: return 'O';  // Crystal Orb
         case BOOK: return 'B';  // Book
-        case MONSTER_START ... MONSTER_END: return 'M';  // Monsters (all types)
         case VENDOR: return 'V';  // Vendor
-        case TREASURE_START ... TREASURE_END: return 'T';  // Treasures
         default:
             // Replace the range case with a check in default
             if (room_content >= MONSTER_START && room_content <= MONSTER_END) {
