@@ -63,7 +63,7 @@ jobs:
         "QMAKE_CXXFLAGS_RELEASE+=/wd4996 /wd4244 /Zc:preprocessor-"
         
         REM Build with jom
-        jom
+        jom -j1 VERBOSE=1
 
     - name: Show build output
       shell: cmd
