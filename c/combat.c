@@ -652,7 +652,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
             case 'M':  // Mischief Blast for Hobbits
                 if (player->race == HOBBIT && player->intelligence >= 11)
                 {
-                    cast_mischief_blast(enemy_strength, enemy_dexterity, enemy_intelligence);
+                    cast_mischief_blast(player, enemy_strength, enemy_dexterity, enemy_intelligence);
                     player->intelligence -= 1;
                     
                     if (*enemy_strength <= 0) {
@@ -1029,8 +1029,8 @@ int enemy_attack_hits(Player *player, int enemy_dexterity) {
     return (roll <= hit_chance) ? 1 : 0;
 }
 
-int cast_mischief_blast(int *enemy_strength, int *enemy_dexterity, int *enemy_intelligence) {
-    int blast_count = random_number(3);  // 1-3 blasts
+int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterity, int *enemy_intelligence) {
+    int blast_count = random_number(4);  // 1-4 blasts
     int total_damage = 0;
     int damage;
     
@@ -1038,11 +1038,11 @@ int cast_mischief_blast(int *enemy_strength, int *enemy_dexterity, int *enemy_in
     print_message_formatted("You unleash %d magical blasts!\n", blast_count);
     
     for (int i = 0; i < blast_count; i++) {
-        damage = random_number(4);  // 1-4 damage per blast
+        damage = random_number(4);  // 1-5 damage per blast
         
         // Each blast has a special effect chance
-        if (random_number(4) == 1) {
-            switch(random_number(3)) {
+        if (random_number(5) >= 4) {
+            switch(random_number(6)) {
                 case 1:
                     damage *= 2;
                     print_message_formatted("Blast %d: BOOM! Double damage! (%d damage)\n", i+1, damage);
@@ -1055,6 +1055,20 @@ int cast_mischief_blast(int *enemy_strength, int *enemy_dexterity, int *enemy_in
                     *enemy_intelligence -= 1;
                     print_message_formatted("Blast %d: PING! Enemy loses 1 intelligence and takes %d damage\n", i+1, damage);
                     break;
+                case 4:
+                    player->intelligence+=1;
+                    print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, damage);
+                    break;
+                case 5:
+                    player->strength+=1;
+                    print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, damage);
+                    break;
+                case 6:
+                    player->dexterity+=1;
+                    print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, damage);
+                    break;
+
+
             }
         } else {
             print_message_formatted("Blast %d: Deals %d damage\n", i+1, damage);
