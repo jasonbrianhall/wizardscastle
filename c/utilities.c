@@ -133,9 +133,10 @@ void move_player_randomly(Player *player, GameState *game)
 // Helper function for minimum of two integers
 int min(int a, int b)
 {
-    return (a < b) ? a : b;
+    if (a < b)
+        return a;
+    return b;
 }
-
 void printStars(void)
 {
 	print_message_formatted("****************************************************************\n");
