@@ -228,7 +228,15 @@ char get_room_symbol(int room_content)
         case MONSTER_START ... MONSTER_END: return 'M';  // Monsters (all types)
         case VENDOR: return 'V';  // Vendor
         case TREASURE_START ... TREASURE_END: return 'T';  // Treasures
-        default: return '?';  // Unknown
+        default:
+            // Replace the range case with a check in default
+            if (room_content >= MONSTER_START && room_content <= MONSTER_END) {
+                return 'M';  // Monsters (all types)
+            }
+            if (room_content >= TREASURE_START && room_content <= TREASURE_END) {
+                return 'T';  // Treasures
+            }
+            return '?';      // Unknown
     }
 }
 
