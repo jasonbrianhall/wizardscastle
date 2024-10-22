@@ -574,7 +574,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
     {
         print_message(          "    (H)EAL - Permanently heals you (but maxes out at 18 after combat); costs one intelligence points\n");
-        print_message           "    (S)PEED - Temporarily increases your dexterity\n");
+        print_message(          "    (S)PEED - Temporarily increases your dexterity\n");
         print_message(          "    (B)RIGHT - Temporarily increases your intelligence \n");
     }
     if ((player->race == HOBBIT ) && player->intelligence>=11)
@@ -1086,7 +1086,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     }                    
                     break;
                 case 6:
-                    if(player->dexterity->18)
+                    if(player->dexterity<18)
                     {
                          player->dexterity+=1;
                         print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, damage);
