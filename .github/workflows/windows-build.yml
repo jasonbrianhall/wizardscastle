@@ -73,27 +73,26 @@ jobs:
         
         if exist c\release\wizards_castle_qt5.exe (
           echo Found release exe
-          move c\release\wizards_castle_qt5.exe win_package\
+          copy c\release\wizards_castle_qt5.exe win_package\
+          echo Running windeployqt...
+          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizards_castle_qt5.exe
         ) else if exist c\wizards_castle_qt5.exe (
           echo Found exe in root
-          move c\wizards_castle_qt5.exe win_package\
+          copy c\wizards_castle_qt5.exe win_package\
+          echo Running windeployqt...
+          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizards_castle_qt5.exe
         ) else (
           echo No exe found
+          exit 1
         )
         
-        if exist c\*.dll move c\*.dll win_package\
-        if exist c\platforms move c\platforms win_package\
-        if exist c\styles move c\styles win_package\
+        echo Package contents:
+        dir /s /b win_package
         
-        dir win_package
-        
-        if exist win_package\*.* (
-          powershell Compress-Archive -Path win_package -DestinationPath wizards_castle_windows.zip
-        )
+        powershell Compress-Archive -Path win_package\* -DestinationPath wizards_castle_windows.zip
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
-      if: hashFiles('wizards_castle_windows.zip') != ''
       with:
         name: Wizards-Castle-Windows
         path: wizards_castle_windows.zip
