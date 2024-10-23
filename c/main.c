@@ -54,8 +54,16 @@ int main(int argc, char *argv[])
             print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
             print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
-            print_message("DEBUG MODE: All rooms are discovered\n");
-
+            print_message("DEBUG MODE: All rooms are discovered and you have all the treasures.\n");
+            for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
+            {
+                if(game->treasure[i]==1)
+                {
+                	print_message2("     ");
+                	print_message2(get_treasure_name(i));
+                	print_message2("\n");
+                }
+            }
         }
 
         generate_castle(&game);

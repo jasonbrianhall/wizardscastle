@@ -85,6 +85,7 @@ public:
 void display_map2(GameState *game, Player *player)
 {
     int currentRoom = get_room_content(game, player->x, player->y, player->level);
+    int treasurecount=0;
     
     if (currentRoom >= ROOM_START && currentRoom <= ROOM_END)
     {
@@ -227,7 +228,7 @@ void display_map2(GameState *game, Player *player)
     }
     else
     {
-         print_message2_formatted("\nBlind %s can't see maps.\n", get_race_name(player->race));
+         print_message2_formatted("\nBlind %s can't see maps.\n\n", get_race_name(player->race));
     }
     
     
@@ -273,7 +274,17 @@ void display_map2(GameState *game, Player *player)
     print_message2("Armor points: %d\n", player->armor_points);
 
     // Print number of treasures
-    print_message2("Treasures Found: %d\n", player->treasure_count);
+
+    for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
+    {
+        if(game->treasure[i]==1)
+        {
+            treasurecount++;
+        }
+    }
+
+
+    print_message2("Treasures Found: %d\n", treasurecount);
 
     for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
