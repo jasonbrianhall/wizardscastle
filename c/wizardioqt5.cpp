@@ -227,7 +227,7 @@ void display_map2(GameState *game, Player *player)
     }
     else
     {
-         print_message2("\nBlind %s can't see maps.\n", get_race_name(player->race));
+         print_message2_formatted("\nBlind %s can't see maps.\n", get_race_name(player->race));
     }
     
     

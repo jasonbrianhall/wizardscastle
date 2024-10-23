@@ -22,6 +22,10 @@ void fight_monster(Player *player, GameState *game)
     player->temp_strength=0;
     player->temp_intelligence=0;
     player->temp_dexterity=0;
+    if(game->game_over) // No use fighting a monster if you are dead.
+    {
+        return;
+    }
     
     if (!is_vendor && player->race == HOBBIT && (random_number(10) == 1 || random_number(24 - player->dexterity)==1)) {
         print_message("Using your hobbit stealth (and the fact that you are very short), you sneak past the %s!\n", enemy_name);

@@ -420,24 +420,27 @@ void fight_monster_normalize(Player *player, GameState *game)
 {
     player->temp_blindness_flag=0;
     fight_monster(player, game);
-    if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
+    if (!game->game_over)
     {
-        player->intelligence=player->temp_intelligence;
-        player->temp_intelligence=0;
-    }
-    if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
-    {
-        player->dexterity=player->temp_dexterity;
-        player->temp_dexterity=0;
-    }
-    if (player->strength>18)
-    {
-        player->strength=18;
-    }
-    if(player->temp_blindness_flag==1)
-    {
-        print_message("Your vision has returned.\n");
-        player->blindness_flag=0;
+        if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
+        {
+            player->intelligence=player->temp_intelligence;
+            player->temp_intelligence=0;
+        }
+        if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
+        {
+            player->dexterity=player->temp_dexterity;
+            player->temp_dexterity=0;
+        }
+        if (player->strength>18)
+        {
+            player->strength=18;
+        }
+        if(player->temp_blindness_flag==1)
+        {
+            print_message("Your vision has returned.\n");
+            player->blindness_flag=0;
+        }
     }
 }
 
