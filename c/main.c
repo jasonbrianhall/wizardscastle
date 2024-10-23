@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
             print_message("DEBUG MODE: All rooms are discovered and you have all the treasures.\n");
             for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
             {
+                print_message("%d\n", i);
                 game.treasure[i]=1;
             }
         }

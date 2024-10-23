@@ -356,9 +356,9 @@ const char* get_race_name(int race)
 void print_status(Player *player, GameState *game)
 {
     //char message[256];  // Buffer for formatting messages
+    int treasurecount=0;
 
     print_message("\n=== PLAYER STATUS ===\n");
-
     // Print player race and attributes
     print_message("Race: ");
     print_message_formatted(get_race_name(player->race));
@@ -401,7 +401,16 @@ void print_status(Player *player, GameState *game)
     print_message("Armor points: %d\n", player->armor_points);
 
     // Print number of treasures
-    print_message("Treasures Found: %d\n", player->treasure_count);
+    for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
+    {
+        if(game->treasure[i]==1)
+        {
+            treasurecount++;
+        }
+    }
+
+    
+    print_message("Treasures Found: %d\n", treasurecount);
 
     for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
