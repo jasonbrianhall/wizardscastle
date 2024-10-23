@@ -5,6 +5,7 @@
 #include "vendor.h"
 #include "utilities.h"
 #include "combat.h"
+#include "player.h"
 #include "wizardio.h"
 
 void handle_vendor(Player *player, GameState *game)
@@ -231,9 +232,7 @@ void attack_vendor(Player *player, GameState *game)
 {
     print_message_formatted("You attack the vendor!\n");
     game->vendor_attacked = 1;
-
-    // Call fight_monster to handle the combat
-    fight_monster(player, game);
+    fight_monster_normalize(player, game);
 }
 
 void buy_flares(Player *player)

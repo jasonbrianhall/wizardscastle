@@ -2,6 +2,7 @@
 #include "wizards-castle.h"
 #include "utilities.h"
 #include "wizardio.h"
+#include "combat.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -224,9 +225,9 @@ void buy_equipment(Player *player)
         user_input = get_user_input_custom_prompt("Your choice:  ");
         exittheloop=1;
         switch(user_input) {
-            case 'P': player->armor_type = 3; cost = 30; break;
-            case 'C': player->armor_type = 2; cost = 20; break;
-            case 'L': player->armor_type = 1; cost = 10; break;
+            case 'P': player->armor_type = PLATE; cost = 30; break;
+            case 'C': player->armor_type = CHAINMAIL; cost = 20; break;
+            case 'L': player->armor_type = SWORD; cost = 10; break;
             case 'N': player->armor_type = 0; cost = 0; break;
             default:
                 print_message("\n** Are you a ");
@@ -256,7 +257,7 @@ void buy_equipment(Player *player)
                     print_message_formatted("** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
                     continue;
                 }
-                player->weapon_type = 3; cost = 30;
+                player->weapon_type = SWORD; cost = 30;
                 player->armor_points = 50;
                 break;
             case 'M': 
@@ -264,11 +265,11 @@ void buy_equipment(Player *player)
                     print_message_formatted("** SORRY %s, I'M AFRAID I DON'T GIVE CREDIT!\n\n",  player->sex == MALE ? "SIR" : "MA'AM");
                     continue;
                 }
-                player->weapon_type = 2; cost = 20;
+                player->weapon_type = MACE; cost = 20;
                 player->armor_points = 50;
                 break;
-            case 'D': player->weapon_type = 1; cost = 10; player->armor_points = 50; break;
-            case 'N': player->weapon_type = 0; cost = 0; break;
+            case 'D': player->weapon_type = DAGGER; cost = 10; player->armor_points = 50; break;
+            case 'N': player->weapon_type = NOTHING; cost = 0; break;
             default:
                 print_message("** Poor ");
                 print_message_formatted("%s ", race_names[player->race - 1]);
@@ -343,7 +344,7 @@ const char* get_race_name(int race)
     switch(race)
     {
         case 1: return "HOBBIT";
-        case 2: return "ELF\0";
+        case 2: return "ELF";
         case 3: return "HUMAN";
         case 4: return "DWARF";
         case 5: return "DARK ELF";
@@ -415,4 +416,28 @@ void print_status(Player *player, GameState *game)
     print_message("======================\n\n");
 }
 
+void fight_monster_normalize(Player *player, GameState *game)
+{
+    player->temp_blindness_flag=0;
+    fight_monster(player, game);
+    if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
+    {
+        player->intelligence=player->temp_intelligence;
+        player->temp_intelligence=0;
+    }
+    if (player->temp_dexterity>0  && player->dexterity>player->temp_dexterity)
+    {
+        player->dexterity=player->temp_dexterity;
+        player->temp_dexterity=0;
+    }
+    if (player->strength>18)
+    {
+        player->strength=18;
+    }
+    if(player->temp_blindness_flag==1)
+    {
+        print_message("Your vision has returned.\n");
+        player->blindness_flag=0;
+    }
+}
 
