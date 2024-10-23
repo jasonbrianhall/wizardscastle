@@ -102,6 +102,7 @@ typedef struct {
     int orb_flag;
     
     int book_flag;
+    int temp_blindness_flag;
     int blindness_flag;
     int stickybook_flag;
     int has_runestaff;

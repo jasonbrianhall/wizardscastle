@@ -344,6 +344,18 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         }
+        else if (room_content == ORC && random_number(4) == 1) {  // 25% chance
+            orc_battle_fury_attack(player, game, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+            }
+        }
+        else if (room_content == GOBLIN && random_number(4) == 1) {  // 25% chance
+            goblin_dirty_tricks_attack(player, game, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+            }
+        }
 
         else if (room_content == CHIMERA && random_number(3) == 1) {  // 33% chance for special attack
             chimera_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
@@ -1853,3 +1865,171 @@ void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int e
         game->game_over = 1;
     }
 }
+
+void orc_battle_fury_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message("\nThe Orc works itself into a battle fury!\n");
+    
+    // First attack
+    if (!enemy_attack_hits(player, enemy_dexterity)) {
+        print_message("The Orc's aggressive swing misses!\n");
+        return;
+    }
+    
+    // Base damage with fury bonus
+    int damage = random_number(4) + 1;  // 2-5 base damage (lower than ogre/troll)
+    damage += enemy_strength / 8;  // Strength bonus
+    enemy_strength += 1;  // Fury increases strength
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    // Apply armor
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type;
+        damage -= armor_protection;
+        player->armor_points -= 1;  // Minimal armor damage (level 2 monster)
+        
+        if (damage < 0) {
+            damage = 0;
+        }
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message("YOUR ARMOR IS BROKEN BY THE ORC'S FURY!\n");
+        }
+    }
+    
+    if (damage > 0) {
+        player->strength -= damage;
+        print_message_formatted("The Orc's fury attack deals %d damage!\n", damage);
+        
+        // As fury builds, chance for quick second attack
+        if (enemy_attack_hits(player, enemy_dexterity - 2)) {  // Harder to hit with quick attack
+            int quick_damage = random_number(3);  // 1-3 damage for quick attack
+            
+            if (player->armor_type != 0) {
+                quick_damage -= player->armor_type;
+                if (quick_damage < 0) {
+                    quick_damage = 0;
+                }
+            }
+            
+            if (quick_damage > 0) {
+                player->strength -= quick_damage;
+                enemy_strength += 1;  // Successful fury attack increases strength more
+                print_message_formatted("The Orc's battle fury intensifies! Quick strike deals %d more damage!\n", quick_damage);
+            }
+        }
+    } else {
+        print_message("Your defenses absorb the Orc's attack!\n");
+    }
+    
+    if (player->strength <= 0) {
+        print_message("\nTHE ORC'S BATTLE FURY HAS OVERWHELMED YOU!\n");
+        game->game_over = 1;
+    }
+}
+
+void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message("\nThe Goblin unleashes a series of dirty fighting tricks!\n");
+    
+    // Base attack with dirty fighting
+    if (!enemy_attack_hits(player, enemy_dexterity)) {
+        print_message("The Goblin's attack misses!\n");
+        return;
+    }
+    
+    // Choose a dirty trick
+    int trick = random_number(5);
+    switch(trick) {
+        case 1:  // Stolen spices - temporary
+            if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
+                print_message("The Goblin throws stolen pepper in your eyes!\n");
+                player->temp_blindness_flag = 1;
+                print_message("Your eyes burn terribly - you can't see!\n");
+            } else {
+                trick = 5;  // Fall back to regular attack if already blind
+            }
+            break;
+            
+        case 2:  // Poisonous powder - permanent unless cured
+            if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
+                print_message("The Goblin throws a vile black powder in your face!\n");
+                player->blindness_flag = 1;
+                print_message("The poison burns your eyes - you've been blinded!\n");
+            } else {
+                trick = 5;
+            }
+            break;
+            
+        case 3:  // Hot embers - temporary
+            if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
+                print_message("The Goblin flings hot embers at your face!\n");
+                player->temp_blindness_flag = 1;
+                print_message("The burning ash blinds you!\n");
+            } else {
+                trick = 5;
+            }
+            break;
+            
+        case 4:  // Mushroom spores - permanent unless cured
+            if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
+                print_message("The Goblin throws toxic mushroom spores at you!\n");
+                player->blindness_flag = 1;
+                print_message("The spores infect your eyes - you've been blinded!\n");
+            } else {
+                trick = 5;
+            }
+            break;
+            
+        case 5:  // Opportunistic strike
+            print_message("The Goblin makes an opportunistic attack!\n");
+            int damage = random_number(4) + 2;  // 3-6 base damage
+            damage += enemy_strength / 9;  // Small strength bonus
+            
+            // Player's defensive calculations
+            int player_defense = player->strength / 9 + player->dexterity / 6;
+            damage -= player_defense;
+            
+            if (player->armor_type != 0) {
+                int armor_protection = player->armor_type;
+                damage -= armor_protection;
+                player->armor_points -= 1;  // Minor armor damage
+                
+                if (damage < 0) {
+                    damage = 0;
+                }
+                
+                if (player->armor_points <= 0) {
+                    player->armor_points = 0;
+                    player->armor_type = 0;
+                    print_message("Your armor falls apart!\n");
+                }
+            }
+            
+            if (damage > 0) {
+                player->strength -= damage;
+                print_message_formatted("The strike deals %d damage!\n", damage);
+            } else {
+                print_message("Your defenses absorb the attack!\n");
+            }
+            break;
+    }
+    
+    // Add a small amount of damage from blinding attacks
+    if (trick < 5 && (player->blindness_flag || player->temp_blindness_flag)) {
+        int blind_damage = random_number(2);  // 1-2 damage from eye pain
+        if (blind_damage > 0) {
+            player->strength -= blind_damage;
+            print_message_formatted("The pain deals %d additional damage!\n", blind_damage);
+        }
+    }
+    
+    if (player->strength <= 0) {
+        print_message("\nTHE GOBLIN'S DIRTY FIGHTING HAS ENDED YOUR ADVENTURE!\n");
+        game->game_over = 1;
+    }
+}
+

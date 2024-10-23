@@ -153,6 +153,7 @@ bool main_game_loop(Player *player, GameState *game)
            // Monsters
            else if (room_content>=MONSTER_START && room_content <=MONSTER_END)
            {
+               player->temp_blindness_flag=0;
                fight_monster(player, game);
                if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
                {
@@ -168,12 +169,11 @@ bool main_game_loop(Player *player, GameState *game)
                {
                    player->strength=18;
                }
-
-
            }
            // Vendors
            else if (room_content==VENDOR)
            {
+               player->temp_blindness_flag=0;
                handle_vendor(player, game);
                if (player->temp_intelligence>0 && player->intelligence > player->temp_intelligence)
                {
@@ -190,7 +190,6 @@ bool main_game_loop(Player *player, GameState *game)
                    player->strength=18;
                    player->temp_strength=0;
                }
-
            }
            // Treasure
            else if (room_content>=TREASURE_START && room_content<=TREASURE_END)
@@ -359,5 +358,3 @@ void print_help()
     print_message          ("BLUE FLAME  - Dissolves Books    NORN STONE  - Pretty\n");
     print_message          ("PALANTIR    - Pretty             SILMARIL    - Pretty\n\n");
 }
-
-

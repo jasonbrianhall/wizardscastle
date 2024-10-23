@@ -30,4 +30,6 @@ void wolf_frenzy_attack(Player *player, int enemy_strength, int enemy_dexterity)
 void gargoyle_stone_form_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 void bear_maul_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void orc_battle_fury_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 #endif // COMBAT_H
