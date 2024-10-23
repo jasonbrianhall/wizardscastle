@@ -387,11 +387,11 @@ void fight_monster(Player *player, GameState *game)
                     spellcasted=random_number(7);  // KOBOLDS CAN'T CAST DARKNESS
                     break;
                 case DRAGON:
-                    spellcasted=random_number(8);
+                    spellcasted=random_number(9);
                     max_increase=5;
                     break;
                 case GOBLIN:
-                    spellcasted=random_number(8);
+                    spellcasted=random_number(9);
                     max_increase=2;
                     break;
                 case TROLL:
@@ -549,6 +549,46 @@ void fight_monster(Player *player, GameState *game)
                          else
                          {
                              print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!");
+                         }
+                     }
+                     break;
+                 case 9:
+                    print_message_formatted("THE %s CASTS FIREBOLT!\n", enemy_name);
+    
+                     // Calculate avoidance chance based on player stats
+                     avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
+    
+                     // Add a random factor
+                     avoidance_chance += random_number(10) - 5;  // -5 to +5 random adjustment
+    
+                     // Ensure the avoidance chance is within a reasonable range (5% to 95%)
+                     if (avoidance_chance < 5) avoidance_chance = 5;
+                     if (avoidance_chance > 95) avoidance_chance = 95;
+    
+                     if (random_number(100) < avoidance_chance) {
+                         print_message_formatted("YOU SUCCESSFULLY DODGE THE FIREBOLT!\n");
+                     } else {
+                         temp = random_number(max_increase);
+                         print_message_formatted("THE FIREBOLT HITS YOU\n", temp);
+                         player->armor_points-=temp;
+                         if (player->armor_points<=0)
+                         {
+                             player->strength += player->armor_points;
+                             print_message("You took %i damage.\n", player->armor_points*-1);
+                             player->armor_points=0;                             
+                             print_message("Your armor was destroyed, good luck adventurer.");
+                             player->armor_type=0;
+                         }
+                         else {
+                             print_message("Your armor absorbed the blow but you lost %d armor points.\n", temp);
+                         }
+                         
+        
+                         if (player->strength <= 0) {
+                             player->strength = 0;
+                             print_message_formatted("YOUR STRENGTH IS GONE. YOU COLLAPSE...\n");
+                             game->game_over = 1;
+                             return;
                          }
                      }
                      break;
