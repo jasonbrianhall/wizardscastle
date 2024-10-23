@@ -736,8 +736,8 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     print_message_formatted("\nWHICH SPELL\n");
     if(player->intelligence >=14)
     {
-        print_message(          "    (W)EB - Casts a magical web that prevents a monster from attacking\n");
-        print_message(          "    (F)IREBALL - Casts a Fireball at the enemy\n");
+        print_message(          "    (W)EB - Casts a magical web that prevents a monster from attacking (guaranteed to hit every time)\n");
+        print_message(          "    (F)IREBALL - Casts a Fireball at the enemy (guaranteed to hit every time)\n");
     }
     if(player->intelligence>=14 && (player->race == DWARF || player->race == DROW))
     {
@@ -769,7 +769,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
             case 'W':
                 if (player->intelligence>=14)
                 {
-                    if(player->strenght>10)
+                    if(player->strength>10)
                     {
                         player->strength--;
                     }
