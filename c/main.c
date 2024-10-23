@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     while (playagain) 
     {
         initialize_player(&player);
+        generate_castle(&game);
         print_introduction();
 
         if (!debug_mode) {
@@ -55,13 +56,12 @@ int main(int argc, char *argv[])
             print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered and you have all the treasures.\n");
-            for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
+            for (i=0; i<TREASURE_END-TREASURE_START+1; i++)
             {
-                print_message("%d\n", i);
+                print_message("Treasure %d\n", i);
                 game.treasure[i]=1;
             }
         }
-        generate_castle(&game);
 
         if (debug_mode) {
             print_message("DEBUG MODE: The Orb of Zot is located at (%d, %d) on level %d.\n", 
