@@ -377,8 +377,8 @@ void fight_monster(Player *player, GameState *game)
         }
         else if ((room_content == KOBOLD && random_number(4)==1) || 
                  (room_content == DRAGON && random_number(3)==1) ||
-                 (room_content == TROLL && random_number(2)==1)) || // Trolls have 50% chance to regenerate
-                 (room_content == GOBLIN && random_number(5)==1)
+                 (room_content == TROLL && random_number(2)==1) || // Trolls have 50% chance to regenerate
+                 (room_content == GOBLIN && random_number(5)==1))
         {
             switch (room_content)
             {
@@ -542,13 +542,13 @@ void fight_monster(Player *player, GameState *game)
                          if (player->blindness_flag==0)
                          {
                              temp = random_number(max_increase);
-                             print_message_formatted("THE SPELL HITS! YOU ARE BLIND!!!);
-                             player->temp_blindness=1;
-                             player->blindness=1;
+                             print_message_formatted("THE SPELL HITS! YOU ARE BLIND!!!");
+                             player->temp_blindness_flag=1;
+                             player->blindness_flag=1;
                          }
                          else
                          {
-                             print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!);
+                             print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!");
                          }
                      }
                      break;
