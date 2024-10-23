@@ -763,49 +763,72 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     }
 
     print_message_formatted("\n");
-    char spell = get_user_input_custom_prompt("Which Spell:  ");
     for (;;) {
+        char spell = get_user_input_custom_prompt("Which Spell:  ");
         switch (spell) {
             case 'W':
-                player->strength--;
-                if (player->strength <= 0) {
-                    game->game_over = 1;
-                    return 1;
+                if (player->intelligence>=14)
+                {
+                    player->strength--;
+                    if (player->strength <= 0) {
+                        game->game_over = 1;
+                        return 1;
+                    }
+                    player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
+                    print_message_formatted("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
+                    return 0;
                 }
-                player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
-                print_message_formatted("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
-                return 0;
+                else
+                {
+                     print_message("WEB . . . INVALID CHOICE\n");
+                }
+                break;    
             case 'F':
-                player->strength--;
-                player->intelligence--;
-                if (player->strength <= 0 || player->intelligence <= 0) {
-                    game->game_over = 1;
-                    return 1;
+                if (player->intelligence>=14)
+                {
+                    player->strength--;
+                    player->intelligence--;
+                    if (player->strength <= 0 || player->intelligence <= 0) {
+                        game->game_over = 1;
+                        return 1;
+                    }
+                    damage = random_number(7) + random_number(7);
+                    print_message_formatted("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
+                    *enemy_strength -= damage;
+                    if (*enemy_strength <= 0) {
+                        handle_combat_victory(player, game, 0, enemy_name);
+                        return 1;
+                    }
+                    return 0;
                 }
-                damage = random_number(7) + random_number(7);
-                print_message_formatted("\nIT DOES %d POINTS WORTH OF DAMAGE.\n", damage);
-                *enemy_strength -= damage;
-                if (*enemy_strength <= 0) {
-                    handle_combat_victory(player, game, 0, enemy_name);
-                    return 1;
+                else
+                {
+                    print_message("FIREBALL . . . INVALID CHOICE\n");
                 }
-                return 0;
-
+                break;
             case 'D':
-                print_message_formatted("\nDEATH . . . ");
-                if (calculate_death_spell(player->intelligence, player->strength, player->dexterity, *enemy_intelligence, *enemy_strength, *enemy_dexterity)) {
-                    print_message_formatted("YOURS!\n");
-                    player->intelligence = 0;
-                    game->game_over = 1;
-                    return 1;
-                } else {
-                    print_message_formatted("HIS!\n");
-                    //handle_combat_victory(player, game, 0, enemy_name)
-                    *enemy_intelligence=0;
-                    *enemy_strength=0;
-                    *enemy_dexterity=0;
-                    return 1;
+                if(player->intelligence>=16)
+                {
+                    print_message_formatted("\nDEATH . . . ");
+                    if (calculate_death_spell(player->intelligence, player->strength, player->dexterity, *enemy_intelligence, *enemy_strength, *enemy_dexterity)) {
+                        print_message_formatted("YOURS!\n");
+                        player->intelligence = 0;
+                        game->game_over = 1;
+                        return 1;
+                    } else {
+                        print_message_formatted("HIS!\n");
+                        //handle_combat_victory(player, game, 0, enemy_name)
+                        *enemy_intelligence=0;
+                        *enemy_strength=0;
+                        *enemy_dexterity=0;
+                        return 1;
+                    }
                 }
+                else
+                {
+                    print_message_formatted("DEATH . . . INVALID CHOICE\n");
+                }
+                break;
             case 'H':
                 if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
                 {

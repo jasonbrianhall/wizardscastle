@@ -701,8 +701,6 @@ void initialize_qt(int argc, char *argv[]) {
                 game.discovered_rooms[q] = 1;  // 0 means undiscovered
             }
         }
-
-        playagain = main_game_loop(&player, &game);
     };
    QObject::connect(g_window, &WizardsCastleWindow::newGameRequested, startNewGame);
 
