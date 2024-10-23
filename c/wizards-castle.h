@@ -66,6 +66,17 @@
 #define FEMALE 0  // No special abilities; just Aesthetic
 #define MALE 1
 
+#define NOTHING   0
+#define DAGGER    1
+#define MACE      2
+#define SWORD     3
+#define EXCALIBUR 4
+
+#define LEATHER   1
+#define CHAINMAIL 2
+#define PLATE     3
+#define STONE     4
+
 
 // Structures
 typedef struct {

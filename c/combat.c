@@ -326,6 +326,12 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         }
+        else if (room_content == GARGOYLE && random_number(4) == 1) {  // 25% chance
+            wolf_frenzy_attack(player, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+            }
+        }
         else if (room_content == CHIMERA && random_number(3) == 1) {  // 33% chance for special attack
             chimera_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
             if (game->game_over) {
@@ -1632,5 +1638,67 @@ void wolf_frenzy_attack(Player *player, int enemy_strength, int enemy_dexterity)
         }
     } else {
         print_message("Your defenses absorb the attack!\n");
+    }
+}
+
+void gargoyle_stone_form_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message("\nThe Gargoyle's flesh turns to living stone!\n");
+    
+    // Attack uses normal hit chance calculation
+    if (!enemy_attack_hits(player, enemy_dexterity)) {
+        print_message("The Gargoyle's heavy stone fist misses you!\n");
+        return;
+    }
+    
+    // Heavy stone attack damage
+    int damage = random_number(6) + 3;  // 4-9 base damage
+    damage += enemy_strength / 8;  // Bonus from strength
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    // Stone form vs different armor types
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type;
+        
+        // Stone skin spell creates magical stone armor (type 4)
+        if (player->armor_type == STONE) {
+            print_message("Your stone armor deflects most of the impact!\n");
+            damage -= (armor_protection * 2);  // Stone armor is extra effective vs stone attacks
+            player->armor_points -= 1;  // Minimal wear
+        } else {
+            damage -= armor_protection;
+            player->armor_points -= armor_protection;  // Normal armor damage
+            
+            if (player->armor_points <= 0) {
+                player->armor_points = 0;
+                player->armor_type = 0;
+                print_message("YOUR ARMOR CRUMBLES UNDER THE STONE IMPACT!\n");
+            }
+        }
+    }
+    
+    if (damage <= 0) {
+        print_message("Your defenses absorb the stone attack!\n");
+        return;
+    }
+    
+    player->strength -= damage;
+    print_message_formatted("The stone-form attack deals %d damage!\n", damage);
+    
+    // Chance to stagger player (unless wearing stone armor)
+    if (player->armor_type != STONE && enemy_attack_hits(player, enemy_dexterity + 2)) {
+        if (player->temp_dexterity == 0) {
+            player->temp_dexterity = player->dexterity;
+        }
+        int stagger = random_number(2);  // 1-2 dexterity reduction
+        player->dexterity -= stagger;
+        print_message_formatted("The heavy impact staggers you, reducing your dexterity by %d!\n", stagger);
+    }
+    
+    if (player->strength <= 0) {
+        print_message("\nTHE GARGOYLE'S STONE FIST HAS CRUSHED YOU!\n");
+        game->game_over = 1;
     }
 }
