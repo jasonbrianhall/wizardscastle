@@ -320,6 +320,12 @@ void fight_monster(Player *player, GameState *game)
                 return;
            }
         }
+        else if (room_content == WOLF && random_number(4) == 1) {  // 25% chance
+            wolf_frenzy_attack(player, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+            }
+        }
         else if (room_content == CHIMERA && random_number(3) == 1) {  // 33% chance for special attack
             chimera_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
             if (game->game_over) {
@@ -540,7 +546,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         print_message_formatted("\nYOU GET ALL HIS WARES:\n");
         print_message_formatted("PLATE ARMOR\n");
         player->armor_type = 3;
-        player->armor_points = 21;
+        player->armor_points = 50;
         print_message_formatted("A SWORD\n");
         player->weapon_type = 3;
         print_message_formatted("A STRENGTH POTION\n");
@@ -935,7 +941,7 @@ int cast_stone_skin_spell(Player *player)
              player->armor_type+=1;
              player->intelligence-=1;
              player->strength-=1;
-             player->armor_points=21;
+             player->armor_points=50;
              if(player->armor_type==0)
              {
                  print_message("Your armor has improved!!!");
@@ -1561,3 +1567,70 @@ void chimera_attack(Player *player, GameState *game, int enemy_strength, int ene
     }
 }
 
+void wolf_frenzy_attack(Player *player, int enemy_strength, int enemy_dexterity) {
+    print_message("\nThe wolf's eyes glow with feral intensity!\n");
+    
+    // First attack hit chance calculation
+    int hit_chance = 50;
+    hit_chance += (enemy_dexterity - 10) * 2;     // Normal dexterity bonus
+    hit_chance += (10 - get_minimum(10, enemy_strength)) * 2;  // Up to +20% when injured
+    hit_chance -= (player->dexterity - 10) * 2;   // Player's dodge chance
+    hit_chance += 15 * player->blindness_flag;    // Blindness penalty
+    
+    if (hit_chance < 10) hit_chance = 10;
+    if (hit_chance > 90) hit_chance = 90;
+    
+    if (random_number(100) > hit_chance) {
+        print_message("The wolf's frenzied attack misses!\n");
+        return;
+    }
+    
+    // Base damage
+    int damage = random_number(3) + 2;  // 3-5 base damage
+    
+    // Bonus damage when wounded
+    if (enemy_strength < 8) {  // Below 50% health
+        damage += random_number(3) + 2;  // Extra 3-5 damage when desperate
+        print_message("The wolf attacks with desperate fury!\n");
+    }
+    
+    // Apply normal combat modifiers
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    // Apply armor reduction if present
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type;
+        damage -= armor_protection;
+        player->armor_points -= 1;  // Minor armor damage
+        
+        if (damage < 0) {
+            damage = 0;
+        }
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message("Your armor has been torn apart!\n");
+        }
+    }
+    
+    if (damage > 0) {
+        player->strength -= damage;
+        print_message_formatted("The wolf's frenzy attack deals %d damage!\n", damage);
+        
+        // Second attack attempt if unarmored - based on stats
+        if (player->armor_type == 0) {
+            // Calculate success chance based on the wolf's dexterity advantage
+            if (enemy_attack_hits(player, enemy_dexterity + (enemy_strength < 8 ? 2 : 0))) {
+                int second_damage = random_number(2);  // 1-2 damage
+                player->strength -= second_damage;
+                print_message_formatted("The wolf's second bite hits, dealing %d additional damage!\n", second_damage);
+            } else {
+                print_message("The wolf's second bite misses!\n");
+            }
+        }
+    } else {
+        print_message("Your defenses absorb the attack!\n");
+    }
+}

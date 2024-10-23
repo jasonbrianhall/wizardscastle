@@ -272,7 +272,7 @@ void buy_armor(Player *player)
                 if (player->armor_type < 1)
                 {
                     player->armor_type = 1;
-                    player->armor_points = 7;
+                    player->armor_points = 50;
                     player->gold -= 1250;
                     print_message_formatted("\nArmor purchased successfully!\n");
                 }
@@ -296,7 +296,7 @@ void buy_armor(Player *player)
                 if(player->armor_type < 2)
                 {
                     player->armor_type = 2;
-                    player->armor_points = 14;
+                    player->armor_points = 50;
                     player->gold -= 1500;
                     print_message("\nArmor purchased successfully!\n");
 
@@ -320,7 +320,7 @@ void buy_armor(Player *player)
                 if (player->armor_type<3)
                 {
                     player->armor_type = 3;
-                    player->armor_points = 21;
+                    player->armor_points = 50;
                     player->gold -= 2000;
                     print_message_formatted("Armor purchased successfully!\n");
 

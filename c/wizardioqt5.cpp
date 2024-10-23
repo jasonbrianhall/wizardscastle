@@ -77,7 +77,7 @@ public:
         connect(inputLine, &QLineEdit::returnPressed, this, &WizardsCastleWindow::processInput);
         mapUpdateTimer = new QTimer(this);
         connect(mapUpdateTimer, &QTimer::timeout, this, &WizardsCastleWindow::updateMap);
-        mapUpdateTimer->start(1000);  // Update every 1000 ms (1 second)
+        mapUpdateTimer->start(66);  // Update 15 times per second
         outputText->installEventFilter(this);
         setColorScheme("White and Black");
     }
@@ -669,7 +669,7 @@ void initialize_qt(int argc, char *argv[]) {
             player.runestaff_flag = 1;
             player.weapon_type = 4;  // Sword
             player.armor_type = 4;   // Plate
-            player.armor_points = 42;
+            player.armor_points = 50;
 
             print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
             print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");

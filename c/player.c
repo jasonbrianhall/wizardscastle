@@ -238,7 +238,7 @@ void buy_equipment(Player *player)
     } while (exittheloop==0);
 
     player->gold -= cost;
-    player->armor_points = player->armor_type * 7;
+    player->armor_points = 0;
 
     // Buy Weapon
     snprintf(message, sizeof(message), "\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
@@ -256,14 +256,18 @@ void buy_equipment(Player *player)
                     print_message_formatted("** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
                     continue;
                 }
-                player->weapon_type = 3; cost = 30; break;
+                player->weapon_type = 3; cost = 30;
+                player->armor_points = 50;
+                break;
             case 'M': 
                 if (player->gold < 20) {
                     print_message_formatted("** SORRY %s, I'M AFRAID I DON'T GIVE CREDIT!\n\n",  player->sex == MALE ? "SIR" : "MA'AM");
                     continue;
                 }
-                player->weapon_type = 2; cost = 20; break;
-            case 'D': player->weapon_type = 1; cost = 10; break;
+                player->weapon_type = 2; cost = 20;
+                player->armor_points = 50;
+                break;
+            case 'D': player->weapon_type = 1; cost = 10; player->armor_points = 50; break;
             case 'N': player->weapon_type = 0; cost = 0; break;
             default:
                 print_message("** Poor ");

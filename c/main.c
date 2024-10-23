@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
             player.runestaff_flag = 1;
             player.weapon_type = 4;  // Sword
             player.armor_type = 4;   // Plate (assuming this is the best armor, equivalent to "Shield")
-            player.armor_points = 42; // Max armor points for Plate armor
+            player.armor_points = 50; // Max armor points for Plate armor
 
 
             print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
