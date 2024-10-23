@@ -1331,7 +1331,7 @@ void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength,
     }
     
     // Charge damage calculation
-    int damage = random_number(8) + random_number(8);  // 2-16 base damage for a powerful charge
+    int damage = random_number(4) + random_number(4);  // 2-8 base damage for a powerful charge
     
     // Add Minotaur's strength bonus
     damage += enemy_strength / 8;    // Better strength bonus for charging
