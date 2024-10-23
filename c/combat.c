@@ -327,11 +327,24 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (room_content == GARGOYLE && random_number(4) == 1) {  // 25% chance
-            wolf_frenzy_attack(player, enemy_strength, enemy_dexterity);
+            gargoyle_stone_form_attack(player, game, enemy_strength, enemy_dexterity);
             if (game->game_over) {
                 return;
             }
         }
+        else if (room_content == BEAR && random_number(4) == 1) {  // 25% chance
+            bear_maul_attack(player, game, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+            }
+        }
+        else if (room_content == OGRE && random_number(4) == 1) {  // 25% chance
+            ogre_rage_attack(player, game, enemy_strength, enemy_dexterity);
+            if (game->game_over) {
+                return;
+            }
+        }
+
         else if (room_content == CHIMERA && random_number(3) == 1) {  // 33% chance for special attack
             chimera_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
             if (game->game_over) {
@@ -1699,6 +1712,144 @@ void gargoyle_stone_form_attack(Player *player, GameState *game, int enemy_stren
     
     if (player->strength <= 0) {
         print_message("\nTHE GARGOYLE'S STONE FIST HAS CRUSHED YOU!\n");
+        game->game_over = 1;
+    }
+}
+
+void bear_maul_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message("\nThe Bear rears up and unleashes a savage mauling attack!\n");
+    
+    if (!enemy_attack_hits(player, enemy_dexterity)) {
+        print_message("You manage to avoid the Bear's deadly claws!\n");
+        return;
+    }
+    
+    // Base damage 
+    int damage = random_number(5) + 2;  // 3-7 base damage
+    damage += enemy_strength / 8;  // Strength bonus
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    // Apply armor reduction if present
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type;
+        damage -= armor_protection;
+        player->armor_points -= armor_protection;  // Significant armor damage from claws
+        
+        if (damage < 0) {
+            damage = 0;
+        }
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message("YOUR ARMOR IS TORN TO SHREDS BY THE BEAR'S CLAWS!\n");
+        }
+    }
+    
+    if (damage > 0) {
+        player->strength -= damage;
+        print_message_formatted("The mauling attack deals %d damage!\n", damage);
+        
+        // Second claw attack
+        if (enemy_attack_hits(player, enemy_dexterity)) {
+            int claw_damage = random_number(4);  // 1-4 damage
+            
+            if (player->armor_type != 0) {
+                claw_damage -= player->armor_type;
+                player->armor_points -= 1;  // Minor additional armor damage
+                
+                if (claw_damage < 0) {
+                    claw_damage = 0;
+                }
+            }
+            
+            if (claw_damage > 0) {
+                player->strength -= claw_damage;
+                print_message_formatted("The Bear's second claw rakes you for %d additional damage!\n", claw_damage);
+            }
+        }
+        
+        // Bleeding effect if unarmored
+        if (player->armor_type == 0 && enemy_attack_hits(player, enemy_dexterity)) {
+            int bleed = random_number(3);  // 1-3 bleed damage
+            player->strength -= bleed;
+            print_message_formatted("The deep wounds cause %d bleeding damage!\n", bleed);
+        }
+    } else {
+        print_message("Your defenses absorb the mauling attack!\n");
+    }
+    
+    if (player->strength <= 0) {
+        print_message("\nTHE BEAR HAS MAULED YOU TO DEATH!\n");
+        game->game_over = 1;
+    }
+}
+
+void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+    print_message("\nThe Ogre works itself into a mindless rage!\n");
+    
+    if (!enemy_attack_hits(player, enemy_dexterity)) {
+        print_message("The Ogre's wild swing misses completely!\n");
+        enemy_dexterity -= 1;  // Gets clumsier in rage
+        return;
+    }
+    
+    // Rage increases damage but reduces accuracy
+    int damage = random_number(8);  // 1-8 base damage
+    damage += enemy_strength / 6;  // Better strength bonus while raging
+    
+    // Player's defensive calculations
+    int player_defense = player->strength / 9 + player->dexterity / 6;
+    damage -= player_defense;
+    
+    // Apply armor reduction if present
+    if (player->armor_type != 0) {
+        int armor_protection = player->armor_type;
+        damage -= armor_protection;
+        player->armor_points -= 2;  // Heavy armor damage from powerful blows
+        
+        if (damage < 0) {
+            damage = 0;
+        }
+        
+        if (player->armor_points <= 0) {
+            player->armor_points = 0;
+            player->armor_type = 0;
+            print_message("YOUR ARMOR IS SMASHED BY THE OGRE'S TREMENDOUS STRENGTH!\n");
+        }
+    }
+    
+    if (damage > 0) {
+        player->strength -= damage;
+        print_message_formatted("The Ogre's rage-fueled attack deals %d damage!\n", damage);
+        
+        // Second wild swing with penalty
+        if (enemy_attack_hits(player, enemy_dexterity - 2)) {
+            int second_damage = random_number(6);  // 1-6 damage
+            if (player->armor_type != 0) {
+                second_damage -= player->armor_type;
+                if (second_damage < 0) {
+                    second_damage = 0;
+                }
+            }
+            
+            if (second_damage > 0) {
+                player->strength -= second_damage;
+                print_message_formatted("The Ogre's second wild swing connects for %d more damage!\n", second_damage);
+            }
+        } else {
+            print_message("The Ogre's second attack misses as it loses balance!\n");
+            enemy_dexterity -= 1;  // Gets even clumsier
+        }
+    } else {
+        print_message("Your defenses absorb the Ogre's attack!\n");
+    }
+    
+    if (player->strength <= 0) {
+        print_message("\nTHE OGRE HAS BEATEN YOU TO DEATH IN ITS RAGE!\n");
         game->game_over = 1;
     }
 }

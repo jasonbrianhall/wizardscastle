@@ -27,5 +27,7 @@ int calculate_damage_enemy(Player *player, int enemy_strength, int enemy_dexteri
 int enemy_attack_hits(Player *player, int enemy_dexterity);
 int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterity, int *enemy_intelligence);
 void wolf_frenzy_attack(Player *player, int enemy_strength, int enemy_dexterity);
-
+void gargoyle_stone_form_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void bear_maul_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 #endif // COMBAT_H
