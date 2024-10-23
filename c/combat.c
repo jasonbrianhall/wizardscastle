@@ -1948,6 +1948,7 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin throws stolen pepper in your eyes!\n");
                 player->temp_blindness_flag = 1;
+                player->blindness_flag=1;
                 print_message("Your eyes burn terribly - you can't see!\n");
             } else {
                 trick = 5;  // Fall back to regular attack if already blind

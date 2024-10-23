@@ -169,6 +169,11 @@ bool main_game_loop(Player *player, GameState *game)
                {
                    player->strength=18;
                }
+               if(player->temp_blindness_flag==1)
+               {
+                   print_message("Your vision has returned.\n");
+                   player->blindness_flag=0;
+               }
            }
            // Vendors
            else if (room_content==VENDOR)
@@ -190,6 +195,12 @@ bool main_game_loop(Player *player, GameState *game)
                    player->strength=18;
                    player->temp_strength=0;
                }
+               if(player->temp_blindness_flag==1)
+               {
+                   print_message("Your vision has returned.\n");
+                   player->blindness_flag=0;
+               }
+
            }
            // Treasure
            else if (room_content>=TREASURE_START && room_content<=TREASURE_END)
