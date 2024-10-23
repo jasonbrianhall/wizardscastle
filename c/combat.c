@@ -377,19 +377,25 @@ void fight_monster(Player *player, GameState *game)
         }
         else if ((room_content == KOBOLD && random_number(4)==1) || 
                  (room_content == DRAGON && random_number(3)==1) ||
-                 (room_content == TROLL && random_number(2)==1))  // Trolls have 50% chance to regenerate
+                 (room_content == TROLL && random_number(2)==1)) || // Trolls have 50% chance to regenerate
+                 (room_content == GOBLIN && random_number(5)==1)
         {
-            spellcasted=random_number(7);
             switch (room_content)
             {
                 case KOBOLD:
                     max_increase=3;
+                    spellcasted=random_number(7);  // KOBOLDS CAN'T CAST DARKNESS
                     break;
                 case DRAGON:
+                    spellcasted=random_number(8);
                     max_increase=5;
                     break;
+                case GOBLIN:
+                    spellcasted=random_number(8);
+                    max_increase=2;
+                    break;
                 case TROLL:
-                    max_increase=4;  // Trolls have strong regeneration
+                    max_increase=5;  // Trolls have strong regeneration
                     spellcasted=1;   // Trolls can only heal, not cast other spells
                     break;
             }
@@ -514,6 +520,35 @@ void fight_monster(Player *player, GameState *game)
                              print_message_formatted("YOUR INTELLIGENCE HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
                              game->game_over = 1;
                              return;
+                         }
+                     }
+                     break;
+                 case 8:
+                    print_message_formatted("THE %s CASTS DARKNESS!\n", enemy_name);
+    
+                     // Calculate avoidance chance based on player stats
+                     avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
+    
+                     // Add a random factor
+                     avoidance_chance += random_number(10) - 5;  // -5 to +5 random adjustment
+    
+                     // Ensure the avoidance chance is within a reasonable range (5% to 95%)
+                     if (avoidance_chance < 5) avoidance_chance = 5;
+                     if (avoidance_chance > 95) avoidance_chance = 95;
+    
+                     if (random_number(100) < avoidance_chance) {
+                         print_message_formatted("YOU SUCCESSFULLY RESIST DARKNESS!\n");
+                     } else {
+                         if (player->blindness_flag==0)
+                         {
+                             temp = random_number(max_increase);
+                             print_message_formatted("THE SPELL HITS! YOU ARE BLIND!!!);
+                             player->temp_blindness=1;
+                             player->blindness=1;
+                         }
+                         else
+                         {
+                             print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!);
                          }
                      }
                      break;
