@@ -581,6 +581,10 @@ void fight_monster(Player *player, GameState *game)
                      } else {
                          temp = random_number(max_increase);
                          print_message_formatted("THE FIREBOLT HITS YOU\n", temp);
+                         if(temp-player->armor_type<0)
+                         {
+                            temp=0;
+                         }
                          player->armor_points-=temp;
                          if (player->armor_points<=0)
                          {
