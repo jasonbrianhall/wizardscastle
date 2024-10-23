@@ -559,8 +559,13 @@ void fight_monster(Player *player, GameState *game)
                      }
                      break;
                  case 9:
-                    print_message_formatted("THE %s CASTS FIREBOLT!\n", enemy_name);
-    
+                     if (room_content == BALROG)
+                     {
+                        print_message("The Balrog opens its fiery mouth and a firebolt shots out of it.\n");
+                     }
+                     else {
+                         print_message_formatted("THE %s CASTS FIREBOLT!\n", enemy_name);
+                     }
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
     
