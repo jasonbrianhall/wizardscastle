@@ -269,16 +269,16 @@ void handle_treasure(Player *player, GameState *game, int room_content)
 
     // Apply special effects of treasures
     switch (treasure_index) {
-        case 0: // Ruby Red
+        case RUBY_RED_INDEX: // Ruby Red
         	print_message_formatted("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n\n");
 	    break;
-        case 1: // Norn Stone
+        case NORN_STONE_INDEX: // Norn Stone
 	    print_message_formatted("THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n\n");
     	break;
-        case 2: // Pale Pearl
+        case PALE_PEARL_INDEX: // Pale Pearl
 	    print_message_formatted("THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n\n");
         	break;
-        case 3: // Opal Eye
+        case OPAL_EYE_INDEX: // Opal Eye
 	    print_message_formatted("THE OPAL EYE WILL CURE BLINDNESS.\n");
         	if (player->blindness_flag) {
 	            player->blindness_flag = 0;
@@ -286,18 +286,18 @@ void handle_treasure(Player *player, GameState *game, int room_content)
         	}
         	print_message_formatted("\n");
 	    break;
-        case 4: // Green Gem
+        case GREEN_GEM_INDEX: // Green Gem
 	    print_message_formatted("THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n\n");
         	break;
-        case 5: // Blue Flame
+        case BLUE_FLAME_INDEX: // Blue Flame
 	    print_message_formatted("THE BLUE FLAME WILL DISSOLVE BOOKS.\n\n");
         	if (player->stickybook_flag) {
 	        player->stickybook_flag = 0;
 	        print_message_formatted("THE STICKY BOOK DISSOLVES!\n\n");
         	}
 	    break;
-        case 6: // Palantir
-        case 7: // Silmaril
+        case PALANTIR_INDEX: // Palantir
+        case SILMARIL_INDEX: // Silmaril
 	    print_message_formatted("ITS BEAUTY IS BEYOND COMPARE.\n\n");
         	break;
     }

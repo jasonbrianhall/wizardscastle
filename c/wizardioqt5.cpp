@@ -275,7 +275,7 @@ void display_map2(GameState *game, Player *player)
     // Print number of treasures
     print_message2("Treasures Found: %d\n", player->treasure_count);
 
-    for (int i=0; i<TREASURE_END-TREASURE_START; i++)
+    for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
         if(game->treasure[i]==1)
         {
@@ -675,6 +675,12 @@ void initialize_qt(int argc, char *argv[]) {
             print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered\n");
+            for (q=0;q<TREASURE_END-TREASURE_START+1; q++)
+            {
+                print_message("%d", q);
+                game.treasure[q]=1;
+            }
+            
         }
 
         if (debug_mode) {

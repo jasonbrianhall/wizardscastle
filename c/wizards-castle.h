@@ -45,16 +45,24 @@
 #define ROOM_END 125
 
 // Treasures (126-133)
-#define TREASURE_START  126
-#define RUBY_RED        126
-#define NORN_STONE      127
-#define PALE_PEARL      128
-#define OPAL_EYE        129
-#define GREEN_GEM       130
-#define BLUE_FLAME      131
-#define PALANTIR        132
-#define SILMARIL        133
-#define TREASURE_END    133
+#define TREASURE_START     126
+#define RUBY_RED           126
+#define RUBY_RED_INDEX      0
+#define NORN_STONE        127
+#define NORN_STONE_INDEX    1
+#define PALE_PEARL        128
+#define PALE_PEARL_INDEX    2
+#define OPAL_EYE          129
+#define OPAL_EYE_INDEX      3
+#define GREEN_GEM         130
+#define GREEN_GEM_INDEX     4
+#define BLUE_FLAME        131
+#define BLUE_FLAME_INDEX    5
+#define PALANTIR          132
+#define PALANTIR_INDEX      6
+#define SILMARIL          133
+#define SILMARIL_INDEX      7
+#define TREASURE_END      133
 
 
 #define HOBBIT 1
