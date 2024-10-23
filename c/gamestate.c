@@ -92,7 +92,7 @@ void generate_castle(GameState *game)
     
     // Seed the random number generator
     srand(time(NULL));
-    for (int i=0; i<TREASURE_END-TREASURE_START; i++)
+    for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
         game->treasure[i]=0;
     }
