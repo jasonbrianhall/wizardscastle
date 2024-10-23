@@ -769,7 +769,10 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
             case 'W':
                 if (player->intelligence>=14)
                 {
-                    player->strength--;
+                    if(player->strenght>10)
+                    {
+                        player->strength--;
+                    }
                     if (player->strength <= 0) {
                         game->game_over = 1;
                         return 1;
@@ -786,7 +789,10 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
             case 'F':
                 if (player->intelligence>=14)
                 {
-                    player->strength--;
+                    if(player->strength>10)
+                    {
+                        player->strength--;
+                    }
                     player->intelligence--;
                     if (player->strength <= 0 || player->intelligence <= 0) {
                         game->game_over = 1;
