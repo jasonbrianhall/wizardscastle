@@ -120,7 +120,7 @@ void generate_castle(GameState *game)
     game->discovered_rooms[entrance_index] = 1;  // 1 means discovered
 
     // Place stairs
-    for (z = 1; z <= 8; z++) {
+    for (z = 1; z <= CASTLE_SIZE; z++) {
         for (int i = 1; i <= 2; i++) {
             do {
                 x = random_number(CASTLE_SIZE);
@@ -138,7 +138,7 @@ void generate_castle(GameState *game)
 
 
     // Place other elements
-    for (z = 1; z <= 8; z++) {
+    for (z = 1; z <= CASTLE_SIZE; z++) {
         // Place monsters, treasures, etc.
         for (q = MONSTER_START; q <= MONSTER_END; q++) {
             do {

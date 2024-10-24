@@ -447,23 +447,23 @@ void teleport(Player *player, GameState *game)
 
     int new_x, new_y, new_level;
 
-    print_message_formatted("\nEnter X-coordinate (1-8): ");
+    print_message_formatted("\nEnter X-coordinate (1-%d): ", CASTLE_SIZE);
     new_x=get_user_input_number();
-    if (new_x < 1 || new_x > 8) {
+    if (new_x < 1 || new_x > CASTLE_SIZE) {
         print_message_formatted("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
-    print_message_formatted("Enter Y-coordinate (1-8): ");
+    print_message_formatted("Enter Y-coordinate (1-%d): ", CASTLE_SIZE);
     new_y=get_user_input_number();
         if (new_y < 1 || new_y > 8) {
         print_message_formatted("Invalid coordinate. Teleportation failed.\n");
         return;
     }
 
-    print_message_formatted("Enter Z-coordinate (level 1-8): ");
+    print_message_formatted("Enter Z-coordinate (level 1-%d): ", CASTLE_SIZE);
     new_level=get_user_input_number();
-        if (new_level < 1 || new_level > 8) {
+        if (new_level < 1 || new_level > CASTLE_SIZE) {
         print_message_formatted("Invalid level. Teleportation failed.\n");
         return;
     }
@@ -621,12 +621,12 @@ void display_map(GameState *game, Player *player)
         print_message("       1        2        3        4        5        6        7        8     \n");
         print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
-        for (int x = 1; x <= 8; x++) {
+        for (int x = 1; x <= CASTLE_SIZE; x++) {
             // Print row coordinate
             snprintf(number_str, sizeof(number_str), "%d", x);
             print_message(number_str);
 
-            for (int y = 1; y <= 8; y++) {
+            for (int y = 1; y <= CASTLE_SIZE; y++) {
                 print_message("|");
                 if (x == player->x && y == player->y) {
                     print_message("  [YOU] ");
@@ -642,7 +642,7 @@ void display_map(GameState *game, Player *player)
             print_message("|\n");
 
             // Print horizontal border between rows
-            if (x < 8) {
+            if (x < CASTLE_SIZE) {
                 print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
             }
         }
