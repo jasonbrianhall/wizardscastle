@@ -205,7 +205,7 @@ To build the MS-DOS CLI version (in Linux)
 I also have a "make qt-windows" command which cross compiles the code from Linux to Windows but the .exe generated doesn't run because it's not packaged with all the proper DLLs dependencies and I am ignorant on how to build that.
 
 
-For debugging, use `make debug` for memory issues and run with `./wizardscastle --debug` to make the castle easier
+For debugging, use `make debug` for memory issues.  Additionally, not related to memory issues, run with `./wizardscastle --debug` to make the castle much easier.
 
 ## Version History
 
