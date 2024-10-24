@@ -840,7 +840,7 @@ char get_user_input_custom_prompt(char* prompt) {
         
         // Get the first character of the input
         char command = input[0];
-        print_message("%c\n", input[0], input);
+        print_message("%c\n", input[0]);
         
         // Check if it's a valid command
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
@@ -871,7 +871,7 @@ char get_user_input_yn() {
         
         // Get the first character of the input
         char command = input[0];
-        
+        print_message("%c\n", input[0]);        
         // Check if it's a valid command
         if (strchr("YN", command) != NULL) {
             return command;
