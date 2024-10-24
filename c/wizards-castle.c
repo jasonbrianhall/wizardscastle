@@ -184,7 +184,7 @@ bool main_game_loop(Player *player, GameState *game)
                 case 'U':
                     if (room_content == STAIRS_UP) {  // Stairs going up
                         player->level++;
-                        if (player->level>8)
+                        if (player->level>CASTLE_SIZE)
                         {
                             player->level=1;
                         }
@@ -208,7 +208,7 @@ bool main_game_loop(Player *player, GameState *game)
                         player->level--;
                         if (player->level<1)
                         {
-                            player->level=8;
+                            player->level=CASTLE_SIZE;
                         }
                         print_message_formatted("YOU DESCEND THE STAIRS.\n");
                     } else {

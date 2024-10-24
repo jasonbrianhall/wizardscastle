@@ -456,7 +456,7 @@ void teleport(Player *player, GameState *game)
 
     print_message_formatted("Enter Y-coordinate (1-%d): ", CASTLE_SIZE);
     new_y=get_user_input_number();
-        if (new_y < 1 || new_y > 8) {
+        if (new_y < 1 || new_y > CASTLE_SIZE) {
         print_message_formatted("Invalid coordinate. Teleportation failed.\n");
         return;
     }
