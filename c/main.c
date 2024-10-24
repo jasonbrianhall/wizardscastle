@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
             // Debug mode: Set player as male elf with max attributes and equipment
             player.race = ELF;  // Elf
             player.sex = MALE;   // Male
-            player.strength = 18;
-            player.intelligence = 18;
-            player.dexterity = 18;
+            player.strength = MAX_STRENGTH;
+            player.intelligence = MAX_INTELLIGENCE;
+            player.dexterity = MAX_DEXTERITY;
             player.gold = 10000;
             player.flares = 1000;
             player.lamp_flag = 1;
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
             player.armor_points = 50; // Max armor points for Plate armor
 
 
-            print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
+            print_message("DEBUG MODE: You are a male elf with %d Strength, %d Intelligence, and %d Dexterity.\n", player.strength, player.intelligence, player.dexterity);
             print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered and you have all the treasures.\n");

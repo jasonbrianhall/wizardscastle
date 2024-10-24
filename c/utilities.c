@@ -375,7 +375,7 @@ void drink_from_pool(Player *player, GameState *game)
     int effect = random_number(8);
     switch(effect) {
         case 1:
-            player->strength = get_minimum(18, player->strength + random_number(3));
+            player->strength = get_minimum(MAX_STRENGTH, player->strength + random_number(3));
             print_message_formatted("feel STRONGER.\n");
             break;
         case 2:
@@ -387,7 +387,7 @@ void drink_from_pool(Player *player, GameState *game)
             }
             break;
         case 3:
-            player->intelligence = get_minimum(18, player->intelligence + random_number(3));
+            player->intelligence = get_minimum(MAX_INTELLIGENCE, player->intelligence + random_number(3));
             print_message_formatted("feel SMARTER.\n");
             break;
         case 4:
@@ -399,7 +399,7 @@ void drink_from_pool(Player *player, GameState *game)
             }
             break;
         case 5:
-            player->dexterity = get_minimum(18, player->dexterity + random_number(3));
+            player->dexterity = get_minimum(MAX_DEXTERITY, player->dexterity + random_number(3));
             print_message_formatted("feel NIMBLER.\n");
             break;
         case 6:
@@ -572,11 +572,12 @@ void open_book(Player *player, GameState *game)
             break;
         case 4:
             print_message_formatted("IT'S A MANUAL OF DEXTERITY!\n");
-            player->dexterity = 18;
+            player->dexterity = (player->dexterity += 18) > MAX_DEXTERITY ? MAX_DEXTERITY : player->dexterity;
+
             break;
         case 5:
             print_message_formatted("IT'S A MANUAL OF STRENGTH!\n");
-            player->strength = 18;
+            player->strength = (player->strength += 18) > MAX_STRENGTH ? MAX_STRENGTH : player->strength;
             break;
         case 6:
             print_message_formatted("THE BOOK STICKS TO YOUR HANDS -\n");
@@ -585,7 +586,8 @@ void open_book(Player *player, GameState *game)
             break;
         case 7:
             print_message_formatted("IT'S A MANUAL OF INTELLIGENCE!\n");
-            player->intelligence = 18;
+            player->intelligence = (player->intelligence += 18) > MAX_INTELLIGENCE ? MAX_INTELLIGENCE : player->intelligence;
+
             break;
 
     }
@@ -617,7 +619,7 @@ void display_map(GameState *game, Player *player)
 
         // Print top border with column coordinates
         print_message("       1        2        3        4        5        6        7        8     \n");
-        print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
         for (int x = 1; x <= 8; x++) {
             // Print row coordinate
@@ -641,12 +643,12 @@ void display_map(GameState *game, Player *player)
 
             // Print horizontal border between rows
             if (x < 8) {
-                print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+                print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
             }
         }
 
         // Print bottom border
-        print_message("  +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
 
         #ifdef MSDOS
         print_message("PRESS ENTER TO CONTINUE...");

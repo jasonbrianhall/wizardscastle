@@ -164,10 +164,10 @@ void allocate_attributes(Player *player)
         }
     }
 
-    if (player->strength>18)
+    if (player->strength>MAX_STRENGTH)
     {
-        other_points+=player->strength-18;
-        player->strength=18;
+        other_points+=player->strength-MAX_STRENGTH;
+        player->strength=MAX_STRENGTH;
     }
 
 
@@ -184,10 +184,10 @@ void allocate_attributes(Player *player)
         }
     }
 
-    if (player->intelligence>18)
+    if (player->intelligence>MAX_INTELLIGENCE)
     {
-        other_points+=player->intelligence-18;
-        player->intelligence=18;
+        other_points+=player->intelligence-MAX_INTELLIGENCE;
+        player->intelligence=MAX_INTELLIGENCE;
     }
 
     // Allocate remaining points to Dexterity
@@ -441,9 +441,9 @@ void fight_monster_normalize(Player *player, GameState *game)
             player->dexterity=player->temp_dexterity;
             player->temp_dexterity=0;
         }
-        if (player->strength>18)
+        if (player->strength>MAX_STRENGTH)
         {
-            player->strength=18;
+            player->strength=MAX_STRENGTH;
         }
         if(player->temp_blindness_flag==1)
         {

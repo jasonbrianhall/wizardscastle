@@ -64,6 +64,10 @@
 #define SILMARIL_INDEX      7
 #define TREASURE_END      133
 
+#define MAX_STRENGTH     50
+#define MAX_INTELLIGENCE 50
+#define MAX_DEXTERITY    50
+
 
 #define HOBBIT 1
 #define ELF    2        

@@ -212,7 +212,7 @@ void fight_monster(Player *player, GameState *game)
                     {
                         chance = player->blindness_flag == 1 ? 4 : 5;
 
-                        if (random_number(chance) >= 4 || random_number(chance) >= 4 || random_number(24-get_minimum(18, player->dexterity))==1)  // 3/5 twice plus dexterity based chance
+                        if (random_number(chance) >= 4 || random_number(chance) >= 4 || random_number(24-get_minimum(23, player->dexterity))==1)  // 3/5 twice plus dexterity based chance (100% chance if dexterity is 23)
                         {
                             chance = player->blindness_flag == 1 ? 12 : 8;
 
@@ -255,7 +255,7 @@ void fight_monster(Player *player, GameState *game)
                     if (player->race == HOBBIT) 
                     {
                         chance = player->blindness_flag == 1 ? 9 : 6;
-                        if (random_number(chance) == 1 || random_number(chance) == 1 || random_number(24-get_minimum(18, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
+                        if (random_number(chance) == 1 || random_number(chance) == 1 || random_number(24-get_minimum(23, player->dexterity))==1) {  // Two 20% chances plus dexterity-based chance
                             temp = random_number(3);  // 1-3 damage
                             print_message_formatted("You throw a stone and hit the enemy for %d damage!\n", temp);
                             enemy_strength  -= temp;
@@ -675,11 +675,11 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         print_message_formatted("A SWORD\n");
         player->weapon_type = 3;
         print_message_formatted("A STRENGTH POTION\n");
-        player->strength = get_minimum(player->strength + random_number(6), 18);
+        player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         print_message_formatted("AN INTELLIGENCE POTION\n");
-        player->intelligence = get_minimum(player->intelligence + random_number(6), 18);
+        player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE;
         print_message_formatted("A DEXTERITY POTION\n");
-        player->dexterity = get_minimum(player->dexterity + random_number(6), 18);
+        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_INTELLIGENCE;
         if (!player->lamp_flag) {
             print_message_formatted("A LAMP\n");
             player->lamp_flag = 1;
@@ -749,7 +749,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     }
     if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
     {
-        print_message(          "    (H)EAL - Permanently heals you (but maxes out at 18 after combat); costs one intelligence points\n");
+        print_message(          "    (H)EAL - Permanently heals you (but maxes out at %d after combat); costs one intelligence points\n", MAX_STRENGTH);
         print_message(          "    (S)PEED - Temporarily increases your dexterity\n");
         print_message(          "    (B)RIGHT - Temporarily increases your intelligence \n");
     }
@@ -1442,10 +1442,10 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     print_message_formatted("Blast %d: PING! Enemy loses %d intelligence and takes %d damage\n", i+1, temp, damage);
                     break;
                 case 4:
-                    if(player->intelligence<18)
+                    if(player->intelligence<MAX_INTELLIGENCE)
                     {
                          temp=player->intelligence;
-                         player->intelligence = (player->intelligence += random_number(3)) > 18 ? 18 : player->intelligence;
+                         player->intelligence = (player->intelligence += random_number(3)) > MAX_INTELLIGENCE ? MAX_INTELLIGENCE : player->intelligence;
                          print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, temp-player->intelligence);
                     }
                     else
@@ -1454,10 +1454,10 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     }
                     break;
                 case 5:
-                    if(player->strength<18)
+                    if(player->strength<MAX_STRENGTH)
                     {
                         temp=player->strength;
-                        player->strength = (player->strength += random_number(3)) > 18 ? 18 : player->strength;
+                        player->strength = (player->strength += random_number(3)) > MAX_STRENGTH ? MAX_STRENGTH : player->strength;
                         print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, temp-player->strength);
                     }
                     else
@@ -1466,10 +1466,10 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     }                    
                     break;
                 case 6:
-                    if(player->dexterity<18)
+                    if(player->dexterity<MAX_DEXTERITY)
                     {
                         temp=player->dexterity;
-                        player->dexterity = (player->dexterity += random_number(3)) > 18 ? 18 : player->dexterity;
+                        player->dexterity = (player->dexterity += random_number(3)) > MAX_DEXTERITY ? MAX_DEXTERITY : player->dexterity;
                         print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, temp-player->dexterity);
                     }
                     else
