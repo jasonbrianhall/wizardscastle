@@ -962,17 +962,38 @@ void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength,
         int armor_protection = player->armor_type + random_number(3) - 1;
         
         // Fireballs are more effective against armor
-        armor_protection = armor_protection / 2;  // Only half armor protection vs fire
-        
-        damage -= armor_protection;
-        player->armor_points -= (armor_protection * 2);  // Double armor damage from fire
-        
-        if (damage < 0) {
-            player->armor_points += damage;  // Adjust for overkill protection
-            damage = 0;
+        armor_protection = armor_protection; 
+
+        if(player->armor_type == STONE)
+        {        
+            damage -= (armor_protection*3) ;
+            player->armor_points -= (armor_protection); 
+
+        }
+        else
+        {        
+            damage -= (armor_protection*2) ;
+            player->armor_points -= (armor_protection * 2);  // Double armor damage from fire
         }
         
-        print_message_formatted("Your armor partially protects you, absorbing %d damage but taking extra wear!\n", armor_protection);
+        if (damage<0)
+        {
+            damage=0;
+            if(player->armor_type==STONE)
+            {
+                 print_message_formatted("Your armor protects you; absorbing the fireball!\n", armor_protection);
+            }
+            else
+            {
+                 print_message_formatted("Your armor protects you, absorbing damage but taking extra wear!\n");
+            }
+
+        }
+        else
+        {
+            print_message_formatted("Your armor partially protects you, absorbing %d damage but taking extra wear!\n", armor_protection);
+        }
+
         
         if (player->armor_points <= 0) {
             player->armor_points = 0;
@@ -980,10 +1001,7 @@ void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength,
             print_message_formatted("YOUR ARMOR HAS BEEN MELTED BY THE DRAGON'S FIRE!\n");
         }
     }
-    
-    // Ensure minimum damage
-    if (damage < 1) damage = 1;  // Dragon's fire always does at least 1 damage
-    
+        
     player->strength -= damage;
     print_message_formatted("You take %d final damage from the fireball!\n", damage);
     
