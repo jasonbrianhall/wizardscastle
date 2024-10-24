@@ -1031,7 +1031,7 @@ void balrog_flame_whip_attack(Player *player, GameState *game, int enemy_strengt
     }
     
     // Base damage calculation
-    int damage = random_number(8) + 4;  // 5-12 base damage
+    int damage = random_number(5) + 1;  // 1-6 base damage
     
     // Add Balrog's strength bonus
     damage += enemy_strength / 9;    // Strength bonus like normal attacks
@@ -1128,9 +1128,9 @@ int cast_stone_skin_spell(Player *player)
         }
         else
         {
-             print_message("You can't improve your armor but armor points have been restors.");
+             print_message("You can't improve your armor but armor points have been restored.");
         }
-        player->armor_points*=2;
+        player->armor_points+10;
         if(player->armor_points<50)
         {
             player->armor_points=50;
