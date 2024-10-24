@@ -723,7 +723,7 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
         player->treasure_count--;
         print_message_formatted("\nOK, JUST DON'T TELL ANYONE ELSE.\n");
         if (strcmp(enemy_name, "VENDOR") == 0) {
-            game->vendor_attacked = 1;  // Vendor won't trade anymore
+            game->vendor_attacked = 0;  // Vendor will now trade
         }
         return 1;
     }
