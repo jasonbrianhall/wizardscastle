@@ -195,6 +195,7 @@ To build the QT Windows version (in Windows)
         nmake 
 
 5.  I have not tried to build the CLI version in Windows because mingw works great and my environment is Fedora based.
+6.  The MSVC version has a severe limitation with constant character types whereas GCC doesn't; hence the simplified ASCII Art.
 
 To build the MS-DOS CLI version (in Linux)
 1. Naviage to the 'c/' dir
