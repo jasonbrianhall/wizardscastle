@@ -670,10 +670,18 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     if (is_vendor) {
         print_message_formatted("\nYOU GET ALL HIS WARES:\n");
         print_message_formatted("PLATE ARMOR\n");
-        player->armor_type = 3;
-        player->armor_points = MAX_ARMOR_POINTS;
+       
+        if (player->armor <=PLATE)
+        {
+             player->armor_type = PLATE;
+             player->armor_points = MAX_ARMOR_POINTS;
+        }
+
         print_message_formatted("A SWORD\n");
-        player->weapon_type = 3;
+        if (player->weapon <=SWORD)
+        {
+            player->weapon_type = SWORD;
+        }
         print_message_formatted("A STRENGTH POTION\n");
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         print_message_formatted("AN INTELLIGENCE POTION\n");

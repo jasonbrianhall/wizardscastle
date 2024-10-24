@@ -612,20 +612,48 @@ void display_map(GameState *game, Player *player)
     if(player->blindness_flag == 0)
     {
         print_message("\n=== MAP OF LEVEL ");
-        char level_str[3], number_str[3];
+        char level_str[3];
         snprintf(level_str, sizeof(level_str), "%d", player->level);
         print_message(level_str);
         print_message(" ===\n\n");
 
         // Print top border with column coordinates
-        print_message("       1        2        3        4        5        6        7        8     \n");
-        print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        for(int x=1;x<=CASTLE_SIZE; x++)
+        {
+            if(x<10)
+            {
+                print_message("       %d ", x);
+            }
+            else {
+                print_message("      %d ", x);
+            }
+        }
+        if(CASTLE_SIZE<10)
+        {
+            print_message("\n +");
+        }
+        else
+        {
+            print_message("\n  +");
+        }
+        for(int x=1;x<=CASTLE_SIZE; x++)
+        {
+            print_message("--------+");
+        }
+        print_message("\n");
+
 
         for (int x = 1; x <= CASTLE_SIZE; x++) {
             // Print row coordinate
-            snprintf(number_str, sizeof(number_str), "%d", x);
-            print_message(number_str);
-
+            if(x<10 && CASTLE_SIZE>=10)
+            {
+                 print_message(" %d", x);
+            }
+            else
+            {
+                 print_message("%d", x);
+           
+            }
             for (int y = 1; y <= CASTLE_SIZE; y++) {
                 print_message("|");
                 if (x == player->x && y == player->y) {
@@ -643,12 +671,30 @@ void display_map(GameState *game, Player *player)
 
             // Print horizontal border between rows
             if (x < CASTLE_SIZE) {
-                print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+                if (CASTLE_SIZE>=10)
+                {
+                    print_message(" ");
+                } 
+                print_message(" +");
+                for(int x=1;x<=CASTLE_SIZE; x++)
+                {
+                    print_message("--------+");
+                }
+                print_message("\n");
             }
         }
 
         // Print bottom border
-        print_message(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        if(CASTLE_SIZE>=10)
+        {
+            print_message(" ");
+        }
+        print_message(" +");
+        for(int x=1;x<=CASTLE_SIZE; x++)
+        {
+            print_message("--------+");
+        }
+        print_message("\n");
 
         #ifdef MSDOS
         print_message("PRESS ENTER TO CONTINUE...");
