@@ -669,8 +669,8 @@ void initialize_qt(int argc, char *argv[]) {
             buy_lamp_and_flares(&player);
         } else {
             // Debug mode setup
-            player.race = 2;  // Elf
-            player.sex = 1;   // Male
+            player.race = ELF;  // Elf
+            player.sex = MALE;   // Male
             player.strength = MAX_STRENGTH;
             player.intelligence = MAX_INTELLIGENCE;
             player.dexterity = MAX_DEXTERITY;
@@ -682,7 +682,7 @@ void initialize_qt(int argc, char *argv[]) {
             player.armor_type = STONE;   // Plate
             player.armor_points = MAX_ARMOR_POINTS;
 
-            print_message("DEBUG MODE: You are a male elf with 18 Strength, 18 Intelligence, and 18 Dexterity.\n");
+            print_message("DEBUG MODE: You are a male elf with %d Strength, %d Intelligence, and %d Dexterity.\n", player.strength, player.intelligence, player.dexterity);
             print_message("DEBUG MODE: You have Excalibur and Stone armor.\n");
             print_message("DEBUG MODE: You start with the Runestaff, 10000 gold, 1000 flares, and a lamp.\n");
             print_message("DEBUG MODE: All rooms are discovered\n");
