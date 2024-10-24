@@ -677,9 +677,9 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         print_message_formatted("A STRENGTH POTION\n");
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         print_message_formatted("AN INTELLIGENCE POTION\n");
-        player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE;
+        player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         print_message_formatted("A DEXTERITY POTION\n");
-        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_INTELLIGENCE;
+        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_INTELLIGENCE);
         if (!player->lamp_flag) {
             print_message_formatted("A LAMP\n");
             player->lamp_flag = 1;
@@ -1433,6 +1433,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     print_message_formatted("Blast %d: BOOM! Double damage! (%d damage)\n", i+1, damage);
                     break;
                 case 2:
+                    temp=random_number(3);
                     *enemy_dexterity -= temp;
                     print_message_formatted("Blast %d: ZAP! Enemy loses %d dexterity and takes %d damage\n", i+1, temp, damage);
                     break;
