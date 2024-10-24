@@ -1130,7 +1130,7 @@ int cast_stone_skin_spell(Player *player)
         {
              print_message("You can't improve your armor but armor points have been restored.");
         }
-        player->armor_points+10;
+        player->armor_points = (player->armor_points += 10) > 50 ? 50 : player->armor_points;
         if(player->armor_points<50)
         {
             player->armor_points=50;
@@ -1418,7 +1418,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
     int blast_count = random_number(4);  // 1-4 blasts
     int total_damage = 0;
     int damage;
-    
+    int temp;
     print_message_formatted("\nYou channel chaotic hobbit magic!\n");
     print_message_formatted("You unleash %d magical blasts!\n", blast_count);
     
@@ -1433,18 +1433,20 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     print_message_formatted("Blast %d: BOOM! Double damage! (%d damage)\n", i+1, damage);
                     break;
                 case 2:
-                    *enemy_dexterity -= 1;
-                    print_message_formatted("Blast %d: ZAP! Enemy loses 1 dexterity and takes %d damage\n", i+1, damage);
+                    *enemy_dexterity -= temp;
+                    print_message_formatted("Blast %d: ZAP! Enemy loses %d dexterity and takes %d damage\n", i+1, temp, damage);
                     break;
                 case 3:
-                    *enemy_intelligence -= 1;
-                    print_message_formatted("Blast %d: PING! Enemy loses 1 intelligence and takes %d damage\n", i+1, damage);
+                    temp=random_number(3);
+                    *enemy_intelligence -= temp;
+                    print_message_formatted("Blast %d: PING! Enemy loses %d intelligence and takes %d damage\n", i+1, temp, damage);
                     break;
                 case 4:
                     if(player->intelligence<18)
                     {
-                         player->intelligence+=1;
-                         print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, damage);
+                         temp=player->intelligence;
+                         player->intelligence = (player->intelligence += random_number(3)) > 18 ? 18 : player->intelligence;
+                         print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, temp-player->intelligence);
                     }
                     else
                     {
@@ -1454,8 +1456,9 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                 case 5:
                     if(player->strength<18)
                     {
-                        player->strength+=1;
-                        print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, damage);
+                        temp=player->strength;
+                        player->strength = (player->strength += random_number(3)) > 18 ? 18 : player->strength;
+                        print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, temp-player->strength);
                     }
                     else
                     {
@@ -1465,8 +1468,9 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                 case 6:
                     if(player->dexterity<18)
                     {
-                         player->dexterity+=1;
-                        print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, damage);
+                        temp=player->dexterity;
+                        player->dexterity = (player->dexterity += random_number(3)) > 18 ? 18 : player->dexterity;
+                        print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, temp-player->dexterity);
                     }
                     else
                     {
