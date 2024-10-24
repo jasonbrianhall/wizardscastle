@@ -403,7 +403,6 @@ void print_status(Player *player, GameState *game)
     // Print number of treasures
     for (i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
-        print_message("STatus %d %d\n", i, game->treasure[i]);
         if(game->treasure[i]==1)
         {
             treasurecount++;
