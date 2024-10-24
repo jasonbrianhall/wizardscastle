@@ -84,7 +84,7 @@ void trade_with_vendor(Player *player, GameState *game)
 
     // Offer to sell items if player has enough gold
     while (player->gold >= 10) {
-        print_message_formatted("\n\nWhat would you like to buy?\n");
+        print_message_formatted("\n\nThese are the services I offer:\n");
         print_message("    1. Improve Strength (1000 GP)\n");
         print_message("    2. Improve Intelligence (1000 GP)\n");
         print_message("    3. Improve Dexterity (1000 GP)\n");
@@ -94,8 +94,8 @@ void trade_with_vendor(Player *player, GameState *game)
         print_message("    7. Flares (10 GP)\n");
         print_message("    8. Cure Blindness (1000 GP)\n");
         print_message("    9. Remove Sticky Book (1000 GP)\n");
-        print_message("    0. Nothing more\n\n");
-
+        print_message("    0. Nothing\n\n");
+        print_message("You have %d GP to spend\n\n", player->gold);
         
 
         char purchase_choice = get_user_input();
