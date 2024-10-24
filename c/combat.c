@@ -1046,8 +1046,14 @@ void balrog_flame_whip_attack(Player *player, GameState *game, int enemy_strengt
     if (player->armor_type != 0) {
         int armor_protection = player->armor_type + random_number(3) - 1;
         damage -= armor_protection;
-        player->armor_points -= (armor_protection * 2);  // Double armor damage from fire
-        
+        if(player->armor_type == STONE)
+        {
+            player->armor_points -= (armor_protection);  // STONE ARMOR IS STRONG
+        }
+        else
+        {
+            player->armor_points -= (armor_protection * 2);  // Double armor damage from fire
+        }
         if (damage < 0) {
             player->armor_points += damage;  // Adjust for overkill protection
             damage = 0;
@@ -1061,9 +1067,6 @@ void balrog_flame_whip_attack(Player *player, GameState *game, int enemy_strengt
             print_message_formatted("YOUR ARMOR HAS BEEN MELTED BY THE BALROG'S FLAME WHIP!\n");
         }
     }
-    
-    // Ensure minimum damage
-    if (damage < 1) damage = 1;  // Balrog's whip always does at least 1 damage
     
     player->strength -= damage;
     print_message_formatted("You take %d final damage from the flame whip!\n", damage);
@@ -1108,7 +1111,7 @@ int cast_stone_skin_spell(Player *player)
 {
     if(player->intelligence>=14)
     {
-        if(player->armor_type<4)
+        if(player->armor_type<STONE)
         {
              player->armor_type+=1;
              player->intelligence-=1;
@@ -1125,14 +1128,13 @@ int cast_stone_skin_spell(Player *player)
         }
         else
         {
-             print_message("You can't improve your armor.");
+             print_message("You can't improve your armor but armor points have been restors.");
         }
         player->armor_points*=2;
-        if(player->armor_points>50)
+        if(player->armor_points<50)
         {
             player->armor_points=50;
         }
-
         return 1;
     }
     else
@@ -1248,18 +1250,90 @@ int calculate_damage(Player *player, int enemy_strength, int enemy_dexterity) {
     int random_factor = random_number(5) - 3;  // -2 to +2 random adjustment
     total_damage += random_factor;
 
-    if (player->race == HOBBIT && random_number(10) == 1) {  // 10% chance
-        print_message("Lucky Strike! You found a weak spot!\n");
-        total_damage *= 2;  // Double the damage
+    // Critical hits
+    switch(player->race) {
+       case HOBBIT:
+           if (random_number(10) == 1 && player->weapon_type>NOTHING) {  // 10% chance
+                print_message("Lucky Strike! You found a weak spot!\n");
+                total_damage *= 2;  // Double the damage
+            }
+            else if (player->weapon_type == DAGGER) {
+                if (random_number(20) == 20) {  // Natural 20 (5% chance)
+                    print_message("Critical Strike! Your small size lets you strike a vital spot!\n");
+                    total_damage *= 2;
+                }
+                // Additional dagger bonus for Hobbits
+                weapon_bonus = random_number(4);  // d4 extra damage with daggers
+                total_damage += weapon_bonus;
+            }
+            break;
+       case HUMAN:
+          if (random_number(4) == 1) {
+              weapon_bonus = random_number(3)-1;  // 0-2 extra damage
+              total_damage += weapon_bonus;
+              if (weapon_bonus > 0) {
+                  print_message_formatted("Your weapon mastery deals %d extra damage!\n", weapon_bonus);
+              }
+          }
+          else if (player->weapon_type >= SWORD) {
+              if (random_number(20) >= 15) {  // 30% chance
+                   weapon_bonus = random_number(6);  // d6 extra damage
+                   total_damage += weapon_bonus;
+                   print_message_formatted("Your sword mastery deals %d extra damage!\n", weapon_bonus);
+              }
+          }
+          break;
+       case ELF:
+            if (player->weapon_type == SWORD) {
+                weapon_bonus = random_number(4);  // d4 extra damage
+                total_damage += weapon_bonus;
+                if (weapon_bonus > 0) {
+                    print_message_formatted("Your elven grace adds %d damage!\n", weapon_bonus);
+                }
+            } else if (player->weapon_type == EXCALIBUR) {
+                weapon_bonus = random_number(8);  // d8 extra damage with Excalibur
+                total_damage += weapon_bonus;
+                if (weapon_bonus > 0) {
+                    print_message_formatted("Your elven magic enhances Excalibur for %d extra damage!\n", weapon_bonus);
+                }
+            } else if (random_number(20)>=15) {
+                  weapon_bonus = random_number(2);  // 1-2 extra damage
+                  total_damage += weapon_bonus;
+                  print_message_formatted("Your weapon mastery deals %d extra damage!\n", weapon_bonus);
+           }            
+           break;
+      case DROW:
+            // Drow are deadly with daggers and swords
+            if (player->weapon_type == DAGGER || player->weapon_type == SWORD) {
+                if (random_number(6) == 6) {  // ~17% chance
+                    weapon_bonus = random_number(4);  // d4 extra damage
+                    total_damage += weapon_bonus;
+                    if (weapon_bonus > 0) {
+                        print_message_formatted("Your Drow combat training deals %d extra damage!\n", weapon_bonus);
+                    }
+                }
+            } else if (random_number(20)>=15) {
+                  weapon_bonus = random_number(2);  // 1-2 extra damage
+                  total_damage += weapon_bonus;
+                  print_message_formatted("Your weapon mastery deals %d extra damage!\n", weapon_bonus);
+           }            
+           break;
+      case DWARF:
+            // Dwarves excel with maces and heavy weapons
+            if (player->weapon_type == MACE) {
+                weapon_bonus = random_number(4) + player->strength/9;  
+                total_damage += weapon_bonus;
+                if (weapon_bonus > 0) {
+                    print_message_formatted("Using your might mace, your dwarven strength adds %d damage!\n", weapon_bonus);
+                }
+            } else if (random_number(20)>=15) {
+                  weapon_bonus = random_number(2);  // 1-2 extra damage
+                  total_damage += weapon_bonus;
+                  print_message_formatted("Your dwarven weapon mastery deals %d extra damage!\n", weapon_bonus);
+           }            
+          break;
     }
-    
-    if (player->race == HUMAN) {
-        weapon_bonus = random_number(3)-1;  // 0-2 extra damage
-        total_damage += weapon_bonus;
-        if (weapon_bonus > 0) {
-            print_message_formatted("Your weapon mastery deals %d extra damage!\n", weapon_bonus);
-        }
-    }
+
     
     if (total_damage<=0)
     {
