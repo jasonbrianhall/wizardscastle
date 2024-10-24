@@ -314,7 +314,7 @@ void buy_armor(Player *player)
                 player->gold -= 100;
                 print_message_formatted("Armor repaired.\n");
             } else {
-                if(player->armor_points>=MAX_ARMOR_POINTS
+                if(player->armor_points>=MAX_ARMOR_POINTS)
                 {
                     print_message("%s, your armor does not need repaired\n", player->sex == MALE ? "Sir" : "Ma'am");
                 
