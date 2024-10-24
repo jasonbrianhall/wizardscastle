@@ -14,7 +14,7 @@ void handle_vendor(Player *player, GameState *game)
     
     // Check if the player has attacked the vendor before
     if (game->vendor_attacked) {
-        fight_monster(player, game);
+        fight_monster_normalize(player, game);
         return;
     }
 
