@@ -945,7 +945,7 @@ void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength,
     }
     
     // Base damage calculation
-    int damage = random_number(6) + random_number(6);  // 2-12 base damage
+    int damage = random_number(5)+1;  // 2-6 base damage
     
     // Add dragon's strength and intelligence bonuses
     damage += enemy_strength / 9;    // Strength bonus like normal attacks
