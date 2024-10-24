@@ -176,20 +176,47 @@ void display_map2(GameState *game, Player *player)
     if(player->blindness_flag == 0)
     {
         print_message2("\n=== MAP OF LEVEL ");
-        //char level_str[3], number_str[3];
         print_message2("%d", player->level);
         print_message2(" ===\n\n");
 
         // Print top border with column coordinates
-        print_message2("      1        2        3        4        5        6        7        8     \n");
-        print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
+        for(int x=1;x<=CASTLE_SIZE; x++)
+        {
+            if(x<10)
+            {
+                print_message2("       %d ", x);
+            }
+            else {
+                print_message2("      %d ", x);
+            }
+        }
+        if(CASTLE_SIZE<10)
+        {
+            print_message2("\n +");
+        }
+        else
+        {
+            print_message2("\n  +");
+        }
+        for(int x=1;x<=CASTLE_SIZE; x++)
+        {
+            print_message2("--------+");
+        }
+        print_message2("\n");
 
-        for (int x = 1; x <= 8; x++) {
+
+        for (int x = 1; x <= CASTLE_SIZE; x++) {
             // Print row coordinate
-            //snprintf(number_str, sizeof(number_str), "%d", x);
-            print_message2("%d", x);
-
-            for (int y = 1; y <= 8; y++) {
+            if(x<10 && CASTLE_SIZE>=10)
+            {
+                 print_message2(" %d", x);
+            }
+            else
+            {
+                 print_message2("%d", x);
+           
+            }
+            for (int y = 1; y <= CASTLE_SIZE; y++) {
                 print_message2("|");
                 if (x == player->x && y == player->y) {
                     print_message2("  [YOU] ");
@@ -201,18 +228,35 @@ void display_map2(GameState *game, Player *player)
                 } else {
                     print_message2("????????");
                 }
-             }
-             print_message2("|\n");
+            }
+            print_message2("|\n");
 
-             // Print horizontal border between rows
-             if (x < 8) {
-                 print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
-             }
-         }
+            // Print horizontal border between rows
+            if (x < CASTLE_SIZE) {
+                if (CASTLE_SIZE>=10)
+                {
+                    print_message2(" ");
+                } 
+                print_message2(" +");
+                for(int x=1;x<=CASTLE_SIZE; x++)
+                {
+                    print_message2("--------+");
+                }
+                print_message2("\n");
+            }
+        }
 
-         // Print bottom border
-         print_message2(" +--------+--------+--------+--------+--------+--------+--------+--------+\n");
-
+        // Print bottom border
+        if(CASTLE_SIZE>=10)
+        {
+            print_message2(" ");
+        }
+        print_message2(" +");
+        for(int x=1;x<=CASTLE_SIZE; x++)
+        {
+            print_message2("--------+");
+        }
+        print_message2("\n");
          // Map is too large for the default font for MS-DOS (Same Information is available in help)
          print_message2("\nLEGEND:\n");
          print_message2("[YOU]    = Your location   EMPTY    = Empty room     ENTRANCE = Entrance\n");

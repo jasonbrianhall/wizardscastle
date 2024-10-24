@@ -615,9 +615,7 @@ void display_map(GameState *game, Player *player)
     if(player->blindness_flag == 0)
     {
         print_message("\n=== MAP OF LEVEL ");
-        char level_str[3];
-        snprintf(level_str, sizeof(level_str), "%d", player->level);
-        print_message(level_str);
+        print_message("%d", player->level);
         print_message(" ===\n\n");
 
         // Print top border with column coordinates

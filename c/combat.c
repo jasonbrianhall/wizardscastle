@@ -678,7 +678,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         }
 
         print_message_formatted("A SWORD\n");
-        if (player->weapon_type <=SWORD)
+        if (player->weapon_type <=SWORD)  // A Dwarf might want to keep their mace but no logic for that.
         {
             player->weapon_type = SWORD;
         }
