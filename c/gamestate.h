@@ -3,7 +3,7 @@
 
 #include "wizards-castle.h"
 
-#define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
+#define CALCULATE_ROOM_INDEX(level, x, y) (CASTLE_SIZE*CASTLE_SIZE * ((level) - 1) + CASTLE_SIZE * ((x) - 1) + (y) - 1)
 
 
 // Function prototypes

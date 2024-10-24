@@ -82,8 +82,8 @@ void move_player(Player *player, GameState *game, char direction)
     }
 
     // Handle wrapping around the castle edges
-    new_x = (new_x - 1 + 8) % 8 + 1;  // Wrap x between 1 and 8
-    new_y = (new_y - 1 + 8) % 8 + 1;  // Wrap y between 1 and 8
+    new_x = (new_x - 1 + CASTLE_SIZE) % CASTLE_SIZE + 1;  // Wrap x between 1 and 8
+    new_y = (new_y - 1 + CASTLE_SIZE) % CASTLE_SIZE + 1;  // Wrap y between 1 and 8
 
     // Update player position
     player->x = new_x;
@@ -105,9 +105,9 @@ void move_player(Player *player, GameState *game, char direction)
     mark_room_discovered(game, player->x, player->y, player->level);
     
     if (room_content == WARP) {  // Warp
-        player->x = random_number(8);
-        player->y = random_number(8);
-        player->level = random_number(8);
+        player->x = random_number(CASTLE_SIZE);
+        player->y = random_number(CASTLE_SIZE);
+        player->level = random_number(CASTLE_SIZE);
         print_message_formatted("You've been warped to a random location!\n");
     } else if (room_content == SINKHOLE) {  // Sinkhole
         if (player->level < 8) {
@@ -520,9 +520,9 @@ void gaze_into_orb(Player *player, GameState *game)
             break;
         case 4:
             {
-                int x = random_number(8);
-                int y = random_number(8);
-                int z = random_number(8);
+                int x = random_number(CASTLE_SIZE);
+                int y = random_number(CASTLE_SIZE);
+                int z = random_number(CASTLE_SIZE);
                 int content = get_room_content(game, x, y, z);
                 char room_desc[100];  // Adjust size as needed
                 get_room_description(content, room_desc);
@@ -537,9 +537,9 @@ void gaze_into_orb(Player *player, GameState *game)
                     y = game->orb_location[0];
                     z = game->orb_location[2];
                 } else {
-                    x = random_number(8);
-                    y = random_number(8);
-                    z = random_number(8);
+                    x = random_number(CASTLE_SIZE);
+                    y = random_number(CASTLE_SIZE);
+                    z = random_number(CASTLE_SIZE);
                 }
                 print_message("***THE ORB OF ZOT*** at (%d,%d) ", x, y);
                 print_message("Level %d!\n", z);

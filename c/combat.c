@@ -710,9 +710,9 @@ int handle_bribe(Player *player, GameState *game, const char *enemy_name)
         return 0;
     }
 
-    int treasure_index = random_number(8) - 1;
+    int treasure_index = random_number(TREASURE_COUNT) - 1;
     while (!game->treasure[treasure_index]) {
-        treasure_index = random_number(8) - 1;
+        treasure_index = random_number(TREASURE_COUNT) - 1;
     }
 
     print_message_formatted("\nI WANT %s. WILL YOU GIVE IT TO ME? ", get_treasure_name(treasure_index));
@@ -777,7 +777,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
                         game->game_over = 1;
                         return 1;
                     }
-                    player->web_count = random_number(8) + 1;  // Set web count to 1-9 turns
+                    player->web_count = random_number(9);  // Set web count to 1-9 turns
                     print_message_formatted("\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name, player->web_count);
                     return 0;
                 }

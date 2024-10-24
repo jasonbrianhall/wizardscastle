@@ -38,7 +38,7 @@ void display_map(GameState *game, Player *player);
 char* strip(const char* str);
 void capitalize_sentences(char* str);
 // Macro definitions
-#define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
-#define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
+#define WRAP_COORDINATE(coord) (((coord) - 1 + CASTLE_SIZE) % CASTLE_SIZE + 1)
+//#define CALCULATE_ROOM_INDEX(level, x, y) (CASTLE_SIZE*CASTLE_SIZE * ((level) - 1) + CASTLE_SIZE * ((x) - 1) + (y) - 1)
 
 #endif // UTILITIES_H

@@ -14,10 +14,6 @@
 #include "vendor.h"
 #include "wizardio.h"
 
-#define WRAP_COORDINATE(coord) (((coord) - 1 + 8) % 8 + 1)
-#define CALCULATE_ROOM_INDEX(level, x, y) (64 * ((level) - 1) + 8 * ((x) - 1) + (y) - 1)
-#define ENSURE_VALID_CONTENT(content) ((content) + 100 * ((content) > 99))
-
 void print_introduction(void)
 {
 	printStars();
@@ -78,9 +74,9 @@ bool main_game_loop(Player *player, GameState *game)
             // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
             if (!game->treasure[4] && random_number(100) <= 5) {  // 5% chance if no Green Gem
                 int old_x = player->x, old_y = player->y, old_z = player->level;
-                player->x = random_number(8);
-                player->y = random_number(8);
-                player->level = random_number(8);
+                player->x = random_number(CASTLE_SIZE);
+                player->y = random_number(CASTLE_SIZE);
+                player->level = random_number(CASTLE_SIZE);
                 print_message_formatted("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
                 print_message_formatted("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n", player->x, player->y, player->level);
 

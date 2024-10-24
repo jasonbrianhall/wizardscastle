@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-
-#define MAP_SIZE 512
+#define CASTLE_SIZE 8
+#define MAP_SIZE CASTLE_SIZE*CASTLE_SIZE*CASTLE_SIZE
 #define TREASURE_COUNT 8
 
 // Room type definitions
@@ -14,7 +14,7 @@
 #define ENTRANCE 102
 #define STAIRS_UP 103
 #define STAIRS_DOWN 104
-#define START_ITEMS
+#define START_ITEMS 105
 #define POOL 105
 #define CHEST 106
 #define GOLD 107
@@ -23,7 +23,7 @@
 #define SINKHOLE 110
 #define CRYSTAL_ORB 111
 #define BOOK 112
-#define END_ITEMS
+#define END_ITEMS 112
 
 // Monster rooms (113-124)
 #define MONSTER_START 113
