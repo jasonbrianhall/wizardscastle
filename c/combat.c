@@ -671,7 +671,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         print_message_formatted("\nYOU GET ALL HIS WARES:\n");
         print_message_formatted("PLATE ARMOR\n");
         player->armor_type = 3;
-        player->armor_points = 50;
+        player->armor_points = MAX_ARMOR_POINTS;
         print_message_formatted("A SWORD\n");
         player->weapon_type = 3;
         print_message_formatted("A STRENGTH POTION\n");
@@ -1116,7 +1116,7 @@ int cast_stone_skin_spell(Player *player)
              player->armor_type+=1;
              player->intelligence-=1;
              player->strength-=1;
-             player->armor_points=50;
+             player->armor_points=MAX_ARMOR_POINTS;
              if(player->armor_type==0)
              {
                  print_message("Your armor has improved!!!");
@@ -1130,11 +1130,7 @@ int cast_stone_skin_spell(Player *player)
         {
              print_message("You can't improve your armor but armor points have been restored.");
         }
-        player->armor_points = (player->armor_points += 10) > 50 ? 50 : player->armor_points;
-        if(player->armor_points<50)
-        {
-            player->armor_points=50;
-        }
+        player->armor_points = (player->armor_points += 10) > MAX_ARMOR_POINTS ? MAX_ARMOR_POINTS : player->armor_points;
         return 1;
     }
     else

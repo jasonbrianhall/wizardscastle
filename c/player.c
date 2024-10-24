@@ -258,7 +258,7 @@ void buy_equipment(Player *player)
                     continue;
                 }
                 player->weapon_type = SWORD; cost = 30;
-                player->armor_points = 50;
+                player->armor_points = MAX_ARMOR_POINTS;
                 break;
             case 'M': 
                 if (player->gold < 20) {
@@ -266,9 +266,9 @@ void buy_equipment(Player *player)
                     continue;
                 }
                 player->weapon_type = MACE; cost = 20;
-                player->armor_points = 50;
+                player->armor_points = MAX_ARMOR_POINTS;
                 break;
-            case 'D': player->weapon_type = DAGGER; cost = 10; player->armor_points = 50; break;
+            case 'D': player->weapon_type = DAGGER; cost = 10; player->armor_points = MAX_ARMOR_POINTS; break;
             case 'N': player->weapon_type = NOTHING; cost = 0; break;
             default:
                 print_message("** Poor ");

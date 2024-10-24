@@ -67,6 +67,7 @@
 #define MAX_STRENGTH     50
 #define MAX_INTELLIGENCE 50
 #define MAX_DEXTERITY    50
+#define MAX_ARMOR_POINTS 50
 
 
 #define HOBBIT 1

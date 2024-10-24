@@ -274,7 +274,7 @@ void buy_armor(Player *player)
                 if (player->armor_type < 1)
                 {
                     player->armor_type = LEATHER;
-                    player->armor_points = 50;
+                    player->armor_points = MAX_ARMOR_POINTS;
                     player->gold -= 1250;
                     print_message_formatted("\n%s armor purchased successfully!\n");
                 }
@@ -286,7 +286,7 @@ void buy_armor(Player *player)
         case '2':
             if (player->gold >= 1500) {
                 player->armor_type = CHAINMAIL;
-                player->armor_points = 50;
+                player->armor_points = MAX_ARMOR_POINTS;
                 player->gold -= 1500;
                 print_message("\nArmor purchased successfully!\n");
             } else {
@@ -297,7 +297,7 @@ void buy_armor(Player *player)
         case '3':
             if (player->gold >= 2000) {
                 player->armor_type = PLATE;
-                player->armor_points = 50;
+                player->armor_points = MAX_ARMOR_POINTS;
                 player->gold -= 2000;
                 print_message_formatted("Armor purchased successfully!\n");
             } else {
@@ -306,15 +306,15 @@ void buy_armor(Player *player)
             }
             break;
         case '4':
-            if (player->gold >= 100 && player->armor_points<50) {
+            if (player->gold >= 100 && player->armor_points<MAX_ARMOR_POINTS) {
                 player->armor_points += random_number(5);
-                if(player->armor_points>=50) {
-                    player->armor_points=50;
+                if(player->armor_points>=MAX_ARMOR_POINTS) {
+                    player->armor_points=MAX_ARMOR_POINTS;
                 }   
                 player->gold -= 100;
                 print_message_formatted("Armor repaired.\n");
             } else {
-                if(player->armor_points>=50)
+                if(player->armor_points>=MAX_ARMOR_POINTS
                 {
                     print_message("%s, your armor does not need repaired\n", player->sex == MALE ? "Sir" : "Ma'am");
                 
