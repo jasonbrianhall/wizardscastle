@@ -163,10 +163,47 @@ The project contains multiple implementations:
 
 ### Building and Compiling
 
-To build the C version:
+To build the CLI version (in Linux):
 1. Navigate to the `c/` directory
 2. Run `make` to compile
 3. Run `./wizardscastle` to play
+
+To build the QT C version (in Linux):
+1. Navigate to the 'c/' directory
+2. Run `make qt` to compile (make sure you have qt-development libraries installed)
+3. Run ./wizards_castle_qt
+
+To build the CLI Windows version (in Linux):
+1. Navigate to the 'c/' directory
+2. Run `make windows` to compile (make sure you have docker installed and functioning)
+3. Copy the resuling .exe to a Windows machine (wizard_windows.exe)
+4. Alternatively, if you have mingw installed, you can run x86_64-w64-mingw32-gcc main.c wizardio.c wizards-castle.c player.c gamestate.c combat.c utilities.c vendor.c -o wizard_windows.exe
+
+To build the QT Windows version (in Windows)
+1. Navigate to the 'c\' dir
+2. Run qmake wizard_castle_qt5.pro
+3. Run nmake (if the msvc and QT Gods are kind to you and you have all the dependencies installed)
+4. If you have issues, please view .github/worksflows/release.yml to see how I compile it.  
+
+    - name: Build Qt application
+      shell: cmd
+      working-directory: c
+      run: |
+        echo Current directory: %CD%
+        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS /diagnostics:column /errorReport:send
+        qmake wizard_castle_qt5.pro
+        nmake 
+
+5.  I have not tried to build the CLI version in Windows because mingw works great and my environment is Fedora based.
+
+To build the MS-DOS CLI version (in Linux)
+1. Naviage to the 'c/' dir
+2. Run make msdos (requires Docker); it's much easier to use someone else's image to build
+3. Alternatively, have gcc from DJGPP in your path and run gcc main.c wizardio.c wizards-castle.c player.c gamestate.c combat.c utilities.c vendor.c -o wizard_dos.exe
+  - Setting up DJGPP can be a pain but not impossible;  much easier to use docker
+
+I also have a "make qt-windows" command which cross compiles the code from Linux to Windows but the .exe generated doesn't run because it's not packaged with all the proper DLLs dependencies and I am ignorant on how to build that.
+
 
 For debugging, use `make debug` for memory issues and run with `./wizardscastle --debug` to make the castle easier
 
