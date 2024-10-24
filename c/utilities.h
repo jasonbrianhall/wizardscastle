@@ -11,6 +11,8 @@ const char* get_random_species(void);
 int get_minimum(int a, int b);
 void printStars(void);
 const char* get_weapon_name(int weapon_type);
+const char* get_armor_name(int weapon_type);
+
 // Helper function to get treasure names
 const char* get_treasure_name(int index);
 // New helper function to get abbreviated room descriptions

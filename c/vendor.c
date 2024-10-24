@@ -265,7 +265,7 @@ void buy_armor(Player *player)
     print_message("    4. Repair Armor (100 GP)");
     print_message("    5. Nothing\n\n");
 
-    print_message("Current armor is %s with armor points of %d\n\n", get_weapon_name(player->armor_type), player->armor_points);
+    print_message("Current armor is %s with armor points of %d\n\n", get_armor_name(player->armor_type), player->armor_points);
 
     char armor_choice = get_user_input();
     switch(armor_choice) {
@@ -273,10 +273,10 @@ void buy_armor(Player *player)
             if (player->gold >= 1250) {
                 if (player->armor_type < 1)
                 {
-                    player->armor_type = 1;
+                    player->armor_type = LEATHER;
                     player->armor_points = 50;
                     player->gold -= 1250;
-                    print_message_formatted("\nArmor purchased successfully!\n");
+                    print_message_formatted("\n%s armor purchased successfully!\n");
                 }
             } else {
                 print_message("%s, Not enough gold for Leather Armor.\n", player->sex == MALE ? "SIR" : "MA'AM");
@@ -285,7 +285,7 @@ void buy_armor(Player *player)
             break;
         case '2':
             if (player->gold >= 1500) {
-                player->armor_type = 2;
+                player->armor_type = CHAINMAIL;
                 player->armor_points = 50;
                 player->gold -= 1500;
                 print_message("\nArmor purchased successfully!\n");
@@ -296,7 +296,7 @@ void buy_armor(Player *player)
             break;
         case '3':
             if (player->gold >= 2000) {
-                player->armor_type = 3;
+                player->armor_type = PLATE;
                 player->armor_points = 50;
                 player->gold -= 2000;
                 print_message_formatted("Armor purchased successfully!\n");

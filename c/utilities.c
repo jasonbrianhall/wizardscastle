@@ -158,6 +158,21 @@ const char* get_weapon_name(int weapon_type)
     }    
 }
 
+const char* get_armor_name(int weapon_type)
+{
+    const char* weapon_names[] = {"NO WEAPON", "LEATHER", "CHAINMAIL", "PLATE", "EXCALIBUR"};
+
+    if (weapon_type<5)
+    {
+        return weapon_names[weapon_type];
+
+    }
+    else
+    {
+        return weapon_names[0];
+    }    
+}
+
 // Helper function to get treasure names
 const char* get_treasure_name(int index)
 {
