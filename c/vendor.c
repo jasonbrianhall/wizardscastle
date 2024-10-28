@@ -58,7 +58,7 @@ void trade_with_vendor(Player *player, GameState *game)
             }
             else
             { 
-               if (random_number(8)==1 && player->weapon_type<4)
+               if (random_number(8)==1 && player->weapon_type<EXCALIBUR)
                {
                    print_message("I'll give you an extremely rare offer; trade %s for Excalibur? (Y/N) ", get_treasure_name(i), offer);
                    if (get_user_input_yn() == 'Y') {
@@ -68,7 +68,7 @@ void trade_with_vendor(Player *player, GameState *game)
                    }        
                }
                else
-                   if (random_number(8)==1 && player->armor_type<4)
+                   if (random_number(8)==1 && player->armor_type<STONE)
                    {
                        print_message("I'll give you an extremely rare offer; trade %s for Stone Armor? (Y/N) ", get_treasure_name(i), offer);
                        if (get_user_input_yn() == 'Y') {
