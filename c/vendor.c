@@ -241,9 +241,7 @@ void attack_vendor(Player *player, GameState *game)
 void buy_flares(Player *player)
 {
     int max_flares = player->gold / 10;
-    char message[100];
-    snprintf(message, sizeof(message), "How many flares do you want to buy? (0-%d): ", max_flares);
-    print_message_formatted(message);
+    print_message_formatted("How many flares do you want to buy? (0-%d): ", max_flares);
 
     int flares_to_buy = get_user_input_number();
 
@@ -255,8 +253,7 @@ void buy_flares(Player *player)
     player->flares += flares_to_buy;
     player->gold -= flares_to_buy * 10;
 
-    snprintf(message, sizeof(message), "You bought %d flares for %d GP.\n", flares_to_buy, flares_to_buy * 10);
-    print_message(message);
+    print_message("You bought %d flares for %d GP.\n", flares_to_buy, flares_to_buy * 10);
 }
 
 void buy_armor(Player *player)

@@ -49,7 +49,6 @@ bool main_game_loop(Player *player, GameState *game)
         "A BALROG", "A DRAGON", "A VENDOR", "A RED RUBY", "THE NORN STONE", "THE PALE_PEARL",
         "THE OPAL EYE", "A GREEN GEM", "THE BLUE FLAME", "THE PALANTIR", "THE SILMARIL"
     };
-    char message[100];
 
 
     while (!game_over) {
@@ -125,16 +124,12 @@ bool main_game_loop(Player *player, GameState *game)
             print_message("Ok, ");
             print_message_formatted("%s, YOU ARE NOW ENTERING THE CASTLE!\n", get_race_name(player->race));
         } else if (room_content >= EMPTY_ROOM && room_content <= TREASURE_END) {
-            char message[100];
-            snprintf(message, sizeof(message), "HERE YOU FIND %s.\n", room_contents[room_content - EMPTY_ROOM]);
-            print_message_formatted(message);
+            print_message_formatted("HERE YOU FIND %s.\n", room_contents[room_content - EMPTY_ROOM]);
             if (room_content==GOLD)
             {
                 int gold_found = random_number(1000);  // Random amount between 1 and 1000
                 player->gold += gold_found;
-                char message[100];
-                snprintf(message, sizeof(message), "%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
-                print_message_formatted(message);
+                print_message_formatted("%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
                 set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);  // Empty the room
             }
             else if (room_content==FLARES)
@@ -142,8 +137,7 @@ bool main_game_loop(Player *player, GameState *game)
                 int flares_found = random_number(5);  // Random amount between 1 and 5
 
                 player->flares += flares_found;
-                snprintf(message, sizeof(message), "%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
-                print_message_formatted(message);
+                print_message_formatted("%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
                 set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);  // Empty the room
            }
            // Monsters
@@ -164,14 +158,13 @@ bool main_game_loop(Player *player, GameState *game)
            
         } else {
             print_message_formatted("HERE YOU FIND AN UNKNOWN ROOM.\n");
-            snprintf(message, sizeof(message), "%i\n", room_content);
-            print_message_formatted(message);
+            print_message_formatted("%i\n", room_content);
         }
         game_over = check_game_over(player, game);
         if(!game_over)
         {
             strncpy(user_command, get_user_input_main(), sizeof(user_command) - 1);
-            user_command[sizeof(user_command) - 1] = '\0';  // Ensure null-termination            snprintf(message, sizeof(message), "User Command: %s\n", user_command);
+            user_command[sizeof(user_command) - 1] = '\0';  // Ensure null-termination
             //print_message_formatted(message);
             switch (user_command[0]) {
                 case '\0':

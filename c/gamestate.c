@@ -232,11 +232,8 @@ void set_room_content(GameState *game, int x, int y, int level, int content)
         game->location_map[index] = content;
     } else {
         // Handle error: invalid room coordinates
-        char error_message[100];
-        snprintf(error_message, sizeof(error_message), 
-                 "Error: Attempted to set invalid room content at (%d,%d) level %d\n", 
+        print_message_formatted("Error: Attempted to set invalid room content at (%d,%d) level %d\n", 
                  x, y, level);
-        print_message_formatted(error_message);
     }
 }
 

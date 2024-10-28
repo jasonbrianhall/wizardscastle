@@ -95,13 +95,11 @@ void move_player(Player *player, GameState *game, char direction)
     // Print movement message
     if (printstatusmessage==1)
     {
-        char message[100];
-        snprintf(message, sizeof(message), "You move %s to (%d, %d) on level %d.\n", 
+        print_message_formatted("You move %s to (%d, %d) on level %d.\n", 
                  direction == 'N' ? "North" :
                  direction == 'S' ? "South" :
                  direction == 'W' ? "West" : "East",
                  player->y, player->x, player->level);
-        print_message_formatted(message);
     }
     // Check for special room events (like warp or sinkhole)
     int room_content = get_room_content(game, player->x, player->y, player->level);
