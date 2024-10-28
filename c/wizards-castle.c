@@ -57,13 +57,13 @@ bool main_game_loop(Player *player, GameState *game)
        // Handle curses
         if (player->runestaff_flag == 0 && player->orb_flag == 0) {
             // Lethargy curse (similar to line 1960 in BASIC)
-            if (!game->treasure[0] && random_number(100) <= 5) {  // 5% chance if no Ruby Red
+            if (!game->treasure[RUBY_RED_INDEX] && random_number(100) <= 5) {  // 5% chance if no Ruby Red
                 game->turn_count++;
                 print_message_formatted("\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
             }
 
             // Leech curse (similar to line 1965 in BASIC)
-            if (!game->treasure[2] && random_number(100) <= 5) {  // 5% chance if no Pale Pearl
+            if (!game->treasure[PALE_PEARL_INDEX] && random_number(100) <= 5) {  // 5% chance if no Pale Pearl
                 int gold_lost = random_number(5);
                 currentgold=player->gold;
                 player->gold = (player->gold > gold_lost) ? player->gold - gold_lost : 0;
@@ -71,7 +71,7 @@ bool main_game_loop(Player *player, GameState *game)
             }
 
             // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
-            if (!game->treasure[4] && random_number(100) <= 5) {  // 5% chance if no Green Gem
+            if (!game->treasure[GREEN_GEM_INDEX] && random_number(100) <= 5) {  // 5% chance if no Green Gem
                 int old_x = player->x, old_y = player->y, old_z = player->level;
                 player->x = random_number(CASTLE_SIZE);
                 player->y = random_number(CASTLE_SIZE);
@@ -105,13 +105,13 @@ bool main_game_loop(Player *player, GameState *game)
         }
 
         // Handle blindness cure (similar to lines 2065-2075 in BASIC)
-        if (player->blindness_flag == 1 && game->treasure[3] == 1) {
+        if (player->blindness_flag == 1 && game->treasure[OPAL_EYE_INDEX] == 1) {
             print_message_formatted("\nTHE OPAL EYE CURES YOUR BLINDNESS!\n");
             player->blindness_flag = 0;
         }
 
         // Handle sticky book cure (similar to lines 2080-2090 in BASIC)
-        if (player->stickybook_flag == 1 && game->treasure[5] == 1) {
+        if (player->stickybook_flag == 1 && game->treasure[BLUE_FLAME_INDEX] == 1) {
             print_message_formatted("\nTHE BLUE FLAME DISSOLVES THE BOOK!\n");
             player->stickybook_flag = 0;
         }

@@ -260,7 +260,7 @@ void handle_treasure(Player *player, GameState *game, int room_content)
 
     print_message_formatted("\nYOU FOUND %s!\n\n", treasure_name);
     
-    game->treasure[treasure_index] = 1;
+    game->treasure[treasure_index]++;
     player->treasure_count++;
     print_message_formatted("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
 

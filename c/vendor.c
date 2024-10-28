@@ -52,7 +52,7 @@ void trade_with_vendor(Player *player, GameState *game)
             
             if (get_user_input_yn() == 'Y') {
                 player->gold += offer;
-                game->treasure[i] = 0;
+                game->treasure[i]--;
                 player->treasure_count--;
                 print_message_formatted("Sold!\n");
             }
@@ -62,7 +62,7 @@ void trade_with_vendor(Player *player, GameState *game)
                {
                    print_message("I'll give you an extremely rare offer; trade %s for Excalibur? (Y/N) ", get_treasure_name(i), offer);
                    if (get_user_input_yn() == 'Y') {
-                       game->treasure[i] = 0;
+                       game->treasure[i]--;
                        player->treasure_count--;
                        player->weapon_type=EXCALIBUR;
                    }        
@@ -72,7 +72,7 @@ void trade_with_vendor(Player *player, GameState *game)
                    {
                        print_message("I'll give you an extremely rare offer; trade %s for Stone Armor? (Y/N) ", get_treasure_name(i), offer);
                        if (get_user_input_yn() == 'Y') {
-                           game->treasure[i] = 0;
+                           game->treasure[i]--;
                            player->treasure_count--;
                            player->armor_type=STONE;
                            player->armor_points=MAX_ARMOR_POINTS;
