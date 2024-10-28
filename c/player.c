@@ -225,10 +225,10 @@ void buy_equipment(Player *player)
         user_input = get_user_input_custom_prompt("Your choice:  ");
         exittheloop=1;
         switch(user_input) {
-            case 'P': player->armor_type = PLATE; cost = 30; break;
-            case 'C': player->armor_type = CHAINMAIL; cost = 20; break;
-            case 'L': player->armor_type = SWORD; cost = 10; break;
-            case 'N': player->armor_type = 0; cost = 0; break;
+            case 'P': player->armor_type = PLATE; cost = 30; player->armor_points=MAX_ARMOR_POINTS; break;
+            case 'C': player->armor_type = CHAINMAIL; cost = 20; player->armor_points=MAX_ARMOR_POINTS; break;
+            case 'L': player->armor_type = LEATHER; cost = 10; player->armor_points=MAX_ARMOR_POINTS; break;
+            case 'N': player->armor_type = 0; cost = 0; player->armor_points=0; break;
             default:
                 print_message("\n** Are you a ");
                 print_message_formatted("%s or a fool?  Try again.\n\n", race_names[player->race - 1]);

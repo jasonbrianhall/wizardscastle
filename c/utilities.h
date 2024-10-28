@@ -35,7 +35,7 @@ void discover_adjacent_rooms(GameState *game, Player *player);
 // Movement and action functions
 void move_player(Player *player, GameState *game, char direction);
 void display_map(GameState *game, Player *player);
-char* strip(const char* str);
+//char* strip(const char* str);
 void capitalize_sentences(char* str);
 // Macro definitions
 #define WRAP_COORDINATE(coord) (((coord) - 1 + CASTLE_SIZE) % CASTLE_SIZE + 1)

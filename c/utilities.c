@@ -431,7 +431,7 @@ void drink_from_pool(Player *player, GameState *game)
             }
             else
             {
-                player->x = MALE;
+                player->sex = MALE;
                 print_message_formatted("become a male %s.\n", get_race_name(player->race));
             }
             
@@ -514,12 +514,10 @@ void gaze_into_orb(Player *player, GameState *game)
             }
             break;
         case 2:
-            print_message_formatted("yourself drinking from a pool and becoming a %s!\n", 
-                   strip(get_monster_name(MONSTER_START + random_number(12) - 1)));
+            print_message_formatted("yourself drinking from a pool and becoming a %s!\n", get_monster_name(MONSTER_START + random_number(12) - 1));
             break;
         case 3:
-            print_message_formatted("%s gazing back at you!\n", 
-                   strip(get_monster_name(MONSTER_START + random_number(12) - 1)));
+            print_message_formatted("%s gazing back at you!\n",  get_monster_name(MONSTER_START + random_number(12) - 1));
             break;
         case 4:
             {
@@ -529,7 +527,7 @@ void gaze_into_orb(Player *player, GameState *game)
                 int content = get_room_content(game, x, y, z);
                 char room_desc[100];  // Adjust size as needed
                 get_room_description(content, room_desc);
-                print_message_formatted("%s at (%d,%d) Level %d.\n", strip(room_desc), x, y, z);
+                print_message_formatted("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
             }
             break;
         case 5:
@@ -719,6 +717,7 @@ void display_map(GameState *game, Player *player)
      }
 }
 
+/*
 char* strip(const char* str) {
     if (str == NULL) {
         return NULL;
@@ -735,14 +734,14 @@ char* strip(const char* str) {
         end--;
     }
     size_t len = end - start + 1;
-    char* result = (char*)malloc(len + 1);
+    char* result = (char*)malloc(len + 1);  // Problem: Dynamic allocation
     if (result == NULL) {
         return NULL;
     }
     strncpy(result, start, len);
     result[len] = '\0';
     return result;
-}
+} */
 
 void capitalize_sentences(char* str) {
     if (str == NULL || *str == '\0') {

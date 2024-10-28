@@ -277,9 +277,9 @@ void fight_monster(Player *player, GameState *game)
                  case 'L':  // Rally
                      if (player->race == HUMAN && rally_used==0) {
                          int rally_bonus = random_number(2) + 1;
-                         player->temp_strength = player->strength+1;
-                         player->temp_intelligence = player->intelligence+1;
-                         player->temp_dexterity = player->dexterity+1;
+                         player->temp_strength = player->strength;
+                         player->temp_intelligence = player->intelligence;
+                         player->temp_dexterity = player->dexterity;
                          player->strength += rally_bonus;
                          player->dexterity+= rally_bonus;
                          player->intelligence += rally_bonus;
@@ -2353,6 +2353,7 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin throws a vile black powder in your face!\n");
                 player->blindness_flag = 1;
+                player->temp_blindness_flag=1;
                 print_message("The poison burns your eyes - you've been blinded!\n");
             } else {
                 trick = 5;
@@ -2363,6 +2364,8 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin flings hot embers at your face!\n");
                 player->temp_blindness_flag = 1;
+                player->blindness_flag = 1;
+                
                 print_message("The burning ash blinds you!\n");
             } else {
                 trick = 5;
@@ -2373,6 +2376,7 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin throws toxic mushroom spores at you!\n");
                 player->blindness_flag = 1;
+                player->temp_blindness_flag=0;
                 print_message("The spores infect your eyes - you've been blinded!\n");
             } else {
                 trick = 5;
