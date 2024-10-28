@@ -770,7 +770,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     }
     if (should_drop_weapon(room_content))
     {
-        print_message("In the %s's den, you find ", enemy_name);
+        print_message_formatted("In the %s's den, you find ", enemy_name);
 
         switch(get_monster_weapon_drop(room_content))
         {
@@ -823,7 +823,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     }
     if (should_drop_armor(room_content))
     {
-        print_message("In the %s's den, you find ", enemy_name);
+        print_message_formatted("In the %s's den, you find ", enemy_name);
 
         switch(get_monster_armor_drop(room_content))
         {
