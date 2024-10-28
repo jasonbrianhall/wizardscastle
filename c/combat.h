@@ -32,4 +32,14 @@ void bear_maul_attack(Player *player, GameState *game, int enemy_strength, int e
 void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 void orc_battle_fury_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+
+bool should_drop_weapon(int monster_type);
+bool should_drop_armor(int monster_type);
+
+// Returns armor type based on monster and chance roll
+int get_monster_armor_drop(int monster_type);
+
+// Returns weapon type based on monster and chance roll
+int get_monster_weapon_drop(int monster_type);
+
 #endif // COMBAT_H

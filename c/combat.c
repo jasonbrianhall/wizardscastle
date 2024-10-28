@@ -748,77 +748,6 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
-
-        if (random_number(10)>1)
-        {
-             print_message("\nIn his stash of treasure, you also found plate armor and a sword.\n");
-
-            if (player->armor_type <=PLATE)
-            {
-                 player->armor_type = PLATE;
-                 player->armor_points = MAX_ARMOR_POINTS;
-            }
-            else
-            {
-                 print_message("You discard the plate.\n");               
-            }                    
-
-            if (player->weapon_type <SWORD)  // A Dwarf might want to keep their mace but no logic for that.
-            {
-                player->weapon_type = SWORD;
-            }
-            else
-            {
-                print_message("You discard the sword.\n");               
-            }                    
-        }
-        else
-        {
-            switch(random_number(2))
-            {
-                case 1:
-                    print_message("\nIn his stash of treasure, you also found stone armor and a sword.\n");
-                    player->armor_points = MAX_ARMOR_POINTS;
-                    if (player->armor_type <STONE)
-                    {
-                        player->armor_type = STONE;
-                    }
-                    else
-                    {
-                        print_message("You discard the stone armor.\n");               
-                    }                    
-                    if (player->armor_type <SWORD)
-                    {
-                        player->armor_type = SWORD;
-                    }
-                    else
-                    {
-                        print_message("You discard the sword.\n");               
-                    }                    
-
-                    break;
-                case 2:
-                    print_message("\nIn his stash of treasure, you also found plate armor and excalibur.\n");
-                    player->armor_points = MAX_ARMOR_POINTS;
-                    if (player->armor_type <PLATE)
-                    {
-                        player->armor_type = PLATE;
-                    }
-                    else
-                    {
-                        print_message("You discard the stone armor.\n");               
-                    }                    
-                    if (player->armor_type <EXCALIBUR)
-                    {
-                        player->armor_type = EXCALIBUR;
-                    }
-                    else
-                    {
-                        print_message("You discard the sword.\n");               
-                    }                    
-                    break;
-            }
-        }
     }
     else
     {
@@ -837,91 +766,115 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                 print_message_formatted("The %s was also hording a Dexterity potion.\n", enemy_name);
                 player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_DEXTERITY);
         }
-        if(random_number(8)==1)
-        {
-             switch(random_number(3)) 
-             {
-                 case DAGGER:
-                     print_message("You find a dagger.\n");
-                     if (player->weapon_type <DAGGER)
-                     {
-                         player->weapon_type = DAGGER;
-                     }
-                     else
-                     {
-                          print_message("You discard the dagger.\n");               
-                     }                    
-                     break;
-                 case MACE:
-                     print_message("You find a mace.\n");
-                     if (player->weapon_type <MACE)
-                     {
-                         player->weapon_type = MACE;
-                     }
-                     else
-                     {
-                          print_message("You discard the mace.\n");               
-                     }                    
-                     break;
-                 case SWORD:
-                     print_message("You find a sword.\n");
-                     if (player->weapon_type <SWORD)
-                     {
-                         player->weapon_type = SWORD;
-                     }
-                     else
-                     {
-                          print_message("You discard the sword.\n");               
-                     }                    
-
-                     break;
-             }
-        }
-        if(random_number(8)==1)
-        {
-             player->armor_points = MAX_ARMOR_POINTS;
-             switch(random_number(3)) 
-             {
-                 case LEATHER:
-                     print_message("You find leather armor.\n");
-                     if (player->armor_type <LEATHER)
-                     {
-                         player->armor_type = LEATHER;
-                     }
-                     else
-                     {
-                          print_message("You discard the leather armor.\n");               
-                     }                    
-                     
-                     break;
-                 case CHAINMAIL:
-                     print_message("You find chaimail armor.\n");
-                     if (player->armor_type <CHAINMAIL)
-                     {
-                         player->armor_type = CHAINMAIL;
-                     }
-                     else
-                     {
-                          print_message("You discard the mace.\n");               
-                     }                    
-
-                     break;
-                 case PLATE:
-                     print_message("You find plate armor.\n");
-                     if (player->armor_type <PLATE)
-                     {
-                         player->armor_type = PLATE;
-                     }
-                     else
-                     {
-                          print_message("You discard the plate.\n");               
-                     }                    
-
-                     break;
-             }
-        }
 
     }
+    if (should_drop_weapon(room_content))
+    {
+        print_message("In the %s's den, you find ", enemy_name);
+
+        switch(get_monster_weapon_drop(room_content))
+        {
+             case EXCALIBUR:
+                print_message("Excalibur.\n");
+                if (player->weapon_type <EXCALIBUR)  // A Dwarf might want to keep their mace but no logic for that.
+                {
+                    player->weapon_type = EXCALIBUR;
+                }
+                else
+                {
+                   print_message("You discard Excalibur.\n");               
+                }                    
+                break;
+             case SWORD:
+                print_message("a sword.\n");
+                if (player->weapon_type <SWORD) 
+                {
+                    player->weapon_type = SWORD;
+                }
+                else
+                {
+                   print_message("You discard the sword.\n");               
+                }                    
+                break;
+             case MACE:
+                print_message("a mace.\n");
+                if (player->weapon_type <MACE)  
+                {
+                    player->weapon_type = MACE;
+                }
+                else
+                {
+                   print_message("You discard the mace.\n");               
+                }                    
+                break;
+             
+             case DAGGER:
+                print_message("a dagger.\n");
+                if (player->weapon_type <DAGGER)
+                {
+                    player->weapon_type = DAGGER;
+                }
+                else
+                {
+                   print_message("You discard the sword.\n");               
+                }                    
+                break;    
+        }
+    }
+    if (should_drop_armor(room_content))
+    {
+        print_message("In the %s's den, you find ", enemy_name);
+
+        switch(get_monster_armor_drop(room_content))
+        {
+             case STONE:
+                print_message("Stone armor.\n");
+                if (player->weapon_type <STONE)  // A Dwarf might want to keep their mace but no logic for that.
+                {
+                    player->weapon_type = STONE;
+                }
+                else
+                {
+                   print_message("You discard stone armor.\n");               
+                }                    
+                break;
+             case PLATE:
+                print_message("plate armor.\n");
+                if (player->weapon_type <PLATE) 
+                {
+                    player->weapon_type = PLATE;
+                }
+                else
+                {
+                   print_message("You discard the plate armor.\n");               
+                }                    
+                break;
+             case CHAINMAIL:
+                print_message("chainmail.\n");
+                if (player->weapon_type <CHAINMAIL)  
+                {
+                    player->weapon_type = CHAINMAIL;
+                }
+                else
+                {
+                   print_message("You discard the chainmail armor.\n");               
+                }                    
+                break;
+             
+             case LEATHER:
+                print_message("leather armor.\n");
+                if (player->weapon_type <LEATHER)
+                {
+                    player->weapon_type = LEATHER;
+                }
+                else
+                {
+                   print_message("You discard the leather armor.\n");               
+                }                    
+                break;    
+        }
+    }
+
 
     // Clear the room
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
@@ -2474,3 +2427,155 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
     }
 }
 
+// First determine if monster drops any armor
+bool should_drop_armor(int monster_type) {
+    switch(monster_type) {
+        case DRAGON:
+            return random_number(5) <= 2;  // 40% chance
+            
+        case BALROG:
+            return random_number(4) <= 1;  // 25% chance
+            
+        case MINOTAUR:
+        case CHIMERA:
+        case GARGOYLE:
+            return random_number(6) <= 1;  // ~17% chance
+            
+        case TROLL:
+        case OGRE:
+        case BEAR:
+            return random_number(8) <= 1;  // ~12% chance
+            
+        case KOBOLD:
+        case ORC:
+        case GOBLIN:
+            return random_number(10) <= 1;  // 10% chance
+            
+        case WOLF:  // Wolves don't drop armor
+            return false;
+            
+        default:
+            return false;
+    }
+}
+
+// First determine if monster drops any weapon
+bool should_drop_weapon(int monster_type) {
+    switch(monster_type) {
+        case DRAGON:
+            return random_number(4) <= 1;  // 25% chance
+            
+        case BALROG:
+            return random_number(5) <= 1;  // 20% chance
+            
+        case MINOTAUR:
+        case CHIMERA:
+        case GARGOYLE:
+            return random_number(6) <= 1;  // ~17% chance
+            
+        case TROLL:
+        case OGRE:
+            return random_number(8) <= 1;  // ~12% chance
+            
+        case KOBOLD:
+        case ORC:
+        case GOBLIN:
+            return random_number(10) <= 1;  // 10% chance
+            
+        case WOLF:  // Wolves don't drop weapons
+        case BEAR:  // Bears don't drop weapons
+            return false;
+            
+        default:
+            return false;
+    }
+}
+
+// Returns armor type based on monster and chance roll
+int get_monster_armor_drop(int monster_type) {
+    if (!should_drop_armor(monster_type)) {
+        return 0;
+    }
+
+    switch(monster_type) {
+        case DRAGON:
+            // Dragons: 60% plate, 40% stone when they do drop
+            return (random_number(10) <= 6) ? PLATE : STONE;
+            
+        case BALROG:
+            // Balrog: 80% plate, 20% stone when they do drop
+            return (random_number(10) <= 8) ? PLATE : STONE;
+            
+        case MINOTAUR:
+        case CHIMERA:
+        case GARGOYLE:
+            // Level 8-10 monsters: 30% plate, 70% chainmail
+            return (random_number(10) <= 3) ? PLATE : CHAINMAIL;
+            
+        case TROLL:
+        case OGRE:
+        case BEAR:
+            // Level 5-7 monsters: 20% plate, 40% chainmail, 40% leather
+            switch(random_number(10)) {
+                case 1: case 2:
+                    return PLATE;
+                case 3: case 4: case 5: case 6:
+                    return CHAINMAIL;
+                default:
+                    return LEATHER;
+            }
+            
+        case KOBOLD:
+        case ORC:
+        case GOBLIN:
+            // Level 1-4 monsters: 70% leather, 30% chainmail
+            return (random_number(10) <= 7) ? LEATHER : CHAINMAIL;
+            
+        default:
+            return 0;
+    }
+}
+
+// Returns weapon type based on monster and chance roll
+int get_monster_weapon_drop(int monster_type) {
+    if (!should_drop_weapon(monster_type)) {
+        return 0;
+    }
+
+    switch(monster_type) {
+        case DRAGON:
+            // Dragons: 80% sword, 20% excalibur when they do drop
+            return (random_number(10) <= 8) ? SWORD : EXCALIBUR;
+            
+        case BALROG:
+            // Balrog: 90% sword, 10% excalibur when they do drop
+            return (random_number(10) <= 9) ? SWORD : EXCALIBUR;
+            
+        case MINOTAUR:
+        case CHIMERA:
+        case GARGOYLE:
+            // Level 8-10 monsters: 40% sword, 60% mace
+            return (random_number(10) <= 4) ? SWORD : MACE;
+            
+        case TROLL:
+        case OGRE:
+            // Level 5-7 monsters: 20% sword, 50% mace, 30% dagger
+            switch(random_number(10)) {
+                case 1: case 2:
+                    return SWORD;
+                case 3: case 4: case 5: case 6: case 7:
+                    return MACE;
+                default:
+                    return DAGGER;
+            }
+            
+        case KOBOLD:
+        case ORC:
+        case GOBLIN:
+            // Level 1-4 monsters: 60% dagger, 40% mace
+            return (random_number(10) <= 6) ? DAGGER : MACE;
+            
+        default:
+            return 0;
+    }
+}
