@@ -84,10 +84,10 @@ void trade_with_vendor(Player *player, GameState *game)
 
     // Offer to sell items if player has enough gold
     while (player->gold >= 10) {
-        print_message_formatted("\n\nThese are the services I offer:\n");
-        print_message("    1. Improve Strength (1000 GP)\n");
-        print_message("    2. Improve Intelligence (1000 GP)\n");
-        print_message("    3. Improve Dexterity (1000 GP)\n");
+        print_message("\n\nThese are the services I offer:\n");
+        print_message("    1. Improve Strength (500 GP)\n");
+        print_message("    2. Improve Intelligence (500 GP)\n");
+        print_message("    3. Improve Dexterity (500 GP)\n");
         print_message("    4. Armor (1250-2000 GP); repair cost at 100\n");
         print_message("    5. Weapon (1250-2000 GP)\n");
         print_message("    6. Lamp (1000 GP)\n");
@@ -101,10 +101,11 @@ void trade_with_vendor(Player *player, GameState *game)
         char purchase_choice = get_user_input();
         switch(purchase_choice) {
             case '1':
-                if(player->gold>=1000)
+                if(player->gold>=500)
 		{
                     if (player->strength < MAX_STRENGTH)
                     {
+                        print_message_formatted("\n%s, I have increased your strength\n", player->sex == MALE ? "SIR" : "MA'AM");
                         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
                         player->gold -= 1000;
                     }
@@ -119,12 +120,13 @@ void trade_with_vendor(Player *player, GameState *game)
                 }
                 break;
             case '2':
-                if(player->gold>=1000)
+                if(player->gold>=500)
 		{
                     if (player->intelligence < MAX_INTELLIGENCE)
                     {
+                        print_message_formatted("\n%s, I have increased your intelligence\n", player->sex == MALE ? "SIR" : "MA'AM");
                         player->intelligence = get_minimum(player->strength + random_number(6), MAX_INTELLIGENCE);
-                        player->gold -= 1000;
+                        player->gold -= 500;
                     }
                     else
                     {
@@ -137,12 +139,13 @@ void trade_with_vendor(Player *player, GameState *game)
                 }
                 break;
             case '3':
-                if(player->gold>=1000)
+                if(player->gold>=500)
 		{
                     if (player->dexterity < MAX_DEXTERITY)
                     {
+                        print_message_formatted("\n%s, I have made you more nimble\n", player->sex == MALE ? "SIR" : "MA'AM");
                         player->dexterity = get_minimum(player->strength + random_number(6), MAX_DEXTERITY);
-                        player->gold -= 1000;
+                        player->gold -= 500;
                     }
                     else
                     {

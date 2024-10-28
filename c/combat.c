@@ -744,7 +744,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
 
     if (room_content == DRAGON)
     {
-        print_message("The dragon was also hording a strength potion, an intelligence postion and a dexterity potion.");
+        print_message("The dragon was also hording a strength potion, an intelligence postion and a dexterity potion.\n\n");
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
