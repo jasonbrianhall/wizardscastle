@@ -125,7 +125,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     if (player->intelligence < MAX_INTELLIGENCE)
                     {
                         print_message_formatted("\n%s, I have increased your intelligence\n", player->sex == MALE ? "SIR" : "MA'AM");
-                        player->intelligence = get_minimum(player->strength + random_number(6), MAX_INTELLIGENCE);
+                        player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
                         player->gold -= 500;
                     }
                     else
@@ -144,7 +144,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     if (player->dexterity < MAX_DEXTERITY)
                     {
                         print_message_formatted("\n%s, I have made you more nimble\n", player->sex == MALE ? "SIR" : "MA'AM");
-                        player->dexterity = get_minimum(player->strength + random_number(6), MAX_DEXTERITY);
+                        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
                         player->gold -= 500;
                     }
                     else

@@ -71,7 +71,7 @@ void choose_race(Player *player)
                 player->race = 4;  // Dwarf
                 break;
             case 'R':
-                player->race = 5;  // Dwarf
+                player->race = 5;  // Dark Elf
                 break;
 
             default:
