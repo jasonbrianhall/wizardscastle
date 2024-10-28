@@ -332,10 +332,14 @@ void display_map2(GameState *game, Player *player)
 
     for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
-        if(game->treasure[i]==1)
+        if(game->treasure[i])
         {
         	print_message2("     ");
         	print_message2(get_treasure_name(i));
+                if(game->treasure>1)
+                {
+                     print_message2(" * %d", game->treasure[i]);
+                }
         	print_message2("\n");
         }
     }
