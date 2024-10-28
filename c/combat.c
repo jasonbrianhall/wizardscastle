@@ -824,14 +824,15 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     if (should_drop_armor(room_content))
     {
         print_message_formatted("In the %s's den, you find ", enemy_name);
+        player->armor_points = MAX_ARMOR_POINTS;
 
         switch(get_monster_armor_drop(room_content))
         {
              case STONE:
                 print_message("Stone armor.\n");
-                if (player->weapon_type <STONE)  // A Dwarf might want to keep their mace but no logic for that.
+                if (player->armor_type <STONE)  // A Dwarf might want to keep their mace but no logic for that.
                 {
-                    player->weapon_type = STONE;
+                    player->armor_type = STONE;
                 }
                 else
                 {
@@ -840,9 +841,9 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                 break;
              case PLATE:
                 print_message("plate armor.\n");
-                if (player->weapon_type <PLATE) 
+                if (player->armor_type <PLATE) 
                 {
-                    player->weapon_type = PLATE;
+                    player->armor_type = PLATE;
                 }
                 else
                 {
@@ -851,9 +852,9 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                 break;
              case CHAINMAIL:
                 print_message("chainmail.\n");
-                if (player->weapon_type <CHAINMAIL)  
+                if (player->armor_type <CHAINMAIL)  
                 {
-                    player->weapon_type = CHAINMAIL;
+                    player->armor_type = CHAINMAIL;
                 }
                 else
                 {
@@ -863,9 +864,9 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
              
              case LEATHER:
                 print_message("leather armor.\n");
-                if (player->weapon_type <LEATHER)
+                if (player->armor_type <LEATHER)
                 {
-                    player->weapon_type = LEATHER;
+                    player->armor_type = LEATHER;
                 }
                 else
                 {
