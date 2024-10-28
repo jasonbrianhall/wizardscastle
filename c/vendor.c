@@ -64,7 +64,7 @@ void trade_with_vendor(Player *player, GameState *game)
                    if (get_user_input_yn() == 'Y') {
                        game->treasure[i] = 0;
                        player->treasure_count--;
-                       player->weapon_type=4;
+                       player->weapon_type=EXCALIBUR;
                    }        
                }
                else
@@ -74,8 +74,8 @@ void trade_with_vendor(Player *player, GameState *game)
                        if (get_user_input_yn() == 'Y') {
                            game->treasure[i] = 0;
                            player->treasure_count--;
-                           player->armor_type=4;
-                           player->armor_points=42;
+                           player->armor_type=STONE;
+                           player->armor_points=MAX_ARMOR_POINTS;
                        }        
                    }          
             }
@@ -135,7 +135,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 }
                 else
                 {
-                    print_message_formatted("\n%s YOU ARE TOO POOR TO BUY A STRENGTH POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
+                    print_message_formatted("\n%s YOU ARE TOO POOR TO BUY AN Intelligence POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             case '3':
@@ -154,7 +154,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 }
                 else
                 {
-                    print_message_formatted("\n%s, YOU ARE TOO POOR TO BUY A STRENGTH POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
+                    print_message_formatted("\n%s, YOU ARE TOO POOR TO BUY A DEXTERITY POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
             case '4':
@@ -320,7 +320,7 @@ void buy_armor(Player *player)
                 
                 }
                 else {
-                    print_message("%s, not enough gold for Plate Armor.\n", player->sex == MALE ? "Sir" : "Ma'am");
+                    print_message("%s, not enough gold to repair Plate Armor.\n", player->sex == MALE ? "Sir" : "Ma'am");
                 }
                 return;
             }
@@ -345,9 +345,9 @@ void buy_weapon(Player *player)
     switch(weapon_choice) {
         case '1':
             if (player->gold >= 1250) {
-                if (player->weapon_type < 1)
+                if (player->weapon_type < DAGGER)
                 {
-                    player->weapon_type = 1;
+                    player->weapon_type = DAGGER;
                     player->gold -= 1250;
                     print_message("Weapon purchased successfully!\n");
                 }
@@ -362,9 +362,9 @@ void buy_weapon(Player *player)
             break;
         case '2':
             if (player->gold >= 1500) {
-                if (player->weapon_type <2)
+                if (player->weapon_type <MACE)
                 {
-                    player->weapon_type = 2;
+                    player->weapon_type = MACE;
                     player->gold -= 1500;
                     print_message("Weapon purchased successfully!\n");
 
@@ -380,9 +380,9 @@ void buy_weapon(Player *player)
             break;
         case '3':
             if (player->gold >= 2000) {
-                if (player->weapon_type < 3)
+                if (player->weapon_type < SWORD)
                 {
-                    player->weapon_type = 3;
+                    player->weapon_type = SWORD;
                     player->gold -= 2000;
                     print_message("Weapon purchased successfully!\n");
                 }
