@@ -836,7 +836,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                 }
                 else
                 {
-                   print_message("You discard stone armor.\n");               
+                   print_message("You discard the stone armor.\n");               
                 }                    
                 break;
              case PLATE:
