@@ -84,13 +84,8 @@ void fight_monster(Player *player, GameState *game)
             if (can_bribe) {
                 print_message("You can also attempt a (B)ribe.\n");
             }
-            if (muted == 0 && (
-                (player->intelligence >= 14) || // Base intelligence requirement for all races
-                ((player->race == DWARF || player->race == ELF || player->race == DROW) && player->intelligence >= 10) || // Special races with lower requirement
-                (player->race == HOBBIT && player->intelligence >= 11)  || // Hobbit specific requirement
-                (player->race == HUMAN && player->intelligence >= 12) // Paladin Magic
-
-            )) {
+            if (can_cast_magic(player, muted))
+            {
                 print_message("You can also (C)ast a spell.\n");
             }
             if (player->race == HOBBIT) {
@@ -183,13 +178,7 @@ void fight_monster(Player *player, GameState *game)
                     can_bribe = 0;
                     break;
                 case 'C':
-                   if (muted == 0 && (
-                       (player->intelligence >= 14) || // Base intelligence requirement for all races
-                       ((player->race == DWARF || player->race == ELF || player->race == DROW) && player->intelligence >= 10) || // Special races with lower requirement
-                       (player->race == HOBBIT && player->intelligence >= 11) || // Hobbit specific requirement
-                       (player->race == HUMAN && player->intelligence >= 12) // Paladin Magic
-
-                   )) {
+                   if (can_cast_magic(player, muted)) {
                         // Player can cast a spell
                         if (handle_spell(player, game, &enemy_strength, &enemy_intelligence, &enemy_dexterity, enemy_name)) {
                             if (game->game_over)
@@ -2575,5 +2564,24 @@ int get_monster_weapon_drop(int monster_type) {
             
         default:
             return 0;
+    }
+}
+
+int can_cast_magic(Player* player, int muted) {
+    if (muted) {
+        return 0;
+    }
+    
+    switch (player->race) {
+        case DWARF:
+        case ELF:
+        case DROW:
+            return player->intelligence >= 10;
+        case HOBBIT:
+            return player->intelligence >= 11;
+        case HUMAN:
+            return player->intelligence >= 12;
+        default:
+            return player->intelligence >= 14;
     }
 }
