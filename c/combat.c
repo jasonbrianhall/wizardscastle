@@ -662,6 +662,7 @@ void fight_monster(Player *player, GameState *game)
 void handle_combat_victory(Player *player, GameState *game, int is_vendor, const char *enemy_name)
 {
     print_message_formatted("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
+    int room_content = get_room_content(game, player->x, player->y, player->level);
     
     if (random_number(5) == 1) {  // 20% chance of eating
         print_message_formatted("\nYOU SPEND AN HOUR EATING %s%s.\n", enemy_name, get_random_body_part());
@@ -676,18 +677,28 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
              player->armor_type = PLATE;
              player->armor_points = MAX_ARMOR_POINTS;
         }
+        else
+        {
+            print_message("You discard the leather armor.\n");               
+        }                    
+
 
         print_message_formatted("A SWORD\n");
         if (player->weapon_type <=SWORD)  // A Dwarf might want to keep their mace but no logic for that.
         {
             player->weapon_type = SWORD;
         }
+        else
+        {
+            print_message("You discard the sword.\n");               
+        }                    
+
         print_message_formatted("A STRENGTH POTION\n");
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         print_message_formatted("AN INTELLIGENCE POTION\n");
         player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         print_message_formatted("A DEXTERITY POTION\n");
-        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_INTELLIGENCE);
+        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
         if (!player->lamp_flag) {
             print_message_formatted("A LAMP\n");
             player->lamp_flag = 1;
@@ -703,9 +714,165 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         }
     }
 
-    int gold_found = random_number(1000);
-    print_message_formatted("\nYOU NOW GET HIS HOARD OF %d GP'S!\n", gold_found);
+    int gold_found = random_number(250) + random_number(250) + random_number(250) + random_number(250);  // 4 to 1000 but higher chance of being a good number.
+    if (room_content == DRAGON)
+    {
+	    gold_found+= random_number(250) + random_number(250) + random_number(250) + random_number(250);  // Dragons horde gold
+    }
+    else if (room_content == KOBOLD)
+    {
+	    gold_found+= random_number(250);  // Kobolds have a litte more chance to have money since they are small dragons
+    }
+    else if (room_content == BALROG)
+    {
+	    gold_found+= random_number(250) + random_number(250) + random_number(250);  // Balrogs are so hard, they should have more treasure
+    }
+
+    print_message("\nYou now get his hoard of %d GP's!\n", gold_found);
     player->gold += gold_found;
+
+    if (random_number(5)==1 || room_content==DRAGON || is_vendor) {
+	    int flares_found=random_number(6);
+	    print_message("\nYou also found his horde of %d flares!\n", flares_found);
+	    player->flares +=flares_found;
+    }
+
+    if ((random_number(20)==1 || room_content == DRAGON) && !is_vendor) {
+           print_message("\nThe %s was also hording a lamp.  It is now yours.\n", enemy_name);
+           player->lamp_flag=1;
+    }
+
+    if (room_content == DRAGON)
+    {
+        print_message("The dragon was also hording a strength potion, an intelligence postion and a dexterity potion.");
+        player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
+        player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
+        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
+
+        print_message("\nIn his stash of treasure, you also found plate armor and a sword.\n");
+
+        if (player->armor_type <=PLATE)
+        {
+             player->armor_type = PLATE;
+             player->armor_points = MAX_ARMOR_POINTS;
+        }
+        else
+        {
+             print_message("You discard the plate.\n");               
+        }                    
+
+        if (player->weapon_type <=SWORD)  // A Dwarf might want to keep their mace but no logic for that.
+        {
+            player->weapon_type = SWORD;
+        }
+        else
+        {
+            print_message("You discard the sword.\n");               
+        }                    
+
+    }
+    else
+    {
+        if(random_number(5)==1)
+	{
+		print_message("The %s was also hording a strength potion.\n", enemy_name);
+		player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
+        }
+	if(random_number(5)==1)
+        {
+                print_message("The %s was also hording a intelligence potion.\n", enemy_name);
+                player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
+        }
+        if(random_number(5)==1)
+        {       
+                print_message("The %s was also hording a Dexterity potion.\n", enemy_name);
+                player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_DEXTERITY);
+        }
+        if(random_number(5)==1)
+        {
+             switch(random_number(3)) 
+             {
+                 case DAGGER:
+                     print_message("You find a dagger.\n");
+                     if (player->weapon_type <=DAGGER)
+                     {
+                         player->weapon_type = DAGGER;
+                     }
+                     else
+                     {
+                          print_message("You discard the dagger.\n");               
+                     }                    
+                     break;
+                 case MACE:
+                     print_message("You find a mace.\n");
+                     if (player->weapon_type <=MACE)
+                     {
+                         player->weapon_type = MACE;
+                     }
+                     else
+                     {
+                          print_message("You discard the mace.\n");               
+                     }                    
+                     break;
+                 case SWORD:
+                     print_message("You find a sword.\n");
+                     if (player->weapon_type <=SWORD)
+                     {
+                         player->weapon_type = SWORD;
+                     }
+                     else
+                     {
+                          print_message("You discard the sword.\n");               
+                     }                    
+
+                     break;
+             }
+        }
+        if(random_number(5)==1)
+        {
+             player->armor_points = MAX_ARMOR_POINTS;
+             switch(random_number(3)) 
+             {
+                 case LEATHER:
+                     print_message("You find leather armor.\n");
+                     if (player->armor_type <=LEATHER)
+                     {
+                         player->armor_type = LEATHER;
+                     }
+                     else
+                     {
+                          print_message("You discard the leather armor.\n");               
+                     }                    
+                     
+                     break;
+                 case CHAINMAIL:
+                     print_message("You find chaimail armor.\n");
+                     if (player->armor_type <=CHAINMAIL)
+                     {
+                         player->armor_type = CHAINMAIL;
+                     }
+                     else
+                     {
+                          print_message("You discard the mace.\n");               
+                     }                    
+
+                     break;
+                 case PLATE:
+                     print_message("You find plate armor.\n");
+                     if (player->armor_type <=PLATE)
+                     {
+                         player->armor_type = PLATE;
+                     }
+                     else
+                     {
+                          print_message("You discard the plate.\n");               
+                     }                    
+
+                     break;
+             }
+        }
+
+    }
 
     // Clear the room
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
