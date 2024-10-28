@@ -965,7 +965,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     }
     if(player->intelligence>=14 && (player->race == DWARF || player->race == DROW))
     {
-        print_message(          "   S(T)one Skin; improves your armor at the cost of one strength and intelligence points\n");
+        print_message(          "   S(T)ONE SKIN; improves your armor at the cost of one strength and intelligence points\n");
     }    
     if (player->intelligence >= 16)
     {
