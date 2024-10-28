@@ -42,4 +42,5 @@ int get_monster_armor_drop(int monster_type);
 // Returns weapon type based on monster and chance roll
 int get_monster_weapon_drop(int monster_type);
 int can_cast_magic(Player* player, int muted);
+int can_escape(Player* player, int is_vendor, const char* enemy_name);
 #endif // COMBAT_H

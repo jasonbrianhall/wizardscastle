@@ -27,31 +27,10 @@ void fight_monster(Player *player, GameState *game)
         return;
     }
     
-    if (!is_vendor && player->race == HOBBIT && (random_number(10) == 1 || random_number(24 - player->dexterity)==1)) {
-        print_message("Using your hobbit stealth (and the fact that you are very short), you sneak past the %s!\n", enemy_name);
-        return;  // End combat successfully
+    if (can_escape(player, is_vendor, enemy_name))
+    {
+        return;
     }
-    
-    if (!is_vendor && player->race == DROW && (random_number(12) == 1 || random_number(26 - player->dexterity)==1)) {
-        print_message("Using your Drow stealth, you slip past the %s unnoticed!\n", enemy_name);
-        return;  // End combat successfully
-    }  
-
-    if (!is_vendor && player->race == ELF && (random_number(13) == 1 || random_number(27 - player->dexterity)==1)) {
-        print_message("Using your legendary Elf stealth, you slip past the %s unnoticed!\n", enemy_name);
-        return;  // End combat successfully
-    }  
-
-    if (!is_vendor && player->race == HUMAN && (random_number(14) == 1 || random_number(27 - player->dexterity)==1)) {
-        print_message("You slip past the %s unnoticed!\n", enemy_name);
-        return;  // End combat successfully
-    }  
-
-    if (!is_vendor && player->race == DWARF && (random_number(15) == 1 || random_number(26 - player->dexterity) == 1)) {
-        print_message("Using your Dwarven... er, 'aerodynamic' build, you somehow manage to roll past the %s unnoticed. Who knew being stout had its advantages?\n", enemy_name);
-        return;  // End combat successfully
-    }
-
     
     // Set enemy stats based on room content
     if (is_vendor) {
@@ -2589,4 +2568,48 @@ int can_cast_magic(Player* player, int muted) {
         default:
             return player->intelligence >= 14;
     }
+}
+
+int can_escape(Player* player, int is_vendor, const char* enemy_name) {
+    if (is_vendor) {
+        return 0;
+    }
+    
+    switch (player->race) {
+        case HOBBIT:
+            if (random_number(10) == 1 || random_number(24 - player->dexterity) == 1) {
+                print_message("Using your hobbit stealth (and the fact that you are very short), you sneak past the %s!\n", enemy_name);
+                return 1;
+            }
+            break;
+            
+        case DROW:
+            if (random_number(12) == 1 || random_number(26 - player->dexterity) == 1) {
+                print_message("Using your Drow stealth, you slip past the %s unnoticed!\n", enemy_name);
+                return 1;
+            }
+            break;
+            
+        case ELF:
+            if (random_number(13) == 1 || random_number(27 - player->dexterity) == 1) {
+                print_message("Using your legendary Elf stealth, you slip past the %s unnoticed!\n", enemy_name);
+                return 1;
+            }
+            break;
+            
+        case HUMAN:
+            if (random_number(14) == 1 || random_number(27 - player->dexterity) == 1) {
+                print_message("You slip past the %s unnoticed!\n", enemy_name);
+                return 1;
+            }
+            break;
+            
+        case DWARF:
+            if (random_number(15) == 1 || random_number(26 - player->dexterity) == 1) {
+                print_message("Using your Dwarven... er, 'aerodynamic' build, you somehow manage to roll past the %s unnoticed. Who knew being stout had its advantages?\n", enemy_name);
+                return 1;
+            }
+            break;
+    }
+    return 0;
 }
