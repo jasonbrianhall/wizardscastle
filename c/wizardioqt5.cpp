@@ -70,7 +70,7 @@ public:
         mapDisplay = new QTextEdit(this);
         mapDisplay->setReadOnly(true);
         mapDisplay->setAcceptRichText(true);
-        mapDisplay->setFont(QFont("Courier New", 10));
+        mapDisplay->setFont(QFont("Consolas", 10));
         mapDisplay->document()->setDefaultStyleSheet(
             "span.emoji { font-size: 48pt; line-height: 1.5; }"
             "span.text { font-size: 12pt; }"
