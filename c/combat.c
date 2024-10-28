@@ -122,8 +122,11 @@ void fight_monster(Player *player, GameState *game)
                             }
                             else
                             {
-                                print_message_formatted("\nOh no! Your %s broke!\n", get_weapon_name(player->weapon_type));
-                                player->weapon_type = 0;
+                                if(player->weapon_type<EXCALIBUR)
+                                {
+                                    print_message_formatted("\nOh no! Your %s broke!\n", get_weapon_name(player->weapon_type));
+                                    player->weapon_type = 0;
+                                }
                             }
                         }
                         if (enemy_strength <= 0) {
@@ -526,8 +529,14 @@ void fight_monster(Player *player, GameState *game)
                          {
                              temp = random_number(max_increase);
                              print_message_formatted("THE SPELL HITS! YOU ARE BLIND!!!");
-                             player->temp_blindness_flag=1;
-                             player->blindness_flag=1;
+                             if (game->treasure[OPAL_EYE_INDEX]) {
+                                 print_message("But the Opal Eye immediately cures your blindness!\n");                
+                                 player->temp_blindness_flag = 0;
+                                 player->blindness_flag = 0;
+                             } else {
+                                 player->temp_blindness_flag=1;
+                                 player->blindness_flag=1;
+                            }
                          }
                          else
                          {
@@ -2314,9 +2323,15 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
         case 1:  // Stolen spices - temporary
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin throws stolen pepper in your eyes!\n");
-                player->temp_blindness_flag = 1;
-                player->blindness_flag=1;
-                print_message("Your eyes burn terribly - you can't see!\n");
+                if (game->treasure[OPAL_EYE_INDEX]) {
+                    print_message("But the Opal Eye immediately cures your blindness!\n");                
+                    player->temp_blindness_flag = 0;
+                    player->blindness_flag = 0;
+                } else {
+                    player->temp_blindness_flag = 1;
+                    player->blindness_flag=1;
+                    print_message("Your eyes burn terribly - you can't see!\n");
+                }
             } else {
                 trick = 5;  // Fall back to regular attack if already blind
             }
@@ -2325,9 +2340,15 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
         case 2:  // Poisonous powder - permanent unless cured
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin throws a vile black powder in your face!\n");
-                player->blindness_flag = 1;
-                player->temp_blindness_flag=1;
-                print_message("The poison burns your eyes - you've been blinded!\n");
+                if (game->treasure[OPAL_EYE_INDEX]) {
+                    print_message("But the Opal Eye immediately cures your blindness!\n");                
+                    player->temp_blindness_flag = 0;
+                    player->blindness_flag = 0;                
+                } else {
+                    player->blindness_flag = 1;
+                    player->temp_blindness_flag=0;
+                    print_message("The poison burns your eyes - you've been blinded!\n");
+                }
             } else {
                 trick = 5;
             }
@@ -2336,10 +2357,16 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
         case 3:  // Hot embers - temporary
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin flings hot embers at your face!\n");
-                player->temp_blindness_flag = 1;
-                player->blindness_flag = 1;
-                
-                print_message("The burning ash blinds you!\n");
+                if (game->treasure[OPAL_EYE_INDEX]) {
+                    print_message("But the Opal Eye immediately cures your blindness!\n");                
+                    player->temp_blindness_flag = 0;
+                    player->blindness_flag = 0;                    
+                } else {
+
+                    player->temp_blindness_flag = 1;
+                    player->blindness_flag = 1;
+                    print_message("The burning ash blinds you!\n");
+               }
             } else {
                 trick = 5;
             }
@@ -2348,9 +2375,15 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_stren
         case 4:  // Mushroom spores - permanent unless cured
             if (player->blindness_flag == 0 && player->temp_blindness_flag == 0) {
                 print_message("The Goblin throws toxic mushroom spores at you!\n");
-                player->blindness_flag = 1;
-                player->temp_blindness_flag=0;
-                print_message("The spores infect your eyes - you've been blinded!\n");
+                if (game->treasure[OPAL_EYE_INDEX]) {
+                    print_message("But the Opal Eye immediately cures your blindness!\n");
+                    player->temp_blindness_flag = 0;
+                    player->blindness_flag = 0;                
+                } else {
+                    player->blindness_flag = 1;
+                    player->temp_blindness_flag=0;
+                    print_message("The spores infect your eyes - you've been blinded!\n");
+                }
             } else {
                 trick = 5;
             }
