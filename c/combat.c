@@ -2575,37 +2575,38 @@ int can_escape(Player* player, int is_vendor, const char* enemy_name) {
         return 0;
     }
     
+    // Dexterity over 18 isn't used for escaping.
     switch (player->race) {
         case HOBBIT:
-            if (random_number(10) == 1 || random_number(24 - player->dexterity) == 1) {
+            if (random_number(10) == 1 || random_number(24 - get_minimum(18, player->dexterity)) == 1) {
                 print_message("Using your hobbit stealth (and the fact that you are very short), you sneak past the %s!\n", enemy_name);
                 return 1;
             }
             break;
             
         case DROW:
-            if (random_number(12) == 1 || random_number(26 - player->dexterity) == 1) {
+            if (random_number(12) == 1 || random_number(26 - get_minimum(18, player->dexterity)) == 1) {
                 print_message("Using your Drow stealth, you slip past the %s unnoticed!\n", enemy_name);
                 return 1;
             }
             break;
             
         case ELF:
-            if (random_number(13) == 1 || random_number(27 - player->dexterity) == 1) {
+            if (random_number(13) == 1 || random_number(27 - get_minimum(18, player->dexterity)) == 1) {
                 print_message("Using your legendary Elf stealth, you slip past the %s unnoticed!\n", enemy_name);
                 return 1;
             }
             break;
             
         case HUMAN:
-            if (random_number(14) == 1 || random_number(27 - player->dexterity) == 1) {
+            if (random_number(14) == 1 || random_number(27 - get_minimum(18, player->dexterity)) == 1) {
                 print_message("You slip past the %s unnoticed!\n", enemy_name);
                 return 1;
             }
             break;
             
         case DWARF:
-            if (random_number(15) == 1 || random_number(26 - player->dexterity) == 1) {
+            if (random_number(15) == 1 || random_number(26 - get_minimum(18, player->dexterity)) == 1) {
                 print_message("Using your Dwarven... er, 'aerodynamic' build, you somehow manage to roll past the %s unnoticed. Who knew being stout had its advantages?\n", enemy_name);
                 return 1;
             }
