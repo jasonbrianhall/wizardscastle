@@ -160,7 +160,7 @@ void trade_with_vendor(Player *player, GameState *game)
             case '4':
                 if (player->gold<100)
                 {
-                    print_message_formatted("\n%s, YOU DO NOT HAVE ENOUGH GOLD TO BUY ARMOR!\n", player->sex == MALE ? "SIR" : "MA'AM");
+                    print_message_formatted("\n%s, YOU DO NOT HAVE ENOUGH GOLD TO BUY OR REPAIR ARMOR!\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 else
                 {
@@ -320,7 +320,7 @@ void buy_armor(Player *player)
                 
                 }
                 else {
-                    print_message("%s, not enough gold to repair Plate Armor.\n", player->sex == MALE ? "Sir" : "Ma'am");
+                    print_message("%s, not enough gold to repair armor.\n", player->sex == MALE ? "Sir" : "Ma'am");
                 }
                 return;
             }
