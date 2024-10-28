@@ -161,18 +161,18 @@ const char* get_weapon_name(int weapon_type)
     }    
 }
 
-const char* get_armor_name(int weapon_type)
+const char* get_armor_name(int armor_type)
 {
-    const char* weapon_names[] = {"NO WEAPON", "LEATHER", "CHAINMAIL", "PLATE", "EXCALIBUR"};
+    const char* armor_names[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE", "STONE"};
 
-    if (weapon_type<5)
+    if (armor_type<5)
     {
-        return weapon_names[weapon_type];
+        return armor_names[armor_type];
 
     }
     else
     {
-        return weapon_names[0];
+        return armor_names[0];
     }    
 }
 
