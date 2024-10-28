@@ -209,7 +209,6 @@ void buy_equipment(Player *player)
     const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
     const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
     int cost, exittheloop;
-    char message[100];
 
     // Buy Armor
     print_message_formatted("\nOK, ");
@@ -219,7 +218,8 @@ void buy_equipment(Player *player)
     
     print_message_formatted("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
     print_message(          "(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
-    
+
+    player->armor_points = 0;
     do {
         //print_message_formatted("YOUR CHOICE:  ");
         user_input = get_user_input_custom_prompt("Your choice:  ");
@@ -239,11 +239,9 @@ void buy_equipment(Player *player)
     } while (exittheloop==0);
 
     player->gold -= cost;
-    player->armor_points = 0;
 
     // Buy Weapon
-    snprintf(message, sizeof(message), "\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
-    print_message_formatted(message);
+    print_message_formatted("\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n", race_names[player->race - 1], player->gold);
     print_message_formatted("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
     print_message(          "(S)word<30> (M)ace<20> (D)agger<10> (N)othing<0>\n\n");
     
@@ -258,7 +256,6 @@ void buy_equipment(Player *player)
                     continue;
                 }
                 player->weapon_type = SWORD; cost = 30;
-                player->armor_points = MAX_ARMOR_POINTS;
                 break;
             case 'M': 
                 if (player->gold < 20) {
@@ -266,9 +263,8 @@ void buy_equipment(Player *player)
                     continue;
                 }
                 player->weapon_type = MACE; cost = 20;
-                player->armor_points = MAX_ARMOR_POINTS;
                 break;
-            case 'D': player->weapon_type = DAGGER; cost = 10; player->armor_points = MAX_ARMOR_POINTS; break;
+            case 'D': player->weapon_type = DAGGER; cost = 10; break;
             case 'N': player->weapon_type = NOTHING; cost = 0; break;
             default:
                 print_message("** Poor ");

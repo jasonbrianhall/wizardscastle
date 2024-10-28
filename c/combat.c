@@ -115,18 +115,10 @@ void fight_monster(Player *player, GameState *game)
                         }
                         enemy_strength -= temp;
                         if ((room_content == GARGOYLE || room_content == DRAGON) && random_number(8) == 1) {
-                            if (player->weapon_type >= EXCALIBUR && random_number(8) == 1) // Excalibur can break but it's rare
-                            {
+                            if (player->weapon_type < EXCALIBUR || 
+                                (player->weapon_type >= EXCALIBUR && random_number(8) == 1)) {
                                 print_message_formatted("\nOh no! Your %s broke!\n", get_weapon_name(player->weapon_type));
                                 player->weapon_type = 0;
-                            }
-                            else
-                            {
-                                if(player->weapon_type<EXCALIBUR)
-                                {
-                                    print_message_formatted("\nOh no! Your %s broke!\n", get_weapon_name(player->weapon_type));
-                                    player->weapon_type = 0;
-                                }
                             }
                         }
                         if (enemy_strength <= 0) {
@@ -1614,7 +1606,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     if(player->strength<MAX_STRENGTH)
                     {
                         temp=player->strength;
-                        player->strength = (player->strength += random_number(3)) > MAX_STRENGTH ? MAX_STRENGTH : player->strength;
+                        player->strength = (player->strength + random_number(3)) > MAX_STRENGTH ? MAX_STRENGTH : player->strength;
                         print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, temp-player->strength);
                     }
                     else
