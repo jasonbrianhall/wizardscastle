@@ -672,7 +672,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         print_message_formatted("\nYOU GET ALL HIS WARES:\n");
         print_message_formatted("PLATE ARMOR\n");
        
-        if (player->armor_type <=PLATE)
+        if (player->armor_type <PLATE)
         {
              player->armor_type = PLATE;
              player->armor_points = MAX_ARMOR_POINTS;
@@ -684,7 +684,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
 
 
         print_message_formatted("A SWORD\n");
-        if (player->weapon_type <=SWORD)  // A Dwarf might want to keep their mace but no logic for that.
+        if (player->weapon_type <SWORD)  // A Dwarf might want to keep their mace but no logic for that.
         {
             player->weapon_type = SWORD;
         }
@@ -761,7 +761,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
              print_message("You discard the plate.\n");               
         }                    
 
-        if (player->weapon_type <=SWORD)  // A Dwarf might want to keep their mace but no logic for that.
+        if (player->weapon_type <SWORD)  // A Dwarf might want to keep their mace but no logic for that.
         {
             player->weapon_type = SWORD;
         }
@@ -794,7 +794,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
              {
                  case DAGGER:
                      print_message("You find a dagger.\n");
-                     if (player->weapon_type <=DAGGER)
+                     if (player->weapon_type <DAGGER)
                      {
                          player->weapon_type = DAGGER;
                      }
@@ -805,7 +805,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                      break;
                  case MACE:
                      print_message("You find a mace.\n");
-                     if (player->weapon_type <=MACE)
+                     if (player->weapon_type <MACE)
                      {
                          player->weapon_type = MACE;
                      }
@@ -816,7 +816,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                      break;
                  case SWORD:
                      print_message("You find a sword.\n");
-                     if (player->weapon_type <=SWORD)
+                     if (player->weapon_type <SWORD)
                      {
                          player->weapon_type = SWORD;
                      }
@@ -835,7 +835,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
              {
                  case LEATHER:
                      print_message("You find leather armor.\n");
-                     if (player->armor_type <=LEATHER)
+                     if (player->armor_type <LEATHER)
                      {
                          player->armor_type = LEATHER;
                      }
@@ -847,7 +847,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                      break;
                  case CHAINMAIL:
                      print_message("You find chaimail armor.\n");
-                     if (player->armor_type <=CHAINMAIL)
+                     if (player->armor_type <CHAINMAIL)
                      {
                          player->armor_type = CHAINMAIL;
                      }
@@ -859,7 +859,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                      break;
                  case PLATE:
                      print_message("You find plate armor.\n");
-                     if (player->armor_type <=PLATE)
+                     if (player->armor_type <PLATE)
                      {
                          player->armor_type = PLATE;
                      }
