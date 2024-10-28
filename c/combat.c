@@ -763,8 +763,8 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         }
         if(random_number(8)==1)
         {       
-                print_message_formatted("The %s was also hording a Dexterity potion.\n", enemy_name);
-                player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_DEXTERITY);
+                print_message_formatted("The %s was also hording a dexterity potion.\n", enemy_name);
+                player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
         }
 
     }

@@ -107,7 +107,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     {
                         print_message_formatted("\n%s, I have increased your strength\n", player->sex == MALE ? "SIR" : "MA'AM");
                         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
-                        player->gold -= 1000;
+                        player->gold -= 500;
                     }
                     else
                     {
@@ -279,7 +279,7 @@ void buy_armor(Player *player)
                     player->armor_type = LEATHER;
                     player->armor_points = MAX_ARMOR_POINTS;
                     player->gold -= 1250;
-                    print_message_formatted("\n%s armor purchased successfully!\n");
+                    print_message_formatted("\nLeather armor purchased successfully!\n");
                 }
             } else {
                 print_message("%s, not enough gold for Leather Armor.\n", player->sex == MALE ? "Sir" : "Ma'am");
@@ -291,7 +291,7 @@ void buy_armor(Player *player)
                 player->armor_type = CHAINMAIL;
                 player->armor_points = MAX_ARMOR_POINTS;
                 player->gold -= 1500;
-                print_message("\nArmor purchased successfully!\n");
+                print_message("\nChainmail armor purchased successfully!\n");
             } else {
                 print_message("%s, not enough gold for Chainmail.\n", player->sex == MALE ? "Sir" : "Ma'am");
                 return;
@@ -302,7 +302,7 @@ void buy_armor(Player *player)
                 player->armor_type = PLATE;
                 player->armor_points = MAX_ARMOR_POINTS;
                 player->gold -= 2000;
-                print_message_formatted("Armor purchased successfully!\n");
+                print_message_formatted("Plate armor purchased successfully!\n");
             } else {
                 print_message("%s, not enough gold for Plate Armor.\n", player->sex == MALE ? "Sir" : "Ma'am");
                 return;
@@ -310,7 +310,7 @@ void buy_armor(Player *player)
             break;
         case '4':
             if (player->gold >= 100 && player->armor_points<MAX_ARMOR_POINTS) {
-                player->armor_points += random_number(5);
+                player->armor_points += random_number(3) + random_number(3); // 2 to 6
                 if(player->armor_points>=MAX_ARMOR_POINTS) {
                     player->armor_points=MAX_ARMOR_POINTS;
                 }   
@@ -352,7 +352,7 @@ void buy_weapon(Player *player)
                 {
                     player->weapon_type = 1;
                     player->gold -= 1250;
-                    print_message_formatted("Weapon purchased successfully!\n");
+                    print_message("Weapon purchased successfully!\n");
                 }
                 else
                 {
@@ -369,7 +369,7 @@ void buy_weapon(Player *player)
                 {
                     player->weapon_type = 2;
                     player->gold -= 1500;
-                    print_message_formatted("Weapon purchased successfully!\n");
+                    print_message("Weapon purchased successfully!\n");
 
                 }
                 else
@@ -387,7 +387,7 @@ void buy_weapon(Player *player)
                 {
                     player->weapon_type = 3;
                     player->gold -= 2000;
-                    print_message_formatted("Weapon purchased successfully!\n");
+                    print_message("Weapon purchased successfully!\n");
                 }
                 else
                 {
