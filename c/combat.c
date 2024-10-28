@@ -669,8 +669,8 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     }
 
     if (is_vendor) {
-        print_message_formatted("\nYOU GET ALL HIS WARES:\n");
-        print_message_formatted("PLATE ARMOR\n");
+        print_message_formatted("\nYou get all his wares:\n");
+        print_message("Plate armor\n");
        
         if (player->armor_type <PLATE)
         {
@@ -683,7 +683,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         }                    
 
 
-        print_message_formatted("A SWORD\n");
+        print_message("A sword\n");
         if (player->weapon_type <SWORD)  // A Dwarf might want to keep their mace but no logic for that.
         {
             player->weapon_type = SWORD;
@@ -693,14 +693,14 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
             print_message("You discard the sword.\n");               
         }                    
 
-        print_message_formatted("A STRENGTH POTION\n");
+        print_message("A strength potion\n");
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
-        print_message_formatted("AN INTELLIGENCE POTION\n");
+        print_message("An intelligence potion\n");
         player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
-        print_message_formatted("A DEXTERITY POTION\n");
+        print_message("A dexterity potion\n");
         player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
         if (!player->lamp_flag) {
-            print_message_formatted("A LAMP\n");
+            print_message("A lamp\n");
             player->lamp_flag = 1;
         }
     } else {
@@ -738,7 +738,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     }
 
     if ((random_number(20)==1 || room_content == DRAGON) && !is_vendor) {
-           print_message("\nThe %s was also hording a lamp.  It is now yours.\n", enemy_name);
+           print_message_formatted("\nThe %s was also hording a lamp.  It is now yours.\n", enemy_name);
            player->lamp_flag=1;
     }
 
@@ -749,46 +749,95 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
         player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
 
-        print_message("\nIn his stash of treasure, you also found plate armor and a sword.\n");
-
-        if (player->armor_type <=PLATE)
+        if (random_number(10)>1)
         {
-             player->armor_type = PLATE;
-             player->armor_points = MAX_ARMOR_POINTS;
+             print_message("\nIn his stash of treasure, you also found plate armor and a sword.\n");
+
+            if (player->armor_type <=PLATE)
+            {
+                 player->armor_type = PLATE;
+                 player->armor_points = MAX_ARMOR_POINTS;
+            }
+            else
+            {
+                 print_message("You discard the plate.\n");               
+            }                    
+
+            if (player->weapon_type <SWORD)  // A Dwarf might want to keep their mace but no logic for that.
+            {
+                player->weapon_type = SWORD;
+            }
+            else
+            {
+                print_message("You discard the sword.\n");               
+            }                    
         }
         else
         {
-             print_message("You discard the plate.\n");               
-        }                    
+            switch(random_number(2))
+            {
+                case 1:
+                    print_message("\nIn his stash of treasure, you also found stone armor and a sword.\n");
+                    player->armor_points = MAX_ARMOR_POINTS;
+                    if (player->armor_type <STONE)
+                    {
+                        player->armor_type = STONE;
+                    }
+                    else
+                    {
+                        print_message("You discard the stone armor.\n");               
+                    }                    
+                    if (player->armor_type <SWORD)
+                    {
+                        player->armor_type = SWORD;
+                    }
+                    else
+                    {
+                        print_message("You discard the sword.\n");               
+                    }                    
 
-        if (player->weapon_type <SWORD)  // A Dwarf might want to keep their mace but no logic for that.
-        {
-            player->weapon_type = SWORD;
+                    break;
+                case 2:
+                    print_message("\nIn his stash of treasure, you also found plate armor and excalibur.\n");
+                    player->armor_points = MAX_ARMOR_POINTS;
+                    if (player->armor_type <PLATE)
+                    {
+                        player->armor_type = PLATE;
+                    }
+                    else
+                    {
+                        print_message("You discard the stone armor.\n");               
+                    }                    
+                    if (player->armor_type <EXCALIBUR)
+                    {
+                        player->armor_type = EXCALIBUR;
+                    }
+                    else
+                    {
+                        print_message("You discard the sword.\n");               
+                    }                    
+                    break;
+            }
         }
-        else
-        {
-            print_message("You discard the sword.\n");               
-        }                    
-
     }
     else
     {
-        if(random_number(5)==1)
+        if(random_number(8)==1)
 	{
-		print_message("The %s was also hording a strength potion.\n", enemy_name);
+		print_message_formatted("The %s was also hording a strength potion.\n", enemy_name);
 		player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         }
-	if(random_number(5)==1)
+	if(random_number(8)==1)
         {
-                print_message("The %s was also hording a intelligence potion.\n", enemy_name);
+                print_message_formatted("The %s was also hording a intelligence potion.\n", enemy_name);
                 player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         }
-        if(random_number(5)==1)
+        if(random_number(8)==1)
         {       
-                print_message("The %s was also hording a Dexterity potion.\n", enemy_name);
+                print_message_formatted("The %s was also hording a Dexterity potion.\n", enemy_name);
                 player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_DEXTERITY);
         }
-        if(random_number(5)==1)
+        if(random_number(8)==1)
         {
              switch(random_number(3)) 
              {
@@ -828,7 +877,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
                      break;
              }
         }
-        if(random_number(5)==1)
+        if(random_number(8)==1)
         {
              player->armor_points = MAX_ARMOR_POINTS;
              switch(random_number(3)) 
