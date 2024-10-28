@@ -2493,10 +2493,6 @@ bool should_drop_weapon(int monster_type) {
 
 // Returns armor type based on monster and chance roll
 int get_monster_armor_drop(int monster_type) {
-    if (!should_drop_armor(monster_type)) {
-        return 0;
-    }
-
     switch(monster_type) {
         case DRAGON:
             // Dragons: 60% plate, 40% stone when they do drop
@@ -2538,9 +2534,6 @@ int get_monster_armor_drop(int monster_type) {
 
 // Returns weapon type based on monster and chance roll
 int get_monster_weapon_drop(int monster_type) {
-    if (!should_drop_weapon(monster_type)) {
-        return 0;
-    }
 
     switch(monster_type) {
         case DRAGON:
