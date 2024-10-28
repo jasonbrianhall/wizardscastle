@@ -69,8 +69,13 @@ public:
         // Create the map display
         mapDisplay = new QTextEdit(this);
         mapDisplay->setReadOnly(true);
-        mapDisplay->setFont(QFont("Courier", 10));  // Use a monospace font for the map
-        mainLayout->addWidget(mapDisplay, 1);  // Right side (map) takes 1/3 of the space
+        mapDisplay->setAcceptRichText(true);
+        mapDisplay->setFont(QFont("Courier", 10));
+        mapDisplay->document()->setDefaultStyleSheet(
+            "span.emoji { font-size: 48pt; line-height: 1.5; }"
+            "span.text { font-size: 12pt; }"
+        );        
+        mainLayout->addWidget(mapDisplay, 1);  // Right side (map) takes 1/2 of the space
 
         setCentralWidget(centralWidget);
 
@@ -91,90 +96,90 @@ void display_map2(GameState *game, Player *player)
     {
         switch(currentRoom) {
             case ENTRANCE:
-                mapDisplay->append(AsciiArt::ENTRANCE_AA);
-                mapDisplay->append("\nYou are at the entrance.\n");
-                break;
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::ENTRANCE_AA + "</p>");
+                mapDisplay->append("<p>You are at the entrance.</p>");                break;
             case STAIRS_UP:
-                mapDisplay->append(AsciiArt::STAIRSUP_AA);
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::STAIRSUP_AA + "</p>");
                 mapDisplay->append("\nYou found stairs going up.\n");
                 break;
             case STAIRS_DOWN:
-                mapDisplay->append(AsciiArt::STAIRSDOWN_AA);
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::STAIRSDOWN_AA + "</p>");
                 mapDisplay->append("\nYou found stairs going down.\n");
                 break;
             case POOL:
-                mapDisplay->append(AsciiArt::POOL_AA);
-                mapDisplay->append("\nYou found a pool.\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #00ffff;'>" + AsciiArt::POOL_AA + "</p>");
+                mapDisplay->append("<p>You found a pool.</p>");
                 break;
             case CHEST:
-                mapDisplay->append(AsciiArt::CHEST_AA);
-                mapDisplay->append("\nYou found a chest.\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::CHEST_AA + "</p>");
+                mapDisplay->append("<p>You found a chest.</p>");
                 break;
             case CRYSTAL_ORB:
-                mapDisplay->append(AsciiArt::CRYSTALORB_AA);
-                mapDisplay->append("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #ff00ff;'>" + AsciiArt::CRYSTALORB_AA + "</p>");
+                mapDisplay->append("<p>You've discovered a mystical crystal orb! It seems to swirl with magical energy.</p>");
                 break;
             case BOOK:
-                mapDisplay->append(AsciiArt::BOOK_AA);
-                mapDisplay->append("\nYou've found an old book.\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #8b4513;'>" + AsciiArt::BOOK_AA + "</p>");
+                mapDisplay->append("<p>You've found an old book.</p>");
                 break;
             case KOBOLD:
-                mapDisplay->append(AsciiArt::KOBOLD_AA);
-                mapDisplay->append("\nYou've encountered a Kobold!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::KOBOLD_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Kobold!</p>");
                 break;
             case ORC:
-                mapDisplay->append(AsciiArt::ORC_AA);
-                mapDisplay->append("\nYou've encountered an Orc!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::ORC_AA + "</p>");
+                mapDisplay->append("<p>You've encountered an Orc!</p>");
                 break;
             case WOLF:
-                mapDisplay->append(AsciiArt::WOLF_AA);
-                mapDisplay->append("\nYou've encountered a Wolf!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #808080;'>" + AsciiArt::WOLF_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Wolf!</p>");
                 break;
             case GOBLIN:
-                mapDisplay->append(AsciiArt::GOBLIN_AA);
-                mapDisplay->append("\nYou've encountered an Orc!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #00ff00;'>" + AsciiArt::GOBLIN_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Goblin!</p>");
                 break;
             case OGRE:
-                mapDisplay->append(AsciiArt::OGRE_AA);
-                mapDisplay->append("\nYou've encountered an Ogre!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" + AsciiArt::OGRE_AA + "</p>");
+                mapDisplay->append("<p>You've encountered an Ogre!</p>");
                 break;
             case TROLL:
-                mapDisplay->append(AsciiArt::TROLL_AA);
-                mapDisplay->append("\nYou've encountered a Troll!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #4b0082;'>" + AsciiArt::TROLL_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Troll!</p>");
                 break;
             case BEAR:
-                mapDisplay->append(AsciiArt::BEAR_AA);
-                mapDisplay->append("\nYou've encountered a Bear!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" + AsciiArt::BEAR_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Bear!</p>");
                 break;
             case MINOTAUR:
-                mapDisplay->append(AsciiArt::MINOTAUR_AA);
-                mapDisplay->append("\nYou've encountered a Minotaur!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #800000;'>" + AsciiArt::MINOTAUR_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Minotaur!</p>");
                 break;
             case GARGOYLE:
-                mapDisplay->append(AsciiArt::GARGOYLE_AA);
-                mapDisplay->append("\nYou've encountered a Gargoyle!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #696969;'>" + AsciiArt::GARGOYLE_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Gargoyle!</p>");
                 break;
             case CHIMERA:
-                mapDisplay->append(AsciiArt::CHIMERA_AA);
-                mapDisplay->append("\nYou've encountered a Chimera!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" + AsciiArt::CHIMERA_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Chimera!</p>");
                 break;
             case DRAGON:
-                mapDisplay->append(AsciiArt::DRAGON_AA);
-                mapDisplay->append("\nYou've encountered a Dragon!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" + AsciiArt::DRAGON_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Dragon!</p>");
                 break;
             case BALROG:
-                mapDisplay->append(AsciiArt::BALROG_AA);
-                mapDisplay->append("\nYou've encountered a Balrog!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::BALROG_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Balrog!</p>");
                 break;
             case VENDOR:
-                mapDisplay->append(AsciiArt::VENDOR_AA);
-                mapDisplay->append("\nYou've encountered a Vendor!\n");
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::VENDOR_AA + "</p>");
+                mapDisplay->append("<p>You've encountered a Vendor!</p>");
                 break;
-
        }
     }
+    mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>");
     if(player->blindness_flag == 0)
     {
+        mapDisplay->append("<p>");
         print_message2("\n=== MAP OF LEVEL ");
         print_message2("%d", player->level);
         print_message2(" ===\n\n");
@@ -269,6 +274,8 @@ void display_map2(GameState *game, Player *player)
          print_message2("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
 
          print_message2("\n=== PLAYER STATUS ===\n");
+         mapDisplay->append("</p>"); 
+
     }
     else
     {
@@ -345,7 +352,7 @@ void display_map2(GameState *game, Player *player)
     }
 
     print_message2("======================\n\n");
-
+    mapDisplay->append("</pre>");
 
 }
 
