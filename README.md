@@ -108,7 +108,7 @@ make qt
 
 ⚠️ Arcane Warning for Windows Wizards: While the spell to create the Windows artifact (executable) can be cast (make qt-windows), the resulting enchantment is unstable. It requires a hefty grimoire of DLL scrolls (over 300MB!) and may still grumble about missing components of the Qt realm. We're working on a more potent incantation to condense this magic into a single, portable artifact. Until then, Linux remains the most stable dimension for this particular enchantment. Fear not, for we continue our mystical research!
 
-🎨 For Windows wizards, fear not! The ancient automatons of GitHub's mystical forges craft your artifacts through their arcane CI rituals. These enchanted binaries, complete with their own magical essences (all external DLLs included!), appear in the sacred releases chamber. While the ASCII runes may appear simplified in the Windows realm, they retain their mystical potency.
+🎨 For Windows wizards, fear not! The ancient automatons of GitHub's mystical forges craft your artifacts through their arcane CI rituals. These enchanted binaries, complete with their own magical essences (all external DLLs included!), appear in the sacred releases chamber. While the ASCII runes may appear simplified in the Windows realm (emojis), they retain their mystical potency.
 
 #### Embarking on Your Quest
 
