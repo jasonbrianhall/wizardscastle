@@ -10,7 +10,7 @@
 
 // Room type definitions
 #define EMPTY_ROOM 101
-#define ROOM_START 102
+#define ROOM_START 101
 #define ENTRANCE 102
 #define STAIRS_UP 103
 #define STAIRS_DOWN 104

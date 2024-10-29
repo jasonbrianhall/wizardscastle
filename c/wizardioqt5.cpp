@@ -98,88 +98,88 @@ void display_map2(GameState *game, Player *player)
         switch(currentRoom) {
             case ENTRANCE:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::ENTRANCE_AA + "</p>");
-                print_message2("\nYou are at the entrance.\n");                break;
+                print_message2("\nYou are at the entrance.\n");
+                break;
             case STAIRS_UP:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::STAIRSUP_AA + "</p>");
-                print_message2("\nYou found stairs going up.\n");                break;
+                print_message2("\nYou found stairs going up.\n");
                 break;
             case STAIRS_DOWN:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::STAIRSDOWN_AA + "</p>");
-                print_message2("\nYou found stairs going down.\n");                break;
+                print_message2("\nYou found stairs going down.\n");
                 break;
             case POOL:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #00ffff;'>" + AsciiArt::POOL_AA + "</p>");
-                print_message2("\nYou found a pool.\n");                break;
+                print_message2("\nYou found a pool.\n");
                 break;
             case CHEST:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::CHEST_AA + "</p>");
-                print_message2("\nYou found a chest.\n");                break;
+                print_message2("\nYou found a chest.\n");
 
                 break;
             case CRYSTAL_ORB:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #ff00ff;'>" + AsciiArt::CRYSTALORB_AA + "</p>");
-                print_message2("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");                break;
+                print_message2("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");
                 break;
             case BOOK:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #8b4513;'>" + AsciiArt::BOOK_AA + "</p>");
-                print_message2("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");                break;
+                print_message2("\nYou've discovered an old book. Open it to reveal it's mysteries.\n");
                 break;
             case KOBOLD:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::KOBOLD_AA + "</p>");
-                print_message2("You've encountered a Kobold!");
+                print_message2("\nYou've encountered a Kobold!\n");
                 break;
             case ORC:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::ORC_AA + "</p>");
-                print_message2("You've encountered an Orc!");
+                print_message2("\nYou've encountered an Orc!\n");
                 break;
             case WOLF:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #808080;'>" + AsciiArt::WOLF_AA + "</p>");
-                print_message2("You've encountered a Wolf!");
+                print_message2("\nYou've encountered a Wolf!\n");
                 break;
             case GOBLIN:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #00ff00;'>" + AsciiArt::GOBLIN_AA + "</p>");
-                print_message2("You've encountered a Goblin!");
+                print_message2("\nYou've encountered a Goblin!\n");
                 break;
             case OGRE:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" + AsciiArt::OGRE_AA + "</p>");
-                print_message2("You've encountered an Ogre!");
+                print_message2("\nYou've encountered an Ogre!\n");
                 break;
             case TROLL:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #4b0082;'>" + AsciiArt::TROLL_AA + "</p>");
-                print_message2("You've encountered a Troll!");
+                print_message2("\nYou've encountered a Troll!\n");
                 break;
             case BEAR:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" + AsciiArt::BEAR_AA + "</p>");
-                print_message2("You've encountered a Bear!");
+                print_message2("\nYou've encountered a Bear!\n");
                 break;
             case MINOTAUR:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #800000;'>" + AsciiArt::MINOTAUR_AA + "</p>");
-                print_message2("You've encountered a Minotaur!");
+                print_message2("\nYou've encountered a Minotaur!\n");
                 break;
             case GARGOYLE:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #696969;'>" + AsciiArt::GARGOYLE_AA + "</p>");
-                print_message2("You've encountered a Gargoyle!");
+                print_message2("\nYou've encountered a Gargoyle!\n");
                 break;
             case CHIMERA:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" + AsciiArt::CHIMERA_AA + "</p>");
-                print_message2("You've encountered a Chimera!");
+                print_message2("\nYou've encountered a Chimera!\n");
                 break;
             case DRAGON:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" + AsciiArt::DRAGON_AA + "</p>");
-                print_message2("You've encountered a Dragon!");
+                print_message2("\nYou've encountered a Dragon!\n");
                 break;
             case BALROG:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::BALROG_AA + "</p>");
-                print_message2("You've encountered a Balrog!");
+                print_message2("\nYou've encountered a Balrog!\n");
                 break;
             case VENDOR:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::VENDOR_AA + "</p>");
-                print_message2("You've encountered a Vendor!");
+                print_message2("\nYou've encountered a Vendor!\n");
                 break;
             case EMPTY_ROOM:
-                print_message2("You are in an empty room.  It's voidness is chilling.");
+                print_message2("\nYou are in an empty room.  It's voidness is chilling.\n");
                 break;
-
        }
     }
     if(player->blindness_flag == 0)
