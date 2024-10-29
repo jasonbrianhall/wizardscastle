@@ -64,17 +64,17 @@ public:
         inputLine = new QLineEdit(this);
         leftLayout->addWidget(inputLine);
 
-        mainLayout->addWidget(leftWidget, 1);  // Left side takes 2/3 of the space
+        mainLayout->addWidget(leftWidget, 1);  // Left side takes 1/2 of the space
 
         // Create the map display
         mapDisplay = new QTextEdit(this);
         mapDisplay->setReadOnly(true);
         mapDisplay->setAcceptRichText(true);
         mapDisplay->setFont(QFont("Consolas", 10));
-        mapDisplay->document()->setDefaultStyleSheet(
+        /*mapDisplay->document()->setDefaultStyleSheet(
             "span.emoji { font-size: 48pt; line-height: 1.5; }"
             "span.text { font-size: 12pt; }"
-        );        
+        );*/        
         mainLayout->addWidget(mapDisplay, 1);  // Right side (map) takes 1/2 of the space
 
         setCentralWidget(centralWidget);
@@ -91,90 +91,95 @@ void display_map2(GameState *game, Player *player)
 {
     int currentRoom = get_room_content(game, player->x, player->y, player->level);
     int treasurecount=0;
-        mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>");
+        print_message2("");
 
     if (currentRoom >= ROOM_START && currentRoom <= ROOM_END)
     {
         switch(currentRoom) {
             case ENTRANCE:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::ENTRANCE_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You are at the entrance.</pre>");                break;
+                print_message2("\nYou are at the entrance.\n");                break;
             case STAIRS_UP:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::STAIRSUP_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You found stairs going up.</pre>");
+                print_message2("\nYou found stairs going up.\n");                break;
                 break;
             case STAIRS_DOWN:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::STAIRSDOWN_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You found stairs going down.</pre>");
+                print_message2("\nYou found stairs going down.\n");                break;
                 break;
             case POOL:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #00ffff;'>" + AsciiArt::POOL_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You found a pool.</pre>");
+                print_message2("\nYou found a pool.\n");                break;
                 break;
             case CHEST:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::CHEST_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You found a chest.</pre>");
+                print_message2("\nYou found a chest.\n");                break;
+
                 break;
             case CRYSTAL_ORB:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #ff00ff;'>" + AsciiArt::CRYSTALORB_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've discovered a mystical crystal orb! It seems to swirl with magical energy./pre>");
+                print_message2("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");                break;
                 break;
             case BOOK:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 0 0 10px #8b4513;'>" + AsciiArt::BOOK_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've found an old book.</pre>");
+                print_message2("\nYou've discovered a mystical crystal orb! It seems to swirl with magical energy.\n");                break;
                 break;
             case KOBOLD:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::KOBOLD_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Kobold!</pre>");
+                print_message2("You've encountered a Kobold!");
                 break;
             case ORC:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::ORC_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered an Orc!</pre>");
+                print_message2("You've encountered an Orc!");
                 break;
             case WOLF:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #808080;'>" + AsciiArt::WOLF_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Wolf!</pre>");
+                print_message2("You've encountered a Wolf!");
                 break;
             case GOBLIN:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #00ff00;'>" + AsciiArt::GOBLIN_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Goblin!</pre>");
+                print_message2("You've encountered a Goblin!");
                 break;
             case OGRE:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" + AsciiArt::OGRE_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered an Ogre!</pre>");
+                print_message2("You've encountered an Ogre!");
                 break;
             case TROLL:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #4b0082;'>" + AsciiArt::TROLL_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Troll!</pre>");
+                print_message2("You've encountered a Troll!");
                 break;
             case BEAR:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" + AsciiArt::BEAR_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Bear!</pre>");
+                print_message2("You've encountered a Bear!");
                 break;
             case MINOTAUR:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #800000;'>" + AsciiArt::MINOTAUR_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Minotaur!</pre>");
+                print_message2("You've encountered a Minotaur!");
                 break;
             case GARGOYLE:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #696969;'>" + AsciiArt::GARGOYLE_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Gargoyle!</pre>");
+                print_message2("You've encountered a Gargoyle!");
                 break;
             case CHIMERA:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" + AsciiArt::CHIMERA_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Chimera!</pre>");
+                print_message2("You've encountered a Chimera!");
                 break;
             case DRAGON:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" + AsciiArt::DRAGON_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Dragon!</pre>");
+                print_message2("You've encountered a Dragon!");
                 break;
             case BALROG:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" + AsciiArt::BALROG_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Balrog!</pre>");
+                print_message2("You've encountered a Balrog!");
                 break;
             case VENDOR:
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::VENDOR_AA + "</p>");
-                mapDisplay->append("<pre style='line-height: 1; margin: 0; padding: 0;'>You've encountered a Vendor!</pre>");
+                print_message2("You've encountered a Vendor!");
                 break;
+            case EMPTY_ROOM:
+                print_message2("You are in an empty room.  It's voidness is chilling.");
+                break;
+
        }
     }
     if(player->blindness_flag == 0)
@@ -350,7 +355,7 @@ void display_map2(GameState *game, Player *player)
     }
 
     print_message2("======================\n\n");
-    //mapDisplay->append("</pre>");
+    //mapDisplay->append("");
 
 }
 
@@ -362,7 +367,12 @@ void print_message2(const char *format, ...) {
     va_end(args);
 
     QString message = QString::fromUtf8(buffer);
-    message = "<span style='font-family: monospace; white-space: pre; line-height: 1em; display: inline-block;'>" + message + "</span>";
+        message = "<span style='font-family: Consolas, \"Courier New\", Monaco, monospace; "
+              "white-space: pre; "
+              "line-height: 1em; "
+              "display: inline-block;'>" 
+              + message + 
+              "</span>";
     appendToMap(message);
 }
 
@@ -377,7 +387,12 @@ void print_message2_formatted(const char *format, ...) {
     va_end(args);
     
     QString message = QString::fromUtf8(buffer);
-    message = "<span style='font-family: monospace; white-space: pre; line-height: 1em; display: inline-block;'>" + message + "</span>";
+    message = "<span style='font-family: Consolas, \"Courier New\", Monaco, monospace; "
+              "white-space: pre; "
+              "line-height: 1em; "
+              "display: inline-block;'>" 
+              + message + 
+              "</span>";    
     appendToMap(message);
 }
 
@@ -677,7 +692,6 @@ private:
             monoFont.setStyleHint(QFont::Monospace);
         }
         outputText->setFont(monoFont);
-        //mapDisplay->setFont(monoFont);
     }
 
     void cleanup() {
