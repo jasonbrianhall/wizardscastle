@@ -98,9 +98,9 @@ void trade_with_vendor(Player *player, GameState *game)
         print_message("You have %d GP to spend\n\n", player->gold);
         
 
-        char purchase_choice = get_user_input();
+        int purchase_choice = get_user_input_number();
         switch(purchase_choice) {
-            case '1':
+            case 1:
                 if(player->gold>=500)
 		{
                     if (player->strength < MAX_STRENGTH)
@@ -119,7 +119,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     print_message_formatted("\n%s YOU ARE TOO POOR TO BUY A STRENGTH POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
-            case '2':
+            case 2:
                 if(player->gold>=500)
 		{
                     if (player->intelligence < MAX_INTELLIGENCE)
@@ -138,7 +138,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     print_message_formatted("\n%s YOU ARE TOO POOR TO BUY AN Intelligence POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
-            case '3':
+            case 3:
                 if(player->gold>=500)
 		{
                     if (player->dexterity < MAX_DEXTERITY)
@@ -157,7 +157,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     print_message_formatted("\n%s, YOU ARE TOO POOR TO BUY A DEXTERITY POTION\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
-            case '4':
+            case 4:
                 if (player->gold<100)
                 {
                     print_message_formatted("\n%s, YOU DO NOT HAVE ENOUGH GOLD TO BUY OR REPAIR ARMOR!\n", player->sex == MALE ? "SIR" : "MA'AM");
@@ -167,7 +167,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     buy_armor(player);
                 }
                 break;
-            case '5':
+            case 5:
                 if (player->gold<1250)
                 {
                     print_message_formatted("\n%s, YOU DO NOT HAVE ENOUGH GOLD TO BUY WEAPONS!\n", player->sex == MALE ? "SIR" : "MA'AM");
@@ -177,7 +177,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     buy_weapon(player);
                 }
                 break;
-            case '6':
+            case 6:
                 if (!player->lamp_flag && player->gold >= 1000) {
                     player->lamp_flag = 1;
                     player->gold -= 1000;
@@ -190,10 +190,10 @@ void trade_with_vendor(Player *player, GameState *game)
                     continue;
                 }
                 break;
-            case '7':
+            case 7:
                 buy_flares(player);
                 break;
-            case '8':
+            case 8:
                 if (player->blindness_flag && player->gold >= 1000) {
                     player->blindness_flag = 0;
                     player->gold -= 1000;
@@ -205,7 +205,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 }
                 break;
             
-            case '9':
+            case 9:
                 if (player->stickybook_flag && player->gold >= 1000) {
                     player->stickybook_flag = 0;
                     player->gold -= 1000;
@@ -216,7 +216,7 @@ void trade_with_vendor(Player *player, GameState *game)
                     print_message_formatted("%s, You don't have enough gold to remove the sticky book.\n", player->sex == MALE ? "SIR" : "MA'AM");
                 }
                 break;
-            case '0':
+            case 0:
                 print_message_formatted("\nOK FINE, DON'T TRADE\n");
                 return;
 

@@ -192,7 +192,7 @@ const char* get_user_input_main() {
         return dr_command;
     }
 
-    if (strchr("ADEFGHILMNOQSTUWYZ", input_buffer[0])) {
+    if (strchr("ABCDEFGHIJKLMNOPQRSTUVWYZ", input_buffer[0])) {
         input_buffer[1] = '\0';
         return input_buffer;
     }
@@ -205,20 +205,19 @@ const char* get_user_input_main() {
 
 int get_user_input_number() 
 {
+    static const char* invalid_message = "Invalid input. Please enter a valid integer.\n";
+    char* input;
     int number;
-    char input[100];
 
     while (1) {
-        print_message("Enter a number: ");
-        if (fgets(input, sizeof(input), stdin) == NULL) {
-            print_message_formatted("Error reading input. Please try again.\n");
-            continue;
-        }
+        // Assuming get_command_with_history() handles the input similarly to the original function
+        input = get_command_with_history("Enter a number: ");
 
+        // Attempt to parse input as an integer
         if (sscanf(input, "%d", &number) == 1) {
             return number;
         } else {
-            print_message_formatted("Invalid input. Please enter a valid integer.\n");
+            print_message_formatted(invalid_message);
         }
     }
 }
