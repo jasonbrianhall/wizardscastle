@@ -93,9 +93,9 @@ void fight_monster(Player *player, GameState *game)
                     if (player->weapon_type == 0) {
                         print_message_formatted("\n** POUNDING ON %s WON'T HURT IT!\n", enemy_name);
                     } else if (player->stickybook_flag) {
-                        print_message_formatted("\n** YOU CAN'T BEAT IT TO DEATH WITH A BOOK!\n");
+                        print_message("\n** You can't bludgeon it to death with a mere book!\n");
                     } else if (random_number(20) + player->dexterity <= random_number(20) + enemy_dexterity + (3 * player->blindness_flag)) {
-                        print_message_formatted("\nYOU MISSED, TOO BAD!\n");
+                        print_message("\nYou missed, too bad!\n");
                     } else {
                         temp=calculate_damage(player, enemy_strength, enemy_dexterity);
 
@@ -135,7 +135,7 @@ void fight_monster(Player *player, GameState *game)
                          temp=player->dexterity/6;
                     }
                     if (random_number(20) + player->dexterity + temp > random_number(20) + enemy_dexterity) {
-                        print_message("\nYou have escaped!\n");
+                        print_message("\nYou have successfully evaded your foe!\n");
                         if (player->race==HOBBIT)
                         {
                             print_message("Hobbitsons are sneaky.\n");
@@ -143,12 +143,12 @@ void fight_monster(Player *player, GameState *game)
                         move_player_randomly(player, game);
                         return;
                     } else {
-                        print_message_formatted("\nYOU FAILED TO RETREAT!\n");
+                        print_message("\nYour retreat has failed!\n");
                     }
                     break;
                 case 'B':
                     if (!can_bribe) {
-                        print_message_formatted("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                        print_message("\n** Choose one of the options presented.\n");
                         continue;
                     }
                     if (handle_bribe(player, game, enemy_name)) {
@@ -171,7 +171,7 @@ void fight_monster(Player *player, GameState *game)
                         }
                     } else {
                         // Player cannot cast a spell
-                        print_message_formatted("\n** YOU CAN'T CAST A SPELL NOW!\n");
+                        print_message("\n** You cannot cast a spell at this moment!\n");
                         continue;  // Skip enemy's turn if player couldn't cast a spell
                     }
                     break;
@@ -270,7 +270,7 @@ void fight_monster(Player *player, GameState *game)
                      }
                      continue;
                 default:
-                    print_message_formatted("\n** CHOOSE ONE OF THE OPTIONS LISTED.\n");
+                    print_message("\n** Choose one of the options presented.\n");
                     continue;
             }
         } else {
@@ -282,11 +282,17 @@ void fight_monster(Player *player, GameState *game)
         if (player->web_count > 0) {
             player->web_count--;
             if (player->web_count == 0) {
-                print_message_formatted("\nTHE WEB JUST BROKE!\n");
+                print_message_formatted("\nThe web spell has shattered!\n");
             } else {
-                print_message_formatted("\nTHE %s IS STUCK AND CAN'T ATTACK NOW!\n", enemy_name);
-                continue;  // Skip the enemy's attack
-            }
+                // Determine if the monster breaks free
+                if (random_number(20) < 5) {  // Example: 25% chance to break free
+                    print_message_formatted("\nThe %s struggles and breaks free from the web but cannot attack until next turn!\n", enemy_name);
+                    player->web_count=0;
+                } else {
+                    print_message_formatted("\nThe %s is ensnared by the web and cannot attack!\n", enemy_name);
+                    continue;  // Skip the enemy's attack
+                }
+           }
         }
         else if (room_content == DRAGON && random_number(3) == 1) {  // 1 in 3 chance for fireball
             print_message_formatted("\nTHE %s ATTACKS!\n", enemy_name);
@@ -457,7 +463,9 @@ void fight_monster(Player *player, GameState *game)
                      }
                      break;   
                  case 6:
-                    print_message_formatted("THE %s CASTS CLUMSY!\n", enemy_name);
+                      print_message_formatted("The %s casts ", enemy_name);
+                      print_message("Clumsy\n");
+
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -470,22 +478,22 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("YOU SUCCESSFULLY RESIST THE CLUMSY SPELL!\n");
+                         print_message("You resist the Clumsy spell with ease!\n");
                      } else {
                          temp = random_number(max_increase);
-                         print_message_formatted("THE SPELL HITS! YOU LOSE %i DEXTERITY POINTS\n", temp);
+                         print_message_formatted("The spell strikes you! You lose %d dexterity points.\n", temp);
                          player->dexterity -= temp;
         
                          if (player->dexterity <= 0) {
                              player->dexterity = 0;
-                             print_message_formatted("YOUR DEXTERITY HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             print_message("Your dexterity has been sapped to nothing. You collapse...\n");
                              game->game_over = 1;
                              return;
                          }
                      }
                      break;
                  case 7:
-                    print_message_formatted("THE %s CASTS MIND FOG!\n", enemy_name);
+                     print_message_formatted("The %s casts Mind Fog, attemping to cloud your thoughts!\n", enemy_name);
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -498,22 +506,23 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("YOU SUCCESSFULLY RESIST THE MIND FOG SPELL!\n");
+                         print_message("You successfully resist the Mind Fog spell!\n");
                      } else {
                          temp = random_number(max_increase);
-                         print_message_formatted("THE SPELL HITS! YOU LOSE %i INTELLIGENCE POINTS\n", temp);
+                         print_message("The spell strikes you! You lose %d intelligence points.\n", temp);
                          player->intelligence -= temp;
         
                          if (player->intelligence <= 0) {
                              player->intelligence = 0;
-                             print_message_formatted("YOUR INTELLIGENCE HAS BEEN REDUCED TO ZERO. YOU COLLAPSE...\n");
+                             print_message("Your intellect has been drained to nothing. You collapse...\n");
+
                              game->game_over = 1;
                              return;
                          }
                      }
                      break;
                  case 8:
-                    print_message_formatted("THE %s CASTS DARKNESS!\n", enemy_name);
+                    print_message("The %s casts a veil of darkness upon you!\n", enemy_name);
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -526,14 +535,14 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("YOU SUCCESSFULLY RESIST DARKNESS!\n");
+                         print_message("You stand firm and resist the darkness!\n");
                      } else {
                          if (player->blindness_flag==0)
                          {
                              temp = random_number(max_increase);
-                             print_message_formatted("THE SPELL HITS! YOU ARE BLIND!!!");
+                             print_message("The spell strikes true! You are now blind!");
                              if (game->treasure[OPAL_EYE_INDEX]) {
-                                 print_message("But the Opal Eye immediately cures your blindness!\n");                
+                                 print_message("The Opal Eye immediately cures your blindness!\n");                
                                  player->temp_blindness_flag = 0;
                                  player->blindness_flag = 0;
                              } else {
@@ -543,7 +552,7 @@ void fight_monster(Player *player, GameState *game)
                          }
                          else
                          {
-                             print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!\n");
+                             print_message("The spell hits, but you are already blind, so it has no effect!\n");
                          }
                      }
                      break;
@@ -553,7 +562,7 @@ void fight_monster(Player *player, GameState *game)
                         print_message("The Balrog opens its fiery mouth and a firebolt shoots out of it.\n");
                      }
                      else {
-                         print_message_formatted("THE %s CASTS FIREBOLT!\n", enemy_name);
+                         print_message("The %s conjures a blazing firebolt!\n", enemy_name);
                      }
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -566,7 +575,7 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("YOU SUCCESSFULLY DODGE THE FIREBOLT!\n");
+                         print_message_formatted("You nimbly evade the scorching firebolt!\n");
                      } else {
                          temp = random_number(max_increase);
                          print_message_formatted("THE FIREBOLT HITS YOU\n");
@@ -590,7 +599,7 @@ void fight_monster(Player *player, GameState *game)
         
                          if (player->strength <= 0) {
                              player->strength = 0;
-                             print_message_formatted("YOUR STRENGTH IS GONE. YOU COLLAPSE...\n");
+                             print_message("Your strength has left you. You collapse...\n");
                              game->game_over = 1;
                              return;
                          }
@@ -601,7 +610,50 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (enemy_attack_hits(player, enemy_dexterity)) {
-            print_message_formatted("THE %s ATTACKS\n", enemy_name);
+            switch (room_content) {
+                case KOBOLD:
+                    print_message("The Kobold lunges at you with surprising speed, its tiny claws slashing viciously!\n");
+                    break;
+                case ORC:
+                    print_message("The Orc charges at you with a brutal roar, swinging its weapon viciously!\n");
+                    break;
+                case WOLF:
+                    print_message("The Wolf snarls and lunges at you, its sharp fangs snapping fiercely!\n");
+                    break;
+                case GOBLIN:
+                    print_message("The Goblin cackles wickedly and darts forward, its crude weapon aimed at you with malicious intent!\n");
+                    break;
+                case OGRE:
+                    print_message("The Ogre bellows with rage, swinging its massive club towards you with bone-crushing force!\n");
+                    break;
+                case TROLL:
+                    print_message("The Ogre bellows with rage, swinging its massive club towards you with bone-crushing force!\n");
+                    break;
+                case BEAR:
+                    print_message("The Bear growls menacingly, rearing up on its hind legs before crashing down with powerful claws swiping towards you!\n");
+                    break;
+                case MINOTAUR:
+                    print_message("The Minotaur swings its massive axe with deadly precision!\n");
+                    break;
+                case GARGOYLE:
+                    print_message("The Gargoyle screeches with an ear-piercing cry, its stone claws slashing through the air with deadly intent!\n");
+                    break;
+                case CHIMERA:
+                    print_message("The Chimera roars with its three heads, each one striking at you with deadly precision!\n");
+                    break;
+                case BALROG:
+                    print_message("The Balrog's massive fist crashes down with immense force!\n");
+                    break;                  
+                case VENDOR:
+                    print_message("The vendor, enraged, pulls out a dagger and lunges at you with unexpected skill!\n");
+                    break;
+                case DRAGON:
+                    print_message_formatted("The dragon lunges at you with a ferocious attack!\n");
+                    break;
+                default:
+                    print_message_formatted("The creature lunges at you with a ferocious attack!\n");
+                    break;
+            }
             print_message_formatted("\nOUCH! HE HIT YOU!\n");
             int damage = calculate_damage_enemy(player, enemy_strength, enemy_dexterity, (room_content-MONSTER_START)/3 +1 );
             
@@ -609,14 +661,16 @@ void fight_monster(Player *player, GameState *game)
             if (player->armor_type>0 && player->armor_points <= 0) {
                 player->armor_points = 0;
                 player->armor_type = 0;
-                print_message_formatted("\nYOUR ARMOR HAS BEEN DESTROYED... GOOD LUCK!\n");
+                print_message("\nYour armor has been shattered... good luck surviving the onslaught!\n");
+
             }
             
             player->strength -= damage;
-            print_message_formatted("YOU TAKE %d DAMAGE!\n", damage);
+            print_message("You take %d damage!\n", damage);
             
             if (player->strength <= 0) {
-                print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message("\nYour strength has failed you... You collapse and succumb to your wounds.\n");
+
                 game->game_over = 1;
                 return;
             }
@@ -627,17 +681,22 @@ void fight_monster(Player *player, GameState *game)
         // Catch all for enemy deaths for one offs
         if (enemy_intelligence<=0)
         {
-            print_message_formatted("THE %s has died from lack of intelligence.\n", enemy_name);
+            print_message_formatted("The %s", enemy_name);
+            print_message(" collapses, succumbing to its own lack of intelligence.\n");
             return;
         }
         if (enemy_strength<=0)
         {
-            print_message_formatted("THE %s has died from lack of strength.\n", enemy_name);
+            print_message("The %s", enemy_name);
+            print_message(" has succumbed to its own weakness and perishes.\n");
+
             return;
         }
         if (enemy_dexterity<=0)
         {
-            print_message_formatted("THE %s has died from lack of dexterity.\n", enemy_name);
+            print_message_formatted("The %s", enemy_name);
+            print_message(" falters and collapses, its lack of dexterity its undoing.\n");
+
             return;
         }
         
