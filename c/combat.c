@@ -691,7 +691,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     int gold_found = random_number(250) + random_number(250) + random_number(250) + random_number(250);  // 4 to 1000 but higher chance of being a good number.
     if (room_content == DRAGON)
     {
-	    gold_found+= random_number(250) + random_number(250) + random_number(250) + random_number(250);  // Dragons horde gold
+	    gold_found+= random_number(250) + random_number(250) + random_number(250) + random_number(250);  // Dragons hoard gold
     }
     else if (room_content == KOBOLD)
     {
@@ -707,18 +707,18 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
 
     if (random_number(5)==1 || room_content==DRAGON || is_vendor) {
 	    int flares_found=random_number(6);
-	    print_message("\nYou also found his horde of %d flares!\n", flares_found);
+	    print_message("\nYou also found his hoard of %d flares!\n", flares_found);
 	    player->flares +=flares_found;
     }
 
     if ((random_number(20)==1 || room_content == DRAGON) && !is_vendor) {
-           print_message_formatted("\nThe %s was also hording a lamp.  It is now yours.\n", enemy_name);
+           print_message_formatted("\nThe %s was also hoarding a lamp.  It is now yours.\n", enemy_name);
            player->lamp_flag=1;
     }
 
     if (room_content == DRAGON)
     {
-        print_message("The dragon was also hording a strength potion, an intelligence postion and a dexterity potion.\n\n");
+        print_message("The dragon was also hoarding a strength potion, an intelligence potion and a dexterity potion.\n\n");
         player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
@@ -727,17 +727,17 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor, const
     {
         if(random_number(8)==1)
 	{
-		print_message_formatted("The %s was also hording a strength potion.\n", enemy_name);
+		print_message_formatted("The %s was also hoarding a strength potion.\n", enemy_name);
 		player->strength = get_minimum(player->strength + random_number(6), MAX_STRENGTH);
         }
 	if(random_number(8)==1)
         {
-                print_message_formatted("The %s was also hording a intelligence potion.\n", enemy_name);
+                print_message_formatted("The %s was also hoarding a intelligence potion.\n", enemy_name);
                 player->intelligence = get_minimum(player->intelligence + random_number(6), MAX_INTELLIGENCE);
         }
         if(random_number(8)==1)
         {       
-                print_message_formatted("The %s was also hording a dexterity potion.\n", enemy_name);
+                print_message_formatted("The %s was also hoarding a dexterity potion.\n", enemy_name);
                 player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
         }
 
@@ -901,8 +901,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength, int *enem
     }
     if ((player->race == ELF || player->race == DROW || player->race == DWARF) && player->intelligence>=10)
     {
-        print_message(          "    (H)EAL - Permanently heals you (but maxes out at %d after combat); costs one intelligence points\n", MAX_STRENGTH);
-        print_message(          "    (S)PEED - Temporarily increases your dexterity\n");
+        print_message(          "    (H)EAL - Permanently heals you (maximum %d strength after combat); costs one intelligence point\n", MAX_STRENGTH);        print_message(          "    (S)PEED - Temporarily increases your dexterity\n");
         print_message(          "    (B)RIGHT - Temporarily increases your intelligence \n");
     }
     if ((player->race == HOBBIT ) && player->intelligence>=11)
