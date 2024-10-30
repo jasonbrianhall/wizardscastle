@@ -409,12 +409,14 @@ void fight_monster(Player *player, GameState *game)
                     if (success_chance > 95) success_chance = 95;
 
                     // Determine if the spell succeeds
-                    if (rand() % 100 < success_chance) {
-                         print_message_formatted("YOU'VE BEEN MUTED.  YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
-                         muted=1;
+                    if (muted) {
+                        print_message_formatted("THE SPELL HITS BUT YOU ARE ALREADY MUTED SO IT HAS NO EFFECT!\n");
+                    } else if (random_number(100) < success_chance) {
+                        print_message_formatted("YOU'VE BEEN MUTED. YOU ARE NOW UNABLE TO CAST SPELLS UNTIL THE END OF COMBAT.\n");
+                        muted = 1;
                     } else {
-                        print_message_formatted("THE SPELL FAILED.  YOU SUCCESSFULLY RESISTED THE SPELL\n");
-                        muted=0; // Spell fails, can still cast
+                        print_message_formatted("THE SPELL FAILED. YOU SUCCESSFULLY RESISTED THE SPELL.\n");
+                        // Spell fails, can still cast; already checked if muted.
                     }
                     break;
                  case 5:
@@ -532,7 +534,7 @@ void fight_monster(Player *player, GameState *game)
                          }
                          else
                          {
-                             print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!");
+                             print_message_formatted("THE SPELL HITS BUT ARE ALREADY BLIND SO IT HAS NO EFFECT!!!\n");
                          }
                      }
                      break;
@@ -558,7 +560,7 @@ void fight_monster(Player *player, GameState *game)
                          print_message_formatted("YOU SUCCESSFULLY DODGE THE FIREBOLT!\n");
                      } else {
                          temp = random_number(max_increase);
-                         print_message_formatted("THE FIREBOLT HITS YOU\n", temp);
+                         print_message_formatted("THE FIREBOLT HITS YOU\n");
                          if(temp-player->armor_type<0)
                          {
                             temp=0;
@@ -1132,7 +1134,7 @@ void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength,
             damage=0;
             if(player->armor_type==STONE)
             {
-                 print_message_formatted("Your armor protects you; absorbing the fireball!\n", armor_protection);
+                 print_message_formatted("Your armor protects you; absorbing the fireball!\n");
             }
             else
             {
