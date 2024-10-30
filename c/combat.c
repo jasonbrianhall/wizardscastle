@@ -245,9 +245,18 @@ void fight_monster(Player *player, GameState *game)
                  case 'L':  // Rally
                      if (player->race == HUMAN && rally_used==0) {
                          int rally_bonus = random_number(2) + 1;
-                         player->temp_strength = player->strength;
-                         player->temp_intelligence = player->intelligence;
-                         player->temp_dexterity = player->dexterity;
+                         if(player->temp_strength==0)
+                         {
+                             player->temp_strength = player->strength;
+                         }
+                         if(player->temp_intelligence==0)
+                         {
+                             player->temp_intelligence = player->intelligence;
+                         }
+                         if(player->temp_dexterity==0)
+                         {
+                             player->temp_dexterity = player->dexterity;
+                         }
                          player->strength += rally_bonus;
                          player->dexterity+= rally_bonus;
                          player->intelligence += rally_bonus;
@@ -1301,7 +1310,15 @@ int cast_bright_spell(Player *player) {
             player->temp_intelligence=player->intelligence;
         }
         player->intelligence += bright_amount;
-        print_message_formatted("YOUR INTELLIGENCE TEMPORARILY INCREASED BY %i POINTS.\n\n", bright_amount);
+        if(player->intelligence>=MAX_INTELLIGENCE)
+        {
+             player->intelligence = MAX_INTELLIGENCE;
+             print_message_formatted("YOUR INTELLIGENCE TEMPORARILY INCREASED TO %d.\n\n", MAX_INTELLIGENCE);
+        }
+        else
+        {
+             print_message_formatted("YOUR INTELLIGENCE TEMPORARILY INCREASED BY %d POINTS.\n\n", bright_amount);
+        }
         return 1;
     }
     return 0;
@@ -1315,7 +1332,14 @@ int cast_haste_spell(Player *player) {
             player->temp_dexterity=player->dexterity;
         }
         player->dexterity += haste_amount;
-        print_message_formatted("YOUR DEXTERITY TEMPORARILY INCREASED BY %i POINTS.\n\n", haste_amount);
+        if (player->dexterity >=MAX_DEXTERITY)
+        {
+             print_message_formatted("YOUR DEXTERITY TEMPORARILY INCREASED TO %d.\n\n", MAX_DEXTERITY);
+        }
+        else
+        {        
+             print_message_formatted("YOUR DEXTERITY TEMPORARILY INCREASED BY %i POINTS.\n\n", haste_amount);
+        }
         return 1;
     }
     return 0;
