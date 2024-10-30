@@ -225,21 +225,14 @@ int get_user_input_number()
 // Input/Output functions
 char get_user_input()
 {
-    char input[100];  // Buffer to store user input
+    static const char* invalid_message = "Invalid command. Type 'H' for help.\n";
+    static const char* empty_message = "Please enter a command.\n";
+    char* input;
     char command;
 
     while (1) {
-        print_message_formatted("ENTER YOUR COMMAND: ");
-        
-        // Get user input
-        if (fgets(input, sizeof(input), stdin) == NULL) {
-            // Handle input error or EOF
-            print_message_formatted("Error reading input. Please try again.\n");
-            continue;
-        }
-
-        // Remove newline character if present
-        input[strcspn(input, "\n")] = 0;
+        // Prompt and get user input with history support
+        input = get_command_with_history("ENTER YOUR COMMAND: ");
 
         // Convert input to uppercase
         for (int i = 0; input[i]; i++) {
@@ -248,39 +241,32 @@ char get_user_input()
 
         // Check if input is empty
         if (strlen(input) == 0) {
-            print_message_formatted("Please enter a command.\n");
+            print_message_formatted(empty_message);
             continue;
         }
 
         // Get the first character of the input
         command = input[0];
 
-        // Check if it's a valid command
+        // Check if the first character is a valid command
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
             return command;
         } else {
-            print_message("Invalid command. Type 'H' for help.\n");
+            print_message_formatted(invalid_message);  // Invalid command message
         }
     }
 }
 
 char get_user_input_custom_prompt(char *prompt)
 {
-    char input[100];  // Buffer to store user input
+    static const char* invalid_message = "Invalid command. Type 'H' for help.\n";
+    static const char* empty_message = "Please enter a command.\n";
+    char* input;
     char command;
 
     while (1) {
-        print_message("%s", prompt);
-        
-        // Get user input
-        if (fgets(input, sizeof(input), stdin) == NULL) {
-            // Handle input error or EOF
-            print_message_formatted("Error reading input. Please try again.\n");
-            continue;
-        }
-
-        // Remove newline character if present
-        input[strcspn(input, "\n")] = 0;
+        // Prompt and get user input with history support
+        input = get_command_with_history(prompt);
 
         // Convert input to uppercase
         for (int i = 0; input[i]; i++) {
@@ -289,18 +275,18 @@ char get_user_input_custom_prompt(char *prompt)
 
         // Check if input is empty
         if (strlen(input) == 0) {
-            print_message_formatted("Please enter a command.\n");
+            print_message_formatted(empty_message);
             continue;
         }
 
         // Get the first character of the input
         command = input[0];
 
-        // Check if it's a valid command
+        // Check if the first character is a valid command
         if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
             return command;
         } else {
-            print_message("Invalid command. Type 'H' for help.\n");
+            print_message_formatted(invalid_message);  // Invalid command message
         }
     }
 }
@@ -308,20 +294,14 @@ char get_user_input_custom_prompt(char *prompt)
 
 char get_user_input_yn()
 {
-    char input[100];  // Buffer to store user input
+    static const char* invalid_message = "Invalid command. Please enter 'Y' or 'N'.\n";
+    static const char* empty_message = "Please Enter Y or N.\n";
+    char* input;
     char command;
 
     while (1) {
-        
-        // Get user input
-        if (fgets(input, sizeof(input), stdin) == NULL) {
-            // Handle input error or EOF
-            print_message_formatted("Error reading input. Please try again.\n");
-            continue;
-        }
-
-        // Remove newline character if present
-        input[strcspn(input, "\n")] = 0;
+        // Prompt and get user input with history support
+        input = get_command_with_history("Enter Y or N: ");
 
         // Convert input to uppercase
         for (int i = 0; input[i]; i++) {
@@ -330,18 +310,18 @@ char get_user_input_yn()
 
         // Check if input is empty
         if (strlen(input) == 0) {
-            print_message("Please Enter Y or N.\n");
+            print_message(empty_message);
             continue;
         }
 
         // Get the first character of the input
         command = input[0];
 
-        // Check if it's a valid command
-        if (strchr("YN", command) != NULL) {
+        // Check if the first character is 'Y' or 'N'
+        if (command == 'Y' || command == 'N') {
             return command;
         } else {
-            print_message("Invalid command. Type 'H' for help.\n");
+            print_message(invalid_message);  // Invalid command message
         }
     }
 }
