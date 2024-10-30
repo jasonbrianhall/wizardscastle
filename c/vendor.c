@@ -105,18 +105,18 @@ void trade_with_vendor(Player *player, GameState *game)
 		{
                     if (player->strength < MAX_STRENGTH)
                     {
-                        print_message("\n%s, I have increased your strength.\n", player->sex == MALE ? "Sire" : "Madam");
+                        print_message("\n%s, your strength has been greatly enhanced.\n", player->sex == MALE ? "My liege" : "My lady");
                         player->strength = get_minimum(player->strength + random_number(3)+ random_number(3), MAX_STRENGTH);
                         player->gold -= 500;
                     }
                     else
                     {
-                        print_message("\n%s, you are already hercules.\n", player->sex == MALE ? "Sire" : "Madam");
+                        print_message("\n%s, your strength rivals that of the mightiest heroes of legend.\n", player->sex == MALE ? "My liege" : "My lady");                    
                     }
                 }
                 else
                 {
-                    print_message_formatted("\n%s you are too poor to buy an intelligence potion.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message_formatted("\n%s you are too poor to buy an intelligence potion.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 break;
             case 2:
@@ -124,18 +124,18 @@ void trade_with_vendor(Player *player, GameState *game)
 		{
                     if (player->intelligence < MAX_INTELLIGENCE)
                     {
-                        print_message_formatted("\n%s, I have increased your intelligence.\n", player->sex == MALE ? "Sire" : "Madam");
+                        print_message_formatted("\n%s, your intellect has been greatly enhanced.\n", player->sex == MALE ? "My liege" : "My lady");
                         player->intelligence = get_minimum(player->intelligence + random_number(3)+random_number(3), MAX_INTELLIGENCE);
                         player->gold -= 500;
                     }
                     else
                     {
-                        print_message("\n%s, your intellect surpasses even the greatest minds of the realm.\n", player->sex == MALE ? "Sire" : "Madam");
+                        print_message("\n%s, your intellect surpasses even the greatest minds of the realm.\n", player->sex == MALE ? "My liege" : "My lady");
                     }
                 }
                 else
                 {
-                    print_message("\n%s, you are too poor to buy an intelligence potion.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("\n%s, you are too poor to buy an intelligence potion.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 break;
             case 3:
@@ -143,24 +143,24 @@ void trade_with_vendor(Player *player, GameState *game)
 		{
                     if (player->dexterity < MAX_DEXTERITY)
                     {
-                        print_message("\n%s, I have made you more nimble\n", player->sex == MALE ? "Sire" : "Madam");
-                        player->dexterity = get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
+                        print_message("\n%s, your agility has been greatly enhanced.\n", player->sex == MALE ? "My liege" : "My lady");
+                        player->dexterity = get_minimum(player->dexterity + random_number(3) + random_number(3), MAX_DEXTERITY);
                         player->gold -= 500;
                     }
                     else
                     {
-                        print_message("\n%s, you are already nimble ... gumby.\n", player->sex == MALE ? "Sire" : "Madam");
+                       print_message("\n%s, your agility rivals the swiftest rogues of the realm.\n", player->sex == MALE ? "My liege" : "My lady");
                     }
                 }
                 else
                 {
-                    print_message("\n%s, you are too poor to buy a dexterity potion.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("\n%s, you are too poor to buy a dexterity potion.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 break;
             case 4:
                 if (player->gold<100)
                 {
-                    print_message("\n%s, you are too poor to buy or repair armor.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("\n%s, you are too poor to buy or repair armor.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 else
                 {
@@ -170,7 +170,7 @@ void trade_with_vendor(Player *player, GameState *game)
             case 5:
                 if (player->gold<1250)
                 {
-                    print_message("\n%s, you do not have enough money to buy weapons!\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("\n%s, you do not have enough money to buy weapons!\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 else
                 {
@@ -183,10 +183,10 @@ void trade_with_vendor(Player *player, GameState *game)
                     player->gold -= 1000;
                     print_message_formatted("You bought a lamp!\n");
                 } else if (player->lamp_flag) {
-                    print_message_formatted("\n%s, you already have a lamp!\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message_formatted("\n%s, you already have a lamp!\n", player->sex == MALE ? "My liege" : "My lady");
                     continue;
                 } else {
-                    print_message("\n%s, you don't have enough gold for a lamp.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("\n%s, you don't have enough gold for a lamp.\n", player->sex == MALE ? "My liege" : "My lady");
                     continue;
                 }
                 break;
@@ -201,7 +201,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 } else if (!player->blindness_flag) {
                     print_message("You're not blind. No need for this service.\n");
                 } else {
-                    print_message("%s, you don't have enough gold to cure blindness.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("%s, you don't have enough gold to cure blindness.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 break;
             
@@ -211,9 +211,9 @@ void trade_with_vendor(Player *player, GameState *game)
                     player->gold -= 1000;
                     print_message_formatted("The sticky book has been removed from your hand!\n");
                 } else if (!player->stickybook_flag) {
-                    print_message("%s, you don't have a sticky book. No need for this service.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("%s, you don't have a sticky book. No need for this service.\n", player->sex == MALE ? "My liege" : "My lady");
                 } else {
-                    print_message_formatted("%s, you don't have enough gold to remove the sticky book.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message_formatted("%s, you don't have enough gold to remove the sticky book.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 break;
             case 0:
@@ -221,7 +221,7 @@ void trade_with_vendor(Player *player, GameState *game)
                 return;
 
             default:
-                print_message("*** %s, invalid choice. ***\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message("*** %s, invalid choice. ***\n", player->sex == MALE ? "My liege" : "My lady");
                 continue;
         }
 
@@ -233,7 +233,7 @@ void trade_with_vendor(Player *player, GameState *game)
 
 void attack_vendor(Player *player, GameState *game)
 {
-    print_message_formatted("You attack the vendor!\n");
+    print_message_formatted("You dare to strike the vendor!\n");
     game->vendor_attacked = 1;
     fight_monster_normalize(player, game);
 }
@@ -279,7 +279,7 @@ void buy_armor(Player *player)
                     print_message_formatted("\nLeather armor purchased successfully!\n");
                 }
             } else {
-                print_message("%s, not enough gold for Leather Armor.\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message("%s, not enough gold for Leather Armor.\n", player->sex == MALE ? "My liege" : "My lady");
                 return;
             }
             break;
@@ -290,7 +290,7 @@ void buy_armor(Player *player)
                 player->gold -= 1500;
                 print_message("\nChainmail armor purchased successfully!\n");
             } else {
-                print_message("%s, not enough gold for Chainmail.\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message("%s, not enough gold for Chainmail.\n", player->sex == MALE ? "My liege" : "My lady");
                 return;
             }
             break;
@@ -301,7 +301,7 @@ void buy_armor(Player *player)
                 player->gold -= 2000;
                 print_message_formatted("Plate armor purchased successfully!\n");
             } else {
-                print_message("%s, not enough gold for Plate Armor.\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message("%s, not enough gold for Plate Armor.\n", player->sex == MALE ? "My liege" : "My lady");
                 return;
             }
             break;
@@ -316,11 +316,11 @@ void buy_armor(Player *player)
             } else {
                 if(player->armor_points>=MAX_ARMOR_POINTS)
                 {
-                    print_message("%s, your armor does not need repaired\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("%s, your armor does not need repaired\n", player->sex == MALE ? "My liege" : "My lady");
                 
                 }
                 else {
-                    print_message("%s, not enough gold to repair armor.\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("%s, not enough gold to repair armor.\n", player->sex == MALE ? "My liege" : "My lady");
                 }
                 return;
             }
@@ -328,7 +328,7 @@ void buy_armor(Player *player)
         case '5':
             return;
         default:
-            print_message("%s, invalid choice. No armor purchased.\n", player->sex == MALE ? "Sire" : "Madam");
+            print_message("%s, invalid choice. No armor purchased.\n", player->sex == MALE ? "My liege" : "My lady");
             return;
     }
 }
@@ -353,10 +353,10 @@ void buy_weapon(Player *player)
                 }
                 else
                 {
-                    print_message("%s, your weapon is already superior!\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("%s, your weapon is already superior!\n", player->sex == MALE ? "My liege" : "My lady");
                 }
             } else {
-                print_message("%s, not enough gold for a Dagger.\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message("%s, not enough gold for a dagger.\n", player->sex == MALE ? "My liege" : "My lady");
                 return;
             }
             break;
@@ -371,10 +371,10 @@ void buy_weapon(Player *player)
                 }
                 else
                 {
-                    print_message("%s, your weapon is already superior!\n", player->sex == MALE ? "Sire" : "Madam");
+                    print_message("%s, your weapon is already superior!\n", player->sex == MALE ? "My liege" : "My lady");
                 }                
             } else {
-                print_message_formatted("%s, Not enough gold for a Mace.\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message_formatted("%s, Not enough gold for a mace.\n", player->sex == MALE ? "My liege" : "My lady");
                 return;
             }
             break;
@@ -388,18 +388,18 @@ void buy_weapon(Player *player)
                 }
                 else
                 {
-                    print_message("%s, your weapon is already superior!\n", player->sex == MALE ? "Sire" : "Madam");                
+                    print_message("%s, your weapon is already superior!\n", player->sex == MALE ? "My liege" : "My lady");                
                 }
                 
             } else {
-                print_message("%s, ,ot enough gold for a Sword.\n", player->sex == MALE ? "Sire" : "Madam");
+                print_message("%s, , you do not have enough gold for a sword.\n", player->sex == MALE ? "My liege" : "My lady");
                 return;
             }
             break;
         case '4':
             return;
         default:
-            print_message("%s, Invalid choice. No weapon purchased.\n", player->sex == MALE ? "Sire" : "Madam");
+            print_message("%s, invalid choice. No weapon purchased.\n", player->sex == MALE ? "My liege" : "My lady");
             return;
     }
     
