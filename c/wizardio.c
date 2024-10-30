@@ -301,7 +301,7 @@ char get_user_input_yn()
 
     while (1) {
         // Prompt and get user input with history support
-        input = get_command_with_history("Enter Y or N: ");
+        input = get_command_with_history("");
 
         // Convert input to uppercase
         for (int i = 0; input[i]; i++) {
