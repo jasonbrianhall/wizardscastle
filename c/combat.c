@@ -487,7 +487,7 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("YOU SUCCESSFULLY RESIST THE MING FOG SPELL!\n");
+                         print_message_formatted("YOU SUCCESSFULLY RESIST THE MIND FOG SPELL!\n");
                      } else {
                          temp = random_number(max_increase);
                          print_message_formatted("THE SPELL HITS! YOU LOSE %i INTELLIGENCE POINTS\n", temp);
@@ -539,7 +539,7 @@ void fight_monster(Player *player, GameState *game)
                  case 9:
                      if (room_content == BALROG)
                      {
-                        print_message("The Balrog opens its fiery mouth and a firebolt shots out of it.\n");
+                        print_message("The Balrog opens its fiery mouth and a firebolt shoots out of it.\n");
                      }
                      else {
                          print_message_formatted("THE %s CASTS FIREBOLT!\n", enemy_name);
@@ -1598,7 +1598,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     }
                     else
                     {
-                         print_message_formatted("Blast %d: Oops! You hit yourself but it had not effect.\n", i+1, damage);
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had no effect.\n", i+1, damage);
                     }
                     break;
                 case 5:
@@ -1610,7 +1610,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     }
                     else
                     {
-                         print_message_formatted("Blast %d: Oops! You hit yourself but it had not effect.\n", i+1, damage);
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had no effect.\n", i+1, damage);
                     }                    
                     break;
                 case 6:
@@ -1622,7 +1622,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     }
                     else
                     {
-                         print_message_formatted("Blast %d: Oops! You hit yourself but it had not effect.\n", i+1, damage);
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had no effect.\n", i+1, damage);
                     }
                     
                     break;
