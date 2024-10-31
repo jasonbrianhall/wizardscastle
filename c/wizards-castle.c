@@ -320,8 +320,8 @@ void print_help()
     print_message("G/AZE     - Gaze into a crystal orb\n");
     print_message("T/ELEPORT - Teleport to a new location (requires Runestaff)\n");
     print_message("Q/UIT     - End the game\n");
-    print_message("Z/tatus   - Player Status (South was already used)\n\n");
-    print_message("QS/ave    - Quick Save (saves a file named quicksav.wcs)\n\n");
+    print_message("Z/tatus   - Player Status (South was already used)\n\");
+    print_message("QS/ave    - Quick Save (saves a file named quicksav.wcs)\n");
     print_message("QL/oad    - Quick Load\n\n");
 
     #ifdef MSDOS
