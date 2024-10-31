@@ -335,6 +335,7 @@ void open_chest(Player *player, GameState *game)
     print_message_formatted("\nYou open the chest and ");
 
     int event = random_number(6), damage, gold, flares;
+    event=2;
     switch(event) {
         case 1:
             print_message_formatted("KABOOM! IT EXPLODES!!\n");
