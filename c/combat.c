@@ -360,7 +360,7 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (room_content == MINOTAUR && random_number(4) == 1) {  // 25% chance for charge attack
-            minotaur_charge_attack(player, game, enemy_strength, enemy_dexterity);
+            minotaur_charge_attack(player, game, enemy_strength, &enemy_dexterity);
             if (game->game_over) {
                  return;
             }
@@ -1803,12 +1803,12 @@ void troll_crushing_attack(Player *player, GameState *game, int enemy_strength, 
     }
 }
 
-void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength, int *enemy_dexterity) {
     print_message_formatted("\nThe Minotaur lowers its horns and charges at you!\n");
     
     // Charging is hard to dodge due to momentum
     int hit_chance = 60;  // Higher base chance due to charging momentum
-    hit_chance += (enemy_dexterity - 10) * 2;     
+    hit_chance += (*enemy_dexterity - 10) * 2;     
     hit_chance += (enemy_strength - 10);          // Strength helps control the charge
     hit_chance -= (player->dexterity - 10) * 1;   // Harder to dodge (only 1x multiplier)
     hit_chance += 15 * player->blindness_flag;    
@@ -1819,7 +1819,7 @@ void minotaur_charge_attack(Player *player, GameState *game, int enemy_strength,
     if (random_number(100) > hit_chance) {
         print_message_formatted("You dive out of the way of the charging Minotaur!\n");
         print_message_formatted("The Minotaur slams into the wall, briefly stunning itself!\n");
-        enemy_dexterity -= 1;  // Minotaur is briefly less effective after a miss
+        *enemy_dexterity -= 1;  // Minotaur is briefly less effective after a miss
         return;
     }
     
