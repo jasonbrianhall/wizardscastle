@@ -140,7 +140,7 @@ void generate_castle(GameState *game)
     // Place other elements
     for (z = 1; z <= CASTLE_SIZE; z++) {
         // Place monsters, treasures, etc.
-        for (q = MONSTER_START; q <= MONSTER_END; q++) {
+        for (q = MONSTER_START; q <= MONSTER_END-1; q++) {    // Don't put Mimics (-1)
             do {
                 x = random_number(CASTLE_SIZE);
                 y = random_number(CASTLE_SIZE);

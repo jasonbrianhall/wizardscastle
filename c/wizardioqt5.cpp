@@ -91,7 +91,10 @@ void display_map2(GameState *game, Player *player)
 {
     int currentRoom = get_room_content(game, player->x, player->y, player->level);
     int treasurecount=0;
-        print_message2("");
+    int red, green, blue, monster_level;
+    char color_str[12];
+
+    print_message2("");        
 
     if (currentRoom >= ROOM_START && currentRoom <= ROOM_END)
     {
@@ -233,12 +236,38 @@ void display_map2(GameState *game, Player *player)
             for (int y = 1; y <= CASTLE_SIZE; y++) {
                 print_message2("|");
                 if (x == player->x && y == player->y) {
-                    print_message2("  [YOU] ");
+                    print_message2("<p style='color: red;'>  [YOU] </p>");
                 } else if (is_room_discovered(game, x, y, player->level)) {
                     int room_content = get_room_content(game, x, y, player->level);
                     char room_str[10] = "        \0";
                     get_room_description(room_content, room_str);
-                    print_message2(room_str);
+                    if (room_content>=MONSTER_START && room_content<=MONSTER_END)
+                    {
+                        monster_level = room_content - MONSTER_START;
+    
+                        // RGB values
+                        red = 255;  // Keep full red
+                        // Reduce green and blue as monsters get tougher
+                        green = 150 - (monster_level * 12);  // Starts at 150, decreases to ~18
+                        blue = 150 - (monster_level * 12);   // Starts at 150, decreases to ~18
+    
+                        // Ensure we don't go below 0
+                        if (green < 0) green = 0;
+                        if (blue < 0) blue = 0;
+    
+                        // Format the color string as RGB
+                        sprintf(color_str, "#%02X%02X%02X", red, green, blue);
+                        print_message2("<p style='color: %s;'>%s</p>", color_str, room_str);
+                    }
+                    else if (room_content >= TREASURE_START && room_content <= TREASURE_END)
+                    {
+                        // Gold color for treasures
+                        print_message2("<p style='color: #FFD700;'>%s</p>", room_str);
+                    }
+                    else
+                    {
+                         print_message2(room_str);
+                    }
                 } else {
                     print_message2("????????");
                 }
