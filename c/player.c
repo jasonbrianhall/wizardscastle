@@ -421,7 +421,7 @@ void print_status(Player *player, GameState *game)
         	print_message_formatted("\n");
         }
     }
-
+    print_message("Turn count: %d\n", game->turn_count);
     print_message("======================\n\n");
 }
 

@@ -261,7 +261,15 @@ void handle_treasure(Player *player, GameState *game, int room_content)
     print_message_formatted("\nYOU FOUND %s!\n\n", treasure_name);
     
     game->treasure[treasure_index]++;
-    player->treasure_count++;
+    player->treasure_count=0;
+    for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
+    {
+        if(game->treasure[i]>=1)
+        {
+            player->treasure_count+=game->treasure[i];
+        }
+    }
+
     print_message_formatted("YOU NOW HAVE %d TREASURES.\n\n", player->treasure_count);
 
     // Apply special effects of treasures

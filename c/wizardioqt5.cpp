@@ -407,9 +407,9 @@ void display_map2(GameState *game, Player *player)
 
     for (int i=0; i<TREASURE_END-TREASURE_START+1; i++)
     {
-        if(game->treasure[i]==1)
+        if(game->treasure[i]>=1)
         {
-            treasurecount++;
+            treasurecount+=game->treasure[i];
         }
     }
 
