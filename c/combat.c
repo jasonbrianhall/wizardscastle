@@ -2981,12 +2981,14 @@ void mimic_special_attack(Player *player, GameState *game, int enemy_strength, i
     else if (spell <= 85) {
         // Perfect Copy - temporarily gains some of player's stats
         print_message("The mimic briefly takes your exact form!\n");
-        temp = random_number(2) + 1;  // 1-2 point gain
-        *enemy_dexterity += (player->dexterity / 6);  // Gains fraction of player's stats
-        *enemy_intelligence += (player->intelligence / 6);
-        print_message_formatted("It gains %d to dexterity and intelligence!\n", temp);
-    }
-    else {
+        int dex_gain = player->dexterity / 6;
+        int int_gain = player->intelligence / 6;
+        if (dex_gain <= 0) dex_gain = 1;
+        if (int_gain <= 0) int_gain = 1;
+        *enemy_dexterity += dex_gain;
+        *enemy_intelligence += int_gain;
+        print_message("It gains %d to dexterity and %d to intelligence!\n", dex_gain, int_gain);
+        } else {
         // Dissolving Touch - armor damage
         print_message("The mimic attempts to dissolve your equipment!\n");
         
