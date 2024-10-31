@@ -429,6 +429,7 @@ void display_map2(GameState *game, Player *player)
         	print_message2("\n");
         }
     }
+    print_message2("Turn count: %d\n", game->turn_count);
 
     print_message2("======================\n\n");
     //mapDisplay->append("");
