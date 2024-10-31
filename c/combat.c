@@ -352,7 +352,13 @@ void fight_monster(Player *player, GameState *game)
                 return;
             }
         }
-
+        else if (room_content == MIMIC && random_number(4) == 1) {  // 25% chance
+            mimic_special_attack(player, game, enemy_strength, *enemy_dexterity, *enemy_intelligence);
+;
+            if (game->game_over) {
+                return;
+            }
+        }
         else if (room_content == CHIMERA && random_number(3) == 1) {  // 33% chance for special attack
             chimera_attack(player, game, enemy_strength, enemy_dexterity, enemy_intelligence);
             if (game->game_over) {
@@ -373,7 +379,7 @@ void fight_monster(Player *player, GameState *game)
         }
         else if ((room_content == KOBOLD && random_number(4)==1) || 
                  (room_content == DRAGON && random_number(3)==1) ||
-                 (room_content == TROLL && random_number(2)==1) || // Trolls have 50% chance to regenerate
+                 (room_content == TROLL && random_number(2)==1) || // Trolls have 50% chance to regenerate if they don't use their special attack (making them pretty annoying to kill)
                  (room_content == BALROG && random_number(5)==1) ||
                  (room_content == GOBLIN && random_number(5)==1) || 
                  (room_content == MIMIC && random_number(4)==1))
@@ -2927,4 +2933,85 @@ int can_escape(Player* player, int is_vendor, const char* enemy_name) {
             break;
     }
     return 0;
+}
+
+void mimic_special_attack(Player *player, GameState *game, int enemy_strength, int *enemy_dexterity, int *enemy_intelligence) {
+    int spell = random_number(100);
+    int temp;
+
+    if (spell <= 25) {
+        // Camouflage
+        int dex_boost = random_number(3) + 2;
+        *enemy_dexterity += dex_boost;
+        print_message("The mimic's form shimmers and blends with its surroundings!\n");
+    } 
+    else if (spell <= 50) {
+        // Shape Weapon
+        enemy_strength += random_number(2) + 2;
+        *enemy_dexterity -= 1;
+        print_message("The mimic reshapes its form into deadly weapons!\n");
+    }
+    else if (spell <= 70) {
+        // Adhesive Trap
+        print_message("The mimic exudes a powerful adhesive!\n");
+        
+        // Similar avoidance check to other monster abilities
+        int avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
+        avoidance_chance += random_number(10) - 5;
+        
+        if (avoidance_chance < 5) avoidance_chance = 5;
+        if (avoidance_chance > 95) avoidance_chance = 95;
+        
+        if (random_number(100) < avoidance_chance) {
+            print_message("You avoid getting caught in the adhesive!\n");
+        } else {
+            temp = random_number(3) + 1;  // 1-3 point reduction
+            player->dexterity -= temp;
+            player->armor_points -= 1;  // Minor armor damage
+            print_message_formatted("You're stuck! You lose %d dexterity points and your armor is damaged!\n", temp);
+            
+            if (player->dexterity <= 0) {
+                player->dexterity = 0;
+                print_message("Unable to move, you collapse...\n");
+                game->game_over = 1;
+                return;
+            }
+        }
+    }
+    else if (spell <= 85) {
+        // Perfect Copy - temporarily gains some of player's stats
+        print_message("The mimic briefly takes your exact form!\n");
+        temp = random_number(2) + 1;  // 1-2 point gain
+        *enemy_dexterity += (player->dexterity / 6);  // Gains fraction of player's stats
+        *enemy_intelligence += (player->intelligence / 6);
+        print_message_formatted("It gains %d to dexterity and intelligence!\n", temp);
+    }
+    else {
+        // Dissolving Touch - armor damage
+        print_message("The mimic attempts to dissolve your equipment!\n");
+        
+        if (player->armor_type != 0) {
+            temp = random_number(4) + 1;  // 1-4 armor damage
+            player->armor_points -= temp;
+            print_message_formatted("Your armor loses %d points!\n", temp);
+            
+            if (player->armor_points <= 0) {
+                player->armor_points = 0;
+                player->armor_type = 0;
+                print_message("Your armor has been completely dissolved!\n");
+            }
+        } else {
+            // If no armor, does minor damage instead
+            temp = random_number(2) + 1;  // 1-2 damage
+            player->strength -= temp;
+            print_message_formatted("The dissolving touch deals %d damage!\n", temp);
+            
+            if (player->strength <= 0) {
+                player->strength = 0;
+                print_message("You've been dissolved completely!\n");
+                game->game_over = 1;
+                return;
+            }
+        }
+    }
 }

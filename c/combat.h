@@ -32,6 +32,7 @@ void bear_maul_attack(Player *player, GameState *game, int enemy_strength, int e
 void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int *enemy_dexterity);
 void orc_battle_fury_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
 void goblin_dirty_tricks_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity);
+void mimic_special_attack(Player *player, GameState *game, int enemy_strength, int *enemy_dexterity, int *enemy_intelligence);
 
 bool should_drop_weapon(int monster_type);
 bool should_drop_armor(int monster_type);
