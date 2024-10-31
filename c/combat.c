@@ -548,7 +548,6 @@ void fight_monster(Player *player, GameState *game)
                      } else {
                          if (player->blindness_flag==0)
                          {
-                             temp = random_number(max_increase);
                              print_message("The spell strikes true! You are now blind!");
                              if (game->treasure[OPAL_EYE_INDEX]) {
                                  print_message("The Opal Eye immediately cures your blindness!\n");                
