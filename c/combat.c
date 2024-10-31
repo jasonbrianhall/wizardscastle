@@ -375,7 +375,9 @@ void fight_monster(Player *player, GameState *game)
                  (room_content == DRAGON && random_number(3)==1) ||
                  (room_content == TROLL && random_number(2)==1) || // Trolls have 50% chance to regenerate
                  (room_content == BALROG && random_number(5)==1) ||
-                 (room_content == GOBLIN && random_number(5)==1))
+                 (room_content == GOBLIN && random_number(5)==1) || 
+                 (room_content == MIMIC && random_number(4)==1))
+                 
         {
             switch (room_content)
             {
@@ -400,26 +402,64 @@ void fight_monster(Player *player, GameState *game)
                     max_increase=5;  // Trolls have strong regeneration
                     spellcasted=1;   // Trolls can only heal, not cast other spells
                     break;
+                case MIMIC:
+                    max_increase = 3;  // Mimics get smaller stat increases than dragons/balrogs
+                    spellcasted = random_number(9);  // Full spell range like most monsters
             }
             switch (spellcasted)
             {
                  case 1:
                      temp=random_number(max_increase);
-                     print_message_formatted("THE %s CASTS HEAL AND GAINED %i STRENGTH POINTS\n", enemy_name, temp);
+                     switch (room_content)
+                     {
+                          case MIMIC:
+                              print_message("The mimic absorbs nearby material and gained %d strength points\n", temp);
+                              break;
+                          default:                              
+                              print_message_formatted("The %s casts heal and gained %i strength points\n", enemy_name, temp);
+                              break;
+                     }
                      enemy_strength+=temp;
                      break;                         
                  case 2:
                      temp=random_number(max_increase);
-                     print_message_formatted("THE %s CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", enemy_name, temp);
+                     switch (room_content)
+                     {
+                          case MIMIC:
+                              print_message_formatted("THE MIMIC LIQUEFIES ITS FORM AND GAINED %i DEXTERITY POINTS\n", temp);
+                              break;
+                          default:                              
+                              print_message_formatted("THE %s CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", enemy_name, temp);
+                              break;
+                     }
+
                      enemy_dexterity+=temp;
                      break;                         
                  case 3:
                      temp=random_number(max_increase);
-                     print_message_formatted("THE %s CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", enemy_name, temp);
+                     switch (room_content)
+                     {
+                          case MIMIC:
+                              print_message_formatted("THE MIMIC LIQUEFIES ITS FORM AND GAINED %i DEXTERITY POINTS\n", temp);
+                              break;
+                          default:                              
+                              print_message_formatted("THE %s CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n", enemy_name, temp);
+                              break;
+                     }
+
                      enemy_intelligence+=temp;
                      break;                         
                  case 4:
-                     print_message_formatted("THE %s CASTS SILENCE; ", enemy_name);
+                     switch (room_content)
+                     {
+                          case MIMIC:
+                              print_message_formatted("THE MIMIC SECRETES A MAGICAL DAMPENING SUBSTANCE; ");
+                              break;
+                          default:                              
+                              print_message_formatted("THE %s CASTS SILENCE; ", enemy_name);
+                              break;
+                     }
+
                      base_chance = 50 + (player->intelligence - enemy_intelligence) * 5;
 
                      // Add a random factor (-10 to +10)
@@ -444,7 +484,15 @@ void fight_monster(Player *player, GameState *game)
                     }
                     break;
                  case 5:
-                     print_message_formatted("THE %s CASTS WEAKNESS!\n", enemy_name);
+                     switch (room_content)
+                     {
+                          case MIMIC:
+                              print_message_formatted("THE MIMIC SPRAYS DIGESTIVE ENZYMES AT YOU!\n");                              break;
+                          default:                              
+                              print_message_formatted("THE %s CASTS WEAKNESS!\n", enemy_name);
+                              break;
+                     }
+
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -457,10 +505,28 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("YOU SUCCESSFULLY RESIST THE WEAKNESS SPELL!\n");
+                          switch (room_content)
+                          {
+                              case MIMIC:
+                                  print_message_formatted("YOU SUCCESSFULLY RESIST THE DIGESTIVE ENZYMES!\n");
+                                  break;
+                              default:                              
+                                  print_message_formatted("YOU SUCCESSFULLY RESIST THE WEAKNESS SPELL!\n");
+                                  break;
+                          }
+
                      } else {
                          temp = random_number(max_increase);
-                         print_message_formatted("THE SPELL HITS! YOU LOSE %i STRENGTH POINTS\n", temp);
+                          switch (room_content)
+                          {
+                              case MIMIC:
+                                  print_message_formatted("THE ENZYMES BURN! YOU LOSE %i STRENGTH POINTS\n", temp);
+                                  break;
+                              default:                              
+                                  print_message_formatted("THE SPELL HITS! YOU LOSE %i STRENGTH POINTS\n", temp);
+                                  break;
+                          }
+
                          player->strength -= temp;
         
                          if (player->strength <= 0) {
@@ -472,8 +538,17 @@ void fight_monster(Player *player, GameState *game)
                      }
                      break;   
                  case 6:
-                      print_message_formatted("The %s casts ", enemy_name);
-                      print_message("Clumsy\n");
+                          switch (room_content)
+                          {
+                              case MIMIC:
+                                  print_message("The mimic exudes a sticky substance!\n");
+                                  break;
+                              default:                              
+                                  print_message_formatted("The %s casts ", enemy_name);
+                                  print_message("Clumsy\n");
+                                  break;
+                          }
+
 
     
                      // Calculate avoidance chance based on player stats
@@ -487,10 +562,27 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message("You resist the Clumsy spell with ease!\n");
+                          switch (room_content)
+                          {
+                              case MIMIC:
+                                  print_message("You avoid getting stuck in the secretion!\n");                 
+                                  break;
+                              default:                              
+                                  print_message("You resist the Clumsy spell with ease!\n");
+                                  break;                          
+                          }
                      } else {
                          temp = random_number(max_increase);
-                         print_message_formatted("The spell strikes you! You lose %d dexterity points.\n", temp);
+                          switch (room_content)
+                          {
+                              case MIMIC:
+                                  print_message("You are sticky! You lose %d dexterity points.\n", temp);
+                                  break;             
+                              default:                              
+                                  print_message_formatted("The spell strikes you! You lose %d dexterity points.\n", temp);
+                                  break;                          
+                          }
+
                          player->dexterity -= temp;
         
                          if (player->dexterity <= 0) {
@@ -502,7 +594,16 @@ void fight_monster(Player *player, GameState *game)
                      }
                      break;
                  case 7:
-                     print_message_formatted("The %s casts Mind Fog, attemping to cloud your thoughts!\n", enemy_name);
+                        switch (room_content)
+                        {
+                              case MIMIC:
+                                  print_message_formatted("The mimic rapidly shifts between confusing forms!\n");
+                                  break;             
+                              default:                              
+                                  print_message_formatted("The %s casts Mind Fog, attemping to cloud your thoughts!\n", enemy_name);
+                                  break;                          
+                        }
+
     
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
@@ -515,15 +616,41 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message("You successfully resist the Mind Fog spell!\n");
+                        switch (room_content)
+                        {
+                              case MIMIC:
+                                  print_message("The mimic rapidly shifts between confusing forms!\n");
+                                  break;             
+                              default:                              
+                                  print_message("You successfully resist the Mind Fog spell!\n");
+                                  break;                          
+                        }
+
                      } else {
                          temp = random_number(max_increase);
-                         print_message("The spell strikes you! You lose %d intelligence points.\n", temp);
+                          switch (room_content)
+                          {
+                              case MIMIC:
+                                  print_message("The shifting forms disorient you! You lose %d intelligence points.\n", temp);
+                                  break;             
+                              default:                              
+                                  print_message("The spell strikes you! You lose %d intelligence points.\n", temp);
+                                  break;                          
+                          }
+
                          player->intelligence -= temp;
         
                          if (player->intelligence <= 0) {
                              player->intelligence = 0;
-                             print_message("Your intellect has been drained to nothing. You collapse...\n");
+                             switch (room_content)
+                             {
+                                case MIMIC:
+                                    print_message("Your mind has been overwhelmed. You collapse...\n");
+                                    break;             
+                                default:                              
+                                    print_message("Your intellect has been drained to nothing. You collapse...\n");
+                                    break;                          
+                             }
 
                              game->game_over = 1;
                              return;
@@ -531,8 +658,16 @@ void fight_monster(Player *player, GameState *game)
                      }
                      break;
                  case 8:
-                    print_message("The %s casts a veil of darkness upon you!\n", enemy_name);
-    
+                     switch (room_content)
+                     {
+                         case MIMIC:
+                             print_message("The mimic sprays a cloud of dark ink!\n");
+                             break;             
+                         default:                              
+                             print_message("The %s casts a veil of darkness upon you!\n", enemy_name);
+                             break;                          
+                     }
+
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
     
@@ -544,11 +679,29 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message("You stand firm and resist the darkness!\n");
+                         switch (room_content)
+                         {
+                             case MIMIC:
+                                 print_message("You dodge away from the ink cloud!\n");
+                                 break;             
+                             default:                              
+                                 print_message("You stand firm and resist the darkness!\n");
+                                 break;                          
+                         }
+
                      } else {
                          if (player->blindness_flag==0)
                          {
-                             print_message("The spell strikes true! You are now blind!");
+                             switch (room_content)
+                             {
+                                 case MIMIC:
+                                     print_message("The ink gets in your eyes! You are now blind!\n");
+                                     break;             
+                                 default:                              
+                                     print_message("The spell strikes true! You are now blind!");
+                                     break;                          
+                              }
+
                              if (game->treasure[OPAL_EYE_INDEX]) {
                                  print_message("The Opal Eye immediately cures your blindness!\n");                
                                  player->temp_blindness_flag = 0;
@@ -560,18 +713,33 @@ void fight_monster(Player *player, GameState *game)
                          }
                          else
                          {
-                             print_message("The spell hits, but you are already blind, so it has no effect!\n");
+                             switch (room_content)
+                             {
+                                 case MIMIC:
+                                     print_message("The ink gets in your eyes! You were already blind!  You wipe your eyes and continue fighting!\n");
+                                     break;             
+                                 default:                              
+                                     print_message("The spell hits, but you are already blind, so it has no effect!\n");
+                                     break;                          
+                              }
                          }
                      }
                      break;
                  case 9:
-                     if (room_content == BALROG)
+                     switch (room_content)
                      {
-                        print_message("The Balrog opens its fiery mouth and a firebolt shoots out of it.\n");
+                         case MIMIC:
+                             print_message("The mimic sprays corrosive acid!\n");
+                             break;             
+                         case BALROG:
+                             print_message("The Balrog opens its fiery mouth and a firebolt shoots out of it.\n");
+                             break;             
+
+                         default:                              
+                             print_message("The %s conjures a blazing firebolt!\n", enemy_name);
+                             break;                          
                      }
-                     else {
-                         print_message("The %s conjures a blazing firebolt!\n", enemy_name);
-                     }
+
                      // Calculate avoidance chance based on player stats
                      avoidance_chance = (player->intelligence * 2 + player->strength + player->dexterity) / 4;
     
@@ -583,7 +751,18 @@ void fight_monster(Player *player, GameState *game)
                      if (avoidance_chance > 95) avoidance_chance = 95;
     
                      if (random_number(100) < avoidance_chance) {
-                         print_message_formatted("You nimbly evade the scorching firebolt!\n");
+                         switch (room_content)
+                         {
+                             case MIMIC:
+                                 print_message("You dodge the acid spray!\n");
+                                 break;             
+                             case BALROG:
+                                 print_message("Sensing the firebolt, you quickly dodge it.\n");
+                                 break;             
+                             default:                              
+                                 print_message("You nimbly avoid the %ss firebolt!\n", enemy_name);
+                                 break;                          
+                         }
                      } else {
                          temp = random_number(max_increase);
                          print_message_formatted("THE FIREBOLT HITS YOU\n");
@@ -597,7 +776,16 @@ void fight_monster(Player *player, GameState *game)
                              player->strength += player->armor_points;
                              print_message("You took %i damage.\n", player->armor_points*-1);
                              player->armor_points=0;                             
-                             print_message("Your armor was destroyed, good luck adventurer.");
+                             switch (room_content)
+                             {
+                                 case MIMIC:
+                                     print_message("The acid melted your armor.  Good luck adventurer!\n");
+                                     break;             
+                                 default:                              
+                                     print_message("Your armor was destroyed, good luck adventurer.");
+                                     break;                          
+                             }
+
                              player->armor_type=0;
                          }
                          else {
@@ -607,7 +795,15 @@ void fight_monster(Player *player, GameState *game)
         
                          if (player->strength <= 0) {
                              player->strength = 0;
-                             print_message("Your strength has left you. You collapse...\n");
+                             switch (room_content)
+                             {
+                                 case MIMIC:
+                                     print_message("The acid has dissolved you.  You have died and not even a skeleton to show for it.\n");
+                                     break;             
+                                 default:                              
+                                     print_message("The firebolt incinerates you.  You have died ...\n");
+                                     break;                          
+                             }
                              game->game_over = 1;
                              return;
                          }
