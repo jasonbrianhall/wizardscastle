@@ -176,6 +176,9 @@ char* get_command_with_history(const char* prompt) {
 const char* get_user_input_main() {
     static char input_buffer[MAX_COMMAND_LEN];
     static const char* dr_command = "DR";
+    static const char* qs_command = "QS";
+    static const char* ql_command = "QL";
+
 
     char* input = get_command_with_history("ENTER YOUR COMMAND: ");
     strncpy(input_buffer, input, sizeof(input_buffer) - 1);
@@ -191,6 +194,19 @@ const char* get_user_input_main() {
         input_buffer[1] == 'R') {
         return dr_command;
     }
+
+    if (strlen(input_buffer) >= 2 && 
+        input_buffer[0] == 'Q' && 
+        input_buffer[1] == 'S') {
+        return qs_command;
+    }
+
+    if (strlen(input_buffer) >= 2 && 
+        input_buffer[0] == 'Q' && 
+        input_buffer[1] == 'L') {
+        return ql_command;
+    }
+
 
     if (strchr("ABCDEFGHIJKLMNOPQRSTUVWYZ", input_buffer[0])) {
         input_buffer[1] = '\0';

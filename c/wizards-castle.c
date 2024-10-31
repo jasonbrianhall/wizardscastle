@@ -13,6 +13,7 @@
 #include "combat.h"
 #include "vendor.h"
 #include "wizardio.h"
+#include "save_load.h"
 
 void print_introduction(void)
 {
@@ -194,7 +195,7 @@ bool main_game_loop(Player *player, GameState *game)
                         }
                         else
                         {
-                            print_message_formatted("** IF YOU WANT A DRINK, FIND A POOL!");
+                            print_message("** If you want to drink, find a pool!\n");
                         }
                     }
                     else if (room_content == STAIRS_DOWN) {  // Stairs going down
@@ -203,9 +204,9 @@ bool main_game_loop(Player *player, GameState *game)
                         {
                             player->level=CASTLE_SIZE;
                         }
-                        print_message_formatted("YOU DESCEND THE STAIRS.\n");
+                        print_message("You descend the stairs.\n");
                     } else {
-                        print_message_formatted("THERE ARE NO STAIRS GOING DOWN FROM HERE!\n");
+                        print_message_formatted("There are no stairs coming down from here!\n");
                     }
                     break;
                 case 'M':
@@ -241,11 +242,34 @@ bool main_game_loop(Player *player, GameState *game)
                     }
                     break;
                 case 'Q':
-                    print_message("Do you really want to quit now? (Y/N) ");
-                    if (get_user_input_yn() == 'Y') {
-                        game_over = 1;
-                    } else {
-                        print_message_formatted("OK, CONTINUE ON BRAVE ADVENTURER!\n");
+                    if (strncmp(user_command, "QS", 2) == 0) {
+                         if (save_game("quicksav.wcs", player, game))
+                         {
+                              print_message("Quick save was successful.\n");
+                         }
+                         else
+                         {
+                              print_message("Quick save failed.\n");
+                         }
+                    }
+                    else if (strncmp(user_command, "QL", 2) == 0)
+                    {
+                         if (load_game("quicksav.wcs", player, game))
+                         {
+                              print_message("Quick load was successful\n");
+                         }
+                         else
+                         {
+                              print_message("Quick load failed.\n");
+                         }
+                    }
+                    else {                    
+                         print_message("Do you really want to quit now? (Y/N) ");
+                        if (get_user_input_yn() == 'Y') {
+                            game_over = 1;
+                        } else {
+                            print_message_formatted("OK, CONTINUE ON BRAVE ADVENTURER!\n");
+                        }
                     }
                     break;
                 case 'Z':
@@ -297,6 +321,8 @@ void print_help()
     print_message("T/ELEPORT - Teleport to a new location (requires Runestaff)\n");
     print_message("Q/UIT     - End the game\n");
     print_message("Z/tatus   - Player Status (South was already used)\n\n");
+    print_message("QS/ave    - Quick Save (saves a file named quicksav.wcs)\n\n");
+    print_message("QL/oad    - Quick Load\n\n");
 
     #ifdef MSDOS
     print_message_formatted("PRESS ENTER TO CONTINUE...");
