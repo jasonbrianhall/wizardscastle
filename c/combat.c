@@ -335,7 +335,7 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (room_content == OGRE && random_number(4) == 1) {  // 25% chance
-            ogre_rage_attack(player, game, enemy_strength, enemy_dexterity);
+            ogre_rage_attack(player, game, enemy_strength, &enemy_dexterity);
             if (game->game_over) {
                 return;
             }
@@ -1194,9 +1194,6 @@ void dragon_fireball_attack(Player *player, GameState *game, int enemy_strength,
     if (player->armor_type != 0) {
         int armor_protection = player->armor_type + random_number(3) - 1;
         
-        // Fireballs are more effective against armor
-        armor_protection = armor_protection; 
-
         if(player->armor_type == STONE)
         {        
             damage -= (armor_protection*3) ;
@@ -1692,7 +1689,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     {
                          temp=player->intelligence;
                          player->intelligence = (player->intelligence += random_number(3)) > MAX_INTELLIGENCE ? MAX_INTELLIGENCE : player->intelligence;
-                         print_message_formatted("Blast %d: Oops! You hit yourself and gained intelligence!!!\n", i+1, temp-player->intelligence);
+                         print_message_formatted("Blast %d: Oops! You hit yourself and gained %d intelligence!!!\n", i+1, temp-player->intelligence);
                     }
                     else
                     {
@@ -1704,7 +1701,7 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     {
                         temp=player->strength;
                         player->strength = (player->strength + random_number(3)) > MAX_STRENGTH ? MAX_STRENGTH : player->strength;
-                        print_message_formatted("Blast %d: Oops! You hit yourself and gained strength!!!\n", i+1, temp-player->strength);
+                        print_message_formatted("Blast %d: Oops! You hit yourself and gained %d strength!!!\n", i+1, temp-player->strength);
                     }
                     else
                     {
@@ -1716,11 +1713,11 @@ int cast_mischief_blast(Player *player, int *enemy_strength, int *enemy_dexterit
                     {
                         temp=player->dexterity;
                         player->dexterity = (player->dexterity += random_number(3)) > MAX_DEXTERITY ? MAX_DEXTERITY : player->dexterity;
-                        print_message_formatted("Blast %d: Oops! You hit yourself and gained dexterity!!!\n", i+1, temp-player->dexterity);
+                        print_message_formatted("Blast %d: Oops! You hit yourself and gained %d dexterity!!!\n", i+1, temp-player->dexterity);
                     }
                     else
                     {
-                         print_message_formatted("Blast %d: Oops! You hit yourself but it had no effect.\n", i+1, damage);
+                         print_message_formatted("Blast %d: Oops! You hit yourself but it had no effect.\n", i+1);
                     }
                     
                     break;
@@ -2265,12 +2262,12 @@ void bear_maul_attack(Player *player, GameState *game, int enemy_strength, int e
     }
 }
 
-void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int enemy_dexterity) {
+void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int *enemy_dexterity) {
     print_message("\nThe Ogre works itself into a mindless rage!\n");
     
-    if (!enemy_attack_hits(player, enemy_dexterity)) {
+    if (!enemy_attack_hits(player, *enemy_dexterity)) {
         print_message("The Ogre's wild swing misses completely!\n");
-        enemy_dexterity -= 1;  // Gets clumsier in rage
+        *enemy_dexterity -= 1;  // Gets clumsier in rage
         return;
     }
     
@@ -2304,7 +2301,7 @@ void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int e
         print_message_formatted("The Ogre's rage-fueled attack deals %d damage!\n", damage);
         
         // Second wild swing with penalty
-        if (enemy_attack_hits(player, enemy_dexterity - 2)) {
+        if (enemy_attack_hits(player, *enemy_dexterity - 2)) {
             int second_damage = random_number(6);  // 1-6 damage
             if (player->armor_type != 0) {
                 second_damage -= player->armor_type;
@@ -2319,7 +2316,7 @@ void ogre_rage_attack(Player *player, GameState *game, int enemy_strength, int e
             }
         } else {
             print_message("The Ogre's second attack misses as it loses balance!\n");
-            enemy_dexterity -= 1;  // Gets even clumsier
+            *enemy_dexterity -= 1;  // Gets even clumsier
         }
     } else {
         print_message("Your defenses absorb the Ogre's attack!\n");

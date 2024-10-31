@@ -60,7 +60,7 @@ void trade_with_vendor(Player *player, GameState *game)
             { 
                if (random_number(8)==1 && player->weapon_type<EXCALIBUR)
                {
-                   print_message("I'll give you an extremely rare offer; trade %s for Excalibur? (Y/N) ", get_treasure_name(i), offer);
+                   print_message("I'll give you an extremely rare offer; trade %s for Excalibur? (Y/N) ", get_treasure_name(i));
                    if (get_user_input_yn() == 'Y') {
                        game->treasure[i]--;
                        player->treasure_count--;
@@ -70,7 +70,7 @@ void trade_with_vendor(Player *player, GameState *game)
                else
                    if (random_number(8)==1 && player->armor_type<STONE)
                    {
-                       print_message("I'll give you an extremely rare offer; trade %s for Stone Armor? (Y/N) ", get_treasure_name(i), offer);
+                       print_message("I'll give you an extremely rare offer; trade %s for Stone Armor? (Y/N) ", get_treasure_name(i));
                        if (get_user_input_yn() == 'Y') {
                            game->treasure[i]--;
                            player->treasure_count--;
@@ -187,7 +187,6 @@ void trade_with_vendor(Player *player, GameState *game)
                     continue;
                 } else {
                     print_message("\n%s, you don't have enough gold for a lamp.\n", player->sex == MALE ? "My liege" : "My lady");
-                    continue;
                 }
                 break;
             case 7:

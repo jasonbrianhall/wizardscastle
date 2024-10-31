@@ -287,7 +287,7 @@ void use_lamp(Player *player, GameState *game)
     
     mark_room_discovered(game, x, y, player->level);
     int room_content = get_room_content(game, x, y, player->level);
-    char room_desc[9];
+    char room_desc[10];
     get_room_description(room_content, room_desc);
 
     print_message_formatted("\nThe lamp reveals: ");

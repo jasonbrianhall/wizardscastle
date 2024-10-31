@@ -271,7 +271,6 @@ void buy_equipment(Player *player)
                 print_message_formatted("%s ", race_names[player->race - 1]);
                 print_message(", try again, your choice must be S, M, D, or N.\n\n");
                 exittheloop=0;
-                continue;
         }
     } while (exittheloop==0);
 
