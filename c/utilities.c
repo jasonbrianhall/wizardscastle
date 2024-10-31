@@ -333,40 +333,49 @@ void open_chest(Player *player, GameState *game)
 {
     print_message_formatted("\nYou open the chest and ");
 
-    int event = random_number(4), damage, gold;
+    int event = random_number(5), damage, gold, flares;
     switch(event) {
         case 1:
             print_message_formatted("KABOOM! IT EXPLODES!!\n");
             damage = random_number(6);
             player->strength -= damage;
             print_message_formatted("You take %d damage.\n", damage);
+            set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+
             if (player->strength <= 0) {
-                print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+                print_message("\nThe explosion killed you.  You died from lack of strength.  This is the end for you adventurer.\n");
                 game->game_over = 1;
             }
             break;
 
         case 2:
         case 4:
-            {
-                gold = random_number(1000);
-                print_message_formatted("find %d gold pieces!\n", gold);
-                player->gold += gold;
-            }
+            gold = random_number(500) + random_number(500);
+            print_message_formatted("find %d gold pieces!\n", gold);
+            player->gold += gold;
+            set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
             break;
 
         case 3:
-            print_message_formatted("GAS!! YOU STAGGER FROM THE ROOM!\n");
+            print_message("Gas!! You stagger from the room!\n");
             game->turn_count += 20;  // Equivalent to T = T + 20 in BASIC
             // Move player in a random direction
             char directions[] = {'N', 'S', 'E', 'W'};
             char direction = directions[random_number(4) - 1];
+            // I set it here because it has to be before I move the player
+            set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
             move_player(player, game, direction);
             break;
+        case 5:
+            flares = random_number(6);
+            print_message_formatted("find %d flares!\n", flares);
+            player->flares += flares;
+            set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+            break;
+
     }
 
     // Remove the chest from the room
-    set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
 }
 
 void drink_from_pool(Player *player, GameState *game)
