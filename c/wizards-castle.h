@@ -40,29 +40,30 @@
 #define BALROG 123
 #define DRAGON 124
 #define MONSTER_END 124
+#define MIMIC 125
 
-#define VENDOR 125
-#define ROOM_END 125
+#define VENDOR 126
+#define ROOM_END 126
 
 // Treasures (126-133)
-#define TREASURE_START     126
-#define RUBY_RED           126
+#define TREASURE_START     127
+#define RUBY_RED           127
 #define RUBY_RED_INDEX      0
-#define NORN_STONE        127
+#define NORN_STONE        128
 #define NORN_STONE_INDEX    1
-#define PALE_PEARL        128
+#define PALE_PEARL        129
 #define PALE_PEARL_INDEX    2
-#define OPAL_EYE          129
+#define OPAL_EYE          130
 #define OPAL_EYE_INDEX      3
-#define GREEN_GEM         130
+#define GREEN_GEM         131
 #define GREEN_GEM_INDEX     4
-#define BLUE_FLAME        131
+#define BLUE_FLAME        132
 #define BLUE_FLAME_INDEX    5
-#define PALANTIR          132
+#define PALANTIR          133
 #define PALANTIR_INDEX      6
-#define SILMARIL          133
+#define SILMARIL          134
 #define SILMARIL_INDEX      7
-#define TREASURE_END      133
+#define TREASURE_END      134
 
 #define MAX_STRENGTH     50
 #define MAX_INTELLIGENCE 50

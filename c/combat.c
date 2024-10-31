@@ -37,19 +37,28 @@ void fight_monster(Player *player, GameState *game)
         enemy_strength = 15;
         enemy_dexterity = 15;
         enemy_intelligence = 15;
-    } else {
+    } else if (room_content==MIMIC)
+    {
+        enemy_strength = 8;
+        enemy_dexterity = 12;
+        enemy_intelligence = 12;
+    }   
+    else {
         enemy_strength = (room_content - MONSTER_START + 1) * 2;
         enemy_dexterity = room_content - MONSTER_START + 8;
         enemy_intelligence = room_content - MONSTER_START + 8;
-    }
-    if (enemy_strength<=10)
-    {
-        enemy_strength=10;
+        if (enemy_strength<=10)
+        {
+            enemy_strength=10;
+        }
     }
 
     firststrike=calculate_first_strike(player->dexterity, player->intelligence, player->strength, enemy_dexterity, enemy_intelligence, enemy_strength);
-    
-    if (firststrike==0)
+    if (room_content==MIMIC)
+    {
+         firststrike=1;
+    }
+    else if (firststrike==0)
     {
         print_message_formatted("ENEMY GETS FIRST STRIKE\n\n");
     }
@@ -649,6 +658,9 @@ void fight_monster(Player *player, GameState *game)
                     break;
                 case DRAGON:
                     print_message_formatted("The dragon lunges at you with a ferocious attack!\n");
+                    break;
+                case MIMIC:
+                    print_message_formatted("The mimic lunges at you with its dagger like teeth!\n");
                     break;
                 default:
                     print_message_formatted("The creature lunges at you with a ferocious attack!\n");
@@ -1313,6 +1325,7 @@ const char* get_monster_name(int room_content)
         case CHIMERA: return "CHIMERA";
         case BALROG: return "BALROG";
         case DRAGON: return "DRAGON";
+        case MIMIC: return "MIMIC";
         default: return "UNKNOWN MONSTER";
     }
 }

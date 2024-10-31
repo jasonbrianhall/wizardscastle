@@ -140,7 +140,7 @@ int get_minimum(int a, int b)
 }
 void printStars(void)
 {
-	print_message_formatted("****************************************************************\n");
+	print_message("****************************************************************\n");
 
 }
 
@@ -189,8 +189,8 @@ void get_room_description(int room_content, char *desc)
 {
     char full_desc[10];
     switch (room_content) {
-        case EMPTY_ROOM:  strncpy(full_desc, "EMPTY   \0", 9); break;
-        case ENTRANCE:    strncpy(full_desc, "ENTRANCE\0", 9); break;
+        case EMPTY_ROOM:  strncpy(full_desc,"EMPTY   \0", 9); break;
+        case ENTRANCE:    strncpy(full_desc,"ENTRANCE\0", 9); break;
         case STAIRS_UP:   strncpy(full_desc,"STAIRS U\0", 9); break;
         case STAIRS_DOWN: strncpy(full_desc,"STAIRS D\0",9); break;
         case POOL:        strncpy(full_desc,"POOL    \0", 9); break;
@@ -213,6 +213,7 @@ void get_room_description(int room_content, char *desc)
         case CHIMERA:     strncpy(full_desc,"CHIMERA \0",9); break;
         case BALROG:      strncpy(full_desc,"BALROG  \0",9); break;
         case DRAGON:      strncpy(full_desc,"DRAGON  \0",9); break;
+        case MIMIC:       strncpy(full_desc,"MIMIC   \0",9); break;
         case VENDOR:      strncpy(full_desc,"VENDOR  \0", 9); break;
         case RUBY_RED:    strncpy(full_desc,"RUBY RED\0", 9); break;
         case NORN_STONE:  strncpy(full_desc,"NORN STN\0", 9); break;
@@ -333,7 +334,7 @@ void open_chest(Player *player, GameState *game)
 {
     print_message_formatted("\nYou open the chest and ");
 
-    int event = random_number(5), damage, gold, flares;
+    int event = random_number(6), damage, gold, flares;
     switch(event) {
         case 1:
             print_message_formatted("KABOOM! IT EXPLODES!!\n");
@@ -343,17 +344,69 @@ void open_chest(Player *player, GameState *game)
             set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
 
             if (player->strength <= 0) {
-                print_message("\nThe explosion killed you.  You died from lack of strength.  This is the end for you adventurer.\n");
+                print_message("\nThe explosion killed you. You died from lack of strength. This is the end for you adventurer.\n");
                 game->game_over = 1;
             }
             break;
 
         case 2:
-        case 4:
-            gold = random_number(500) + random_number(500);
-            print_message_formatted("find %d gold pieces!\n", gold);
-            player->gold += gold;
-            set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+            print_message_formatted("OH NO! IT'S A MIMIC!\n");
+            print_message_formatted("The chest sprouts teeth and tentacles!\n");
+            
+            if (player->dexterity > 8 + random_number(4) && random_number(4) != 1) {
+                // Player might notice it's a mimic if they're dexterous
+                print_message_formatted("You jump back just in time as the mimic lunges!\n");
+                
+                // Move player in a random direction
+                char directions[] = {'N', 'S', 'E', 'W'};
+                char direction = directions[random_number(4) - 1];
+                set_room_content(game, player->x, player->y, player->level, MIMIC);
+                move_player(player, game, direction);
+            } else {
+                // Calculate initial surprise attack damage
+                damage = random_number(6) + 2;  // 3-8 base damage
+                
+                // Apply armor reduction if player has armor
+                if (player->armor_type != 0) {
+                    int armor_protection = player->armor_type + random_number(2);  // Armor type plus small random bonus
+                    print_message_formatted("Your armor absorbs some of the mimic's attack!\n");
+                    
+                    // Reduce damage based on armor
+                    damage -= armor_protection;
+                    
+                    // Apply armor damage
+                    player->armor_points -= armor_protection;
+                    
+                    if (damage < 0) {
+                        damage = 0;
+                    }
+                    
+                    if (player->armor_points <= 0) {
+                        player->armor_points = 0;
+                        player->armor_type = 0;
+                        print_message("Your armor has been destroyed by the mimic's powerful bite!\n");
+                    } else {
+                        print_message_formatted("Your armor took %d points of damage!\n", armor_protection);
+                    }
+                }
+                
+                if (damage > 0) {
+                    print_message_formatted("The mimic's surprise attack hits you for %d damage!\n", damage);
+                    player->strength -= damage;
+                    
+                    if (player->strength <= 0) {
+                        print_message("\nThe mimic devours you whole! Your adventure ends here.\n");
+                        game->game_over = 1;
+                    } else {
+                        set_room_content(game, player->x, player->y, player->level, MIMIC);
+                        fight_monster(player, game);  // Initiate combat immediately
+                    }
+                } else {
+                    print_message("Your armor completely protects you from the surprise attack!\n");
+                    set_room_content(game, player->x, player->y, player->level, MIMIC);
+                    fight_monster(player, game);  // Initiate combat
+                }
+            }
             break;
 
         case 3:
@@ -366,18 +419,23 @@ void open_chest(Player *player, GameState *game)
             set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
             move_player(player, game, direction);
             break;
+
+        case 4:
         case 5:
+            gold = random_number(500) + random_number(500);
+            print_message_formatted("find %d gold pieces!\n", gold);
+            player->gold += gold;
+            set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
+            break;
+
+        case 6:
             flares = random_number(6);
             print_message_formatted("find %d flares!\n", flares);
             player->flares += flares;
             set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
             break;
-
     }
-
-    // Remove the chest from the room
 }
-
 void drink_from_pool(Player *player, GameState *game)
 {
     print_message_formatted("\nYou take a drink and ");

@@ -25,6 +25,7 @@ const QString CHIMERA_AA = "🦁🐐🐍";
 const QString BALROG_AA = "🔥👿";
 const QString DRAGON_AA = "🐉";
 const QString VENDOR_AA = "🧙‍♂️🏪";
+const QString MIMIC_AA = "👹🗝️🔓";
 
 }
 

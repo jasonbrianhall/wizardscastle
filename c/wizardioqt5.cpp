@@ -177,6 +177,11 @@ void display_map2(GameState *game, Player *player)
                 mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::VENDOR_AA + "</p>");
                 print_message2("\nYou've encountered a Vendor!\n");
                 break;
+            case MIMIC:
+                mapDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI Emoji\", \"Apple Color Emoji\", \"Noto Color Emoji\"; text-shadow: 2px 2px 4px gold;'>" + AsciiArt::MIMIC_AA + "</p>");
+                print_message2("\nYou've encountered a Mimic!\n");
+                break;
+
             case EMPTY_ROOM:
                 print_message2("\nYou are in an empty room.  It's voidness is chilling.\n");
                 break;
