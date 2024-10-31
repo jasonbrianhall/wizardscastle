@@ -47,7 +47,7 @@ bool main_game_loop(Player *player, GameState *game)
         "A POOL", "A CHEST", "GOLD PIECES", "FLARES", "A WARP", "A SINKHOLE",
         "A CRYSTAL ORB", "A BOOK", "A KOBOLD", "AN ORC", "A WOLF", "A GOBLIN",
         "AN OGRE", "A TROLL", "A BEAR", "A MINOTAUR", "A GARGOYLE", "A CHIMERA",
-        "A BALROG", "A DRAGON", "A VENDOR", "A RED RUBY", "THE NORN STONE", "THE PALE_PEARL",
+        "A BALROG", "A DRAGON", "A MIMIC", "A VENDOR", "A RED RUBY", "THE NORN STONE", "THE PALE_PEARL",
         "THE OPAL EYE", "A GREEN GEM", "THE BLUE FLAME", "THE PALANTIR", "THE SILMARIL"
     };
 

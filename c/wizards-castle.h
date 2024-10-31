@@ -39,8 +39,8 @@
 #define CHIMERA 122
 #define BALROG 123
 #define DRAGON 124
-#define MONSTER_END 124
 #define MIMIC 125
+#define MONSTER_END 125
 
 #define VENDOR 126
 #define ROOM_END 126
