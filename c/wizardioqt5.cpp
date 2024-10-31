@@ -236,7 +236,7 @@ void display_map2(GameState *game, Player *player)
             for (int y = 1; y <= CASTLE_SIZE; y++) {
                 print_message2("|");
                 if (x == player->x && y == player->y) {
-                    print_message2("<p style='color: red;'>  [YOU] </p>");
+                    print_message2("<p style='color: #00FF00;'>  [YOU] </p>");
                 } else if (is_room_discovered(game, x, y, player->level)) {
                     int room_content = get_room_content(game, x, y, player->level);
                     char room_str[10] = "        \0";
@@ -263,6 +263,48 @@ void display_map2(GameState *game, Player *player)
                     {
                         // Gold color for treasures
                         print_message2("<p style='color: #FFD700;'>%s</p>", room_str);
+                    }
+                    else if (room_content == VENDOR) {
+                        // Blue for vendors
+                        print_message2("<p style='color: #4169E1;'>%s</p>", room_str);
+                    }
+                    else if (room_content == STAIRS_UP || room_content == STAIRS_DOWN) {
+                        // Orange for stairs
+                        print_message2("<p style='color: #FFA500;'>%s</p>", room_str);
+                    }
+                    else if (room_content == POOL) {
+                        // Cyan for pools
+                        print_message2("<p style='color: #00FFFF;'>%s</p>", room_str);
+                    }
+                    else if (room_content == CHEST) {
+                        // Brown for chests
+                        print_message2("<p style='color: #8B4513;'>%s</p>", room_str);
+                    }
+                    else if (room_content == CRYSTAL_ORB) {
+                        // Purple for crystal orbs
+                        print_message2("<p style='color: #800080;'>%s</p>", room_str);
+                    }
+                    else if (room_content == BOOK) {
+                        // Tan for books
+                        print_message2("<p style='color: #D2B48C;'>%s</p>", room_str);
+                    }
+                    else if (room_content == WARP) {
+                        // Magenta for warps
+                        print_message2("<p style='color: #FF00FF;'>%s</p>", room_str);
+                    }
+                    else if (room_content == FLARES) {
+                        // Orange-red for flares
+                        print_message2("<p style='color: #FF4500;'>%s</p>", room_str);
+                    }
+                    else if (room_content == GOLD) {
+                        // Yellow for gold
+                        print_message2("<p style='color: #FFD700;'>%s</p>", room_str);
+                    }
+                    else if (room_content == SINKHOLE) {
+                        print_message2("<span style='color: #800080;'>%s</span>", room_str);  // Dark Purple
+                    }
+                    else if (room_content == ENTRANCE) {
+                        print_message2("<span style='color: #FFD700; font-weight: bold;'>%s</span>", room_str);  // Bold Gold
                     }
                     else
                     {
