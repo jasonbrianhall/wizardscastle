@@ -353,7 +353,7 @@ void fight_monster(Player *player, GameState *game)
             }
         }
         else if (room_content == MIMIC && random_number(4) == 1) {  // 25% chance
-            mimic_special_attack(player, game, enemy_strength, *enemy_dexterity, *enemy_intelligence);
+            mimic_special_attack(player, game, enemy_strength, &enemy_dexterity, &enemy_intelligence);
 ;
             if (game->game_over) {
                 return;
