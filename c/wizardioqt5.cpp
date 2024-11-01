@@ -592,6 +592,10 @@ signals:
 
 protected:
     void closeEvent(QCloseEvent *event) override {
+        if (g_player && g_game) {
+            // Attempt to save the current game state
+            save_game("lastcastle.wcs", g_player, g_game);
+        }
         event->accept();
         std::exit(0);
     }
@@ -816,6 +820,35 @@ private:
     int currentHistoryIndex;
     QString currentInput;
 
+
+    void checkForLastGame() {
+        QFile file("lastcastle.wcs");
+        if (file.exists()) {
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "Resume Game",
+                "Would you like to continue your last game?",
+                QMessageBox::Yes | QMessageBox::No);
+
+            if (reply == QMessageBox::Yes) {
+                if (load_game("lastcastle.wcs", g_player, g_game)) {
+                    QMessageBox::information(this, "Game Loaded", 
+                        "Your previous game has been loaded successfully.");
+                    emit gameStateChanged();
+                } else {
+                    QMessageBox::warning(this, "Load Failed", 
+                        "Failed to load the previous game. Starting a new game.");
+                    emit newGameRequested();
+                }
+            } else {
+                // User chose not to load the last game
+                emit newGameRequested();
+            }
+        } else {
+            // No previous game found
+            emit newGameRequested();
+        }
+    }
+    
    void handleCommandHistory(int key) {
         if (commandHistory.isEmpty()) {
             return;
@@ -959,7 +992,6 @@ void initialize_qt(int argc, char *argv[]) {
         g_window->setColorScheme("Default");
     });
     
-
     bool debug_mode = parse_arguments(argc, argv);
     int q, playagain=1;
 

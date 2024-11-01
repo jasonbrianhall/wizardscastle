@@ -11,11 +11,11 @@
 void initialize_player(Player *player)
 {
 	// Set initial attributes
-	player->race = 0;
-	player->sex = 0;
+	player->race = HOBBIT;
+	player->sex = FEMALE;
 	player->strength = 2;
-	player->intelligence = 8;
-	player->dexterity = 14;
+	player->intelligence = 2;
+	player->dexterity = 2;
 	player->gold = 60;
 	player->flares = 0;
 	player->armor_type = 0;
