@@ -196,9 +196,9 @@ jobs:
       run: |
         mkdir win_package
         if exist c\release\wizardscastle-qt.exe (
-          copy c\release\wizardscastleqt.exe win_package\
+          copy c\release\wizardscastle-qt.exe win_package\
           windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizardscastle-qt.exe
-        ) else if exist c\wizardscastleq-qt.exe (
+        ) else if exist c\wizardscastle-qt.exe (
           copy c\wizardscastle-qt.exe win_package\
           windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizardscastle-qt.exe
         ) else (
