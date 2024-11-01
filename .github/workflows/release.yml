@@ -38,7 +38,7 @@ jobs:
         cp *.h   wizardscastle-1.0/
         cp *.pro wizardscastle-1.0/
         cp *.cpp wizardscastle-1.0/
-        cp Makefile*.* wizardscastle-1.0/
+        cp Makefile wizardscastle-1.0/
         tar -czf wizardscastle-1.0.tar.gz wizardscastle-1.0
         rm -rf wizardscastle-1.0
         mkdir -p ~/rpmbuild/SOURCES
