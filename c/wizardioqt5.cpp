@@ -86,7 +86,12 @@ public:
         mapUpdateTimer->start(66);  // Update 15 times per second
         outputText->installEventFilter(this);
         setColorScheme("Default");
+        
+        inputLine->installEventFilter(this);
+        commandHistory.clear();
     }
+
+
 
 void display_map2(GameState *game, Player *player)
 {
@@ -604,8 +609,16 @@ protected:
                 return true;
             }
         }
+        else if (obj == inputLine && event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down) {
+                handleCommandHistory(keyEvent->key());
+                return true;
+            }
+        }
         return QMainWindow::eventFilter(obj, event);
     }
+
 
 private slots:
 
@@ -741,10 +754,23 @@ private slots:
     void quit() {
         close();
     }
+    
     void processInput() {
         QString input = inputLine->text().toUpper();
+        
+        // Add command history functionality
+        if (!input.isEmpty()) {
+            commandHistory.append(input);
+            // Limit history size to prevent memory issues
+            while (commandHistory.size() > 100) {
+                commandHistory.removeFirst();
+            }
+        }
+        
         inputLine->clear();
+        currentHistoryIndex = -1;  // Reset history index after entering command
 
+        // Your existing input handling
         if (waitingForSpecificInput) {
             if (validInputs.find(input[0].toLatin1()) != std::string::npos) {
                 lastInput = input[0].toLatin1();
@@ -756,7 +782,7 @@ private slots:
             lastInput = input.toStdString();
         }
     }
-
+    
     void increaseFontSize() {
         if (fontSize < 24) {
             fontSize++;
@@ -785,6 +811,43 @@ private:
     int lastPlayerX = -1;   // Track player position
     int lastPlayerY = -1;
     int lastPlayerLevel = -1;
+    
+    QStringList commandHistory;
+    int currentHistoryIndex;
+    QString currentInput;
+
+   void handleCommandHistory(int key) {
+        if (commandHistory.isEmpty()) {
+            return;
+        }
+
+        // Save current input if we're just starting to navigate history
+        if (currentHistoryIndex == -1) {
+            currentInput = inputLine->text();
+        }
+
+        if (key == Qt::Key_Up) {
+            // Move backwards through history
+            if (currentHistoryIndex < commandHistory.size() - 1) {
+                currentHistoryIndex++;
+                inputLine->setText(commandHistory[commandHistory.size() - 1 - currentHistoryIndex]);
+            }
+        } else if (key == Qt::Key_Down) {
+            // Move forwards through history
+            if (currentHistoryIndex > 0) {
+                currentHistoryIndex--;
+                inputLine->setText(commandHistory[commandHistory.size() - 1 - currentHistoryIndex]);
+            } else if (currentHistoryIndex == 0) {
+                // Restore the current input when reaching the bottom of history
+                currentHistoryIndex = -1;
+                inputLine->setText(currentInput);
+            }
+        }
+        
+        // Move cursor to end of line
+        inputLine->setCursorPosition(inputLine->text().length());
+    }
+
 
     void createMenus() {
         QMenuBar *menuBar = new QMenuBar(this);
