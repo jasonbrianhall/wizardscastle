@@ -199,6 +199,10 @@ void allocate_attributes(Player *player)
     if (other_points > 0) {
         print_message_formatted("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n", other_points);
         player->dexterity += other_points;
+        if(player->dexterity>=MAX_DEXTERITY)
+        {
+            player->dexterity=MAX_DEXTERITY;
+        }
     }
 
     print_message_formatted("\nYOUR ATTRIBUTES ARE NOW:\n");

@@ -635,6 +635,7 @@ protected:
 private slots:
 
     void showCheat(){
+        int fogOfWarChecked;
         if (!g_player) {
             QMessageBox::warning(this, tr("Error"), tr("No active game found."));
             return;
@@ -741,6 +742,11 @@ private slots:
     runestaffFlag->setChecked(g_player->runestaff_flag);
     flagsLayout->addWidget(runestaffFlag, 2, 0);
 
+    QCheckBox *fogOfWar = new QCheckBox(tr("Fog of War"), &dialog);
+    fogOfWar->setChecked(g_player->stickybook_flag);
+    flagsLayout->addWidget(fogOfWar, 2, 1);
+
+
     mainLayout->addWidget(flagsGroup);
 
     // Resources section
@@ -787,9 +793,16 @@ private slots:
         g_player->runestaff_flag = runestaffFlag->isChecked();
         g_player->gold = goldBox->value();
         g_player->flares = flaresBox->value();
+        fogOfWarChecked = fogOfWar->isChecked();
 
+        if (fogOfWarChecked)
+        {
+            for (int q = 0; q < MAP_SIZE; q++) {
+                g_game->discovered_rooms[q] = 1;  // 0 means undiscovered
+            }
+        }
         // Update the display
-        updateMap();
+        //updateMap();
     });
 
         dialog.exec();
