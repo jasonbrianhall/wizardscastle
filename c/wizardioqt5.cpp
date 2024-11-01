@@ -705,14 +705,14 @@ private slots:
     QGridLayout *equipLayout = new QGridLayout(equipGroup);
 
     QComboBox *weaponBox = new QComboBox(&dialog);
-    weaponBox->addItems({"Dagger", "Mace", "Sword", "Excalibur"});
-    weaponBox->setCurrentIndex(g_player->weapon_type - 1);
+    weaponBox->addItems({"Nothing", "Dagger", "Mace", "Sword", "Excalibur"});
+    weaponBox->setCurrentIndex(g_player->weapon_type);
     equipLayout->addWidget(new QLabel(tr("Weapon:")), 0, 0);
     equipLayout->addWidget(weaponBox, 0, 1);
 
     QComboBox *armorBox = new QComboBox(&dialog);
-    armorBox->addItems({"Leather", "Chainmail", "Plate", "Stone"});
-    armorBox->setCurrentIndex(g_player->armor_type - 1);
+    armorBox->addItems({"Nothing", "Leather", "Chainmail", "Plate", "Stone"});
+    armorBox->setCurrentIndex(g_player->armor_type);
     equipLayout->addWidget(new QLabel(tr("Armor:")), 1, 0);
     equipLayout->addWidget(armorBox, 1, 1);
 
@@ -738,14 +738,60 @@ private slots:
     orbFlag->setChecked(g_player->orb_flag);
     flagsLayout->addWidget(orbFlag, 1, 1);
 
+    QString orbLocation = QString("The Orb of Zot is located at (%1, %2) on level %3")
+        .arg(g_game->orb_location[1])
+        .arg(g_game->orb_location[0])
+        .arg(g_game->orb_location[2]);
+    QLabel *orbLocationLabel = new QLabel(orbLocation, &dialog);
+    flagsLayout->addWidget(orbLocationLabel, 7, 0, 1, 2); 
+
+
+    QString runeLocation = QString("The Rune Staff is located at (%1, %2) on level %3")
+        .arg(g_game->runestaff_location[1])
+        .arg(g_game->runestaff_location[0])
+        .arg(g_game->runestaff_location[2]);
+    QLabel *runeLocationLabel = new QLabel(runeLocation, &dialog);
+    flagsLayout->addWidget(runeLocationLabel, 8, 0, 1, 2); 
+
+
     QCheckBox *runestaffFlag = new QCheckBox(tr("Runestaff"), &dialog);
     runestaffFlag->setChecked(g_player->runestaff_flag);
     flagsLayout->addWidget(runestaffFlag, 2, 0);
 
-    QCheckBox *fogOfWar = new QCheckBox(tr("Fog of War"), &dialog);
-    fogOfWar->setChecked(g_player->stickybook_flag);
+    QCheckBox *fogOfWar = new QCheckBox(tr("Display Entire Map (not reversable)"), &dialog);
     flagsLayout->addWidget(fogOfWar, 2, 1);
 
+    QCheckBox *rubyRed = new QCheckBox(tr("Ruby Red"), &dialog);
+    rubyRed->setChecked(g_game->treasure[0]);
+    flagsLayout->addWidget(rubyRed, 3, 0);
+
+    QCheckBox *nornStone = new QCheckBox(tr("Norn Stone"), &dialog);
+    nornStone->setChecked(g_game->treasure[1]);
+    flagsLayout->addWidget(nornStone, 3, 1);
+
+    QCheckBox *palePearl = new QCheckBox(tr("Pale Pearl"), &dialog);
+    palePearl->setChecked(g_game->treasure[2]);
+    flagsLayout->addWidget(palePearl, 4, 0);
+
+    QCheckBox *opalEye = new QCheckBox(tr("Opal Eye"), &dialog);
+    opalEye->setChecked(g_game->treasure[3]);
+    flagsLayout->addWidget(opalEye, 4, 1);
+
+    QCheckBox *greenGem = new QCheckBox(tr("Green Gem"), &dialog);
+    greenGem->setChecked(g_game->treasure[4]);
+    flagsLayout->addWidget(greenGem, 5, 0);
+
+    QCheckBox *blueFlame = new QCheckBox(tr("Blue Flame"), &dialog);
+    blueFlame->setChecked(g_game->treasure[5]);
+    flagsLayout->addWidget(blueFlame, 5, 1);
+
+    QCheckBox *palantir = new QCheckBox(tr("Palantir"), &dialog);
+    palantir->setChecked(g_game->treasure[6]);
+    flagsLayout->addWidget(palantir, 6, 0);
+
+    QCheckBox *silmaril = new QCheckBox(tr("Silmaril"), &dialog);
+    silmaril->setChecked(g_game->treasure[7]);
+    flagsLayout->addWidget(silmaril, 6, 1);
 
     mainLayout->addWidget(flagsGroup);
 
@@ -784,8 +830,8 @@ private slots:
         g_player->intelligence = intelligenceBox->value();
         g_player->dexterity = dexterityBox->value();
         g_player->armor_points = armorPointsBox->value();
-        g_player->weapon_type = weaponBox->currentIndex() + 1;
-        g_player->armor_type = armorBox->currentIndex() + 1;
+        g_player->weapon_type = weaponBox->currentIndex();
+        g_player->armor_type = armorBox->currentIndex();
         g_player->lamp_flag = lampFlag->isChecked();
         g_player->blindness_flag = blindnessFlag->isChecked();
         g_player->stickybook_flag = stickyBookFlag->isChecked();
@@ -794,7 +840,14 @@ private slots:
         g_player->gold = goldBox->value();
         g_player->flares = flaresBox->value();
         fogOfWarChecked = fogOfWar->isChecked();
-
+        if (!g_game->treasure[0] && rubyRed->isChecked()) g_game->treasure[0] = 1;
+        if (!g_game->treasure[1] && nornStone->isChecked()) g_game->treasure[1] = 1;
+        if (!g_game->treasure[2] && palePearl->isChecked()) g_game->treasure[2] = 1;
+        if (!g_game->treasure[3] && opalEye->isChecked()) g_game->treasure[3] = 1;
+        if (!g_game->treasure[4] && greenGem->isChecked()) g_game->treasure[4] = 1;
+        if (!g_game->treasure[5] && blueFlame->isChecked()) g_game->treasure[5] = 1;
+        if (!g_game->treasure[6] && palantir->isChecked()) g_game->treasure[6] = 1;
+        if (!g_game->treasure[7] && silmaril->isChecked()) g_game->treasure[7] = 1;
         if (fogOfWarChecked)
         {
             for (int q = 0; q < MAP_SIZE; q++) {
