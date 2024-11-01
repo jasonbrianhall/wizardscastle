@@ -595,6 +595,58 @@ protected:
 
 private slots:
 
+    void showAbout() {
+        // Calculate castle dimensions correctly
+        int roomsPerLevel = CASTLE_SIZE * CASTLE_SIZE;         // rooms on each level
+        int totalRooms = CASTLE_SIZE * CASTLE_SIZE * CASTLE_SIZE;  // total rooms in the castle
+        
+        QMessageBox aboutBox(this);
+        aboutBox.setWindowTitle("About The Wizard's Castle");
+        aboutBox.setTextFormat(Qt::RichText);
+        aboutBox.setText(tr("<h3>The Wizard's Castle</h3>"
+                          "<p><i>Hear ye, brave adventurer! Within these ancient walls lies a tale of courage, magic, and destiny...</i><br/><br/>"
+                          
+                          "Deep within the realms of digital enchantment lies a legendary fortress - The Wizard's Castle. "
+                          "Whispered tales speak of the mythical Orb of Zot, a relic of unimaginable power, hidden within its ever-changing halls. "
+                          "Will you answer the call to adventure?<br/>"
+                          "<br/>"
+                          "<b>⚔️ Your Quest Awaits ⚔️</b><br/>"
+                          "• Journey through %3 mysterious levels, each containing %1 chambers of wonder and peril<br/>"
+                          "• Explore a vast castle of %2 rooms across %3×%3 floors<br/>"
+                          "• Choose your adventurer from noble races: Hardy Dwarves, Nimble Elves, Cunning Hobbits, or Versatile Humans<br/>"
+                          "• Face fearsome creatures from legend - from mischievous Kobolds to the dreaded Balrog<br/>"
+                          "• Master arcane treasures: The Ruby Red, The Pale Pearl, and other artifacts of power<br/>"
+                          "• Barter with the mysterious Vendor, keeper of potent magical wares<br/>"
+                          "• Wield weapons from simple daggers to the legendary Excalibur<br/>"
+                          "• Don armor ranging from humble leather to enchanted platemail<br/>"
+                          "• Navigate treacherous chambers with magical flares and an enchanted lamp<br/>"
+                          "<br/>"
+                          "<i>But beware, intrepid soul! The castle's depths hold many dangers:</i><br/>"
+                          "• Lethal combat with mythical beasts<br/>"
+                          "• Cursed books of forbidden knowledge<br/>"
+                          "• Mysterious pools of magical essence<br/>"
+                          "• Sinkholes leading to deeper levels<br/>"
+                          "• And the ever-present threat of the dreaded Vendor's wrath!<br/>"
+                          "<br/>"
+                          "Arm yourself with wit and wisdom - Type 'H' to consult your adventurer's tome, or 'M' to unfurl your magical map.<br/>"
+                          "<br/>"
+                          "<i>Remember, brave hero: Fortune favors the bold, but only the wise survive the Wizard's Castle!</i><br/><br/>"
+                          
+                          "<font size='2'>This magical tome's source incantations can be found in the Grand Library of: "
+                          "<a href='https://github.com/jasonbrianhall/wizardscastle'>The Wizard's Castle Repository</a><br/>"
+                          "Enchanted by Jason Hall &lt;jasonbrianhall@gmail.com&gt; in 2024</font></p>")
+                          .arg(roomsPerLevel)    // rooms per level (CASTLE_SIZE^2)
+                          .arg(totalRooms)       // total rooms (CASTLE_SIZE^3)
+                          .arg(CASTLE_SIZE));    // dimension size and number of levels
+        
+        // Enable link opening
+        aboutBox.setTextInteractionFlags(Qt::TextBrowserInteraction);
+        aboutBox.setIcon(QMessageBox::Information);
+        
+        // Set a minimum width to make the text more readable
+        aboutBox.setMinimumWidth(4096);
+        aboutBox.exec();
+    }
     void updateMap() {
         if (g_player && g_game) {
             mapDisplay->clear();  // Clear the previous map
@@ -765,6 +817,12 @@ private:
                 schemeAction->setChecked(true);
             }
         }
+        
+        // Add Help menu
+        QMenu *helpMenu = menuBar->addMenu(tr("&Help"));
+        QAction *aboutAction = new QAction(tr("&About"), this);
+        connect(aboutAction, &QAction::triggered, this, &WizardsCastleWindow::showAbout);
+        helpMenu->addAction(aboutAction);
     }
 
     void updateFont() {
