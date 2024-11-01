@@ -28,7 +28,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget
+        sudo dnf install -y rpm zip gcc make rpm-build mingw64-gcc wget qt6-qtbase-devel
 
     - name: Build RPM
       run: |
