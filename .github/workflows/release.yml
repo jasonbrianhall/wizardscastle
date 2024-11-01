@@ -195,12 +195,12 @@ jobs:
       shell: cmd
       run: |
         mkdir win_package
-        if exist c\release\wizards_castle_qt5.exe (
-          copy c\release\wizards_castle_qt5.exe win_package\
-          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizards_castle_qt5.exe
-        ) else if exist c\wizards_castle_qt5.exe (
-          copy c\wizards_castle_qt5.exe win_package\
-          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizards_castle_qt5.exe
+        if exist c\release\wizardscastle-qt.exe (
+          copy c\release\wizardscastleqt.exe win_package\
+          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizardscastle-qt.exe
+        ) else if exist c\wizardscastleq-qt.exe (
+          copy c\wizardscastle-qt.exe win_package\
+          windeployqt --release --no-translations --no-system-d3d-compiler win_package\wizardscastle-qt.exe
         ) else (
           echo No exe found
           exit 1
