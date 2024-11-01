@@ -25,4 +25,4 @@ HEADERS += \
     vendor.h \
     save_load.h
 
-TARGET = wizards_castle_qt5
+TARGET = wizardscastle-qt5

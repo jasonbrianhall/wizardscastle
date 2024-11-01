@@ -86,8 +86,10 @@ run-msdos: msdos
 rpm: clean
 	# Create the source tarball
 	mkdir -p wizardscastle-$(VERSION)
-	cp *.c wizardscastle-$(VERSION)/
-	cp *.h wizardscastle-$(VERSION)/
+	cp *.c   wizardscastle-$(VERSION)/
+	cp *.h   wizardscastle-$(VERSION)/
+	cp *.cpp wizardscastle-$(VERSION)/
+	cp *.pro wizardscastle-$(VERSION)/
 	cp Makefile wizardscastle-$(VERSION)/
 	tar -czf wizardscastle-$(VERSION).tar.gz wizardscastle-$(VERSION)
 	rm -rf wizardscastle-$(VERSION)

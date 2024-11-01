@@ -35,11 +35,13 @@ Wizard's Castle: Where your choices shape your destiny!
 
 %build
 make
+make qt
+
 
 %install
 mkdir -p %{buildroot}/usr/bin
-install -m 0755 wizardscastle %{buildroot}/usr/bin/wizardscastle
-
+install -m 0755 wizardscastle    %{buildroot}/usr/bin/wizardscastle
+install -m 0755 wizardscastle-qt %{buildroot}/usr/bin/wizardscastle-qt
 %files
 /usr/bin/wizardscastle
 
