@@ -206,8 +206,6 @@ void display_map2(GameState *game, Player *player)
         int levelToDisplay = (displayLevel == -1) ? player->level : displayLevel;
     
         // When displaying room content:
-        int currentRoom = get_room_content(game, player->x, player->y, levelToDisplay);
-
         print_message2("\n=== MAP OF LEVEL ");
         print_message2("%d", levelToDisplay);
         print_message2(" ===\n\n");
@@ -254,7 +252,7 @@ void display_map2(GameState *game, Player *player)
                 if (x == player->x && y == player->y && levelToDisplay==player->level) {
                     print_message2("<p style='color: #00FF00;'>  [YOU] </p>");
                 } else if (is_room_discovered(game, x, y, levelToDisplay)) {
-                    int room_content = get_room_content(game, x, y, player->level);
+                    int room_content = get_room_content(game, x, y, levelToDisplay);
                     char room_str[10] = "        \0";
                     get_room_description(room_content, room_str);
                     if (room_content>=MONSTER_START && room_content<=MONSTER_END)
