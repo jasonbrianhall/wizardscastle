@@ -84,7 +84,7 @@ public:
         connect(mapUpdateTimer, &QTimer::timeout, this, &WizardsCastleWindow::updateMap);
         mapUpdateTimer->start(66);  // Update 15 times per second
         outputText->installEventFilter(this);
-        setColorScheme("White and Black");
+        setColorScheme("Nord");
     }
 
 void display_map2(GameState *game, Player *player)
@@ -658,7 +658,8 @@ private slots:
         palette.setColor(QPalette::Base, QColor(46, 52, 64));    // Dark blue-gray
         palette.setColor(QPalette::Text, QColor(216, 222, 233)); // Light gray-blue
     } else { // Default
-        palette = QApplication::style()->standardPalette();
+        palette.setColor(QPalette::Base, QColor(46, 52, 64));    // Dark blue-gray
+        palette.setColor(QPalette::Text, QColor(216, 222, 233)); // Light gray-blue
     }
         inputLine->setPalette(palette);
         outputText->setPalette(palette);
@@ -721,7 +722,6 @@ private:
         newGameAction->setShortcut(QKeySequence::New);
         connect(newGameAction, &QAction::triggered, this, &WizardsCastleWindow::newGame);
         fileMenu->addAction(newGameAction);
-
 
         QAction *saveAction = new QAction(tr("&Save Game"), this);
         saveAction->setShortcut(QKeySequence::Save);
