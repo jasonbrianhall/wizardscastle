@@ -16,6 +16,11 @@
 #include <QActionGroup>
 #include <QStyle>
 #include <QLabel>
+#include <QGroupBox>
+#include <QSpinBox>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QDialogButtonBox>
 #include "wizardio.h"
 #include "asciiart.h"
 #include <cstdlib>
@@ -629,6 +634,167 @@ protected:
 
 private slots:
 
+    void showCheat(){
+        if (!g_player) {
+            QMessageBox::warning(this, tr("Error"), tr("No active game found."));
+            return;
+        }
+        QDialog dialog(this);
+        dialog.setWindowTitle(tr("Cheat Menu"));
+        dialog.setModal(true);
+        dialog.setMinimumWidth(400);
+
+        QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+
+        // Stats section
+        QGroupBox *statsGroup = new QGroupBox(tr("Stats"), &dialog);
+        QGridLayout *statsLayout = new QGridLayout(statsGroup);
+
+    // Character section
+    QGroupBox *charGroup = new QGroupBox(tr("Character"), &dialog);
+    QGridLayout *charLayout = new QGridLayout(charGroup);
+
+    // Race selection
+    QComboBox *raceBox = new QComboBox(&dialog);
+    raceBox->addItems({"Hobbit", "Elf", "Human", "Dwarf", "Drow"});
+    raceBox->setCurrentIndex(g_player->race - 1);  // Race enum starts at 1
+    charLayout->addWidget(new QLabel(tr("Race:")), 0, 0);
+    charLayout->addWidget(raceBox, 0, 1);
+
+    // Sex selection
+    QComboBox *sexBox = new QComboBox(&dialog);
+    sexBox->addItems({"Female", "Male"});
+    sexBox->setCurrentIndex(g_player->sex);  // FEMALE is 0, MALE is 1
+    charLayout->addWidget(new QLabel(tr("Sex:")), 1, 0);
+    charLayout->addWidget(sexBox, 1, 1);
+
+    mainLayout->addWidget(charGroup);
+
+
+    // Strength
+    QSpinBox *strengthBox = new QSpinBox(&dialog);
+    strengthBox->setRange(0, MAX_STRENGTH);
+    strengthBox->setValue(g_player->strength);
+    statsLayout->addWidget(new QLabel(tr("Strength:")), 0, 0);
+    statsLayout->addWidget(strengthBox, 0, 1);
+
+    // Intelligence
+    QSpinBox *intelligenceBox = new QSpinBox(&dialog);
+    intelligenceBox->setRange(0, MAX_INTELLIGENCE);
+    intelligenceBox->setValue(g_player->intelligence);
+    statsLayout->addWidget(new QLabel(tr("Intelligence:")), 1, 0);
+    statsLayout->addWidget(intelligenceBox, 1, 1);
+
+    // Dexterity
+    QSpinBox *dexterityBox = new QSpinBox(&dialog);
+    dexterityBox->setRange(0, MAX_DEXTERITY);
+    dexterityBox->setValue(g_player->dexterity);
+    statsLayout->addWidget(new QLabel(tr("Dexterity:")), 2, 0);
+    statsLayout->addWidget(dexterityBox, 2, 1);
+
+    // Armor Points
+    QSpinBox *armorPointsBox = new QSpinBox(&dialog);
+    armorPointsBox->setRange(0, MAX_ARMOR_POINTS);
+    armorPointsBox->setValue(g_player->armor_points);
+    statsLayout->addWidget(new QLabel(tr("Armor Points:")), 3, 0);
+    statsLayout->addWidget(armorPointsBox, 3, 1);
+
+    // Equipment section
+    QGroupBox *equipGroup = new QGroupBox(tr("Equipment"), &dialog);
+    QGridLayout *equipLayout = new QGridLayout(equipGroup);
+
+    QComboBox *weaponBox = new QComboBox(&dialog);
+    weaponBox->addItems({"Dagger", "Mace", "Sword", "Excalibur"});
+    weaponBox->setCurrentIndex(g_player->weapon_type - 1);
+    equipLayout->addWidget(new QLabel(tr("Weapon:")), 0, 0);
+    equipLayout->addWidget(weaponBox, 0, 1);
+
+    QComboBox *armorBox = new QComboBox(&dialog);
+    armorBox->addItems({"Leather", "Chainmail", "Plate", "Stone"});
+    armorBox->setCurrentIndex(g_player->armor_type - 1);
+    equipLayout->addWidget(new QLabel(tr("Armor:")), 1, 0);
+    equipLayout->addWidget(armorBox, 1, 1);
+
+    mainLayout->addWidget(equipGroup);
+
+    // Flags section
+    QGroupBox *flagsGroup = new QGroupBox(tr("Status"), &dialog);
+    QGridLayout *flagsLayout = new QGridLayout(flagsGroup);
+
+    QCheckBox *lampFlag = new QCheckBox(tr("Lamp"), &dialog);
+    lampFlag->setChecked(g_player->lamp_flag);
+    flagsLayout->addWidget(lampFlag, 0, 0);
+
+    QCheckBox *blindnessFlag = new QCheckBox(tr("Blindness"), &dialog);
+    blindnessFlag->setChecked(g_player->blindness_flag);
+    flagsLayout->addWidget(blindnessFlag, 0, 1);
+
+    QCheckBox *stickyBookFlag = new QCheckBox(tr("Sticky Book"), &dialog);
+    stickyBookFlag->setChecked(g_player->stickybook_flag);
+    flagsLayout->addWidget(stickyBookFlag, 1, 0);
+
+    QCheckBox *orbFlag = new QCheckBox(tr("Orb of Zot"), &dialog);
+    orbFlag->setChecked(g_player->orb_flag);
+    flagsLayout->addWidget(orbFlag, 1, 1);
+
+    QCheckBox *runestaffFlag = new QCheckBox(tr("Runestaff"), &dialog);
+    runestaffFlag->setChecked(g_player->runestaff_flag);
+    flagsLayout->addWidget(runestaffFlag, 2, 0);
+
+    mainLayout->addWidget(flagsGroup);
+
+    // Resources section
+    QGroupBox *resourcesGroup = new QGroupBox(tr("Resources"), &dialog);
+    QGridLayout *resourcesLayout = new QGridLayout(resourcesGroup);
+
+    QSpinBox *goldBox = new QSpinBox(&dialog);
+    goldBox->setRange(0, 99999);
+    goldBox->setValue(g_player->gold);
+    resourcesLayout->addWidget(new QLabel(tr("Gold:")), 0, 0);
+    resourcesLayout->addWidget(goldBox, 0, 1);
+
+    QSpinBox *flaresBox = new QSpinBox(&dialog);
+    flaresBox->setRange(0, 99999);
+    flaresBox->setValue(g_player->flares);
+    resourcesLayout->addWidget(new QLabel(tr("Flares:")), 1, 0);
+    resourcesLayout->addWidget(flaresBox, 1, 1);
+
+    mainLayout->addWidget(resourcesGroup);
+
+    // Dialog buttons
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(
+        QDialogButtonBox::Apply | QDialogButtonBox::Cancel,
+        Qt::Horizontal, &dialog);
+    mainLayout->addWidget(buttonBox);
+
+
+    mainLayout->addWidget(statsGroup);
+
+    connect(buttonBox, &QDialogButtonBox::clicked, [&]() {
+        // Apply all changes
+        g_player->race = raceBox->currentIndex() + 1;  // Add 1 because race enum starts at 1
+        g_player->sex = sexBox->currentIndex();        // 0 for Female, 1 for Male
+        g_player->strength = strengthBox->value();
+        g_player->intelligence = intelligenceBox->value();
+        g_player->dexterity = dexterityBox->value();
+        g_player->armor_points = armorPointsBox->value();
+        g_player->weapon_type = weaponBox->currentIndex() + 1;
+        g_player->armor_type = armorBox->currentIndex() + 1;
+        g_player->lamp_flag = lampFlag->isChecked();
+        g_player->blindness_flag = blindnessFlag->isChecked();
+        g_player->stickybook_flag = stickyBookFlag->isChecked();
+        g_player->orb_flag = orbFlag->isChecked();
+        g_player->runestaff_flag = runestaffFlag->isChecked();
+        g_player->gold = goldBox->value();
+        g_player->flares = flaresBox->value();
+
+        // Update the display
+        updateMap();
+    });
+
+        dialog.exec();
+    }
+    
     void showAbout() {
         // Calculate castle dimensions correctly
         int roomsPerLevel = CASTLE_SIZE * CASTLE_SIZE;         // rooms on each level
@@ -919,6 +1085,7 @@ private:
         fileMenu->addAction(quitAction);
 
         QMenu *optionsMenu = menuBar->addMenu(tr("&Options"));
+
         QMenu *colorSchemeMenu = optionsMenu->addMenu(tr("&Color Scheme"));
 
         QActionGroup *colorSchemeGroup = new QActionGroup(this);
@@ -939,6 +1106,11 @@ private:
                 schemeAction->setChecked(true);
             }
         }
+
+        QAction *cheatAction = new QAction(tr("&Cheat"), this);
+        connect(cheatAction, &QAction::triggered, this, &WizardsCastleWindow::showCheat);
+        optionsMenu->addAction(cheatAction);
+
         
         QMenu* viewMenu = menuBar->addMenu(tr("&View"));
         QMenu* levelMenu = viewMenu->addMenu(tr("&Level"));
