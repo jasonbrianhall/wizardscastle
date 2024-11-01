@@ -52,6 +52,13 @@ public:
         QWidget *leftWidget = new QWidget(this);
         QVBoxLayout *leftLayout = new QVBoxLayout(leftWidget);
 
+        QWidget *levelNavigatorContainer = new QWidget(this);
+        QVBoxLayout *levelNavLayout = new QVBoxLayout(levelNavigatorContainer);
+
+        QPushButton *upButton = new QPushButton("▲", this);
+        //QLabel *levelLabel = new QLabel("Level 1", this);
+        QPushButton *downButton = new QPushButton("▼", this);
+
         createMenus();
 
         outputText = new QTextEdit(this);
@@ -658,8 +665,9 @@ private slots:
         palette.setColor(QPalette::Base, QColor(46, 52, 64));    // Dark blue-gray
         palette.setColor(QPalette::Text, QColor(216, 222, 233)); // Light gray-blue
     } else { // Default
-        palette.setColor(QPalette::Base, QColor(46, 52, 64));    // Dark blue-gray
-        palette.setColor(QPalette::Text, QColor(216, 222, 233)); // Light gray-blue
+        /*palette.setColor(QPalette::Base, QColor(46, 52, 64));    // Dark blue-gray
+        palette.setColor(QPalette::Text, QColor(216, 222, 233)); // Light gray-blue */
+        palette = QApplication::style()->standardPalette();
     }
         inputLine->setPalette(palette);
         outputText->setPalette(palette);
