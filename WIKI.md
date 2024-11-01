@@ -222,6 +222,9 @@ A: Find the Orb of Zot and escape the castle with it.
 Q: What does the Runestaff do?
 A: The Runestaff allows you to teleport within the castle.
 
+Q: How far away from the origin is this version?
+A: It has been significantly enhanced but has kept the basic structure.
+
 ### Technical FAQs
 
 Q: Can I play the original BASIC version?
