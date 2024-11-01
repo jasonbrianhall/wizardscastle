@@ -193,8 +193,23 @@ void display_map2(GameState *game, Player *player)
     }
     if(player->blindness_flag == 0)
     {
+
+        if (player->x != lastPlayerX || player->y != lastPlayerY || player->level != lastPlayerLevel) {
+            displayLevel = -1;  // Reset to player's current level
+            // Update last known position
+            lastPlayerX = player->x;
+            lastPlayerY = player->y;
+            lastPlayerLevel = player->level;
+         }
+    
+         // Use either the display level or player's current level
+        int levelToDisplay = (displayLevel == -1) ? player->level : displayLevel;
+    
+        // When displaying room content:
+        int currentRoom = get_room_content(game, player->x, player->y, levelToDisplay);
+
         print_message2("\n=== MAP OF LEVEL ");
-        print_message2("%d", player->level);
+        print_message2("%d", levelToDisplay);
         print_message2(" ===\n\n");
 
         // Print top border with column coordinates
@@ -236,9 +251,9 @@ void display_map2(GameState *game, Player *player)
             }
             for (int y = 1; y <= CASTLE_SIZE; y++) {
                 print_message2("|");
-                if (x == player->x && y == player->y) {
+                if (x == player->x && y == player->y && levelToDisplay==player->level) {
                     print_message2("<p style='color: #00FF00;'>  [YOU] </p>");
-                } else if (is_room_discovered(game, x, y, player->level)) {
+                } else if (is_room_discovered(game, x, y, levelToDisplay)) {
                     int room_content = get_room_content(game, x, y, player->level);
                     char room_str[10] = "        \0";
                     get_room_description(room_content, room_str);
@@ -767,6 +782,10 @@ private:
     std::string validInputs;
     int fontSize;
 
+    int displayLevel = -1;  // -1 means show player's current level
+    int lastPlayerX = -1;   // Track player position
+    int lastPlayerY = -1;
+    int lastPlayerLevel = -1;
 
     void createMenus() {
         QMenuBar *menuBar = new QMenuBar(this);
@@ -818,11 +837,25 @@ private:
             }
         }
         
+        QMenu* viewMenu = menuBar->addMenu(tr("&View"));
+        QMenu* levelMenu = viewMenu->addMenu(tr("&Level"));
+
+        // Add numbered levels
+        for (int i = 1; i <= CASTLE_SIZE; i++) {
+            QAction* levelAction = levelMenu->addAction(tr("Level %1").arg(i));
+            connect(levelAction, &QAction::triggered, [this, i]() {
+                displayLevel = i;
+                updateMap();
+            });
+        }
+
+
         // Add Help menu
         QMenu *helpMenu = menuBar->addMenu(tr("&Help"));
         QAction *aboutAction = new QAction(tr("&About"), this);
         connect(aboutAction, &QAction::triggered, this, &WizardsCastleWindow::showAbout);
         helpMenu->addAction(aboutAction);
+        
     }
 
     void updateFont() {
