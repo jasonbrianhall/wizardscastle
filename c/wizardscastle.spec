@@ -42,8 +42,10 @@ make qt
 mkdir -p %{buildroot}/usr/bin
 install -m 0755 wizardscastle    %{buildroot}/usr/bin/wizardscastle
 install -m 0755 wizardscastle-qt %{buildroot}/usr/bin/wizardscastle-qt
+
 %files
 /usr/bin/wizardscastle
+/usr/bin/wizardscastle-qt
 
 %changelog
 * %(date "+%a %b %d %Y") jbhall <jasonbrianhall@gmail.com> - 1.0-%{build_date}
