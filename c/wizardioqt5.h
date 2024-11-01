@@ -35,6 +35,8 @@ public:
     void display_map2(GameState *game, Player *player);
     void print_message2(const char *format, ...);
     void print_message2_formatted(const char *format, ...);
+    void setColorScheme(const QString &scheme);
+
 
 signals:
     void programExit();
@@ -50,7 +52,6 @@ private slots:
     void saveGame();
     void loadGame();
     void newGame();
-    void setColorScheme(const QString &scheme);
     void quit();
     void processInput();
     void increaseFontSize();
