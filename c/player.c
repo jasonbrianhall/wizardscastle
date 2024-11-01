@@ -50,6 +50,11 @@ void choose_race(Player *player)
     char user_input;
     int valid_choice = 0;
 
+    player->strength = 2;
+    player->intelligence = 8;
+    player->dexterity = 14;
+
+
     do {
         print_message_formatted("ALL RIGHT, BOLD ONE.\n");
         print_message          ("You may be an (E)lf, (D)warf, (M)an, (H)obbit, or D(R)ow (Dark Elf).\n\n");
@@ -85,7 +90,7 @@ void choose_race(Player *player)
             if (player->race == 2 || player->race==5) {  // Elf gets extra points
                 player->intelligence += 4;
             }
-            if(player->race==5) // Give Dark Elves 4 extra dexterity
+            if(player->race==DROW) // Give Dark Elves 4 extra dexterity
             {
                  player->dexterity+=4;
             }
