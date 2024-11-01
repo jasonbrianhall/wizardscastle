@@ -594,7 +594,10 @@ protected:
     void closeEvent(QCloseEvent *event) override {
         if (g_player && g_game) {
             // Attempt to save the current game state
-            save_game("lastcastle.wcs", g_player, g_game);
+            if(g_game->game_over==0)
+            {
+                save_game("lastcastle.wcs", g_player, g_game);
+            }
         }
         event->accept();
         std::exit(0);
@@ -686,6 +689,11 @@ private slots:
     }
     
     void saveGame() {
+        if(g_game->game_over==1)
+        {
+            QMessageBox::warning(this, tr("Save Failed"), tr("Dead adventurers can't save."));
+            return;
+        }
         if (!g_player || !g_game) {
             QMessageBox::warning(this, tr("Save Failed"), tr("No active game to save."));
             return;
