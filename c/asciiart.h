@@ -6,7 +6,7 @@
 namespace AsciiArt {
 
 const QString ENTRANCE_AA = "🏰";
-const QString STAIRSUP_AA = "⬆️";  
+const QString STAIRSUP_AA = "⬆️";
 const QString STAIRSDOWN_AA = "⬇️";
 const QString POOL_AA = "🌊";
 const QString CHEST_AA = "🗝️🔓";
@@ -27,6 +27,6 @@ const QString DRAGON_AA = "🐉";
 const QString VENDOR_AA = "🧙‍♂️🏪";
 const QString MIMIC_AA = "👹🗝️🔓";
 
-}
+} // namespace AsciiArt
 
 #endif

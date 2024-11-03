@@ -5,11 +5,10 @@
 extern "C" {
 #endif
 
-
 #include <stdbool.h>
 
 // Input functions
-const char* get_user_input_main(void);
+const char *get_user_input_main(void);
 char get_user_input(void);
 char get_user_input_yn(void);
 int get_user_input_number(void);
@@ -26,6 +25,5 @@ char get_user_input_custom_prompt(char *prompt);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif // WIZARDIO_H

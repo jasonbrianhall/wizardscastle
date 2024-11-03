@@ -1,23 +1,21 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
 #include "wizardioqt5.h"
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
 
 // Include C header files
 extern "C" {
-#include "wizards-castle.h"
-#include "player.h"
-#include "gamestate.h"
-#include "utilities.h"
 #include "combat.h"
+#include "gamestate.h"
+#include "player.h"
+#include "utilities.h"
 #include "vendor.h"
 #include "wizardio.h"
+#include "wizards-castle.h"
 }
 
-int main(int argc, char *argv[])
-{
-    initialize_qt(argc, argv);
-    return 0;
+int main(int argc, char *argv[]) {
+  initialize_qt(argc, argv);
+  return 0;
 }
-
