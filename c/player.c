@@ -278,8 +278,8 @@ void buy_equipment(Player *player) {
     switch (user_input) {
     case 'S':
       if (player->gold < 30) {
-        print_message_formatted(
-            "** YOUR DUNGEON EXPRESS CARD - YOU LEFT HOME WITHOUT IT!\n\n");
+        print_message(
+            "** Your dungeon express card - you left home without it!\n\n");
         continue;
       }
       player->weapon_type = SWORD;
@@ -287,9 +287,7 @@ void buy_equipment(Player *player) {
       break;
     case 'M':
       if (player->gold < 20) {
-        print_message_formatted(
-            "** SORRY %s, I'M AFRAID I DON'T GIVE CREDIT!\n\n",
-            player->sex == MALE ? "SIR" : "MA'AM");
+        print_message("** Sorry %s, I'm afraid I don't give credit!!\n\n", player->sex == MALE ? "sir" : "ma'am");
         continue;
       }
       player->weapon_type = MACE;
@@ -316,7 +314,7 @@ void buy_equipment(Player *player) {
   print_message_formatted("\nYOU NOW HAVE %s ARMOR AND A %s.\n",
                           armor_types[player->armor_type],
                           weapon_types[player->weapon_type]);
-  print_message_formatted("YOU HAVE %d GOLD PIECES LEFT.\n", player->gold);
+  print_message("You have %d gold pieces left.\n", player->gold);
 }
 
 void buy_lamp_and_flares(Player *player) {
@@ -325,15 +323,14 @@ void buy_lamp_and_flares(Player *player) {
 
   // Try to buy a lamp
   if (player->gold >= 20 && !player->lamp_flag) {
-    print_message_formatted("\nDO YOU WANT TO BUY A LAMP FOR 20 GP'S?\n");
+    print_message("\nDo you want to buy a lamp for 20 GP'S?\n");
     do {
       print_message("Your choice (Y/N):  ");
       user_input_yn = get_user_input_yn();
       if (user_input_yn == 'Y') {
         player->lamp_flag = 1;
         player->gold -= 20;
-        print_message_formatted(
-            "\nOK, LAMP PURCHASED. IT'S GUARANTEED TO OUTLIVE YOU!\n");
+        print_message("\nOk, lamp purchased. It's guaranteed to outlive you!\n");
         break;
       } else if (user_input_yn == 'N') {
         break;
@@ -348,7 +345,7 @@ void buy_lamp_and_flares(Player *player) {
   if (player->gold >= 1) {
     print_message_formatted("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n",
                             race_names[player->race - 1], player->gold);
-    print_message_formatted("FLARES COST 1 GP EACH. HOW MANY DO YOU WANT? ");
+    print_message("Flares cost 1 GP each. How many do you want? ");
 
     int flares_to_buy;
     do {
@@ -356,25 +353,25 @@ void buy_lamp_and_flares(Player *player) {
 
       // Check if the input is "0" to explicitly buy no flares
       if (flares_to_buy == 0) {
-        print_message_formatted("YOU CHOSE NOT TO BUY ANY FLARES.\n");
+        print_message("You chose not to buy any flares.\n");
         return;
       } else if (flares_to_buy < 0) {
-        print_message_formatted("** %s, PLEASE ENTER A POSITIVE NUMBER.\n",
-                                player->sex == MALE ? "SIR" : "MA'AM");
+        print_message("** %s, PLEASE ENTER A POSITIVE NUMBER.\n",
+                                player->sex == MALE ? "Sir" : "Ma'am");
       } else if (flares_to_buy > player->gold) {
-        print_message_formatted(
-            "** YOU CAN ONLY AFFORD %d. PLEASE ENTER A LOWER NUMBER.\n",
+        print_message(
+            "** You can only afford %d. Please enter a lower number.\n",
             player->gold);
       } else {
         player->flares += flares_to_buy;
         player->gold -= flares_to_buy;
-        print_message_formatted(
-            "\nOK, YOU NOW HAVE %d FLARES AND %d GOLD PIECES LEFT.\n",
+        print_message(
+            "\nOk, you now have %d flares and %d gold pieces left.\n",
             player->flares, player->gold);
         return;
       }
-      print_message_formatted(
-          "HOW MANY FLARES DO YOU WANT? (OR ENTER 0 TO BUY NONE) ");
+      print_message(
+          "How many flares do you want? (or enter 0 to buy none):  ");
     } while (1);
   }
 }
@@ -432,20 +429,20 @@ void print_status(Player *player, GameState *game) {
 
   print_message("Special Items: ");
   if (player->lamp_flag)
-    print_message_formatted("Lamp ");
+    print_message("Lamp ");
   if (player->runestaff_flag)
-    print_message_formatted("Runestaff ");
+    print_message("Runestaff ");
   if (player->orb_flag)
-    print_message_formatted("Orb of Zot ");
-  print_message_formatted("\n");
+    print_message("Orb of Zot ");
+  print_message("\n");
 
   // Print curses or blessings
-  print_message_formatted("Status Effects: ");
+  print_message("Status Effects: ");
   if (player->blindness_flag)
-    print_message_formatted("Blind ");
+    print_message("Blind ");
   if (player->stickybook_flag)
-    print_message_formatted("Sticky Book ");
-  print_message_formatted("\n");
+    print_message("Sticky Book ");
+  print_message("\n");
 
   print_message("Armor points: %d\n", player->armor_points);
 
@@ -460,12 +457,12 @@ void print_status(Player *player, GameState *game) {
 
   for (int i = 0; i < TREASURE_END - TREASURE_START + 1; i++) {
     if (game->treasure[i] >= 1) {
-      print_message_formatted("     ");
+      print_message("     ");
       print_message_formatted(get_treasure_name(i));
       if (game->treasure[i] > 1) {
         print_message(" * %d", game->treasure[i]);
       }
-      print_message_formatted("\n");
+      print_message("\n");
     }
   }
   print_message("Turn count: %d\n", game->turn_count);

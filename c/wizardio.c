@@ -251,7 +251,7 @@ char get_user_input() {
 
     // Check if input is empty
     if (strlen(input) == 0) {
-      print_message_formatted(empty_message);
+      print_message(empty_message);
       continue;
     }
 
@@ -262,7 +262,7 @@ char get_user_input() {
     if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
       return command;
     } else {
-      print_message_formatted(invalid_message); // Invalid command message
+      print_message(invalid_message); // Invalid command message
     }
   }
 }
@@ -284,7 +284,7 @@ char get_user_input_custom_prompt(char *prompt) {
 
     // Check if input is empty
     if (strlen(input) == 0) {
-      print_message_formatted(empty_message);
+      print_message(empty_message);
       continue;
     }
 
@@ -295,7 +295,7 @@ char get_user_input_custom_prompt(char *prompt) {
     if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
       return command;
     } else {
-      print_message_formatted(invalid_message); // Invalid command message
+      print_message(invalid_message); // Invalid command message
     }
   }
 }

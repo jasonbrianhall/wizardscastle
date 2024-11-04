@@ -341,12 +341,12 @@ void print_help() {
   print_message("QL/oad    - Quick Load\n\n");
 
 #ifdef MSDOS
-  print_message_formatted("PRESS ENTER TO CONTINUE...");
+  print_message("Press enter to continue...");
   while (getchar() != '\n')
     ; // Wait for Enter key
 #endif
 
-  print_message_formatted("THE CONTENTS OF ROOMS ARE AS FOLLOWS:\n\n");
+  print_message("The contents of the room are as follows:\n\n");
   print_message(
       "EMPTY    = EMPTY ROOM      BOOK     = BOOK            Chest = CHEST\n");
   print_message("STAIRS D = STAIRS DOWN     ENTRANCE = ENTRANCE/EXIT   FLARES "
@@ -358,7 +358,7 @@ void print_help() {
   print_message("STAIRS U = STAIRS UP       VENDOR   = VENDOR          WARP = "
                 "WARP/ORB\n\n");
 
-  print_message_formatted("THE BENEFITS OF HAVING TREASURES ARE:\n\n");
+  print_message("The benefits of having treasure are:\n\n");
   print_message("RUBY RED    - Avoid Lethargy     PALE PEARL  - Avoid Leech\n");
   print_message(
       "GREEN GEM   - Avoid Forgetting   OPAL EYE    - Cures Blindess\n");

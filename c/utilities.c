@@ -38,24 +38,24 @@ void move_player(Player *player, GameState *game, char direction) {
   // Check if player is at the entrance and moving north
   if (current_room == 102 && direction == 'N') {
     if (player->orb_flag) {
-      print_message_formatted(
+      print_message(
           "Congratulations! You've escaped the castle with the Orb of Zot!\n");
       // Set a flag or call a function to end the game with victory
       game->game_over = 1;
       game->victory = 1;
       return;
     } else {
-      print_message_formatted("You're at the entrance. Are you sure you want "
+      print_message("You're at the entrance. Are you sure you want "
                               "to leave without the Orb of Zot? (Y/N) ");
       char choice = get_user_input_yn();
       if (choice == 'Y') {
-        print_message_formatted(
+        print_message(
             "You leave the castle empty-handed. Game over!\n");
         // Set a flag or call a function to end the game
         game->game_over = 1;
         return;
       } else {
-        print_message_formatted("You decide to stay in the castle.\n");
+        print_message("You decide to stay in the castle.\n");
         return;
       }
     }
@@ -79,7 +79,7 @@ void move_player(Player *player, GameState *game, char direction) {
     printstatusmessage = 0;
     break;
   default:
-    print_message_formatted("Invalid direction!\n");
+    print_message("Invalid direction!\n");
     return;
   }
 
@@ -93,7 +93,7 @@ void move_player(Player *player, GameState *game, char direction) {
 
   // Print movement message
   if (printstatusmessage == 1) {
-    print_message_formatted("You move %s to (%d, %d) on level %d.\n",
+    print_message("You move %s to (%d, %d) on level %d.\n",
                             direction == 'N'   ? "North"
                             : direction == 'S' ? "South"
                             : direction == 'W' ? "West"
@@ -109,14 +109,14 @@ void move_player(Player *player, GameState *game, char direction) {
     player->x = random_number(CASTLE_SIZE);
     player->y = random_number(CASTLE_SIZE);
     player->level = random_number(CASTLE_SIZE);
-    print_message_formatted("You've been warped to a random location!\n");
+    print_message("You've been warped to a random location!\n");
   } else if (room_content == SINKHOLE) { // Sinkhole
     if (player->level < 8) {
       player->level++;
     } else {
       player->level = 1;
     }
-    print_message_formatted(
+    print_message(
         "You've fallen through a sinkhole to the level below!\n");
   }
 
@@ -327,15 +327,15 @@ char get_room_symbol(int room_content) {
 
 void use_lamp(Player *player, GameState *game) {
   if (!player->lamp_flag) {
-    print_message_formatted("You don't have a lamp!\n");
+    print_message("You don't have a lamp!\n");
     return;
   }
 
   if (player->blindness_flag == 1) {
-    print_message_formatted("You are blind, you can't use a lamp!\n");
+    print_message("You are blind, you can't use a lamp!\n");
     return;
   }
-  print_message_formatted(
+  print_message(
       "Which direction do you want to shine the lamp? (N/S/E/W) ");
   char direction = get_user_input();
   int dx = 0, dy = 0;
@@ -354,7 +354,7 @@ void use_lamp(Player *player, GameState *game) {
     dy = 1;
     break;
   default:
-    print_message_formatted("Invalid direction!\n");
+    print_message("Invalid direction!\n");
     return;
   }
 
@@ -366,22 +366,22 @@ void use_lamp(Player *player, GameState *game) {
   char room_desc[10];
   get_room_description(room_content, room_desc);
 
-  print_message_formatted("\nThe lamp reveals: ");
+  print_message("\nThe lamp reveals: ");
   print_message_formatted("%s\n", room_desc);
 }
 
 void use_flare(Player *player, GameState *game) {
   if (player->flares <= 0) {
-    print_message_formatted("You don't have any flares!\n");
+    print_message("You don't have any flares!\n");
     return;
   }
   if (player->blindness_flag == 1) {
-    print_message_formatted("You are blind, you can't use flares!\n");
+    print_message("You are blind, you can't use flares!\n");
     return;
   }
 
   player->flares--;
-  print_message_formatted(
+  print_message(
       "\nYou light a flare. It illuminates the surrounding rooms:\n\n");
 
   for (int dx = -1; dx <= 1; dx++) {
@@ -395,25 +395,25 @@ void use_flare(Player *player, GameState *game) {
       get_room_description(room_content, room_desc);
 
       if (dx == 0 && dy == 0) {
-        print_message_formatted("  [YOU]   ");
+        print_message("  [You]   ");
       } else {
         print_message_formatted(" %s ", room_desc);
       }
     }
-    print_message_formatted("\n");
+    print_message("\n");
   }
 }
 
 void open_chest(Player *player, GameState *game) {
-  print_message_formatted("\nYou open the chest and ");
+  print_message("\nYou open the chest and ");
 
   int event = random_number(6), damage, gold, flares;
   switch (event) {
   case 1:
-    print_message_formatted("KABOOM! IT EXPLODES!!\n");
+    print_message("Kaboom! It explodes!!\n");
     damage = random_number(6);
     player->strength -= damage;
-    print_message_formatted("You take %d damage.\n", damage);
+    print_message("You take %d damage.\n", damage);
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
 
     if (player->strength <= 0) {
@@ -424,12 +424,12 @@ void open_chest(Player *player, GameState *game) {
     break;
 
   case 2:
-    print_message_formatted("OH NO! IT'S A MIMIC!\n");
-    print_message_formatted("The chest sprouts teeth and tentacles!\n");
+    print_message("Oh no! It's a mimic!\n");
+    print_message("The chest sprouts teeth and tentacles!\n");
 
     if (player->dexterity > 8 + random_number(4) && random_number(4) != 1) {
       // Player might notice it's a mimic if they're dexterous
-      print_message_formatted(
+      print_message(
           "You jump back just in time as the mimic lunges!\n");
 
       // Move player in a random direction
@@ -446,7 +446,7 @@ void open_chest(Player *player, GameState *game) {
         int armor_protection =
             player->armor_type +
             random_number(2); // Armor type plus small random bonus
-        print_message_formatted(
+        print_message(
             "Your armor absorbs some of the mimic's attack!\n");
 
         // Reduce damage based on armor
@@ -465,13 +465,13 @@ void open_chest(Player *player, GameState *game) {
           print_message(
               "Your armor has been destroyed by the mimic's powerful bite!\n");
         } else {
-          print_message_formatted("Your armor took %d points of damage!\n",
+          print_message("Your armor took %d points of damage!\n",
                                   armor_protection);
         }
       }
 
       if (damage > 0) {
-        print_message_formatted(
+        print_message(
             "The mimic's surprise attack hits you for %d damage!\n", damage);
         player->strength -= damage;
 
@@ -506,60 +506,60 @@ void open_chest(Player *player, GameState *game) {
   case 4:
   case 5:
     gold = random_number(500) + random_number(500);
-    print_message_formatted("find %d gold pieces!\n", gold);
+    print_message("find %d gold pieces!\n", gold);
     player->gold += gold;
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
     break;
 
   case 6:
     flares = random_number(6);
-    print_message_formatted("find %d flares!\n", flares);
+    print_message("find %d flares!\n", flares);
     player->flares += flares;
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
     break;
   }
 }
 void drink_from_pool(Player *player, GameState *game) {
-  print_message_formatted("\nYou take a drink and ");
+  print_message("\nYou take a drink and ");
 
   int effect = random_number(8);
   switch (effect) {
   case 1:
     player->strength =
         get_minimum(MAX_STRENGTH, player->strength + random_number(3));
-    print_message_formatted("feel STRONGER.\n");
+    print_message("feel stronger.\n");
     break;
   case 2:
     player->strength -= random_number(3);
-    print_message_formatted("feel WEAKER.\n");
+    print_message("feel weaker.\n");
     if (player->strength <= 0) {
-      print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+      print_message("\nYou died due to lack of strength.\n");
       game->game_over = 1;
     }
     break;
   case 3:
     player->intelligence =
         get_minimum(MAX_INTELLIGENCE, player->intelligence + random_number(3));
-    print_message_formatted("feel SMARTER.\n");
+    print_message("feel smarter.\n");
     break;
   case 4:
     player->intelligence -= random_number(3);
-    print_message_formatted("feel DUMBER.\n");
+    print_message("feel dumber.\n");
     if (player->intelligence <= 0) {
-      print_message_formatted("\nYOU DIED DUE TO LACK OF INTELLIGENCE.\n");
+      print_message("\nYou died due to lack of intelligence.\n");
       game->game_over = 1;
     }
     break;
   case 5:
     player->dexterity =
         get_minimum(MAX_DEXTERITY, player->dexterity + random_number(3));
-    print_message_formatted("feel NIMBLER.\n");
+    print_message("feel nimbler.\n");
     break;
   case 6:
     player->dexterity -= random_number(3);
-    print_message_formatted("feel CLUMSIER.\n");
+    print_message("feel clumsier.\n");
     if (player->dexterity <= 0) {
-      print_message_formatted("\nYOU DIED DUE TO LACK OF DEXTERITY.\n");
+      print_message("\nYou died due to lack of dexterity.\n");
       game->game_over = 1;
     }
     break;
@@ -590,30 +590,30 @@ void drink_from_pool(Player *player, GameState *game) {
 
 void teleport(Player *player, GameState *game) {
   if (!player->runestaff_flag) {
-    print_message_formatted("\n** YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+    print_message("\n** You can't teleport without a runestaff!\n");
     return;
   }
 
   int new_x, new_y, new_level;
 
-  print_message_formatted("\nEnter X-coordinate (1-%d): ", CASTLE_SIZE);
+  print_message("\nEnter X-coordinate (1-%d): ", CASTLE_SIZE);
   new_x = get_user_input_number();
   if (new_x < 1 || new_x > CASTLE_SIZE) {
-    print_message_formatted("Invalid coordinate. Teleportation failed.\n");
+    print_message("Invalid coordinate. Teleportation failed.\n");
     return;
   }
 
-  print_message_formatted("Enter Y-coordinate (1-%d): ", CASTLE_SIZE);
+  print_message("Enter Y-coordinate (1-%d): ", CASTLE_SIZE);
   new_y = get_user_input_number();
   if (new_y < 1 || new_y > CASTLE_SIZE) {
-    print_message_formatted("Invalid coordinate. Teleportation failed.\n");
+    print_message("Invalid coordinate. Teleportation failed.\n");
     return;
   }
 
-  print_message_formatted("Enter Z-coordinate (level 1-%d): ", CASTLE_SIZE);
+  print_message("Enter Z-coordinate (level 1-%d): ", CASTLE_SIZE);
   new_level = get_user_input_number();
   if (new_level < 1 || new_level > CASTLE_SIZE) {
-    print_message_formatted("Invalid level. Teleportation failed.\n");
+    print_message("Invalid level. Teleportation failed.\n");
     return;
   }
 
@@ -622,16 +622,16 @@ void teleport(Player *player, GameState *game) {
   player->y = new_x;
   player->level = new_level;
 
-  print_message_formatted("\nYou have teleported to (%d, %d) on level %d.\n",
+  print_message("\nYou have teleported to (%d, %d) on level %d.\n",
                           player->y, player->x, player->level);
 
   // Check if the player teleported to the Orb of Zot
   if (player->x == game->orb_location[0] &&
       player->y == game->orb_location[1] &&
       player->level == game->orb_location[2]) {
-    print_message_formatted("\nGREAT UNMITIGATED ZOT!\n");
-    print_message_formatted("\nYOU JUST FOUND ***THE ORB OF ZOT***!\n");
-    print_message_formatted("\nTHE RUNESTAFF HAS DISAPPEARED!\n");
+    print_message("\nGreat unmitigated zot!\n");
+    print_message("\nYou just found ***The Orb of Zot***!\n");
+    print_message("\nThe runestaff has disappeared!\n");
     player->runestaff_flag = 0;
     player->orb_flag = 1;
     game->orb_location[0] = 0; // Mark as found
@@ -642,19 +642,42 @@ void teleport(Player *player, GameState *game) {
 void gaze_into_orb(Player *player, GameState *game) {
   if (get_room_content(game, player->x, player->y, player->level) !=
       CRYSTAL_ORB) {
-    print_message_formatted("\n** IT'S HARD TO GAZE WITHOUT AN ORB!\n");
+    print_message("\n** It's hard to gate without an orb!\n");
     return;
   }
 
-  print_message_formatted("\nYou gaze into the crystal orb and see ");
+  print_message("\nYou gaze into the crystal orb and see ");
+
+
+  // Special rare effects (0.5% each)
+  int rare_vision = random_number(1000);
+  switch(rare_vision) {
+    case 1:
+      print_message("\nthe orb suddenly flares with an ancient power. A great lidless eye wreathed in flame briefly fixes its gaze upon you before fading away...\n");
+      return;
+    case 2:
+      print_message("\na small figure with hairy feet sneaking past, clutching something precious...\n");
+      return;
+    case 3:
+      print_message("\an ancient scroll covered in angular black letters. The writing fills you with unease...\n");
+      return;
+    case 4:
+      print_message("\na grey-robed figure facing down a creature of shadow and flame upon a narrow bridge...\n");
+      return;
+    case 5:
+      print_message("\na golden ring spinning, falling into flames...\n");
+      return;
+  }
+
+
 
   int vision = random_number(6);
   switch (vision) {
   case 1:
-    print_message_formatted("yourself in a bloody heap!\n");
+    print_message("yourself in a bloody heap!\n");
     player->strength -= random_number(2);
     if (player->strength <= 0) {
-      print_message_formatted("\nYOU DIED DUE TO LACK OF STRENGTH.\n");
+      print_message("\nYou died due to lack of strength.\n");
       game->game_over = 1;
     }
     break;
@@ -675,7 +698,7 @@ void gaze_into_orb(Player *player, GameState *game) {
     int content = get_room_content(game, x, y, z);
     char room_desc[100]; // Adjust size as needed
     get_room_description(content, room_desc);
-    print_message_formatted("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
+    print_message("%s at (%d,%d) Level %d.\n", room_desc, x, y, z);
   } break;
   case 5: {
     int x, y, z;
@@ -692,7 +715,7 @@ void gaze_into_orb(Player *player, GameState *game) {
     print_message("Level %d!\n", z);
   } break;
   case 6:
-    print_message_formatted("a soap opera rerun!\n");
+    print_message("a soap opera rerun!\n");
     break;
   }
 }
@@ -700,42 +723,78 @@ void gaze_into_orb(Player *player, GameState *game) {
 void open_book(Player *player, GameState *game) {
   int effect = random_number(7);
 
-  print_message_formatted("YOU OPEN THE BOOK AND ");
+  print_message("You open the book and ");
+  if (player->blindness_flag)
+  {
+      print_message_formatted("Blind %s can't read books\n", get_race_name(player->race));
+      return;
+  }
+
+  int rare_book = random_number(200);
+  if (rare_book == 1) {
+    int rare_effect = random_number(5);
+    print_message("You open the book and discover ");
+    switch(rare_effect) {
+      case 1:
+        print_message("find an ancient red leather-bound book with strange runes. The pages detail the history of rings of power!  Your intelligence increases.\n");
+        player->intelligence += 5;  // Small bonus for ancient knowledge
+        break;
+      case 2:
+        print_message("find 'There and Back Again', a dusty manuscript written in a small, neat hand.  You read the entire manuscript and feel more determined to find the Orb of Zot.\n");
+        player->dexterity += 3;  // Hobbits are naturally dexterous
+        break;
+      case 3:
+        print_message("find a tome written in elegant elvish script, containing ancient songs of power.  You sing it and you feel stronger.\n");
+        player->strength += 3;  // Songs of power grant some strength
+        break;
+      case 4:
+        print_message("find a book of ancient dwarvish lore, detailing the secrets of the great halls.  The knowledge is now seered in you.\n");
+        player->intelligence += 3;  // Knowledge of the ancient kingdoms
+        break;
+      case 5:
+        print_message("find a black tome with sinister angular script. You quickly close it!\n");
+        // No penalty, but no bonus either - wisdom is knowing some books should stay closed
+        break;
+    }
+    player->dexterity = get_minimum(MAX_DEXTERITY, player->dexterity);
+    player->intelligence = get_minimum(MAX_INTELLIGENCE, player->intelligence);
+    player->strength = get_minimum(MAX_STRENGTH, player->strength);
+
+    return;
+  } 
 
   switch (effect) {
   case 1:
-    print_message_formatted("FLASH! OH NO! YOU ARE NOW A BLIND ");
-    print_message_formatted(player->race == HUMAN ? "HUMAN" : "CREATURE");
-    print_message_formatted("!\n");
+    print_message("Flash! Oh no! You are now a blind %s.\n", player->race == HUMAN ? "human" : "creature");
     player->blindness_flag = 1;
     break;
   case 2:
-    print_message_formatted("IT'S ANOTHER VOLUME OF ZOT'S POETRY! - YECH!!\n");
+    print_message("It'S another volume of Zot's poetry! - Yech!!\n");
     break;
   case 3:
-    print_message_formatted("IT'S AN OLD COPY OF PLAY%s!\n",
+    print_message_formatted("It's an old copy of play%s!\n",
                             get_random_species());
     break;
   case 4:
-    print_message_formatted("IT'S A MANUAL OF DEXTERITY!\n");
+    print_message("It's a manual of dexterity!\n");
     player->dexterity = (player->dexterity += 18) > MAX_DEXTERITY
                             ? MAX_DEXTERITY
                             : player->dexterity;
 
     break;
   case 5:
-    print_message_formatted("IT'S A MANUAL OF STRENGTH!\n");
+    print_message("It's a manual of strength!\n");
     player->strength = (player->strength += 18) > MAX_STRENGTH
                            ? MAX_STRENGTH
                            : player->strength;
     break;
   case 6:
-    print_message_formatted("THE BOOK STICKS TO YOUR HANDS -\n");
-    print_message_formatted("NOW YOU ARE UNABLE TO DRAW YOUR WEAPON!\n");
+    print_message("The book sticks to your hand -\n");
+    print_message("now you are unable to draw your weapon!\n");
     player->stickybook_flag = 1;
     break;
   case 7:
-    print_message_formatted("IT'S A MANUAL OF INTELLIGENCE!\n");
+    print_message("It's a manual of intelligence!\n");
     player->intelligence = (player->intelligence += 18) > MAX_INTELLIGENCE
                                ? MAX_INTELLIGENCE
                                : player->intelligence;
