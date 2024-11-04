@@ -544,15 +544,15 @@ void open_chest(Player *player, GameState *game) {
       int book_type = random_number(3);
       switch(book_type) {
         case 1:
-            print_message("You find a dusty book of ancient lore. Reading it increases your intelligence by 1!\n");
+            print_message("you find a dusty book of ancient lore. Reading it increases your intelligence by 1!\n");
             player->intelligence = get_minimum(player->intelligence + 1, MAX_INTELLIGENCE);
             break;
         case 2:
-            print_message("You find a strange book. As you pick it up, it magically sticks to your hand!\n");
+            print_message("you find a strange book. As you pick it up, it magically sticks to your hand!\n");
             player->stickybook_flag = 1;
             break;
         case 3:
-            print_message("You find a sinister-looking book. Reading it makes your head spin!\n");
+            print_message("you find a sinister-looking book. Reading it makes your head spin!\n");
             if(player->intelligence>1)
             {
                  player->intelligence--;
