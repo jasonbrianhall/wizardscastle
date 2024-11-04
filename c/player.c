@@ -162,7 +162,7 @@ void allocate_attributes(Player *player) {
       other_points -= points_to_add;
       break;
     } else {
-      print_message("\n** Invalid input.  You have %d points to allocate.\n\n", other_points) 
+      print_message("\n** Invalid input.  You have %d points to allocate.\n\n", other_points);
     }
   }
 
@@ -215,7 +215,7 @@ void buy_equipment(Player *player) {
   int cost, exittheloop;
 
   // Buy Armor
-  print_message("\nOK, %s, (race_names[player->race - 1]);
+  print_message("\nOK, %s", (race_names[player->race - 1]));
 
   print_message(", you have %d gold pieces (GP'S).\n\n",
                           player->gold);
