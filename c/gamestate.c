@@ -228,7 +228,7 @@ int get_room_content(GameState *game, int x, int y, int level) {
   if (index >= 0 && index < MAP_SIZE) {
     return game->location_map[index];
   }
-  print_message_formatted("Invalid Room %i\n", index);
+  print_message("Invalid Room %d\n", index);
   return -1; // Invalid room
 }
 
@@ -238,7 +238,7 @@ void set_room_content(GameState *game, int x, int y, int level, int content) {
     game->location_map[index] = content;
   } else {
     // Handle error: invalid room coordinates
-    print_message_formatted(
+    print_message(
         "Error: Attempted to set invalid room content at (%d,%d) level %d\n", x,
         y, level);
   }
