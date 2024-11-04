@@ -61,8 +61,7 @@ bool main_game_loop(Player *player, GameState *game) {
       if (!game->treasure[RUBY_RED_INDEX] &&
           random_number(100) <= 5) { // 5% chance if no Ruby Red
         game->turn_count++;
-        print_message_formatted(
-            "\nYOU ARE AFFECTED BY LETHARGY. YOU LOSE A TURN.\n");
+        print_message("\nYou are affected by lethargy. You lose a turn.\n");
       }
 
       // Leech curse (similar to line 1965 in BASIC)
@@ -72,9 +71,7 @@ bool main_game_loop(Player *player, GameState *game) {
         currentgold = player->gold;
         player->gold =
             (player->gold > gold_lost) ? player->gold - gold_lost : 0;
-        print_message_formatted(
-            "\nA LEECH ATTACKS YOU! YOU LOSE %d GOLD PIECES.\n",
-            currentgold - player->gold);
+        print_message("\nA leech attacks you! You lose %d gold pieces.\n", currentgold - player->gold);
       }
 
       // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
@@ -84,8 +81,8 @@ bool main_game_loop(Player *player, GameState *game) {
         player->x = random_number(CASTLE_SIZE);
         player->y = random_number(CASTLE_SIZE);
         player->level = random_number(CASTLE_SIZE);
-        print_message_formatted("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
-        print_message_formatted("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n",
+        print_message("\nYou suddenly forget where you are!\n");
+        print_message("You find yourself at (%d,%d) on level %d.\n",
                                 player->x, player->y, player->level);
         mark_room_discovered(game, player->x, player->y, player->level);
         //index = CALCULATE_ROOM_INDEX(player->level, player->x, player->y);
@@ -101,74 +98,74 @@ bool main_game_loop(Player *player, GameState *game) {
 
     // Display random events (similar to lines 2010-2060 in BASIC)
     if (random_number(5) == 1) {
-      print_message_formatted("\nYOU ");
+      print_message("\nYou ");
       int event_type = random_number(7) + player->blindness_flag;
       if (event_type > 7)
         event_type = 4;
 
       switch (event_type) {
       case 1:
-        print_message_formatted("SEE A BAT FLY BY!\n");
+        print_message("see a bat fly by!\n");
         break;
       case 2:
-        print_message_formatted("HEAR FOOTSTEPS!\n");
+        print_message("hear footsteps!\n");
         break;
       case 3:
-        print_message_formatted("SNEEZED!\n");
+        print_message("sneezed!\n");
         break;
       case 4:
-        print_message_formatted("STEPPED ON A FROG!\n");
+        print_message("stepped on a frog!\n");
         break;
       case 5:
-        print_message_formatted("SMELL SOMETHING FRYING!\n");
+        print_message("smell something frying!\n");
         break;
       case 6:
-        print_message_formatted("FEEL LIKE YOU'RE BEING WATCHED!\n");
+        print_message("feel like you are being watched!\n");
         break;
       case 7:
-        print_message_formatted("HEAR FAINT RUSTLING NOISES!\n");
+        print_message("Hear faint rustling noises!\n");
         break;
       }
     }
 
     // Handle blindness cure (similar to lines 2065-2075 in BASIC)
     if (player->blindness_flag == 1 && game->treasure[OPAL_EYE_INDEX] == 1) {
-      print_message_formatted("\nTHE OPAL EYE CURES YOUR BLINDNESS!\n");
+      print_message("\nThe Opal Eye cures your blindness!\n");
       player->blindness_flag = 0;
     }
 
     // Handle sticky book cure (similar to lines 2080-2090 in BASIC)
     if (player->stickybook_flag == 1 && game->treasure[BLUE_FLAME_INDEX] == 1) {
-      print_message_formatted("\nTHE BLUE FLAME DISSOLVES THE BOOK!\n");
+      print_message("\nThe Blue Flame dissolves the book!\n");
       player->stickybook_flag = 0;
     }
 
-    print_message_formatted("\n");
+    print_message("\n");
     // print_status(player, game);
 
     int room_content =
         get_room_content(game, player->x, player->y, player->level);
     if (room_content == ENTRANCE) { // The Entrance
       print_message("Ok, ");
-      print_message_formatted("%s, YOU ARE NOW ENTERING THE CASTLE!\n",
-                              get_race_name(player->race));
+      print_message("%s, you are now entering the castle!\n",
+                              get_race_name_flc(player->race));
     } else if (room_content >= EMPTY_ROOM && room_content <= TREASURE_END) {
-      print_message_formatted("HERE YOU FIND %s.\n",
+      print_message_formatted("Here you find %s.\n",
                               room_contents[room_content - EMPTY_ROOM]);
       if (room_content == GOLD) {
         int gold_found =
             random_number(1000); // Random amount between 1 and 1000
         player->gold += gold_found;
-        print_message_formatted(
-            "%d GOLD PIECES HAVE BEEN ADDED TO YOUR INVENTORY!\n", gold_found);
+        print_message(
+            "%d gold pieces have been added to your inventory!\n", gold_found);
         set_room_content(game, player->x, player->y, player->level,
                          EMPTY_ROOM); // Empty the room
       } else if (room_content == FLARES) {
         int flares_found = random_number(5); // Random amount between 1 and 5
 
         player->flares += flares_found;
-        print_message_formatted(
-            "%d FLARES HAVE BEEN ADDED TO YOUR INVENTORY!\n", flares_found);
+        print_message(
+            "%d flares have been added to your inventory!\n", flares_found);
         set_room_content(game, player->x, player->y, player->level,
                          EMPTY_ROOM); // Empty the room
       }
@@ -186,17 +183,15 @@ bool main_game_loop(Player *player, GameState *game) {
       }
 
     } else {
-      print_message_formatted("HERE YOU FIND AN UNKNOWN ROOM.\n");
-      print_message_formatted("%i\n", room_content);
+      print_message("Here you find an unknown room.\n");
     }
     game_over = check_game_over(player, game);
     if (!game_over) {
       strncpy(user_command, get_user_input_main(), sizeof(user_command) - 1);
       user_command[sizeof(user_command) - 1] = '\0'; // Ensure null-termination
-      // print_message_formatted(message);
       switch (user_command[0]) {
       case '\0':
-        print_message_formatted("\n\nPlease enter a command.\n\n");
+        print_message("\n\nPlease enter a command.\n\n");
         break;
 
       case 'N':
@@ -211,9 +206,9 @@ bool main_game_loop(Player *player, GameState *game) {
           if (player->level > CASTLE_SIZE) {
             player->level = 1;
           }
-          print_message_formatted("YOU CLIMB UP THE STAIRS.\n");
+          print_message("You climb up the stairs.\n");
         } else {
-          print_message_formatted("THERE ARE NO STAIRS GOING UP FROM HERE!\n");
+          print_message("There are not stairs going up from here\n");
         }
         break;
       case 'D':
@@ -230,8 +225,7 @@ bool main_game_loop(Player *player, GameState *game) {
           }
           print_message("You descend the stairs.\n");
         } else {
-          print_message_formatted(
-              "There are no stairs coming down from here!\n");
+          print_message("There are no stairs coming down from here!\n");
         }
         break;
       case 'M':
@@ -249,23 +243,22 @@ bool main_game_loop(Player *player, GameState *game) {
         } else if (room_content == BOOK) { // Book
           open_book(player, game);
         } else {
-          print_message_formatted("THERE'S NOTHING HERE TO OPEN!\n");
+          print_message("There's nothing here to open!\n");
         }
         break;
       case 'G':
         if (room_content == CRYSTAL_ORB) { // Crystal orb
           gaze_into_orb(player, game);
         } else {
-          print_message_formatted(
-              "THERE'S NO CRYSTAL ORB HERE TO GAZE INTO!\n");
+          print_message(
+              "There's no crystal orb in here to gaze into!\n");
         }
         break;
       case 'T':
         if (player->runestaff_flag) {
           teleport(player, game);
         } else {
-          print_message_formatted(
-              "YOU CAN'T TELEPORT WITHOUT THE RUNESTAFF!\n");
+          print_message("You can't teleport without the Runestaff!\n");
         }
         break;
       case 'Q':
@@ -286,7 +279,7 @@ bool main_game_loop(Player *player, GameState *game) {
           if (get_user_input_yn() == 'Y') {
             game_over = 1;
           } else {
-            print_message_formatted("OK, CONTINUE ON BRAVE ADVENTURER!\n");
+            print_message("Ok, continue on brave adventurer!\n");
           }
         }
         break;
@@ -307,15 +300,14 @@ bool main_game_loop(Player *player, GameState *game) {
 
   end_game(player, game);
   // Ask if the player wants to play again
-  print_message_formatted("\nARE YOU FOOLISH ENOUGH TO WANT TO PLAY AGAIN? ");
+  print_message("\nAre you foolish enough to want to play again? ");
   char play_again = get_user_input_yn();
   if (play_again == 'Y') {
-    print_message_formatted("\nSOME ADVENTURERS NEVER LEARN!\n\n");
-    print_message_formatted(
-        "PLEASE BE PATIENT WHILE THE CASTLE IS RESTOCKED.\n\n");
+    print_message("\nSome adventurers never learn!\n\n");
+    print_message("Please be patient while the castle is restocked.\n\n");
     return 1;
   } else {
-    print_message_formatted("\nGOOD BYE, AND GOOD LUCK IN YOUR TRAVELS!\n");
+    print_message("\nGood bye, and good luck in your travels!\n");
     return 0;
   }
 }
