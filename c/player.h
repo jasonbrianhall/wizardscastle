@@ -11,6 +11,8 @@ void allocate_attributes(Player *player);
 void buy_equipment(Player *player);
 void buy_lamp_and_flares(Player *player);
 const char *get_race_name(int race);
+const char *get_race_name_flc(int race);
+
 void print_status(Player *player, GameState *game); // Added GameState parameter
 void fight_monster_normalize(Player *player, GameState *game);
 

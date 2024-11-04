@@ -384,14 +384,31 @@ const char *get_race_name(int race) {
   }
 }
 
+const char *get_race_name_flc(int race) {
+  switch (race) {
+  case 1:
+    return "Hobbit";
+  case 2:
+    return "Elf";
+  case 3:
+    return "Human";
+  case 4:
+    return "Dwarf";
+  case 5:
+    return "Dark Elf";
+  default:
+    return "UNKNOWN";
+  }
+}
+
+
 void print_status(Player *player, GameState *game) {
   // char message[256];  // Buffer for formatting messages
   int treasurecount = 0, i;
 
   print_message("\n=== PLAYER STATUS ===\n");
   // Print player race and attributes
-  print_message("Race: ");
-  print_message_formatted(get_race_name(player->race));
+  print_message("Race: %s", get_race_name_flc(player->race));
   print_message("   Sex: ");
   if (player->sex == FEMALE) {
     print_message("Female");
