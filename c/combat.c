@@ -76,7 +76,7 @@ void fight_monster(Player *player, GameState *game) {
         print_message("You can also (T)hrow a stone.\n");
       }
       if ((player->race == ELF || player->race == DROW) &&
-          player->intelligence >= 8) {
+          player->intelligence >= 8 && player->stickybook_flag==0) {
         print_message("You can also (S)hoot a magical bow with extremely high "
                       "accuracy.\n");
       }
@@ -194,7 +194,7 @@ void fight_monster(Player *player, GameState *game) {
         break;
       case 'S': // Shoot magical bows
         if ((player->race == ELF || player->race == DROW) &&
-            player->intelligence >= 8) {
+            player->intelligence >= 8 && player->stickybook_flag==0) {
           chance = player->blindness_flag == 1 ? 4 : 5;
 
           if (random_number(chance) >= 4 || random_number(chance) >= 4 ||
@@ -237,7 +237,21 @@ void fight_monster(Player *player, GameState *game) {
           }
           break;
         }
-        print_message("You don't have any magical arrows.\n");
+        if(player->stickybook_flag==0)
+        {
+            print_message("You don't have any magical arrows.\n");
+        }
+        else
+        {
+            if(player->race == ELF || player->race == DROW)
+            {
+                 print_message("Elf, you have book stuck to your hand.  How are you going to draw your bow?\n");
+            }
+            else
+            {
+                 print_message("Not sure how you are going to fire magical arrows with a book stuck to your hand.\n");
+           }
+        }
         continue;
       case 'T':
         if (player->race == HOBBIT) {
