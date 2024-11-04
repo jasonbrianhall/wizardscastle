@@ -15,25 +15,25 @@
 #include <time.h>
 
 void print_introduction(void) {
-  printStars();
-  print_message("\n                * * * THE WIZARD'S CASTLE * * *\n\n");
-  printStars();
-  print_message_formatted("\n");
-  print_message_formatted("MANY CYCLES AGO, IN THE KINGDOM OF ");
-  print_message_formatted("N'Dic, the gnomic\n"
-                          "wizard ");
-  print_message_formatted("ZOT FORGED HIS GREAT ");
-  print_message("*ORB OF POWER*. ");
-  print_message_formatted(
-      "HE SOON\n"
-      "VANISHED, LEAVING BEHIND HIS VAST SUBTERRANEAN CASTLE\n"
-      "FILLED WITH ESURIENT MONSTERS, FABULOUS TREASURES, AND\n"
-      "THE INCREDIBLE ");
-  print_message("*ORB OF ZOT*.");
-  print_message_formatted(
-      " FROM THAT TIME HENCE, MANY\n"
-      "A BOLD YOUTH HAS VENTURED INTO THE WIZARD'S CASTLE. AS\n"
-      "OF NOW, *NONE* HAS EVER EMERGED VICTORIOUSLY! BEWARE!!\n\n");
+    printStars();
+    print_message("\n                *  The Wizard's Castle  *\n\n");
+    printStars();
+    print_message("\n");
+    print_message("Many cycles ago, in the Kingdom of ");
+    print_message("N'dic, the gnomic\n"
+                           "wizard ");
+    print_message("Zot forged his great ");
+    print_message("*Orb of Power*. ");
+    print_message(
+        "He soon\n"
+        "vanished, leaving behind his vast subterranean castle\n"
+        "filled with esurient monsters, fabulous treasures, and\n"
+        "the incredible ");
+    print_message("*Orb of Zot*.");
+    print_message(
+        " From that time hence, many\n"
+        "a bold youth has ventured into the Wizard's Castle. As\n"
+        "of now, *NONE* has ever emerged victoriously! Beware!!\n\n");
 }
 
 bool main_game_loop(Player *player, GameState *game) {
