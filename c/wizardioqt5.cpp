@@ -464,7 +464,7 @@ public:
                                  "Stone"};
     const char *weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword",
                                   "Excalibur"};
-    print_message2("Armor: %s  Weapon: %s\n", armor_types[player->armor_type],
+    print_message_status("Armor: %s  Weapon: %s\n", armor_types[player->armor_type],
                    weapon_types[player->weapon_type]);
     // Print special items
 
