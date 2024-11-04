@@ -112,7 +112,6 @@ public:
     char lowercase_species[100]; // Adjust size based on max monster name length
     to_lowercase(lowercase_species, get_race_name(player->race));
 
-    statusDisplay->clear();
     if (currentRoom >= ROOM_START && currentRoom <= ROOM_END) {
       switch (currentRoom) {
       case ENTRANCE:
@@ -271,7 +270,7 @@ public:
             "\nYou are in an empty room.  It's voidness is chilling.");
         break;
       }
-      print_message2("\nCurrent location:  Level %d, Room (%d %d)\n",
+      print_message2("Current location:  Level %d, Room (%d %d)\n\n",
                      player->level, player->y, player->x);
     }
     if (player->blindness_flag == 0) {
@@ -289,7 +288,7 @@ public:
       int levelToDisplay = (displayLevel == -1) ? player->level : displayLevel;
 
       // When displaying room content:
-      print_message2("\n=== MAP OF LEVEL ");
+      print_message2("=== MAP OF LEVEL ");
       print_message2("%d", levelToDisplay);
       print_message2(" ===\n\n");
 
@@ -429,9 +428,9 @@ public:
       print_message2("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
       print_message2("MONSTER  = Monster Name    VENDOR   = Vendor\n");
       print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
-      print_message2("STAIRS U = Stairs Up        STAIRS D = Stairs Down\n");
+      print_message2("STAIRS U = Stairs Up       STAIRS D = Stairs Down\n");
 
-      print_message_status("\n=== PLAYER STATUS ===\n");
+      print_message_status("\n\n=== PLAYER STATUS ===\n");
 
     } else {
       print_message2("\nBlind %s can't see maps.\n\n", lowercase_species);
@@ -666,6 +665,8 @@ public:
     outputText->setPalette(palette);
     inputLine->setPalette(palette);
     mapDisplay->setPalette(palette);
+    statusDisplay->setPalette(palette);
+
   }
 
 signals:
@@ -1041,6 +1042,7 @@ private slots:
   void updateMap() {
     if (g_player && g_game) {
       mapDisplay->clear(); // Clear the previous map
+      statusDisplay->clear();
       display_map2(g_game, g_player);
     }
   }
