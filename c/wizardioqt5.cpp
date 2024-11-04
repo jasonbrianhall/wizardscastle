@@ -1472,9 +1472,9 @@ int get_user_input_number() {
                     data); // Assuming print_message is similar to printf
       return data;
     } catch (const std::invalid_argument &) {
-      print_message_formatted("Invalid input. Please enter a valid integer.\n");
+      print_message("Invalid input. Please enter a valid integer.\n");
     } catch (const std::out_of_range &) {
-      print_message_formatted(
+      print_message(
           "Input out of range. Please enter a smaller number.\n");
     }
   }
@@ -1482,7 +1482,7 @@ int get_user_input_number() {
 
 char get_user_input() {
   while (true) {
-    print_message_formatted("ENTER YOUR COMMAND: ");
+    print_message("Enter your command: ");
 
     g_window->clearInput();
     while (g_window->inputIsEmpty()) {
@@ -1496,7 +1496,7 @@ char get_user_input() {
 
     // Check if input is empty
     if (input.empty()) {
-      print_message_formatted("Please enter a command.\n");
+      print_message("Please enter a command.\n");
       continue;
     }
 
@@ -1528,7 +1528,7 @@ char get_user_input_custom_prompt(char *prompt) {
 
     // Check if input is empty
     if (input.empty()) {
-      print_message_formatted("Please enter a command.\n");
+      print_message("Please enter a command.\n");
       continue;
     }
 
