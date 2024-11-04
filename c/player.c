@@ -43,7 +43,7 @@ void initialize_player(Player *player) {
 
 // Player creation and attribute functions
 void choose_race(Player *player) {
-  const char *races[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
+  const char *races[] = {"Hobbit", "Elf", "Human", "Dwarf", "Drow"};
   char user_input;
   int valid_choice = 0;
 
@@ -52,7 +52,7 @@ void choose_race(Player *player) {
   player->dexterity = 14;
 
   do {
-    print_message_formatted("ALL RIGHT, BOLD ONE.\n");
+    print_message("All right, bold one.\n");
     print_message("You may be an (E)lf, (D)warf, (M)an, (H)obbit, or D(R)ow "
                   "(Dark Elf).\n\n");
     user_input = get_user_input_custom_prompt("Your choice:  ");
@@ -92,7 +92,7 @@ void choose_race(Player *player) {
         player->dexterity += 4;
       }
       print_message("You have chosen to be a ");
-      print_message_formatted("%s\n", races[player->race - 1]);
+      print_message("%s\n", races[player->race - 1]);
       valid_choice = 1;
     } else {
       print_message("\n** That was incorrect. Please type E, D, M, OR H.\n");
@@ -103,10 +103,10 @@ void choose_race(Player *player) {
 void choose_sex(Player *player) {
   char user_input;
   int valid_choice = 0;
-  const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
+  const char *race_names[] = {"Hobbit", "Elf", "Human", "Dwarf", "Drow"};
 
   do {
-    print_message_formatted("WHICH SEX DO YOU PREFER?\n\n");
+    print_message("Which sex do you prefer?\n\n");
     user_input = get_user_input_custom_prompt("Your choice:  ");
 
     switch (user_input) {
@@ -119,21 +119,21 @@ void choose_sex(Player *player) {
       valid_choice = 1;
       break;
     default: {
-      print_message_formatted("** CUTE ");
-      print_message_formatted("%s, REAL CUTE. TRY ",
+      print_message("** Cute ");
+      print_message("%s, real cute. Try ",
                               race_names[player->race - 1]);
       print_message("M or F.\n");
     } break;
     }
   } while (!valid_choice);
 
-  print_message_formatted("\n");
+  print_message("\n");
 }
 
 void allocate_attributes(Player *player) {
   int other_points;
   int points_to_add;
-  const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
+  const char *race_names[] = {"Hobbit", "Elf", "Human", "Dwarf", "Drow"};
 
   // Set other_points based on race
   if (player->race == 1) { // Hobbit
@@ -142,17 +142,17 @@ void allocate_attributes(Player *player) {
     other_points = 8;
   }
 
-  print_message_formatted("Ok, ");
-  print_message_formatted("%s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n",
+  print_message("Ok, ");
+  print_message("%s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n",
                           race_names[player->race - 1]);
   print_message("Strength = %d    Intelligence = %d    Dexterity = %d\n",
                 player->strength, player->intelligence, player->dexterity);
-  print_message_formatted("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n",
+  print_message("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n",
                           other_points);
 
   // Allocate points to Strength
   while (other_points > 0) {
-    print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR "
+    print_message("How many points do you wish to add to your strength (you have %d points)?\n\n"
                             "STRENGTH (you have %d points)?\n\n",
                             other_points);
     points_to_add = get_user_input_number();
@@ -162,9 +162,7 @@ void allocate_attributes(Player *player) {
       other_points -= points_to_add;
       break;
     } else {
-      print_message_formatted(
-          "\n** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n",
-          other_points);
+      print_message("\n** Invalid input.  You have %d points to allocate.\n\n", other_points) 
     }
   }
 
@@ -175,17 +173,15 @@ void allocate_attributes(Player *player) {
 
   // Allocate points to Intelligence
   while (other_points > 0) {
-    print_message_formatted("HOW MANY POINTS DO YOU WISH TO ADD TO YOUR "
-                            "INTELLIGENCE (you have %d points)?\n\n",
-                            other_points);
+    print_message("How many points do you wish to allocate to your intelligence (you have %d points)?\n\n", other_points);
     points_to_add = get_user_input_number();
     if (points_to_add >= 0 && points_to_add <= other_points) {
       player->intelligence += points_to_add;
       other_points -= points_to_add;
       break;
     } else {
-      print_message_formatted(
-          "\n** INVALID INPUT. YOU HAVE %d POINTS TO ALLOCATE.\n\n",
+      print_message(
+          "\n** Invalid choice. You have %d points to allocate.\n\n",
           other_points);
     }
   }
@@ -197,7 +193,7 @@ void allocate_attributes(Player *player) {
 
   // Allocate remaining points to Dexterity
   if (other_points > 0) {
-    print_message_formatted("ALLOCATING REMAINING %d POINTS TO DEXTERITY.\n",
+    print_message("Allocating remaining %d points to dexterity.\n",
                             other_points);
     player->dexterity += other_points;
     if (player->dexterity >= MAX_DEXTERITY) {
@@ -205,7 +201,7 @@ void allocate_attributes(Player *player) {
     }
   }
 
-  print_message_formatted("\nYOUR ATTRIBUTES ARE NOW:\n");
+  print_message("\nYour attributes are now:\n");
   print_message("Strength = %d    Intelligence = %d    Dexterity = %d\n",
                 player->strength, player->intelligence, player->dexterity);
 }
@@ -213,24 +209,22 @@ void allocate_attributes(Player *player) {
 // Item and treasure functions
 void buy_equipment(Player *player) {
   char user_input;
-  const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
-  const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE"};
-  const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD"};
+  const char *race_names[] = {"Hobbit", "Elf", "Human", "Dwarf", "Drow"};
+  const char *armor_types[] = {"No Armor", "Leather", "Chainmail", "Plate"};
+  const char *weapon_types[] = {"No Weapon", "Dagger", "Mace", "Sword"};
   int cost, exittheloop;
 
   // Buy Armor
-  print_message_formatted("\nOK, ");
-  print_message_formatted(race_names[player->race - 1]);
+  print_message("\nOK, %s, (race_names[player->race - 1]);
 
-  print_message_formatted(", YOU HAVE %d GOLD PIECES (GP'S).\n\n",
+  print_message(", you have %d gold pieces (GP'S).\n\n",
                           player->gold);
 
-  print_message_formatted("THESE ARE THE TYPES OF ARMOR YOU CAN BUY :\n");
+  print_message("These are the types of armor you can buy:\n");
   print_message("(P)late<30> (C)hainmail<20> (L)eather<10> (N)othing<0>\n\n");
 
   player->armor_points = 0;
   do {
-    // print_message_formatted("YOUR CHOICE:  ");
     user_input = get_user_input_custom_prompt("Your choice:  ");
     exittheloop = 1;
     switch (user_input) {
@@ -256,7 +250,7 @@ void buy_equipment(Player *player) {
       break;
     default:
       print_message("\n** Are you a ");
-      print_message_formatted("%s or a fool?  Try again.\n\n",
+      print_message("%s or a fool?  Try again.\n\n",
                               race_names[player->race - 1]);
       exittheloop = 0;
       continue;
@@ -266,13 +260,12 @@ void buy_equipment(Player *player) {
   player->gold -= cost;
 
   // Buy Weapon
-  print_message_formatted("\nOK, %s, YOU HAVE %d GP'S LEFT.\n\n",
+  print_message("\nOk, %s, you have %d GP's left.\n\n",
                           race_names[player->race - 1], player->gold);
-  print_message_formatted("THESE ARE THE TYPES OF WEAPONS YOU CAN BUY :\n");
+  print_message("These are the type of weapons you can buy:\n");
   print_message("(S)word<30> (M)ace<20> (D)agger<10> (N)othing<0>\n\n");
 
   do {
-    // print_message_formatted("YOUR CHOICE:  ");
     user_input = get_user_input_custom_prompt("Your choice:  ");
     exittheloop = 1;
     switch (user_input) {
@@ -304,7 +297,7 @@ void buy_equipment(Player *player) {
       break;
     default:
       print_message("** Poor ");
-      print_message_formatted("%s ", race_names[player->race - 1]);
+      print_message("%s ", race_names[player->race - 1]);
       print_message(", try again, your choice must be S, M, D, or N.\n\n");
       exittheloop = 0;
     }
@@ -312,7 +305,7 @@ void buy_equipment(Player *player) {
 
   player->gold -= cost;
 
-  print_message_formatted("\nYOU NOW HAVE %s ARMOR AND A %s.\n",
+  print_message("\nYou now have %s armor and a %s.\n",
                           armor_types[player->armor_type],
                           weapon_types[player->weapon_type]);
   print_message("You have %d gold pieces left.\n", player->gold);
@@ -320,7 +313,7 @@ void buy_equipment(Player *player) {
 
 void buy_lamp_and_flares(Player *player) {
   char user_input_yn;
-  const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
+  const char *race_names[] = {"Hobbit", "Elf", "Human", "Dwarf", "Drow"};
 
   // Try to buy a lamp
   if (player->gold >= 20 && !player->lamp_flag) {
@@ -337,15 +330,15 @@ void buy_lamp_and_flares(Player *player) {
       } else if (user_input_yn == 'N') {
         break;
       } else {
-        print_message("** %s, PLEASE ANSWER YES OR NO.\n",
-                      player->sex == MALE ? "SIR" : "MA'AM");
+        print_message("** %s, Please answer Yes or No.\n",
+                      player->sex == MALE ? "Sir" : "Ma'am");
       }
     } while (1);
   }
 
   // Try to buy flares
   if (player->gold >= 1) {
-    print_message_formatted("\nOK, %s, YOU HAVE %d GOLD PIECES LEFT.\n",
+    print_message("\nOk, %s, you have %d gold pieces left.\n",
                             race_names[player->race - 1], player->gold);
     print_message("Flares cost 1 GP each. How many do you want? ");
 

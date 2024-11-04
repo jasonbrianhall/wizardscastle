@@ -268,7 +268,7 @@ void handle_treasure(Player *player, GameState *game, int room_content) {
   int treasure_index = room_content - TREASURE_START;
   const char *treasure_name = get_treasure_name(treasure_index);
 
-  print_message_formatted("\nYOU FOUND %s!\n\n", treasure_name);
+  print_message_formatted("\nYou found %s!\n\n", treasure_name);
 
   game->treasure[treasure_index]++;
   player->treasure_count = 0;
@@ -278,44 +278,45 @@ void handle_treasure(Player *player, GameState *game, int room_content) {
     }
   }
 
-  print_message_formatted("YOU NOW HAVE %d TREASURES.\n\n",
+  print_message("You now have %d treasures.\n\n",
                           player->treasure_count);
 
   // Apply special effects of treasures
   switch (treasure_index) {
   case RUBY_RED_INDEX: // Ruby Red
-    print_message_formatted("THE RUBY RED WILL HELP YOU AVOID LETHARGY.\n\n");
+    print_message("The Ruby Red will help you avoid lethargy.\n\n");
     break;
   case NORN_STONE_INDEX: // Norn Stone
-    print_message_formatted(
-        "THE NORN STONE GLOWS WITH AN OTHERWORLDLY LIGHT.\n\n");
+    print_message(
+        "The Norn Stone glows with an otherworldly light.\n\n");
+
     break;
   case PALE_PEARL_INDEX: // Pale Pearl
-    print_message_formatted(
-        "THE PALE PEARL WILL PROTECT YOU FROM LEECHES.\n\n");
+    print_message(
+        "The Pale Pearl will protect you from Leeches.\n\n");
     break;
   case OPAL_EYE_INDEX: // Opal Eye
-    print_message_formatted("THE OPAL EYE WILL CURE BLINDNESS.\n");
+    print_message("The Opal Eye will cure your blindness.\n");
     if (player->blindness_flag) {
       player->blindness_flag = 0;
-      print_message_formatted("YOUR BLINDNESS IS CURED!\n");
+      print_message("Your blindness is cured!\n");
     }
-    print_message_formatted("\n");
+    print_message("\n");
     break;
   case GREEN_GEM_INDEX: // Green Gem
-    print_message_formatted(
-        "THE GREEN GEM WILL HELP YOU AVOID FORGETTING.\n\n");
+    print_message(
+        "The Green Gem will help prevent you from forgetting.\n\n");
     break;
   case BLUE_FLAME_INDEX: // Blue Flame
-    print_message_formatted("THE BLUE FLAME WILL DISSOLVE BOOKS.\n\n");
+    print_message("The blue flames dissolves books.\n\n");
     if (player->stickybook_flag) {
       player->stickybook_flag = 0;
-      print_message_formatted("THE STICKY BOOK DISSOLVES!\n\n");
+      print_message("The sticky book dissolves!\n\n");
     }
     break;
   case PALANTIR_INDEX: // Palantir
   case SILMARIL_INDEX: // Silmaril
-    print_message_formatted("ITS BEAUTY IS BEYOND COMPARE.\n\n");
+    print_message("Its beauty is beyond compare.\n\n");
     break;
   }
 
