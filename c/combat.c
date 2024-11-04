@@ -18,6 +18,8 @@ void fight_monster(Player *player, GameState *game) {
   int can_bribe = 1;
   const char *enemy_name =
       is_vendor ? "VENDOR" : get_monster_name(room_content);
+  
+  char lowercase_enemy_name[100];
   int firststrike, chance;
   char choice;
   int max_increase;
@@ -33,6 +35,8 @@ void fight_monster(Player *player, GameState *game) {
   if (can_escape(player, is_vendor, enemy_name)) {
     return;
   }
+
+  to_lowercase(lowercase_enemy_name, enemy_name);
 
   // Set enemy stats based on room content
   if (is_vendor) {
@@ -63,8 +67,7 @@ void fight_monster(Player *player, GameState *game) {
   int rally_used = 0;
   while (1) {
     if (firststrike == 1) {
-      print_message("\nYou're facing a ");
-      print_message_formatted("%s!\n\n", enemy_name);
+      print_message("\nYou're facing a %s!\n\n", lowercase_enemy_name);
       print_message("You may (A)ttack or (R)etreat.\n");
       if (can_bribe) {
         print_message("You can also attempt a (B)ribe.\n");
@@ -99,8 +102,8 @@ void fight_monster(Player *player, GameState *game) {
       switch (choice) {
       case 'A':
         if (player->weapon_type == 0) {
-          print_message_formatted("\n** Pounding on %s won't hurt it!\n",
-                                  enemy_name);
+          print_message("\n** Pounding on %s won't hurt it!\n",
+                                  lowercase_enemy_name);
         } else if (player->stickybook_flag) {
           print_message(
               "\n** You can't bludgeon it to death with a mere book!\n");
@@ -118,13 +121,10 @@ void fight_monster(Player *player, GameState *game) {
               random_number(chance) == 1) { // 20% chance
             int extra_damage = random_number(player->strength / 3);
             temp += extra_damage;
-            print_message("You land a mighty blow on the ");
-            print_message_formatted(
-                "%s, dealing %d extra damage!  Total damage was %d.\n",
-                enemy_name, extra_damage, temp);
+            print_message("You land a mighty blow on the %s, dealing %d extra damage!  Total damage was %d.\n",
+                lowercase_enemy_name, extra_damage, temp);
           } else {
-            print_message("\nYou hit the evil ");
-            print_message_formatted("%s AND DID %i DAMAGE!\n", enemy_name,
+            print_message("\nYou hit the evil %s and did %d damage!\n", lowercase_enemy_name,
                                     temp);
           }
           enemy_strength -= temp;
@@ -317,20 +317,20 @@ void fight_monster(Player *player, GameState *game) {
       } else {
         // Determine if the monster breaks free
         if (random_number(20) < 5) { // Example: 25% chance to break free
-          print_message_formatted("\nThe %s struggles and breaks free from the "
+          print_message("\nThe %s struggles and breaks free from the "
                                   "web but cannot attack until next turn!\n",
-                                  enemy_name);
+                                  lowercase_enemy_name);
           player->web_count = 0;
         } else {
-          print_message_formatted(
+          print_message(
               "\nThe %s is ensnared by the web and cannot attack!\n",
-              enemy_name);
+              lowercase_enemy_name);
           continue; // Skip the enemy's attack
         }
       }
     } else if (room_content == DRAGON &&
                random_number(3) == 1) { // 1 in 3 chance for fireball
-      print_message_formatted("\nTHE %s ATTACKS!\n", enemy_name);
+      print_message("\nThe %s attacks!\n", lowercase_enemy_name);
       dragon_fireball_attack(player, game, enemy_strength, enemy_dexterity,
                              enemy_intelligence);
       if (game->game_over) {
@@ -447,8 +447,8 @@ void fight_monster(Player *player, GameState *game) {
                         temp);
           break;
         default:
-          print_message_formatted(
-              "The %s casts heal and gained %i strength points\n", enemy_name,
+          print_message(
+              "The %s casts heal and gained %i strength points\n", lowercase_enemy_name,
               temp);
           break;
         }
@@ -463,8 +463,8 @@ void fight_monster(Player *player, GameState *game) {
               temp);
           break;
         default:
-          print_message_formatted(
-              "THE %s CASTS HASTE AND GAINED %i DEXTERITY POINTS\n", enemy_name,
+          print_message(
+              "The %s casts haste and gains %d dexterity points\n", lowercase_enemy_name,
               temp);
           break;
         }
@@ -480,9 +480,9 @@ void fight_monster(Player *player, GameState *game) {
                         temp);
           break;
         default:
-          print_message_formatted(
-              "THE %s CASTS BRIGHT AND GAINED %i INTELLIGENCE POINTS\n",
-              enemy_name, temp);
+          print_message(
+              "The %s casts bright and gained %d intelligence points\n",
+              lowercase_enemy_name, temp);
           break;
         }
 
@@ -494,7 +494,7 @@ void fight_monster(Player *player, GameState *game) {
           print_message("The mimic secretes a magical dampening substgance; ");
           break;
         default:
-          print_message_formatted("THE %s CASTS SILENCE; ", enemy_name);
+          print_message("The %s cast silence; ", lowercase_enemy_name);
           break;
         }
 
@@ -532,7 +532,7 @@ void fight_monster(Player *player, GameState *game) {
           print_message("The Mimic sprays digestive enzymes at you!\n");
           break;
         default:
-          print_message_formatted("THE %s CASTS WEAKNESS!\n", enemy_name);
+          print_message("The %s casts weakness!\n", lowercase_enemy_name);
           break;
         }
 
@@ -590,7 +590,7 @@ void fight_monster(Player *player, GameState *game) {
           print_message("The mimic exudes a sticky substance!\n");
           break;
         default:
-          print_message_formatted("The %s casts ", enemy_name);
+          print_message("The %s casts ", lowercase_enemy_name);
           print_message("Clumsy\n");
           break;
         }
@@ -648,9 +648,9 @@ void fight_monster(Player *player, GameState *game) {
           print_message("The mimic rapidly shifts between confusing forms!\n");
           break;
         default:
-          print_message_formatted(
+          print_message(
               "The %s casts Mind Fog, attemping to cloud your thoughts!\n",
-              enemy_name);
+              lowercase_enemy_name);
           break;
         }
 
@@ -721,7 +721,7 @@ void fight_monster(Player *player, GameState *game) {
           break;
         default:
           print_message("The %s casts a veil of darkness upon you!\n",
-                        enemy_name);
+                        lowercase_enemy_name);
           break;
         }
 
@@ -794,7 +794,7 @@ void fight_monster(Player *player, GameState *game) {
           break;
 
         default:
-          print_message("The %s conjures a blazing firebolt!\n", enemy_name);
+          print_message("The %s conjures a blazing firebolt!\n", lowercase_enemy_name);
           break;
         }
 
@@ -821,7 +821,7 @@ void fight_monster(Player *player, GameState *game) {
             print_message("Sensing the firebolt, you quickly dodge it.\n");
             break;
           default:
-            print_message("You nimbly avoid the %ss firebolt!\n", enemy_name);
+            print_message("You nimbly avoid the %ss firebolt!\n", lowercase_enemy_name);
             break;
           }
         } else {
@@ -956,24 +956,24 @@ void fight_monster(Player *player, GameState *game) {
         return;
       }
     } else {
-      print_message_formatted("THE %s ATTACKS\n", enemy_name);
+      print_message("The %s attacks\n", lowercase_enemy_name);
       print_message("\nWhat luck, he missed you!\n");
     }
     // Catch all for enemy deaths for one offs
     if (enemy_intelligence <= 0) {
-      print_message_formatted("The %s", enemy_name);
+      print_message("The %s", lowercase_enemy_name);
       print_message(
           " collapses, succumbing to its own lack of intelligence.\n");
       return;
     }
     if (enemy_strength <= 0) {
-      print_message("The %s", enemy_name);
+      print_message("The %s", lowercase_enemy_name);
       print_message(" has succumbed to its own weakness and perishes.\n");
 
       return;
     }
     if (enemy_dexterity <= 0) {
-      print_message_formatted("The %s", enemy_name);
+      print_message("The %s", lowercase_enemy_name);
       print_message(
           " falters and collapses, its lack of dexterity its undoing.\n");
 
@@ -984,12 +984,16 @@ void fight_monster(Player *player, GameState *game) {
 
 void handle_combat_victory(Player *player, GameState *game, int is_vendor,
                            const char *enemy_name) {
-  print_message_formatted("\n%s LIES DEAD AT YOUR FEET!\n", enemy_name);
+  char lowercase_enemy_name[100];
+  to_lowercase(lowercase_enemy_name, enemy_name);
+
+
+  print_message("\nThe %s lies dead at your feet!\n", lowercase_enemy_name);
   int room_content =
       get_room_content(game, player->x, player->y, player->level);
 
   if (random_number(5) == 1) { // 20% chance of eating
-    print_message_formatted("\nYOU SPEND AN HOUR EATING %s%s.\n", enemy_name,
+    print_message("\nYou spend an hour eating %s%s.\n", lowercase_enemy_name,
                             get_random_body_part());
   }
 
@@ -1063,8 +1067,8 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor,
   }
 
   if ((random_number(20) == 1 || room_content == DRAGON) && !is_vendor) {
-    print_message_formatted(
-        "\nThe %s was also hoarding a lamp.  It is now yours.\n", enemy_name);
+    print_message(
+        "\nThe %s was also hoarding a lamp.  It is now yours.\n", lowercase_enemy_name);
     player->lamp_flag = 1;
   }
 
@@ -1079,26 +1083,26 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor,
         get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
   } else {
     if (random_number(8) == 1) {
-      print_message_formatted("The %s was also hoarding a strength potion.\n",
-                              enemy_name);
+      print_message("The %s was also hoarding a strength potion.\n",
+                              lowercase_enemy_name);
       player->strength =
           get_minimum(player->strength + random_number(6), MAX_STRENGTH);
     }
     if (random_number(8) == 1) {
-      print_message_formatted(
-          "The %s was also hoarding a intelligence potion.\n", enemy_name);
+      print_message(
+          "The %s was also hoarding a intelligence potion.\n", lowercase_enemy_name);
       player->intelligence = get_minimum(
           player->intelligence + random_number(6), MAX_INTELLIGENCE);
     }
     if (random_number(8) == 1) {
-      print_message_formatted("The %s was also hoarding a dexterity potion.\n",
-                              enemy_name);
+      print_message("The %s was also hoarding a dexterity potion.\n",
+                              lowercase_enemy_name);
       player->dexterity =
           get_minimum(player->dexterity + random_number(6), MAX_DEXTERITY);
     }
   }
   if (should_drop_weapon(room_content)) {
-    print_message_formatted("In the %s's den, you find ", enemy_name);
+    print_message("In the %s's den, you find ", lowercase_enemy_name);
 
     switch (get_monster_weapon_drop(room_content)) {
     case EXCALIBUR:
@@ -1139,7 +1143,7 @@ void handle_combat_victory(Player *player, GameState *game, int is_vendor,
     }
   }
   if (should_drop_armor(room_content)) {
-    print_message_formatted("In the %s's den, you find ", enemy_name);
+    print_message("In the %s's den, you find ", lowercase_enemy_name);
     player->armor_points = MAX_ARMOR_POINTS;
 
     switch (get_monster_armor_drop(room_content)) {
@@ -1216,6 +1220,10 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength,
                  int *enemy_intelligence, int *enemy_dexterity,
                  const char *enemy_name) {
   int damage;
+  char lowercase_enemy_name[100];
+  to_lowercase(lowercase_enemy_name, enemy_name);
+
+
   print_message("\nWhich spell\n");
   if (player->intelligence >= 14) {
     print_message("    (W)EB - Casts a magical web that prevents a monster "
@@ -1262,12 +1270,12 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength,
           return 1;
         }
         player->web_count = random_number(9); // Set web count to 1-9 turns
-        print_message_formatted(
-            "\nTHE %s IS STUCK AND CAN'T ATTACK FOR %d TURNS!\n", enemy_name,
+        print_message(
+            "\nThe %s is stuck and can't attack for %d turns (unless it breaks free)!\n", lowercase_enemy_name,
             player->web_count);
         return 0;
       } else {
-        print_message("WEB . . . INVALID CHOICE\n");
+        print_message("Web . . . Invalid choice\n");
       }
       break;
     case 'F':
@@ -1639,11 +1647,11 @@ int cast_bright_spell(Player *player) {
     player->intelligence += bright_amount;
     if (player->intelligence >= MAX_INTELLIGENCE) {
       player->intelligence = MAX_INTELLIGENCE;
-      print_message_formatted(
+      print_message(
           "Your intelligence temporarily increased to %d points.\n\n",
           MAX_INTELLIGENCE);
     } else {
-      print_message_formatted(
+      print_message(
           "Your intelligence temporarily increased by %d points.\n\n",
           bright_amount);
     }
@@ -1660,10 +1668,10 @@ int cast_haste_spell(Player *player) {
     }
     player->dexterity += haste_amount;
     if (player->dexterity >= MAX_DEXTERITY) {
-      print_message_formatted("Your dexterity temporarily increasd to %d.\n\n",
+      print_message("Your dexterity temporarily increasd to %d.\n\n",
                               MAX_DEXTERITY);
     } else {
-      print_message_formatted(
+      print_message(
           "Your dexterity temporarily increased by %d points.\n\n",
           haste_amount);
     }
@@ -2233,27 +2241,27 @@ void chimera_attack(Player *player, GameState *game, int enemy_strength,
         damage = 0;
       }
 
-      print_message_formatted("Your armor absorbs %d damage!\n",
+      print_message("Your armor absorbs %d damage!\n",
                               armor_protection);
 
       if (player->armor_points <= 0) {
         player->armor_points = 0;
         player->armor_type = 0;
-        print_message_formatted("YOUR ARMOR HAS BEEN TORN APART!\n");
+        print_message("Your armor has been torn apart!\n");
       }
     }
 
     if (damage <= 0) {
-      print_message_formatted("Your defenses absorbed the attack!\n");
+      print_message("Your defenses absorbed the attack!\n");
       return;
     }
 
     player->strength -= damage;
-    print_message_formatted("The lion's bite deals %d damage!\n", damage);
+    print_message("The lion's bite deals %d damage!\n", damage);
     break;
 
   case 2: // Dragon/Goat head - Fire breath
-    print_message_formatted("\nThe Chimera's dragon head breathes fire!\n");
+    print_message("\nThe Chimera's dragon head breathes fire!\n");
 
     hit_chance = 50;
     hit_chance += (enemy_dexterity - 10) * 2;
@@ -2267,7 +2275,7 @@ void chimera_attack(Player *player, GameState *game, int enemy_strength,
       hit_chance = 85;
 
     if (random_number(100) > hit_chance) {
-      print_message_formatted("You dodge the gout of flame!\n");
+      print_message("You dodge the gout of flame!\n");
       return;
     }
 
@@ -2288,27 +2296,27 @@ void chimera_attack(Player *player, GameState *game, int enemy_strength,
         damage = 0;
       }
 
-      print_message_formatted("Your armor partially protects against the "
+      print_message("Your armor partially protects against the "
                               "flames but takes extra damage!\n");
 
       if (player->armor_points <= 0) {
         player->armor_points = 0;
         player->armor_type = 0;
-        print_message_formatted("YOUR ARMOR HAS BEEN MELTED!\n");
+        print_message("Your armor has been melted!\n");
       }
     }
 
     if (damage <= 0) {
-      print_message_formatted("Your defenses absorbed the flames!\n");
+      print_message("Your defenses absorbed the flames!\n");
       return;
     }
 
     player->strength -= damage;
-    print_message_formatted("The flames deal %d damage!\n", damage);
+    print_message("The flames deal %d damage!\n", damage);
     break;
 
   case 3: // Snake head - Poison bite
-    print_message_formatted(
+    print_message(
         "\nThe Chimera's serpent head strikes with venomous fangs!\n");
 
     hit_chance = 50;
@@ -2322,7 +2330,7 @@ void chimera_attack(Player *player, GameState *game, int enemy_strength,
       hit_chance = 90; // Snake head more accurate
 
     if (random_number(100) > hit_chance) {
-      print_message_formatted("You avoid the serpent's strike!\n");
+      print_message("You avoid the serpent's strike!\n");
       return;
     }
 
@@ -2340,14 +2348,14 @@ void chimera_attack(Player *player, GameState *game, int enemy_strength,
         damage = 0;
       }
 
-      print_message_formatted("Your armor absorbs %d damage!\n",
+      print_message("Your armor absorbs %d damage!\n",
                               armor_protection);
     }
 
     // Poison effect occurs even if initial damage was blocked
     if (random_number(4) != 1) {            // 75% chance of poison
       int poison_damage = random_number(3); // 1-3 additional damage
-      print_message_formatted(
+      print_message(
           "The venom burns through your veins for %d additional damage!\n",
           poison_damage);
       damage += poison_damage;
@@ -3100,6 +3108,8 @@ int can_escape(Player *player, int is_vendor, const char *enemy_name) {
   if (is_vendor) {
     return 0;
   }
+  char lowercase_enemy_name[100];
+  to_lowercase(lowercase_enemy_name, enemy_name);
 
   // Dexterity over 18 isn't used for escaping.
   switch (player->race) {
