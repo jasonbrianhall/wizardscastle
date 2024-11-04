@@ -228,7 +228,7 @@ int get_user_input_number() {
     if (sscanf(input, "%d", &number) == 1) {
       return number;
     } else {
-      print_message_formatted(invalid_message);
+      print_message(invalid_message);
     }
   }
 }

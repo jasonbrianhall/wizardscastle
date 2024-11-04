@@ -431,7 +431,7 @@ void use_flare(Player *player, GameState *game) {
 void open_chest(Player *player, GameState *game) {
   print_message("\nYou open the chest and ");
 
-  int event = random_number(6), damage, gold, flares;
+  int event = random_number(7), damage, gold, flares;
   switch (event) {
   case 1:
     print_message("Kaboom! It explodes!!\n");
@@ -539,6 +539,27 @@ void open_chest(Player *player, GameState *game) {
     player->flares += flares;
     set_room_content(game, player->x, player->y, player->level, EMPTY_ROOM);
     break;
+  case 7:
+      // 1 in 7 chance of finding a book
+      int book_type = random_number(3);
+      switch(book_type) {
+        case 1:
+            print_message("You find a dusty book of ancient lore. Reading it increases your intelligence by 1!\n");
+            player->intelligence = get_minimum(player->intelligence + 1, MAX_INTELLIGENCE);
+            break;
+        case 2:
+            print_message("You find a strange book. As you pick it up, it magically sticks to your hand!\n");
+            player->stickybook_flag = 1;
+            break;
+        case 3:
+            print_message("You find a sinister-looking book. Reading it makes your head spin!\n");
+            if(player->intelligence>1)
+            {
+                 player->intelligence--;
+            }
+            break;
+      break;
+    }
   }
 }
 void drink_from_pool(Player *player, GameState *game) {
