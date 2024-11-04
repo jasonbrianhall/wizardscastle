@@ -254,14 +254,13 @@ void fight_monster(Player *player, GameState *game) {
         }
         continue;
       case 'T':
-        if (player->race == HOBBIT) {
+        if (player->race == HOBBIT  && player->stickybook_flag==0) {
           chance = player->blindness_flag == 1 ? 9 : 6;
           if (random_number(chance) == 1 || random_number(chance) == 1 ||
               random_number(24 - get_minimum(23, player->dexterity)) ==
                   1) { // Two 20% chances plus dexterity-based chance
             temp = random_number(3); // 1-3 damage
-            print_message_formatted(
-                "You throw a stone and hit the enemy for %d damage!\n", temp);
+            print_message("You throw a stone and hit the enemy for %d damage!\n", temp);
             enemy_strength -= temp;
             if (enemy_strength <= 0) {
               handle_combat_victory(player, game, is_vendor, enemy_name);
@@ -271,7 +270,14 @@ void fight_monster(Player *player, GameState *game) {
             print_message("Your thrown stone misses the enemy.\n");
           }
         } else {
-          print_message("Do you look like a hobbit?  You can't cast stones.\n");
+          if(player->race == HOBBIT)
+          {
+              print_message("You have a book stuck to your hand.  How are you going to throw stones?\n");
+          }
+          else
+          {
+              print_message("Do you look like a hobbit?  You can't cast stones.\n");
+          }
         }
         continue;
       case 'L': // Rally
@@ -2953,6 +2959,7 @@ bool should_drop_weapon(int monster_type) {
     return random_number(4) <= 1; // 25% chance
 
   case BALROG:
+  case MIMIC:
     return random_number(5) <= 1; // 20% chance
 
   case MINOTAUR:
@@ -2984,8 +2991,24 @@ int get_monster_armor_drop(int monster_type) {
   case DRAGON:
     // Dragons: 60% plate, 40% stone when they do drop
     return (random_number(10) <= 6) ? PLATE : STONE;
-
-  case BALROG:
+  case MIMIC:
+    // Mimics: Mix of armor when they solidify after death
+    switch (random_number(15)) {
+    case 1:
+    case 2:
+        return PLATE;  // ~13% PLATE
+    case 3:
+    case 4:
+    case 5:
+        return CHAINMAIL;   // ~20% CHAINMAIL
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+        return LEATHER; // ~27% LEATHER
+    default:
+        return NOTHING; // ~40% nothing
+    }  case BALROG:
     // Balrog: 80% plate, 20% stone when they do drop
     return (random_number(10) <= 8) ? PLATE : STONE;
 
@@ -2998,8 +3021,7 @@ int get_monster_armor_drop(int monster_type) {
   case TROLL:
   case OGRE:
   case BEAR:
-    // Level 5-7 monsters: 20% plate, 40% chainmail, 40% leather
-    switch (random_number(10)) {
+    switch (random_number(16)) {
     case 1:
     case 2:
       return PLATE;
@@ -3008,8 +3030,13 @@ int get_monster_armor_drop(int monster_type) {
     case 5:
     case 6:
       return CHAINMAIL;
-    default:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
       return LEATHER;
+    default:
+      return NOTHING;
     }
 
   case KOBOLD:
@@ -3019,7 +3046,7 @@ int get_monster_armor_drop(int monster_type) {
     return (random_number(10) <= 7) ? LEATHER : CHAINMAIL;
 
   default:
-    return 0;
+    return NOTHING;
   }
 }
 
@@ -3034,7 +3061,24 @@ int get_monster_weapon_drop(int monster_type) {
   case BALROG:
     // Balrog: 90% sword, 10% excalibur when they do drop
     return (random_number(10) <= 9) ? SWORD : EXCALIBUR;
-
+  case MIMIC:
+    // Mimics: Mix of armor types since they can absorb and form materials
+    switch (random_number(15)) {
+    case 1:
+    case 2:
+      return SWORD;    // 20% plate
+    case 3:
+    case 4:
+    case 5:
+      return MACE; // 30% chainmail
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+       return DAGGER;
+    default:
+      return NOTHING;   // 50% leather
+    }
   case MINOTAUR:
   case CHIMERA:
   case GARGOYLE:
@@ -3044,7 +3088,7 @@ int get_monster_weapon_drop(int monster_type) {
   case TROLL:
   case OGRE:
     // Level 5-7 monsters: 20% sword, 50% mace, 30% dagger
-    switch (random_number(10)) {
+    switch (random_number(18)) {
     case 1:
     case 2:
       return SWORD;
@@ -3054,8 +3098,16 @@ int get_monster_weapon_drop(int monster_type) {
     case 6:
     case 7:
       return MACE;
-    default:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
       return DAGGER;
+    default:
+      return NOTHING;
     }
 
   case KOBOLD:
@@ -3065,7 +3117,7 @@ int get_monster_weapon_drop(int monster_type) {
     return (random_number(10) <= 6) ? DAGGER : MACE;
 
   default:
-    return 0;
+    return NOTHING;
   }
 }
 
