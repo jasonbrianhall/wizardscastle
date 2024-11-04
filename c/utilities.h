@@ -41,7 +41,7 @@ void capitalize_sentences(char *str);
 
 int is_vowel(char c);
 void to_lowercase(char *dest, const char *src);
-
+void capitalize_first(char *str);
 
 #define WRAP_COORDINATE(coord) (((coord) - 1 + CASTLE_SIZE) % CASTLE_SIZE + 1)
 

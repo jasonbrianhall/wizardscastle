@@ -9,6 +9,19 @@
 #include <string.h>
 #include <time.h>
 
+void capitalize_first(char *str) {
+    if (!str || !*str) return;
+    
+    // Capitalize first letter
+    str[0] = toupper(str[0]);
+    
+    // Make rest lowercase
+    for (int i = 1; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+
 const char *get_random_body_part(void) {
   const char *body_parts[] = {" SANDWICH", " STEW",  " SOUP", " BURGER",
                               " ROAST",    " FILET", " TACO", " PIE"};

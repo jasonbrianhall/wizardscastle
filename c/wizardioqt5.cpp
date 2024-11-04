@@ -108,6 +108,7 @@ public:
     int treasurecount = 0;
     int red, green, blue, monster_level;
     char color_str[12];
+    const char *species[] = {"Elf", "Human", "Dwarf", "Hobbit", "Drow"};
 
     char lowercase_species[100]; // Adjust size based on max monster name length
     to_lowercase(lowercase_species, get_race_name(player->race));
@@ -438,7 +439,8 @@ public:
 
     // Print player race and attributes
     print_message_status("Race: ");
-    print_message_status(get_race_name(player->race));
+    print_message_status(species[player->race]);
+
     print_message_status("   Sex: ");
     if (player->sex == FEMALE) {
       print_message_status("Female");
