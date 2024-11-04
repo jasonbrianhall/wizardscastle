@@ -730,7 +730,7 @@ void gaze_into_orb(Player *player, GameState *game) {
       y = random_number(CASTLE_SIZE);
       z = random_number(CASTLE_SIZE);
     }
-    print_message("***THE ORB OF ZOT*** at (%d,%d) ", x, y);
+    print_message("***The Orb of Zot*** at (%d,%d) ", x, y);
     print_message("Level %d!\n", z);
   } break;
   case 6:
