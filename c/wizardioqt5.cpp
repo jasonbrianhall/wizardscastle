@@ -104,7 +104,9 @@ public:
     int red, green, blue, monster_level;
     char color_str[12];
 
-    print_message2("");
+    char lowercase_species[100]; // Adjust size based on max monster name length
+    to_lowercase(lowercase_species, get_race_name(player->race));
+
 
     if (currentRoom >= ROOM_START && currentRoom <= ROOM_END) {
       switch (currentRoom) {
@@ -427,8 +429,7 @@ public:
       print_message2("\n=== PLAYER STATUS ===\n");
 
     } else {
-      print_message2_formatted("\nBlind %s can't see maps.\n\n",
-                               get_race_name(player->race));
+      print_message2("\nBlind %s can't see maps.\n\n", lowercase_species);
     }
 
     // Print player race and attributes
