@@ -89,7 +89,7 @@ public:
     mapUpdateTimer = new QTimer(this);
     connect(mapUpdateTimer, &QTimer::timeout, this,
             &WizardsCastleWindow::updateMap);
-    mapUpdateTimer->start(66); // Update 15 times per second
+    mapUpdateTimer->start(200); // Update every 1/5 second
     outputText->installEventFilter(this);
     setColorScheme("Default");
 
@@ -424,7 +424,7 @@ public:
       print_message2("CRYSTAL  = Crystal Orb     BOOK     = Magic Book\n");
       print_message2("MONSTER  = Monster Name    VENDOR   = Vendor\n");
       print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
-      print_message2("STAIRS UP= Stairs U        STAIRS D = Stairs Down\n");
+      print_message2("STAIRS U = Stairs Up        STAIRS D = Stairs Down\n");
 
       print_message2("\n=== PLAYER STATUS ===\n");
 
@@ -636,6 +636,7 @@ signals:
   void programExit();
   void gameStateChanged();
   void newGameRequested();
+  void inputReady();
 
 protected:
   void closeEvent(QCloseEvent *event) override {
@@ -1095,34 +1096,32 @@ private slots:
 
   void quit() { close(); }
 
-  void processInput() {
+void processInput() {
     QString input = inputLine->text().toUpper();
-
-    // Add command history functionality
-    if (!input.isEmpty()) {
-      commandHistory.append(input);
-      // Limit history size to prevent memory issues
-      while (commandHistory.size() > 100) {
-        commandHistory.removeFirst();
-      }
-    }
-
     inputLine->clear();
-    currentHistoryIndex = -1; // Reset history index after entering command
+    currentHistoryIndex = -1;
 
-    // Your existing input handling
-    if (waitingForSpecificInput) {
-      if (validInputs.find(input[0].toLatin1()) != std::string::npos) {
-        lastInput = input[0].toLatin1();
-        waitingForSpecificInput = false;
-      } else {
-        appendToOutput(QString("Please enter one of the following: %1\n")
-                           .arg(QString::fromStdString(validInputs)));
-      }
-    } else {
-      lastInput = input.toStdString();
+    if (!input.isEmpty()) {
+        commandHistory.append(input);
+        while (commandHistory.size() > 100) {
+            commandHistory.removeFirst();
+        }
     }
-  }
+
+    if (waitingForSpecificInput) {
+        if (validInputs.find(input[0].toLatin1()) != std::string::npos) {
+            lastInput = input[0].toLatin1();
+            waitingForSpecificInput = false;
+            emit inputReady(); // Add signal to notify input is ready
+        } else {
+            appendToOutput(QString("Please enter one of the following: %1\n")
+                .arg(QString::fromStdString(validInputs)));
+        }
+    } else {
+        lastInput = input.toStdString();
+        emit inputReady(); // Add signal to notify input is ready
+    }
+}
 
   void increaseFontSize() {
     if (fontSize < 24) {
@@ -1412,167 +1411,150 @@ void initialize_qt(int argc, char *argv[]) {
   delete app;
 }
 
-const char *get_user_input_main() {
-  static std::string input;
-  static const char *dr_command = "DR";
-
-  while (true) {
+const char* get_user_input_main() {
+    static std::string input;
+    static const char* dr_command = "DR";
+    
     print_message("ENTER YOUR COMMAND: ");
-
     g_window->clearInput();
-    while (g_window->inputIsEmpty()) {
-      QCoreApplication::processEvents();
-    }
-
+    
+    // Create an event loop
+    QEventLoop loop;
+    QObject::connect(g_window, &WizardsCastleWindow::inputReady, &loop, &QEventLoop::quit);
+    loop.exec();
+    
     input = g_window->getLastInput();
-    // Remove newline character if present
     input.erase(std::remove(input.begin(), input.end(), '\n'), input.end());
-
-    // Convert input to uppercase
     std::transform(input.begin(), input.end(), input.begin(), ::toupper);
-
-    // Check if input is empty
+    
     if (input.empty()) {
-      print_message("\n");
-      return input.c_str(); // Return empty string
+        print_message("\n");
+        return input.c_str();
     }
-
-    // Get the first character
+    
     char firstChar = input[0];
-
-    // Validate commands
     if (firstChar == 'D' && input.length() > 1 && input[1] == 'R') {
-      print_message("DR\n", input[0]);
-      return dr_command; // Return "DR" for DRINK
+        print_message("DR\n");
+        return dr_command;
     } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
-      print_message("%c\n", firstChar);
-
-      return input.c_str(); // Return the single letter command
-
-    } else {
-      print_message("Invalid command. Type 'H' for help.\n");
+        print_message("%c\n", firstChar);
+        return input.c_str();
     }
-  }
+    
+    print_message("Invalid command. Type 'H' for help.\n");
+    return get_user_input_main();
 }
 
 int get_user_input_number() {
-  int data;
-  while (true) {
-    g_window->clearInput();
     print_message("Enter a number: ");
-
-    while (g_window->inputIsEmpty()) {
-      QCoreApplication::processEvents();
+    g_window->clearInput();
+    
+    while (true) {
+        // Create an event loop for waiting for input
+        QEventLoop loop;
+        QObject::connect(g_window, &WizardsCastleWindow::inputReady, &loop, &QEventLoop::quit);
+        loop.exec();
+        
+        std::string input = g_window->getLastInput();
+        
+        try {
+            int data = std::stoi(input);
+            print_message("%d\n", data);
+            return data;
+        } catch (const std::invalid_argument&) {
+            print_message("Invalid input. Please enter a valid integer.\n");
+            print_message("Enter a number: ");
+            g_window->clearInput();
+        } catch (const std::out_of_range&) {
+            print_message("Input out of range. Please enter a smaller number.\n");
+            print_message("Enter a number: ");
+            g_window->clearInput();
+        }
     }
-
-    std::string input = g_window->getLastInput();
-
-    try {
-      data = std::stoi(input);
-      print_message("%d\n",
-                    data); // Assuming print_message is similar to printf
-      return data;
-    } catch (const std::invalid_argument &) {
-      print_message("Invalid input. Please enter a valid integer.\n");
-    } catch (const std::out_of_range &) {
-      print_message("Input out of range. Please enter a smaller number.\n");
-    }
-  }
 }
 
 char get_user_input() {
-  while (true) {
     print_message("Enter your command: ");
-
     g_window->clearInput();
-    while (g_window->inputIsEmpty()) {
-      QCoreApplication::processEvents();
-    }
-
+    
+    QEventLoop loop;
+    QObject::connect(g_window, &WizardsCastleWindow::inputReady, &loop, &QEventLoop::quit);
+    loop.exec();
+    
     std::string input = g_window->getLastInput();
-
-    // Convert input to uppercase
     std::transform(input.begin(), input.end(), input.begin(), ::toupper);
-
-    // Check if input is empty
+    
     if (input.empty()) {
-      print_message("Please enter a command.\n");
-      continue;
+        print_message("Please enter a command.\n");
+        return get_user_input();
     }
-
-    // Get the first character of the input
+    
     char command = input[0];
     print_message("%c\n", command);
-    // Check if it's a valid command
+    
     if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
-      return command;
-    } else {
-      print_message("Invalid command. Type 'H' for help.\n");
+        return command;
     }
-  }
+    
+    print_message("Invalid command. Type 'H' for help.\n");
+    return get_user_input();
 }
 
 char get_user_input_custom_prompt(char *prompt) {
-  while (true) {
-    print_message("%s", prompt);
-
-    g_window->clearInput();
-    while (g_window->inputIsEmpty()) {
-      QCoreApplication::processEvents();
+    while (true) {
+        print_message("%s", prompt);
+        g_window->clearInput();
+        
+        // Create an event loop to wait for input
+        QEventLoop loop;
+        QObject::connect(g_window, &WizardsCastleWindow::inputReady, &loop, &QEventLoop::quit);
+        loop.exec();
+        
+        std::string input = g_window->getLastInput();
+        std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        
+        if (input.empty()) {
+            print_message("Please enter a command.\n");
+            continue;
+        }
+        
+        char command = input[0];
+        print_message("%c\n", command);
+        
+        if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
+            return command;
+        }
+        
+        print_message("Invalid command. Type 'H' for help.\n");
     }
-
-    std::string input = g_window->getLastInput();
-
-    // Convert input to uppercase
-    std::transform(input.begin(), input.end(), input.begin(), ::toupper);
-
-    // Check if input is empty
-    if (input.empty()) {
-      print_message("Please enter a command.\n");
-      continue;
-    }
-
-    // Get the first character of the input
-    char command = input[0];
-    print_message("%c\n", input[0]);
-
-    // Check if it's a valid command
-    if (strchr("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", command) != NULL) {
-      return command;
-    } else {
-      print_message("Invalid command. Type 'H' for help.\n");
-    }
-  }
 }
 
 char get_user_input_yn() {
-  while (true) {
-    g_window->clearInput();
-    while (g_window->inputIsEmpty()) {
-      QCoreApplication::processEvents();
+    while (true) {
+        g_window->clearInput();
+        
+        // Create an event loop to wait for input
+        QEventLoop loop;
+        QObject::connect(g_window, &WizardsCastleWindow::inputReady, &loop, &QEventLoop::quit);
+        loop.exec();
+        
+        std::string input = g_window->getLastInput();
+        std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+        
+        if (input.empty()) {
+            print_message("Please Enter Y or N.\n");
+            continue;
+        }
+        
+        char command = input[0];
+        print_message("%c\n", command);
+        
+        if (strchr("YN", command) != NULL) {
+            return command;
+        }
+        
+        print_message("Invalid command. Please enter Y or N.\n");
     }
-
-    std::string input = g_window->getLastInput();
-
-    // Convert input to uppercase
-    std::transform(input.begin(), input.end(), input.begin(), ::toupper);
-
-    // Check if input is empty
-    if (input.empty()) {
-      print_message("Please Enter Y or N.\n");
-      continue;
-    }
-
-    // Get the first character of the input
-    char command = input[0];
-    print_message("%c\n", input[0]);
-    // Check if it's a valid command
-    if (strchr("YN", command) != NULL) {
-      return command;
-    } else {
-      print_message("Invalid command. Please enter Y or N.\n");
-    }
-  }
 }
 
 void print_message(const char *format, ...) {
