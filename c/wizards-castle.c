@@ -53,6 +53,7 @@ bool main_game_loop(Player *player, GameState *game) {
 
   while (!game_over) {
     game->turn_count++;
+    mark_room_discovered(game, player->x, player->y, player->level);
 
     // Handle curses
     if (player->runestaff_flag == 0 && player->orb_flag == 0) {
@@ -79,19 +80,22 @@ bool main_game_loop(Player *player, GameState *game) {
       // Forgetfulness curse (similar to lines 1975-2015 in BASIC)
       if (!game->treasure[GREEN_GEM_INDEX] &&
           random_number(100) <= 5) { // 5% chance if no Green Gem
-        int old_x = player->x, old_y = player->y, old_z = player->level;
+        //int old_x = player->x, old_y = player->y, old_z = player->level;
         player->x = random_number(CASTLE_SIZE);
         player->y = random_number(CASTLE_SIZE);
         player->level = random_number(CASTLE_SIZE);
         print_message_formatted("\nYOU SUDDENLY FORGET WHERE YOU ARE!\n");
         print_message_formatted("YOU FIND YOURSELF AT (%d,%d) ON LEVEL %d.\n",
                                 player->x, player->y, player->level);
-
+        mark_room_discovered(game, player->x, player->y, player->level);
+        //index = CALCULATE_ROOM_INDEX(player->level, player->x, player->y);
+        //game->discovered_rooms[index] = 1;
+       
         // If player was in an empty room, mark old room as unexplored
-        if (get_room_content(game, old_x, old_y, old_z) == EMPTY_ROOM) {
+        /*if (get_room_content(game, old_x, old_y, old_z) == EMPTY_ROOM) {
           int index = CALCULATE_ROOM_INDEX(old_z, old_x, old_y);
           game->discovered_rooms[index] = 0;
-        }
+        }*/
       }
     }
 
