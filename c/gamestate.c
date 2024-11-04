@@ -28,64 +28,69 @@ int check_game_over(Player *player, GameState *game) {
 }
 
 void end_game(Player *player, GameState *game) {
-  printStars();
+    printStars();
+    
+    const char *race_names[] = {
+        "hobbit", "elf", "human", "dwarf", "drow"
+    };
+    const char *armor_types[] = {
+        "No Armor", "Leather", "Chainmail", "Plate", "Stone"
+    };
+    const char *weapon_types[] = {
+        "No Weapon", "Dagger", "Mace", "Sword", "Excalibur"
+    };
 
-  const char *race_names[] = {"HOBBIT", "ELF", "HUMAN", "DWARF", "DROW"};
-  const char *armor_types[] = {"NO ARMOR", "LEATHER", "CHAINMAIL", "PLATE",
-                               "STONE"};
-  const char *weapon_types[] = {"NO WEAPON", "DAGGER", "MACE", "SWORD",
-                                "EXCALIBUR"};
-
-  if (player->strength <= 0 || player->intelligence <= 0 ||
-      player->dexterity <= 0) {
-    print_message_formatted("A NOBLE EFFORT, OH FORMERLY LIVING %s!\n\n",
-                            race_names[player->race - 1]);
-
-    if (player->strength <= 0)
-      print_message_formatted("YOU DIED DUE TO LACK OF STRENGTH.\n\n");
-    else if (player->intelligence <= 0)
-      print_message_formatted("YOU DIED DUE TO LACK OF INTELLIGENCE.\n\n");
-    else
-      print_message_formatted("YOU DIED DUE TO LACK OF DEXTERITY.\n\n");
-
-    print_message_formatted("AT THE TIME YOU DIED, YOU HAD :\n");
-  } else if (game->victory) {
-    print_message_formatted("CONGRATULATIONS!\n\n");
-    print_message_formatted("YOU LEFT THE CASTLE WITH THE ORB OF ZOT.\n\n");
-    print_message_formatted("AN INCREDIBLY GLORIOUS VICTORY!!\n\n");
-    print_message_formatted("IN ADDITION, YOU GOT OUT WITH THE FOLLOWING :\n");
-  } else {
-    print_message_formatted("YOU LEFT THE CASTLE WITHOUT THE ORB OF ZOT.\n\n");
-    print_message_formatted("A LESS THAN AWE-INSPIRING DEFEAT.\n\n");
-    print_message_formatted("WHEN YOU LEFT THE CASTLE, YOU HAD :\n");
-  }
-
-  // List treasures
-  for (int i = 0; i < TREASURE_COUNT; i++) {
-    if (game->treasure[i]) {
-      print_message_formatted("%s\n", get_treasure_name(i));
+    if (player->strength <= 0 || player->intelligence <= 0 || player->dexterity <= 0) {
+        print_message("A noble effort, oh formerly living %s!\n\n", race_names[player->race - 1]);
+        
+        if (player->strength <= 0) {
+            print_message("You died due to lack of strength.\n\n");
+        } else if (player->intelligence <= 0) {
+            print_message("You died due to lack of intelligence.\n\n");
+        } else {
+            print_message("You died due to lack of dexterity.\n\n");
+        }
+        print_message("At the time you died, you had:\n");
+    } else if (game->victory) {
+        print_message("Congratulations!\n\n");
+        print_message("You left the castle with the Orb of Zot.\n\n");
+        print_message("An incredibly glorious victory!!\n\n");
+        print_message("In addition, you got out with the following:\n");
+    } else {
+        print_message("You left the castle without the Orb of Zot.\n\n");
+        print_message("A less than awe-inspiring defeat.\n\n");
+        print_message("When you left the castle, you had:\n");
     }
-  }
 
-  // Print equipment
-  print_message_formatted("%s AND %s", weapon_types[player->weapon_type],
-                          armor_types[player->armor_type]);
-  if (player->lamp_flag)
-    print_message_formatted(" AND A LAMP");
-  print_message_formatted("\n");
+    // List treasures
+    for (int i = 0; i < TREASURE_COUNT; i++) {
+        if (game->treasure[i]) {
+            print_message_formatted("%s\n", get_treasure_name(i));
+        }
+    }
 
-  // Print flares and gold
-  print_message_formatted("YOU ALSO HAD %d FLARES AND %d GOLD PIECES\n",
-                          player->flares, player->gold);
+    // Print equipment
+    print_message("%s and %s", weapon_types[player->weapon_type], 
+                  armor_types[player->armor_type]);
+    
+    if (player->lamp_flag) {
+        print_message(" and a lamp");
+    }
+    print_message("\n");
 
-  // Print Runestaff status
-  if (player->runestaff_flag)
-    print_message_formatted("AND THE RUNESTAFF\n");
+    // Print flares and gold
+    print_message("You also had %d flares and %d gold pieces\n",
+                 player->flares, player->gold);
 
-  // Print turn count
-  print_message_formatted("\nAND IT TOOK YOU %d TURNS!\n", game->turn_count);
+    // Print Runestaff status
+    if (player->runestaff_flag) {
+        print_message("and the Runestaff\n");
+    }
 
-  printStars();
+    // Print turn count
+    print_message("\nand it took you %d turns!\n", game->turn_count);
+    
+    printStars();
 }
 
 // Map and room functions
