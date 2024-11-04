@@ -152,9 +152,7 @@ void allocate_attributes(Player *player) {
 
   // Allocate points to Strength
   while (other_points > 0) {
-    print_message("How many points do you wish to add to your strength (you have %d points)?\n\n"
-                            "STRENGTH (you have %d points)?\n\n",
-                            other_points);
+    print_message("How many points do you wish to add to your strength (you have %d points)?\n\n", other_points);
     points_to_add = get_user_input_number();
 
     if (points_to_add >= 0 && points_to_add <= other_points) {
