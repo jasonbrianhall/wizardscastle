@@ -287,7 +287,8 @@ void buy_equipment(Player *player) {
       break;
     case 'M':
       if (player->gold < 20) {
-        print_message("** Sorry %s, I'm afraid I don't give credit!!\n\n", player->sex == MALE ? "sir" : "ma'am");
+        print_message("** Sorry %s, I'm afraid I don't give credit!!\n\n",
+                      player->sex == MALE ? "sir" : "ma'am");
         continue;
       }
       player->weapon_type = MACE;
@@ -330,7 +331,8 @@ void buy_lamp_and_flares(Player *player) {
       if (user_input_yn == 'Y') {
         player->lamp_flag = 1;
         player->gold -= 20;
-        print_message("\nOk, lamp purchased. It's guaranteed to outlive you!\n");
+        print_message(
+            "\nOk, lamp purchased. It's guaranteed to outlive you!\n");
         break;
       } else if (user_input_yn == 'N') {
         break;
@@ -357,7 +359,7 @@ void buy_lamp_and_flares(Player *player) {
         return;
       } else if (flares_to_buy < 0) {
         print_message("** %s, PLEASE ENTER A POSITIVE NUMBER.\n",
-                                player->sex == MALE ? "Sir" : "Ma'am");
+                      player->sex == MALE ? "Sir" : "Ma'am");
       } else if (flares_to_buy > player->gold) {
         print_message(
             "** You can only afford %d. Please enter a lower number.\n",
@@ -365,13 +367,11 @@ void buy_lamp_and_flares(Player *player) {
       } else {
         player->flares += flares_to_buy;
         player->gold -= flares_to_buy;
-        print_message(
-            "\nOk, you now have %d flares and %d gold pieces left.\n",
-            player->flares, player->gold);
+        print_message("\nOk, you now have %d flares and %d gold pieces left.\n",
+                      player->flares, player->gold);
         return;
       }
-      print_message(
-          "How many flares do you want? (or enter 0 to buy none):  ");
+      print_message("How many flares do you want? (or enter 0 to buy none):  ");
     } while (1);
   }
 }

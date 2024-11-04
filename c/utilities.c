@@ -17,6 +17,20 @@ const char *get_random_body_part(void) {
   return body_parts[random_number(num_parts) - 1];
 }
 
+int is_vowel(char c) {
+  c = tolower(c); // Convert to lowercase for checking
+  return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+}
+
+void to_lowercase(char *dest, const char *src) {
+  int i = 0;
+  while (src[i]) {
+    dest[i] = tolower(src[i]);
+    i++;
+  }
+  dest[i] = '\0'; // Null terminate the string
+}
+
 const char *get_random_species(void) {
   const char *species[] = {"ELF", "HUMAN", "DWARF", "HOBBIT", "DROW"};
   int num_species = sizeof(species) / sizeof(species[0]);
@@ -46,11 +60,10 @@ void move_player(Player *player, GameState *game, char direction) {
       return;
     } else {
       print_message("You're at the entrance. Are you sure you want "
-                              "to leave without the Orb of Zot? (Y/N) ");
+                    "to leave without the Orb of Zot? (Y/N) ");
       char choice = get_user_input_yn();
       if (choice == 'Y') {
-        print_message(
-            "You leave the castle empty-handed. Game over!\n");
+        print_message("You leave the castle empty-handed. Game over!\n");
         // Set a flag or call a function to end the game
         game->game_over = 1;
         return;
@@ -94,11 +107,11 @@ void move_player(Player *player, GameState *game, char direction) {
   // Print movement message
   if (printstatusmessage == 1) {
     print_message("You move %s to (%d, %d) on level %d.\n",
-                            direction == 'N'   ? "North"
-                            : direction == 'S' ? "South"
-                            : direction == 'W' ? "West"
-                                               : "East",
-                            player->y, player->x, player->level);
+                  direction == 'N'   ? "North"
+                  : direction == 'S' ? "South"
+                  : direction == 'W' ? "West"
+                                     : "East",
+                  player->y, player->x, player->level);
   }
   // Check for special room events (like warp or sinkhole)
   int room_content =
@@ -116,8 +129,7 @@ void move_player(Player *player, GameState *game, char direction) {
     } else {
       player->level = 1;
     }
-    print_message(
-        "You've fallen through a sinkhole to the level below!\n");
+    print_message("You've fallen through a sinkhole to the level below!\n");
   }
 
   // Print the new room description
@@ -335,8 +347,7 @@ void use_lamp(Player *player, GameState *game) {
     print_message("You are blind, you can't use a lamp!\n");
     return;
   }
-  print_message(
-      "Which direction do you want to shine the lamp? (N/S/E/W) ");
+  print_message("Which direction do you want to shine the lamp? (N/S/E/W) ");
   char direction = get_user_input();
   int dx = 0, dy = 0;
 
@@ -429,8 +440,7 @@ void open_chest(Player *player, GameState *game) {
 
     if (player->dexterity > 8 + random_number(4) && random_number(4) != 1) {
       // Player might notice it's a mimic if they're dexterous
-      print_message(
-          "You jump back just in time as the mimic lunges!\n");
+      print_message("You jump back just in time as the mimic lunges!\n");
 
       // Move player in a random direction
       char directions[] = {'N', 'S', 'E', 'W'};
@@ -446,8 +456,7 @@ void open_chest(Player *player, GameState *game) {
         int armor_protection =
             player->armor_type +
             random_number(2); // Armor type plus small random bonus
-        print_message(
-            "Your armor absorbs some of the mimic's attack!\n");
+        print_message("Your armor absorbs some of the mimic's attack!\n");
 
         // Reduce damage based on armor
         damage -= armor_protection;
@@ -466,13 +475,13 @@ void open_chest(Player *player, GameState *game) {
               "Your armor has been destroyed by the mimic's powerful bite!\n");
         } else {
           print_message("Your armor took %d points of damage!\n",
-                                  armor_protection);
+                        armor_protection);
         }
       }
 
       if (damage > 0) {
-        print_message(
-            "The mimic's surprise attack hits you for %d damage!\n", damage);
+        print_message("The mimic's surprise attack hits you for %d damage!\n",
+                      damage);
         player->strength -= damage;
 
         if (player->strength <= 0) {
@@ -622,8 +631,8 @@ void teleport(Player *player, GameState *game) {
   player->y = new_x;
   player->level = new_level;
 
-  print_message("\nYou have teleported to (%d, %d) on level %d.\n",
-                          player->y, player->x, player->level);
+  print_message("\nYou have teleported to (%d, %d) on level %d.\n", player->y,
+                player->x, player->level);
 
   // Check if the player teleported to the Orb of Zot
   if (player->x == game->orb_location[0] &&
@@ -648,28 +657,30 @@ void gaze_into_orb(Player *player, GameState *game) {
 
   print_message("\nYou gaze into the crystal orb and see ");
 
-
   // Special rare effects (0.5% each)
   int rare_vision = random_number(1000);
-  switch(rare_vision) {
-    case 1:
-      print_message("\nthe orb suddenly flares with an ancient power. A great lidless eye wreathed in flame briefly fixes its gaze upon you before fading away...\n");
-      return;
-    case 2:
-      print_message("\na small figure with hairy feet sneaking past, clutching something precious...\n");
-      return;
-    case 3:
-      print_message("\an ancient scroll covered in angular black letters. The writing fills you with unease...\n");
-      return;
-    case 4:
-      print_message("\na grey-robed figure facing down a creature of shadow and flame upon a narrow bridge...\n");
-      return;
-    case 5:
-      print_message("\na golden ring spinning, falling into flames...\n");
-      return;
+  switch (rare_vision) {
+  case 1:
+    print_message("\nthe orb suddenly flares with an ancient power. A great "
+                  "lidless eye wreathed in flame briefly fixes its gaze upon "
+                  "you before fading away...\n");
+    return;
+  case 2:
+    print_message("\na small figure with hairy feet sneaking past, clutching "
+                  "something precious...\n");
+    return;
+  case 3:
+    print_message("\an ancient scroll covered in angular black letters. The "
+                  "writing fills you with unease...\n");
+    return;
+  case 4:
+    print_message("\na grey-robed figure facing down a creature of shadow and "
+                  "flame upon a narrow bridge...\n");
+    return;
+  case 5:
+    print_message("\na golden ring spinning, falling into flames...\n");
+    return;
   }
-
-
 
   int vision = random_number(6);
   switch (vision) {
@@ -681,16 +692,24 @@ void gaze_into_orb(Player *player, GameState *game) {
       game->game_over = 1;
     }
     break;
-  case 2:
-    print_message_formatted(
-        "yourself drinking from a pool and becoming a %s!\n",
-        get_monster_name(MONSTER_START + random_number(12) - 1));
+  case 2: {
+    const char *monster_name = get_monster_name(
+        MONSTER_START + random_number(MONSTER_END - MONSTER_START + 1) - 1);
+    char lowercase_name[100]; // Adjust size based on max monster name length
+    to_lowercase(lowercase_name, monster_name);
+    print_message("yourself drinking from a pool and becoming %s %s!\n",
+                  is_vowel(lowercase_name[0]) ? "an" : "a", lowercase_name);
     break;
-  case 3:
-    print_message_formatted(
-        "%s gazing back at you!\n",
-        get_monster_name(MONSTER_START + random_number(12) - 1));
+  }
+  case 3: {
+    const char *monster_name = get_monster_name(
+        MONSTER_START + random_number(MONSTER_END - MONSTER_START + 1) - 1);
+    char lowercase_name[100]; // Adjust size based on max monster name length
+    to_lowercase(lowercase_name, monster_name);
+    print_message("%s %s gazing back at you!\n",
+                  is_vowel(lowercase_name[0]) ? "an" : "a", lowercase_name);
     break;
+  }
   case 4: {
     int x = random_number(CASTLE_SIZE);
     int y = random_number(CASTLE_SIZE);
@@ -724,77 +743,88 @@ void open_book(Player *player, GameState *game) {
   int effect = random_number(7);
 
   print_message("You open the book and ");
-  if (player->blindness_flag)
-  {
-      print_message_formatted("Blind %s can't read books\n", get_race_name(player->race));
-      return;
+  if (player->blindness_flag) {
+    print_message_formatted("Blind %s can't read books\n",
+                            get_race_name(player->race));
+    return;
   }
 
   int rare_book = random_number(200);
   if (rare_book == 1) {
     int rare_effect = random_number(5);
     print_message("You open the book and discover ");
-    switch(rare_effect) {
-      case 1:
-        print_message("find an ancient red leather-bound book with strange runes. The pages detail the history of rings of power!  Your intelligence increases.\n");
-        player->intelligence += 5;  // Small bonus for ancient knowledge
-        break;
-      case 2:
-        print_message("find 'There and Back Again', a dusty manuscript written in a small, neat hand.  You read the entire manuscript and feel more determined to find the Orb of Zot.\n");
-        player->dexterity += 3;  // Hobbits are naturally dexterous
-        break;
-      case 3:
-        print_message("find a tome written in elegant elvish script, containing ancient songs of power.  You sing it and you feel stronger.\n");
-        player->strength += 3;  // Songs of power grant some strength
-        break;
-      case 4:
-        print_message("find a book of ancient dwarvish lore, detailing the secrets of the great halls.  The knowledge is now seered in you.\n");
-        player->intelligence += 3;  // Knowledge of the ancient kingdoms
-        break;
-      case 5:
-        print_message("find a black tome with sinister angular script. You quickly close it!\n");
-        // No penalty, but no bonus either - wisdom is knowing some books should stay closed
-        break;
+    switch (rare_effect) {
+    case 1:
+      print_message("find an ancient red leather-bound book with strange "
+                    "runes. The pages detail the history of rings of power!  "
+                    "Your intelligence increases.\n");
+      player->intelligence += 5; // Small bonus for ancient knowledge
+      break;
+    case 2:
+      print_message("find 'There and Back Again', a dusty manuscript written "
+                    "in a small, neat hand.  You read the entire manuscript "
+                    "and feel more determined to find the Orb of Zot.\n");
+      player->dexterity += 3; // Hobbits are naturally dexterous
+      break;
+    case 3:
+      print_message(
+          "find a tome written in elegant elvish script, containing ancient "
+          "songs of power.  You sing it and you feel stronger.\n");
+      player->strength += 3; // Songs of power grant some strength
+      break;
+    case 4:
+      print_message(
+          "find a book of ancient dwarvish lore, detailing the secrets of the "
+          "great halls.  The knowledge is now seered in you.\n");
+      player->intelligence += 3; // Knowledge of the ancient kingdoms
+      break;
+    case 5:
+      print_message("find a black tome with sinister angular script. You "
+                    "quickly close it!\n");
+      // No penalty, but no bonus either - wisdom is knowing some books should
+      // stay closed
+      break;
     }
     player->dexterity = get_minimum(MAX_DEXTERITY, player->dexterity);
     player->intelligence = get_minimum(MAX_INTELLIGENCE, player->intelligence);
     player->strength = get_minimum(MAX_STRENGTH, player->strength);
 
     return;
-  } 
+  }
 
   switch (effect) {
   case 1:
-    print_message("Flash! Oh no! You are now a blind %s.\n", player->race == HUMAN ? "human" : "creature");
+    print_message("flash! Oh no! You are now a blind %s.\n",
+                  player->race == HUMAN ? "human" : "creature");
     player->blindness_flag = 1;
     break;
   case 2:
-    print_message("It'S another volume of Zot's poetry! - Yech!!\n");
+    print_message("it'S another volume of Zot's poetry! - Yech!!\n");
     break;
   case 3:
-    print_message_formatted("It's an old copy of play%s!\n",
+    print_message_formatted("it's an old copy of play%s!\n",
                             get_random_species());
     break;
   case 4:
-    print_message("It's a manual of dexterity!\n");
+    print_message("it's a manual of dexterity!\n");
     player->dexterity = (player->dexterity += 18) > MAX_DEXTERITY
                             ? MAX_DEXTERITY
                             : player->dexterity;
 
     break;
   case 5:
-    print_message("It's a manual of strength!\n");
+    print_message("it's a manual of strength!\n");
     player->strength = (player->strength += 18) > MAX_STRENGTH
                            ? MAX_STRENGTH
                            : player->strength;
     break;
   case 6:
-    print_message("The book sticks to your hand -\n");
-    print_message("now you are unable to draw your weapon!\n");
+    print_message("the book sticks to your hand -\n");
+    print_message("Now you are unable to draw your weapon!\n");
     player->stickybook_flag = 1;
     break;
   case 7:
-    print_message("It's a manual of intelligence!\n");
+    print_message("it's a manual of intelligence!\n");
     player->intelligence = (player->intelligence += 18) > MAX_INTELLIGENCE
                                ? MAX_INTELLIGENCE
                                : player->intelligence;

@@ -113,17 +113,15 @@ void trade_with_vendor(Player *player, GameState *game) {
                         player->sex == MALE ? "My liege" : "My lady");
         }
       } else {
-        print_message(
-            "\n%s you are too poor to buy an intelligence potion.\n",
-            player->sex == MALE ? "My liege" : "My lady");
+        print_message("\n%s you are too poor to buy an intelligence potion.\n",
+                      player->sex == MALE ? "My liege" : "My lady");
       }
       break;
     case 2:
       if (player->gold >= 500) {
         if (player->intelligence < MAX_INTELLIGENCE) {
-          print_message(
-              "\n%s, your intellect has been greatly enhanced.\n",
-              player->sex == MALE ? "My liege" : "My lady");
+          print_message("\n%s, your intellect has been greatly enhanced.\n",
+                        player->sex == MALE ? "My liege" : "My lady");
           player->intelligence = get_minimum(
               player->intelligence + random_number(3) + random_number(3),
               MAX_INTELLIGENCE);
@@ -180,7 +178,7 @@ void trade_with_vendor(Player *player, GameState *game) {
         print_message("You bought a lamp!\n");
       } else if (player->lamp_flag) {
         print_message("\n%s, you already have a lamp!\n",
-                                player->sex == MALE ? "My liege" : "My lady");
+                      player->sex == MALE ? "My liege" : "My lady");
         continue;
       } else {
         print_message("\n%s, you don't have enough gold for a lamp.\n",
@@ -207,8 +205,7 @@ void trade_with_vendor(Player *player, GameState *game) {
       if (player->stickybook_flag && player->gold >= 1000) {
         player->stickybook_flag = 0;
         player->gold -= 1000;
-        print_message(
-            "The sticky book has been removed from your hand!\n");
+        print_message("The sticky book has been removed from your hand!\n");
       } else if (!player->stickybook_flag) {
         print_message(
             "%s, you don't have a sticky book. No need for this service.\n",
@@ -228,11 +225,9 @@ void trade_with_vendor(Player *player, GameState *game) {
                     player->sex == MALE ? "My liege" : "My lady");
       continue;
     }
-
   }
 
-  print_message(
-      "You don't have enough gold for any more purchases.\n");
+  print_message("You don't have enough gold for any more purchases.\n");
 }
 
 void attack_vendor(Player *player, GameState *game) {
@@ -243,8 +238,7 @@ void attack_vendor(Player *player, GameState *game) {
 
 void buy_flares(Player *player) {
   int max_flares = player->gold / 10;
-  print_message("How many flares do you want to buy? (0-%d): ",
-                          max_flares);
+  print_message("How many flares do you want to buy? (0-%d): ", max_flares);
 
   int flares_to_buy = get_user_input_number();
 
@@ -269,8 +263,7 @@ void buy_armor(Player *player) {
   print_message("    5. Nothing\n\n");
 
   print_message("Current armor is %s with armor points of %d\n\n",
-                          get_armor_name(player->armor_type),
-                          player->armor_points);
+                get_armor_name(player->armor_type), player->armor_points);
 
   char armor_choice = get_user_input();
   switch (armor_choice) {
@@ -379,7 +372,7 @@ void buy_weapon(Player *player) {
       }
     } else {
       print_message("%s, not enough gold for a mace.\n",
-                              player->sex == MALE ? "My liege" : "My lady");
+                    player->sex == MALE ? "My liege" : "My lady");
       return;
     }
     break;

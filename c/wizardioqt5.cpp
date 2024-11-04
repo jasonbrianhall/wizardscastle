@@ -1398,12 +1398,12 @@ void initialize_qt(int argc, char *argv[]) {
                    startNewGame);
 
   // Start the initial game
-  startNewGame();
+  // startNewGame();
 
   while (playagain) {
+    startNewGame();
     playagain = main_game_loop(&player, &game);
     if (playagain) {
-      startNewGame();
     }
   }
   // app->exec();
@@ -1474,8 +1474,7 @@ int get_user_input_number() {
     } catch (const std::invalid_argument &) {
       print_message("Invalid input. Please enter a valid integer.\n");
     } catch (const std::out_of_range &) {
-      print_message(
-          "Input out of range. Please enter a smaller number.\n");
+      print_message("Input out of range. Please enter a smaller number.\n");
     }
   }
 }
