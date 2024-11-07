@@ -431,7 +431,7 @@ void use_flare(Player *player, GameState *game) {
 void open_chest(Player *player, GameState *game) {
   print_message("\nYou open the chest and ");
 
-  int event = random_number(7), damage, gold, flares;
+  int event = random_number(7), damage, gold, flares, book_type;
   switch (event) {
   case 1:
     print_message("Kaboom! It explodes!!\n");
@@ -541,7 +541,7 @@ void open_chest(Player *player, GameState *game) {
     break;
   case 7:
       // 1 in 7 chance of finding a book
-      int book_type = random_number(3);
+      book_type = random_number(3);
       switch(book_type) {
         case 1:
             print_message("you find a dusty book of ancient lore. Reading it increases your intelligence by 1!\n");
