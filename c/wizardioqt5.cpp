@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWheelEvent>
+#include <QScreen>
 #include <cstdlib>
 #include <stdexcept>
 
