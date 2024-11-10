@@ -48,60 +48,77 @@ public:
   WizardsCastleWindow(QWidget *parent = nullptr)
       : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10) {
     setWindowTitle("Wizard's Castle");
-    resize(1280, 768); // Increased width to accommodate the map
+    resize(1280, 768);
 
     QWidget *centralWidget = new QWidget(this);
     QHBoxLayout *mainLayout = new QHBoxLayout(centralWidget);
-    QWidget *rightWidget = new QWidget(this);
-    QVBoxLayout *rightLayout = new QVBoxLayout(rightWidget);
     
+    // Left panel for game output and input
     QWidget *leftWidget = new QWidget(this);
     QVBoxLayout *leftLayout = new QVBoxLayout(leftWidget);
 
+    // Right panel containing status, stats, and map
+    QWidget *rightWidget = new QWidget(this);
+    QVBoxLayout *rightLayout = new QVBoxLayout(rightWidget);
+    
+    // Top section of right panel for status and stats
+    QWidget *topRightWidget = new QWidget(this);
+    QHBoxLayout *topRightLayout = new QHBoxLayout(topRightWidget);
+
     createMenus();
 
+    // Setup left panel (game output and input)
     outputText = new QTextEdit(this);
     outputText->setReadOnly(true);
-
     updateFont();
-
     leftLayout->addWidget(outputText);
 
     inputLine = new QLineEdit(this);
     leftLayout->addWidget(inputLine);
 
-    mainLayout->addWidget(leftWidget, 1); // Left side takes 1/2 of the space
-
+    // Setup top-right section (status and stats displays)
     statusDisplay = new QTextEdit(this);
     statusDisplay->setReadOnly(true);
     statusDisplay->setAcceptRichText(true);
     statusDisplay->setFont(QFont("Consolas", 10));
-    rightLayout->addWidget(statusDisplay, 1); // Take 1/3 of vertical space
+    topRightLayout->addWidget(statusDisplay, 1);
 
-    // Create the map display (lower window)
+    statsDisplay = new QTextEdit(this);
+    statsDisplay->setReadOnly(true);
+    statsDisplay->setAcceptRichText(true);
+    statsDisplay->setFont(QFont("Consolas", 10));
+    topRightLayout->addWidget(statsDisplay, 1);
+
+    // Add top section to right layout
+    rightLayout->addWidget(topRightWidget, 1);
+
+    // Setup map display (takes remaining space in right panel)
     mapDisplay = new QTextEdit(this);
     mapDisplay->setReadOnly(true);
     mapDisplay->setAcceptRichText(true);
     mapDisplay->setFont(QFont("Consolas", 10));
-    rightLayout->addWidget(mapDisplay, 2); // Take 2/3 of vertical space
+    rightLayout->addWidget(mapDisplay, 2);
 
-    mainLayout->addWidget(rightWidget, 1); // Right side takes 1/2 of horizontal space
+    // Add main sections to the layout
+    mainLayout->addWidget(leftWidget, 1);  // Left side takes 1/2 of space
+    mainLayout->addWidget(rightWidget, 1); // Right side takes 1/2 of space
 
     setCentralWidget(centralWidget);
 
+    // Connect signals and setup timers
     connect(inputLine, &QLineEdit::returnPressed, this,
             &WizardsCastleWindow::processInput);
     mapUpdateTimer = new QTimer(this);
     connect(mapUpdateTimer, &QTimer::timeout, this,
             &WizardsCastleWindow::updateMap);
-    mapUpdateTimer->start(200); // Update every 1/5 second
+    mapUpdateTimer->start(200);
+    
     outputText->installEventFilter(this);
-    setColorScheme("Default");
-
     inputLine->installEventFilter(this);
     commandHistory.clear();
-  }
-
+    
+    setColorScheme("Default");
+  }  
   void display_map2(GameState *game, Player *player) {
     int currentRoom =
         get_room_content(game, player->x, player->y, player->level);
@@ -119,35 +136,35 @@ public:
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
                            AsciiArt::ENTRANCE_AA + "</p>");
-        print_message_status("\nYou are at the entrance.");
+        statusDisplay->append("You are at the entrance.");
         break;
       case STAIRS_UP:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
                            AsciiArt::STAIRSUP_AA + "</p>");
-        print_message_status("\nYou found stairs going up.");
+        statusDisplay->append("You found stairs going up.");
         break;
       case STAIRS_DOWN:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
                            AsciiArt::STAIRSDOWN_AA + "</p>");
-        print_message_status("\nYou found stairs going down.");
+        statusDisplay->append("You found stairs going down.");
         break;
       case POOL:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 0 0 10px #00ffff;'>" +
                            AsciiArt::POOL_AA + "</p>");
-        print_message_status("\nYou found a pool.");
+        statusDisplay->append("You found a pool.");
         break;
       case CHEST:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
                            AsciiArt::CHEST_AA + "</p>");
-        print_message_status("\nYou found a chest.");
+        statusDisplay->append("You found a chest.");
 
         break;
       case CRYSTAL_ORB:
@@ -155,7 +172,7 @@ public:
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 0 0 10px #ff00ff;'>" +
                            AsciiArt::CRYSTALORB_AA + "</p>");
-        print_message_status("\nYou've discovered a mystical crystal orb! It seems "
+        statusDisplay->append("You've discovered a mystical crystal orb! It seems "
                        "to swirl with magical energy.");
         break;
       case BOOK:
@@ -163,7 +180,7 @@ public:
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 0 0 10px #8b4513;'>" +
                            AsciiArt::BOOK_AA + "</p>");
-        print_message_status("\nYou've discovered an old book. Open it to reveal "
+        statusDisplay->append("You've discovered an old book. Open it to reveal "
                        "it's mysteries.");
         break;
       case KOBOLD:
@@ -171,103 +188,108 @@ public:
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" +
                            AsciiArt::KOBOLD_AA + "</p>");
-        print_message_status("\nYou've encountered a Kobold!");
+        statusDisplay->append("You've encountered a Kobold!");
         break;
       case ORC:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" +
                            AsciiArt::ORC_AA + "</p>");
-        print_message_status("\nYou've encountered an Orc!");
+        statusDisplay->append("You've encountered an Orc!");
         break;
       case WOLF:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #808080;'>" +
                            AsciiArt::WOLF_AA + "</p>");
-        print_message_status("\nYou've encountered a Wolf!");
+        statusDisplay->append("You've encountered a Wolf!");
         break;
       case GOBLIN:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #00ff00;'>" +
                            AsciiArt::GOBLIN_AA + "</p>");
-        print_message_status("\nYou've encountered a Goblin!");
+        statusDisplay->append("You've encountered a Goblin!");
         break;
       case OGRE:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" +
                            AsciiArt::OGRE_AA + "</p>");
-        print_message_status("\nYou've encountered an Ogre!");
+        statusDisplay->append("You've encountered an Ogre!");
         break;
       case TROLL:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #4b0082;'>" +
                            AsciiArt::TROLL_AA + "</p>");
-        print_message_status("\nYou've encountered a Troll!");
+        statusDisplay->append("You've encountered a Troll!");
         break;
       case BEAR:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #8b4513;'>" +
                            AsciiArt::BEAR_AA + "</p>");
-        print_message_status("\nYou've encountered a Bear!");
+        statusDisplay->append("You've encountered a Bear!");
         break;
       case MINOTAUR:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #800000;'>" +
                            AsciiArt::MINOTAUR_AA + "</p>");
-        print_message_status("\nYou've encountered a Minotaur!");
+        statusDisplay->append("You've encountered a Minotaur!");
         break;
       case GARGOYLE:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #696969;'>" +
                            AsciiArt::GARGOYLE_AA + "</p>");
-        print_message_status("\nYou've encountered a Gargoyle!");
+        statusDisplay->append("You've encountered a Gargoyle!");
         break;
       case CHIMERA:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" +
                            AsciiArt::CHIMERA_AA + "</p>");
-        print_message_status("\nYou've encountered a Chimera!");
+        statusDisplay->append("You've encountered a Chimera!");
         break;
       case DRAGON:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #ff4500;'>" +
                            AsciiArt::DRAGON_AA + "</p>");
-        print_message_status("\nYou've encountered a Dragon!");
+        statusDisplay->append("You've encountered a Dragon!");
         break;
       case BALROG:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px #ff0000;'>" +
                            AsciiArt::BALROG_AA + "</p>");
-        print_message_status("\nYou've encountered a Balrog!");
+        statusDisplay->append("You've encountered a Balrog!");
         break;
       case VENDOR:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
                            AsciiArt::VENDOR_AA + "</p>");
-        print_message2("\nYou've encountered a Vendor!");
+        statusDisplay->append("You've encountered a Vendor!");
         break;
       case MIMIC:
         statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
                            "Emoji\", \"Apple Color Emoji\", \"Noto Color "
                            "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
                            AsciiArt::MIMIC_AA + "</p>");
-        print_message_status("\nYou've encountered a Mimic!");
+        statusDisplay->append("You've encountered a Mimic!");
         break;
 
       case EMPTY_ROOM:
-        print_message_status(
-            "\nYou are in an empty room.  It's voidness is chilling.");
+        statusDisplay->append("<p style='font-size: 48pt; font-family: \"Segoe UI "
+                           "Emoji\", \"Apple Color Emoji\", \"Noto Color "
+                           "Emoji\"; text-shadow: 2px 2px 4px gold;'>" +
+                           AsciiArt::EMPTY_AA + "</p>");
+
+        statusDisplay->append(
+            "You are in an empty room.  It's voidness is chilling.");
         break;
       }
       print_message2("Current location:  Level %d, Room (%d %d)\n\n",
@@ -430,7 +452,7 @@ public:
       print_message2("TREASURE = Treasure Name   ???????? = Undiscovered\n");
       print_message2("STAIRS U = Stairs Up       STAIRS D = Stairs Down\n");
 
-      print_message_status("\n\n=== PLAYER STATUS ===\n");
+      print_message_status("=== PLAYER STATUS ===\n");
 
     } else {
       print_message2("\nBlind %s can't see maps.\n\n", lowercase_species);
@@ -574,9 +596,9 @@ public:
   }
 
   void appendToMap_status(const QString &text) {
-    statusDisplay->moveCursor(QTextCursor::End);
-    statusDisplay->insertHtml(text);
-    statusDisplay->verticalScrollBar()->setValue(
+    statsDisplay->moveCursor(QTextCursor::End);
+    statsDisplay->insertHtml(text);
+    statsDisplay->verticalScrollBar()->setValue(
         outputText->verticalScrollBar()->maximum());
   }
 
@@ -605,6 +627,7 @@ public:
   { 
        outputText->clear(); 
        statusDisplay->clear();
+       statsDisplay->clear();
        mapDisplay->clear();
   }
 
@@ -666,6 +689,7 @@ public:
     inputLine->setPalette(palette);
     mapDisplay->setPalette(palette);
     statusDisplay->setPalette(palette);
+    statsDisplay->setPalette(palette);
 
   }
 
@@ -1043,6 +1067,7 @@ private slots:
     if (g_player && g_game) {
       mapDisplay->clear(); // Clear the previous map
       statusDisplay->clear();
+      statsDisplay->clear();
       display_map2(g_game, g_player);
     }
   }
@@ -1180,6 +1205,7 @@ private:
   QLineEdit *inputLine;
   QTextEdit *mapDisplay;
   QTextEdit *statusDisplay;
+  QTextEdit *statsDisplay;
 
   QTimer *mapUpdateTimer;
   std::string lastInput;
@@ -1454,6 +1480,8 @@ void initialize_qt(int argc, char *argv[]) {
 const char* get_user_input_main() {
     static std::string input;
     static const char* dr_command = "DR";
+    static const char* qs_command = "QS";
+    static const char* ql_command = "QL";
     
     print_message("ENTER YOUR COMMAND: ");
     g_window->clearInput();
@@ -1476,6 +1504,12 @@ const char* get_user_input_main() {
     if (firstChar == 'D' && input.length() > 1 && input[1] == 'R') {
         print_message("DR\n");
         return dr_command;
+    } else if (firstChar == 'Q' && input.length() > 1 && input[1] == 'S') {
+        print_message("QS\n");
+        return qs_command;
+    } else if (firstChar == 'Q' && input.length() > 1 && input[1] == 'L') {
+        print_message("QL\n");
+        return ql_command;
     } else if (strchr("ADEFGHILMNOQSTUWYZ", firstChar) != NULL) {
         print_message("%c\n", firstChar);
         return input.c_str();

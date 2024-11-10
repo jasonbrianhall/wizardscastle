@@ -5,6 +5,7 @@
 
 namespace AsciiArt {
 
+const QString EMPTY_AA = "🕳️";
 const QString ENTRANCE_AA = "🏰";
 const QString STAIRSUP_AA = "⬆️";
 const QString STAIRSDOWN_AA = "⬇️";
