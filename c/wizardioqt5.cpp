@@ -50,6 +50,13 @@ public:
     setWindowTitle("Wizard's Castle");
     resize(1280, 768);
 
+    QScreen *screen = QApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+    
+    // Set the window size to match the screen
+    resize(screenGeometry.width(), screenGeometry.height());
+
+
     QWidget *centralWidget = new QWidget(this);
     QHBoxLayout *mainLayout = new QHBoxLayout(centralWidget);
     
