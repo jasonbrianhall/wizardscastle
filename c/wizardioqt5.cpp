@@ -1104,6 +1104,28 @@ private slots:
     }
   }
 
+  void qsaveGame() {
+    if (g_game->game_over == 1) {
+      QMessageBox::warning(this, tr("Save Failed"),
+                           tr("Dead adventurers can't save."));
+      return;
+    }
+    if (!g_player || !g_game) {
+      QMessageBox::warning(this, tr("Save Failed"),
+                           tr("No active game to save."));
+      return;
+    }
+
+    if (save_game("quicksave.wcs", g_player, g_game)) {
+      /*QMessageBox::information(this, tr("Game Saved"),
+                               tr("Your game has been saved successfully.")); */  // Do nothing
+    } else {
+      QMessageBox::warning(this, tr("Save Failed"),
+                           tr("Failed to save the game. Please try again."));
+    }
+  }
+
+
   void loadGame() {
     if (!g_player || !g_game) {
       QMessageBox::warning(this, tr("Load Failed"),
@@ -1119,7 +1141,7 @@ private slots:
     }
 
     if (load_game(fileName.toStdString().c_str(), g_player, g_game)) {
-      QMessageBox::information(this, tr("Game Loaded"),
+        QMessageBox::information(this, tr("Game Loaded"),
                                tr("Your game has been loaded successfully."));
       // You might want to trigger an update of the UI here
       emit gameStateChanged();
@@ -1128,22 +1150,29 @@ private slots:
                            tr("Failed to load the game. The file might be "
                               "corrupted or incompatible."));
     }
-
-    int playAgain = 1;
-    while (playAgain) {
-      playAgain = main_game_loop(g_player, g_game);
-      if (playAgain) {
-        // If the player wants to play again after finishing, start a new game
-        emit newGameRequested();
-        break;
-      }
-    }
-    // display_map(g_game, g_player);
-    /*for(int x=0;x<MAP_SIZE;x++)
-    {
-         print_message("%i %i\n", x, g_game->discovered_rooms[x]);
-    }*/
   }
+
+  void qloadGame() {
+    if (!g_player || !g_game) {
+      QMessageBox::warning(this, tr("Load Failed"),
+                           tr("Cannot load game at this time."));
+      return;
+    }
+
+    if (load_game("quicksave.wcs", g_player, g_game)) {
+      /* QMessageBox::information(this, tr("Game Loaded"),
+                               tr("Your game has been loaded successfully.")); */
+      // You might want to trigger an update of the UI here
+      emit gameStateChanged();
+    } else {
+      QMessageBox::warning(this, tr("Load Failed"),
+                           tr("Failed to load the game. The file might be "
+                              "corrupted or incompatible."));
+    }
+  }
+
+
+
 
   void newGame() {
     // Ask for confirmation before starting a new game
@@ -1304,11 +1333,23 @@ private:
             &WizardsCastleWindow::saveGame);
     fileMenu->addAction(saveAction);
 
-    QAction *loadAction = new QAction(tr("&Load Game"), this);
+    QAction *qsaveAction = new QAction(tr("Quick save Game"), this);
+    qsaveAction->setShortcut(QKeySequence(Qt::Key_F5));
+    connect(qsaveAction, &QAction::triggered, this,
+            &WizardsCastleWindow::qsaveGame);
+    fileMenu->addAction(qsaveAction);
+
+    QAction *qloadAction = new QAction(tr("Quick load Game"), this);
+    qloadAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_F5));
+    connect(qloadAction, &QAction::triggered, this,
+            &WizardsCastleWindow::qloadGame);
+    fileMenu->addAction(qloadAction);
+
+    QAction *loadAction = new QAction(tr("Quick Load Game"), this);
     loadAction->setShortcut(QKeySequence::Open);
     connect(loadAction, &QAction::triggered, this,
             &WizardsCastleWindow::loadGame);
-    fileMenu->addAction(loadAction);
+    fileMenu->addAction(qloadAction);
 
     fileMenu->addSeparator();
     QAction *quitAction = new QAction(tr("&Quit"), this);
