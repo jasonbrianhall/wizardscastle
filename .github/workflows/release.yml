@@ -239,12 +239,28 @@ jobs:
         echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
         echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
 
-    - name: Verify Python environment
+    - name: Install build dependencies
       run: |
-        which python
-        python --version
-        pip --version
-        echo "VIRTUAL_ENV: $VIRTUAL_ENV"
+        # Remove any existing cmake installation
+        brew uninstall --ignore-dependencies cmake || true
+        brew uninstall --ignore-dependencies ninja || true
+        
+        # Install specific versions
+        brew install cmake@3.24
+        brew link cmake@3.24
+        
+        # Install other dependencies without ninja
+        brew install pkg-config
+        brew install create-dmg
+        
+        # Install Qt dependencies directly
+        pip install --upgrade pip
+        pip install PyQt5==5.15.9
+        
+        # Verify installations
+        cmake --version
+        pkg-config --version
+        python -c "import PyQt5; print(PyQt5.__version__)"
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -258,21 +274,13 @@ jobs:
         cache: true
         setup-python: false
 
-    - name: Install build dependencies
-      run: |
-        brew install cmake
-        brew install ninja
-        brew install pkg-config
-        # Install any Python packages needed for the build in the virtual environment
-        pip install pyqt5 pyqt5-tools
-
     - name: Build Qt application
       working-directory: c
       run: |
         source $VIRTUAL_ENV/bin/activate
         export PATH="/usr/local/opt/qt/bin:$PATH"
         qmake wizard_castle_qt5.pro
-        make
+        make -j$(sysctl -n hw.ncpu)
 
     - name: Create app bundle
       run: |
