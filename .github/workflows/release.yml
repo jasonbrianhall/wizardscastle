@@ -218,53 +218,12 @@ jobs:
         asset_content_type: application/zip
 
   # I don't actually have a MAC to test this 
-  build-qt-macos:
+build-qt-macos:
     runs-on: macos-latest
     needs: build-and-release
     
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        
-    - name: Create and activate virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        python -m pip install --upgrade pip
-        python -m pip install wheel setuptools virtualenv
-        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
-        echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
-
-    - name: Install build dependencies
-      run: |
-        # Clean up any existing installations
-        brew uninstall --ignore-dependencies cmake || true
-        brew uninstall --ignore-dependencies pkg-config || true
-        
-        # Install build tools
-        brew install cmake
-        brew install qmake
-        brew install pkg-config
-        brew install create-dmg
-        
-        # Remove any existing PyQt installations
-        pip uninstall -y PyQt5 PyQt5-sip PyQt5-Qt5 || true
-        
-        # Install Python dependencies in correct order
-        pip install sip
-        pip install PyQt5-sip
-        pip install PyQt5
-        
-        # Verify installations without version check
-        echo "Testing PyQt5 import..."
-        python -c "import PyQt5.QtCore; print('PyQt5 import successful')"
-        
-        echo "Testing Qt installation..."
-        qmake --version || true
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -278,26 +237,25 @@ jobs:
         cache: true
         setup-python: false
 
-    - name: Verify Qt installation
+    - name: Install additional dependencies
       run: |
-        echo "Qt installation path: $Qt5_DIR"
-        echo "QTDIR: $QTDIR"
-        qmake --version
-        which qmake
+        brew install cmake
+        brew install create-dmg
 
     - name: Build Qt application
       working-directory: c
       run: |
-        source $VIRTUAL_ENV/bin/activate
-        export PATH="$QTDIR/bin:$PATH"
+        # Print Qt information for debugging
+        echo "Qt installation path: $Qt5_DIR"
+        echo "QTDIR: $QTDIR"
         echo "Using qmake from: $(which qmake)"
-        qmake -v
+        
+        # Build the application
         qmake wizard_castle_qt5.pro
         make -j$(sysctl -n hw.ncpu)
 
     - name: Create app bundle
       run: |
-        source $VIRTUAL_ENV/bin/activate
         mkdir -p WizardsCastle.app/Contents/{MacOS,Resources,Frameworks}
         cp c/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
         
