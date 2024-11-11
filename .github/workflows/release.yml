@@ -225,6 +225,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install wheel setuptools
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
@@ -241,18 +251,48 @@ jobs:
       run: |
         brew install cmake
         brew install ninja
+        brew install pkg-config
 
     - name: Build Qt application
       working-directory: c
       run: |
+        export PATH="/usr/local/opt/qt/bin:$PATH"
         qmake wizard_castle_qt5.pro
         make
 
     - name: Create app bundle
       run: |
-        mkdir -p WizardsCastle.app/Contents/MacOS
+        mkdir -p WizardsCastle.app/Contents/{MacOS,Resources,Frameworks}
         cp c/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
-        macdeployqt WizardsCastle.app -dmg
+        
+        # Create Info.plist
+        cat > WizardsCastle.app/Contents/Info.plist << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleExecutable</key>
+            <string>wizardscastle-qt</string>
+            <key>CFBundleIconFile</key>
+            <string>wizardscastle.icns</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.wizardscastle.app</string>
+            <key>CFBundleName</key>
+            <string>Wizard's Castle</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>10.13</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+        </dict>
+        </plist>
+        EOF
+        
+        # Deploy Qt dependencies
+        macdeployqt WizardsCastle.app -dmg -verbose=2
 
     - name: Upload macOS Release Asset
       uses: actions/upload-release-asset@v1
