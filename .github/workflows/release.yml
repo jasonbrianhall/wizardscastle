@@ -218,7 +218,7 @@ jobs:
         asset_content_type: application/zip
 
   # I don't actually have a MAC to test this 
-build-qt-macos:
+  build-qt-macos:
     runs-on: macos-latest
     needs: build-and-release
     
