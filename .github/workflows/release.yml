@@ -247,6 +247,7 @@ jobs:
         
         # Install build tools
         brew install cmake
+        brow install qmake
         brew install pkg-config
         brew install create-dmg
         
