@@ -369,13 +369,12 @@ jobs:
           windeployqt --release --no-translations --no-system-d3d-compiler deploy\wizardscastle-qt.exe
         )
 
-
     - name: Create WiX config
       shell: cmd
       run: |
         echo ^<?xml version="1.0" encoding="UTF-8"?^> > installer.wxs
         echo ^<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"^> >> installer.wxs
-        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="1.0.0" Manufacturer="Jason Hall" UpgradeCode="e27db2c8-b1b6-4cfa-a8f0-97e6dcf0a0e0"^> >> installer.wxs
+        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="%DATE:~10,4%.%DATE:~4,2%.%DATE:~7,2%.0" Manufacturer="Jason Hall" UpgradeCode="e27db2c8-b1b6-4cfa-a8f0-97e6dcf0a0e0"^> >> installer.wxs
         echo     ^<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" /^> >> installer.wxs
         echo     ^<MajorUpgrade DowngradeErrorMessage="A newer version is already installed." /^> >> installer.wxs
         echo     ^<MediaTemplate EmbedCab="yes" /^> >> installer.wxs
@@ -393,15 +392,22 @@ jobs:
         echo         ^</Directory^> >> installer.wxs
         echo       ^</Directory^> >> installer.wxs
         echo       ^<Directory Id="ProgramMenuFolder"^> >> installer.wxs
-        echo         ^<Directory Id="ProgramMenuDir" Name="Wizard's Castle" /^> >> installer.wxs
+        echo         ^<Directory Id="ProgramMenuDir" Name="Wizard's Castle"^> >> installer.wxs
+        echo           ^<Component Id="ProgramMenuDir" Guid="*"^> >> installer.wxs
+        echo             ^<RemoveFolder Id="ProgramMenuDir" On="uninstall" /^> >> installer.wxs
+        echo             ^<RegistryValue Root="HKCU" Key="Software\WizardsCastle" Type="string" Value="" KeyPath="yes" /^> >> installer.wxs
+        echo           ^</Component^> >> installer.wxs
+        echo         ^</Directory^> >> installer.wxs
         echo       ^</Directory^> >> installer.wxs
         echo       ^<Directory Id="DesktopFolder" Name="Desktop" /^> >> installer.wxs
         echo     ^</Directory^> >> installer.wxs
         echo     ^<Feature Id="ProductFeature" Title="WizardsCastle" Level="1"^> >> installer.wxs
         echo       ^<ComponentRef Id="MainExecutable" /^> >> installer.wxs
+        echo       ^<ComponentRef Id="ProgramMenuDir" /^> >> installer.wxs
         echo     ^</Feature^> >> installer.wxs
         echo   ^</Product^> >> installer.wxs
         echo ^</Wix^> >> installer.wxs
+
 
     - name: Build MSI
       shell: cmd
