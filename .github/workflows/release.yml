@@ -221,6 +221,8 @@ jobs:
   build-qt-macos:
     runs-on: macos-latest
     needs: build-and-release
+    env:
+      QT_VERSION: '6.6.2'  # Updated from 5.15.2 to latest Qt 6
     
     steps:
     - uses: actions/checkout@v3
@@ -237,10 +239,6 @@ jobs:
         cache: true
         setup-python: false
 
-    - name: Install additional dependencies
-      run: |
-        brew install cmake
-
     - name: Build Qt application
       working-directory: c
       run: |
@@ -249,16 +247,14 @@ jobs:
         echo "QTDIR: $QTDIR"
         echo "Using qmake from: $(which qmake)"
         
-        # Build the application
         qmake wizard_castle_qt5.pro
         make -j$(sysctl -n hw.ncpu)
 
     - name: Create app bundle and DMG
       run: |
         mkdir -p WizardsCastle.app/Contents/{MacOS,Resources,Frameworks}
-        cp c/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
+        cp c/wizardscastle-qt.app/Contents/MacOS/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
         
-        # Create Info.plist
         cat > WizardsCastle.app/Contents/Info.plist << EOF
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -284,6 +280,14 @@ jobs:
         </plist>
         EOF
         
-        # Use macdeployqt to create DMG
         macdeployqt WizardsCastle.app -dmg -verbose=2
- 
+
+    - name: Upload macOS Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.build-and-release.outputs.upload_url }}
+        asset_path: ./WizardsCastle.dmg
+        asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-qt-macos.dmg
+        asset_content_type: application/x-apple-diskimage 
