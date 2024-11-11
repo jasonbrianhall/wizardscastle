@@ -246,8 +246,8 @@ jobs:
         brew uninstall --ignore-dependencies ninja || true
         
         # Install specific versions
-        brew install cmake@3.24
-        brew link cmake@3.24
+        brew install cmake
+        brew link cmake
         
         # Install other dependencies without ninja
         brew install pkg-config
@@ -255,7 +255,7 @@ jobs:
         
         # Install Qt dependencies directly
         pip install --upgrade pip
-        pip install PyQt5==5.15.9
+        pip install PyQt5
         
         # Verify installations
         cmake --version
