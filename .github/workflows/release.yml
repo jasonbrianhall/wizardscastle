@@ -241,26 +241,29 @@ jobs:
 
     - name: Install build dependencies
       run: |
-        # Remove any existing cmake installation
+        # Clean up any existing installations
         brew uninstall --ignore-dependencies cmake || true
-        brew uninstall --ignore-dependencies ninja || true
+        brew uninstall --ignore-dependencies pkg-config || true
         
-        # Install specific versions
+        # Install build tools
         brew install cmake
-        brew link cmake
-        
-        # Install other dependencies without ninja
         brew install pkg-config
         brew install create-dmg
         
-        # Install Qt dependencies directly
-        pip install --upgrade pip
-        pip install PyQt5
+        # Remove any existing PyQt installations
+        pip uninstall -y PyQt5 PyQt5-sip PyQt5-Qt5 || true
         
-        # Verify installations
-        cmake --version
-        pkg-config --version
-        python -c "import PyQt5; print(PyQt5.__version__)"
+        # Install Python dependencies in correct order
+        pip install sip
+        pip install PyQt5-sip
+        pip install PyQt5==5.15.9
+        
+        # Verify installations without version check
+        echo "Testing PyQt5 import..."
+        python -c "import PyQt5.QtCore; print('PyQt5 import successful')"
+        
+        echo "Testing Qt installation..."
+        qmake --version || true
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -274,11 +277,20 @@ jobs:
         cache: true
         setup-python: false
 
+    - name: Verify Qt installation
+      run: |
+        echo "Qt installation path: $Qt5_DIR"
+        echo "QTDIR: $QTDIR"
+        qmake --version
+        which qmake
+
     - name: Build Qt application
       working-directory: c
       run: |
         source $VIRTUAL_ENV/bin/activate
-        export PATH="/usr/local/opt/qt/bin:$PATH"
+        export PATH="$QTDIR/bin:$PATH"
+        echo "Using qmake from: $(which qmake)"
+        qmake -v
         qmake wizard_castle_qt5.pro
         make -j$(sysctl -n hw.ncpu)
 
