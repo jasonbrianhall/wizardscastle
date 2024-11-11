@@ -374,7 +374,7 @@ public:
                 blue = 0;
 
               // Format the color string as RGB
-              sprintf(color_str, "#%02X%02X%02X", red, green, blue);
+              snprintf(color_str, sizeof(color_str), "#%02X%02X%02X", red, green, blue);
               print_message2("<p style='color: %s;'>%s</p>", color_str,
                              room_str);
             } else if (room_content >= TREASURE_START &&
