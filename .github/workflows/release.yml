@@ -314,3 +314,106 @@ jobs:
         asset_path: ./c/WizardsCastle.dmg
         asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-qt-macos.dmg
         asset_content_type: application/x-apple-diskimage
+
+  build-qt-windows-msi:
+    runs-on: windows-latest
+    needs: build-and-release
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
+        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        dir: ${{ runner.temp }}
+        cache: true
+        setup-python: false
+
+    - name: Setup WiX Toolset
+      run: |
+        mkdir -p ${{ runner.temp }}/wix
+        Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip" -OutFile "${{ runner.temp }}/wix.zip"
+        Expand-Archive -Path "${{ runner.temp }}/wix.zip" -DestinationPath "${{ runner.temp }}/wix"
+        echo "${{ runner.temp }}/wix" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+        toolset: 14.29
+        spectre: false
+
+    - name: Build Qt application
+      shell: cmd
+      working-directory: c
+      run: |
+        echo Current directory: %CD%
+        set CL=/MD /O1 /W1 /wd4996 /wd4244 /wd5105 /Zc:preprocessor- /GS- /D_CRT_SECURE_NO_WARNINGS /diagnostics:column /errorReport:send
+        qmake wizard_castle_qt5.pro
+        nmake
+
+    - name: Create deployment directory
+      shell: cmd
+      run: |
+        mkdir deploy
+        if exist c\release\wizardscastle-qt.exe (
+          copy c\release\wizardscastle-qt.exe deploy\
+          windeployqt --release --no-translations --no-system-d3d-compiler deploy\wizardscastle-qt.exe
+        ) else if exist c\wizardscastle-qt.exe (
+          copy c\wizardscastle-qt.exe deploy\
+          windeployqt --release --no-translations --no-system-d3d-compiler deploy\wizardscastle-qt.exe
+        )
+
+    - name: Create WiX config
+      shell: cmd
+      run: |
+        echo ^<?xml version="1.0" encoding="UTF-8"?^> > installer.wxs
+        echo ^<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"^> >> installer.wxs
+        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="1.0.0" Manufacturer="Your Company" UpgradeCode="YOUR-GUID-HERE"^> >> installer.wxs
+        echo     ^<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" /^> >> installer.wxs
+        echo     ^<MajorUpgrade DowngradeErrorMessage="A newer version is already installed." /^> >> installer.wxs
+        echo     ^<MediaTemplate EmbedCab="yes" /^> >> installer.wxs
+        echo     ^<Icon Id="icon.ico" SourceFile="c\icon.ico"/^> >> installer.wxs
+        echo     ^<Property Id="ARPPRODUCTICON" Value="icon.ico" /^> >> installer.wxs
+        echo     ^<Feature Id="ProductFeature" Title="WizardsCastle" Level="1"^> >> installer.wxs
+        echo       ^<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER"^> >> installer.wxs
+        echo     ^<Component Id="MainExecutable" Guid="*"^> >> installer.wxs
+        echo       ^<File Id="WizardsCastleEXE" Source="deploy\wizardscastle-qt.exe" KeyPath="yes"^> >> installer.wxs
+        echo         ^<Shortcut Id="startmenuShortcut" Directory="ProgramMenuDir" Name="Wizard's Castle" WorkingDirectory="INSTALLFOLDER" Icon="icon.ico" IconIndex="0" Advertise="yes" /^> >> installer.wxs
+        echo         ^<Shortcut Id="desktopShortcut" Directory="DesktopFolder" Name="Wizard's Castle" WorkingDirectory="INSTALLFOLDER" Icon="icon.ico" IconIndex="0" Advertise="yes" /^> >> installer.wxs
+        echo       ^</File^> >> installer.wxs
+        echo     ^</Component^> >> installer.wxs
+        echo       ^</ComponentGroup^> >> installer.wxs
+        echo     ^</Feature^> >> installer.wxs
+        echo     ^<Directory Id="TARGETDIR" Name="SourceDir"^> >> installer.wxs
+        echo       ^<Directory Id="ProgramFilesFolder"^> >> installer.wxs
+        echo         ^<Directory Id="INSTALLFOLDER" Name="WizardsCastle" /^> >> installer.wxs
+        echo       ^</Directory^> >> installer.wxs
+        echo       ^<Directory Id="ProgramMenuFolder"^> >> installer.wxs
+        echo         ^<Directory Id="ProgramMenuDir" Name="Wizard's Castle" /^> >> installer.wxs
+        echo       ^</Directory^> >> installer.wxs
+        echo       ^<Directory Id="DesktopFolder" Name="Desktop" /^> >> installer.wxs
+        echo     ^</Directory^> >> installer.wxs
+        echo   ^</Product^> >> installer.wxs
+        echo ^</Wix^> >> installer.wxs
+
+    - name: Build MSI
+      shell: cmd
+      run: |
+        candle installer.wxs
+        light -ext WixUIExtension installer.wixobj
+
+    - name: Upload MSI Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.build-and-release.outputs.upload_url }}
+        asset_path: ./installer.msi
+        asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-qt-windows.msi
+        asset_content_type: application/x-msi
