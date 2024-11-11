@@ -230,10 +230,21 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
-    - name: Install Python dependencies
+    - name: Create and activate virtual environment
       run: |
+        python -m venv venv
+        source venv/bin/activate
         python -m pip install --upgrade pip
-        python -m pip install wheel setuptools
+        python -m pip install wheel setuptools virtualenv
+        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+        echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
+
+    - name: Verify Python environment
+      run: |
+        which python
+        python --version
+        pip --version
+        echo "VIRTUAL_ENV: $VIRTUAL_ENV"
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -252,16 +263,20 @@ jobs:
         brew install cmake
         brew install ninja
         brew install pkg-config
+        # Install any Python packages needed for the build in the virtual environment
+        pip install pyqt5 pyqt5-tools
 
     - name: Build Qt application
       working-directory: c
       run: |
+        source $VIRTUAL_ENV/bin/activate
         export PATH="/usr/local/opt/qt/bin:$PATH"
         qmake wizard_castle_qt5.pro
         make
 
     - name: Create app bundle
       run: |
+        source $VIRTUAL_ENV/bin/activate
         mkdir -p WizardsCastle.app/Contents/{MacOS,Resources,Frameworks}
         cp c/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
         
