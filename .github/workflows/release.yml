@@ -254,9 +254,27 @@ jobs:
         make -j$(sysctl -n hw.ncpu)
 
     - name: Create app bundle and DMG
+      working-directory: c
       run: |
+        # Debug - show us where everything is
+        echo "Current directory contents:"
+        ls -R
+        
+        # Create the app bundle structure
         mkdir -p WizardsCastle.app/Contents/{MacOS,Resources,Frameworks}
-        cp c/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
+        
+        # Look for the executable in multiple possible locations
+        if [ -f "wizardscastle-qt.app/Contents/MacOS/wizardscastle-qt" ]; then
+          cp wizardscastle-qt.app/Contents/MacOS/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
+        elif [ -f "release/wizardscastle-qt" ]; then
+          cp release/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
+        elif [ -f "wizardscastle-qt" ]; then
+          cp wizardscastle-qt WizardsCastle.app/Contents/MacOS/
+        else
+          echo "Error: Could not find executable. Directory contents:"
+          find . -type f -name "wizardscastle*"
+          exit 1
+        fi
         
         # Create Info.plist
         cat > WizardsCastle.app/Contents/Info.plist << EOF
@@ -285,5 +303,4 @@ jobs:
         EOF
         
         # Use macdeployqt to create DMG
-        macdeployqt WizardsCastle.app -dmg -verbose=2
- 
+        macdeployqt WizardsCastle.app -dmg -verbose=2 
