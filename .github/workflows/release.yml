@@ -216,3 +216,50 @@ jobs:
         asset_path: ./wizards_castle_qt_windows.zip
         asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-qt-windows.zip
         asset_content_type: application/zip
+
+  # I don't actually have a MAC to test this 
+  build-qt-macos:
+    runs-on: macos-latest
+    needs: build-and-release
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ env.QT_VERSION }}
+        host: 'mac'
+        target: 'desktop'
+        arch: 'clang_64'
+        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        dir: ${{ runner.temp }}
+        cache: true
+        setup-python: false
+
+    - name: Install build dependencies
+      run: |
+        brew install cmake
+        brew install ninja
+
+    - name: Build Qt application
+      working-directory: c
+      run: |
+        qmake wizard_castle_qt5.pro
+        make
+
+    - name: Create app bundle
+      run: |
+        mkdir -p WizardsCastle.app/Contents/MacOS
+        cp c/wizardscastle-qt WizardsCastle.app/Contents/MacOS/
+        macdeployqt WizardsCastle.app -dmg
+
+    - name: Upload macOS Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.build-and-release.outputs.upload_url }}
+        asset_path: ./WizardsCastle.dmg
+        asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-qt-macos.dmg
+        asset_content_type: application/x-apple-diskimage
