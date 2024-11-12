@@ -636,10 +636,83 @@ public:
     return input;
   }
 
-  void clearInput() {
+void clearInput() {
+    QPalette currentPalette = inputLine->palette(); // Store current palette
     inputLine->clear();
     lastInput.clear();
-  }
+    inputLine->setPlaceholderText(getRandomPlaceholder());
+    inputLine->setPalette(currentPalette); // Reapply the palette
+}
+
+
+   QString getRandomPlaceholder() {
+        int choice = rand() % 30;  // Increased to match number of cases
+        
+        switch (choice) {
+            case 0:
+                return QString("What do you wish to do, adventurer?");
+            case 1:
+                return QString("Your next action?");
+            case 2:
+                return QString("State your intention:");
+            case 3:
+                return QString("Command the way forward:");
+            case 4:
+                return QString("What path shall you take?");
+            case 5:
+                return QString("Your decree:");
+            case 6:
+                return QString("By your word:");
+            case 7:
+                return QString("Declare your action:");
+            case 8:
+                return QString("Make your choice, brave one:");
+            case 9:
+                return QString("How do you proceed?");
+            case 10:
+                return QString("What is thy bidding?");
+            case 11:
+                return QString("Your quest beckons:");
+            case 12:
+                return QString("Choose wisely:");
+            case 13:
+                return QString("What says your heart?");
+            case 14:
+                return QString("Speak thy will:");
+            case 15:
+                return QString("Your destiny awaits:");
+            case 16:
+                return QString("What shall be done?");
+            case 17:
+                return QString("Guide your fate:");
+            case 18:
+                return QString("Chart your course:");
+            case 19:
+                return QString("What moves you?");
+            case 20:
+                return QString("Your tale unfolds:");
+            case 21:
+                return QString("Forge ahead, how?");
+            case 22:
+                return QString("Write your legend:");
+            case 23:
+                return QString("What brings victory?");
+            case 24:
+                return QString("Choose your path:");
+            case 25:
+                return QString("What say you?");
+            case 26:
+                return QString("Your quest continues:");
+            case 27:
+                return QString("Brave soul, proceed:");
+            case 28:
+                return QString("Your adventure calls:");
+            case 29:
+                return QString("Show your mettle:");
+            default:
+                return QString("What is your command?");
+        }
+    }
 
   void clearOutput() 
   { 
