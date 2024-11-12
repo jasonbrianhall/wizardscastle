@@ -4,7 +4,7 @@
 #include "wizards-castle.h"
 
 // Function prototypes
-void fight_monster(Player *player, GameState *game);
+void fight_monster(Player *player, GameState *game, int monsterattacked);
 void handle_combat_victory(Player *player, GameState *game, int is_vendor,
                            const char *enemy_name);
 int handle_bribe(Player *player, GameState *game, const char *enemy_name);

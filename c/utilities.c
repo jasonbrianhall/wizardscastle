@@ -503,13 +503,13 @@ void open_chest(Player *player, GameState *game) {
           game->game_over = 1;
         } else {
           set_room_content(game, player->x, player->y, player->level, MIMIC);
-          fight_monster(player, game); // Initiate combat immediately
+          fight_monster(player, game, 1); // Initiate combat immediately
         }
       } else {
         print_message(
             "Your armor completely protects you from the surprise attack!\n");
         set_room_content(game, player->x, player->y, player->level, MIMIC);
-        fight_monster(player, game); // Initiate combat
+        fight_monster(player, game, 1); // Initiate combat
       }
     }
     break;

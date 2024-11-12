@@ -479,7 +479,7 @@ void print_status(Player *player, GameState *game) {
 
 void fight_monster_normalize(Player *player, GameState *game) {
   player->temp_blindness_flag = 0;
-  fight_monster(player, game);
+  fight_monster(player, game, 0);
   if (!game->game_over) {
     if (player->temp_intelligence > 0 &&
         player->intelligence > player->temp_intelligence) {

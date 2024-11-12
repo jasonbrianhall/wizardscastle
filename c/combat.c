@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 
-void fight_monster(Player *player, GameState *game) {
+void fight_monster(Player *player, GameState *game, int monsteralreadyattacked) {
   int room_content =
       get_room_content(game, player->x, player->y, player->level);
   int is_vendor = (room_content == VENDOR);
@@ -32,7 +32,7 @@ void fight_monster(Player *player, GameState *game) {
     return;
   }
 
-  if (can_escape(player, is_vendor, enemy_name)) {
+  if (monsteralreadyattacked==0 && can_escape(player, is_vendor, enemy_name)) {
     return;
   }
 
