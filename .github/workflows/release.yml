@@ -371,7 +371,7 @@ jobs:
 
     - name: Get version info
       id: version
-      shell: bash
+      shell: cmd
       run: |
         # Split year into century and year (2024 -> 20,24) but century first
         YEAR=$(git log -1 --format=%cd --date=format:%Y -- c/)
@@ -397,7 +397,7 @@ jobs:
         echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
 
     - name: Create WiX config
-      shell: cmd
+      shell: pwsh
       env:
         COMMIT_DATE: ${{ steps.version.outputs.commit_date }}
       run: |
