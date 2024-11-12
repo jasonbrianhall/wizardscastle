@@ -374,18 +374,29 @@ jobs:
       shell: bash
       run: |
         # Get year, month, day from the last commit
-        YEAR=$(git log -1 --format=%cd --date=format:%y -- c/)
+        YEAR=$(git log -1 --format=%cd --date=format:%Y -- c/)
         MONTH=$(git log -1 --format=%cd --date=format:%m -- c/)
         DAY=$(git log -1 --format=%cd --date=format:%d -- c/)
-        # Remove leading zeros to ensure valid integer format
+        
+        # Remove leading zeros and ensure numbers are within valid range
+        YEAR=$(echo $YEAR | sed 's/^0*//')
         MONTH=$(echo $MONTH | sed 's/^0*//')
         DAY=$(echo $DAY | sed 's/^0*//')
-        # Format as version string
-        COMMIT_DATE="${YEAR}.${MONTH}.${DAY}"
+        
+        # Get build number (hours + minutes) for fourth version component
+        BUILD=$(date +%H%M)
+        
+        # Format as version string that's valid for MSI
+        # Using: year.month.day.buildtime
+        COMMIT_DATE="${YEAR}.${MONTH}.${DAY}.${BUILD}"
+        
+        echo "Generated version: ${COMMIT_DATE}" 
         echo "commit_date=${COMMIT_DATE}" >> $GITHUB_OUTPUT
+        
         # Also get the commit SHA for the filename
         COMMIT_SHA=$(git log -1 --format=%h -- c/)
         echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
+
         
     - name: Create WiX config
       shell: cmd
