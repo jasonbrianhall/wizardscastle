@@ -369,32 +369,25 @@ jobs:
           windeployqt --release --no-translations --no-system-d3d-compiler deploy\wizardscastle-qt.exe
         )
 
+
+
     - name: Get version info
       id: version
-      shell: cmd
+      shell: bash
       run: |
-        # Split year into century and year (2024 -> 20,24) but century first
-        YEAR=$(git log -1 --format=%cd --date=format:%Y -- c/)
-        MAJOR=${YEAR: 0:2} # First 2 digits (20) for proper century ordering
-        MINOR=${YEAR: -2}  # Last 2 digits (24)
-        
-        # Use month and day for third component (MMDD)
-        MONTH=$(git log -1 --format=%cd --date=format:%-m -- c/)
-        DAY=$(git log -1 --format=%cd --date=format:%-d -- c/)
-        THIRD=$((MONTH * 100 + DAY))  # e.g., 1111 for Nov 11
-        
-        # Use time for fourth component
-        BUILD=$(date +%H%M)
-        
+        # Get year, month, day from the last commit
+        YEAR=$(git log -1 --format=%cd --date=format:%y -- c/)
+        MONTH=$(git log -1 --format=%cd --date=format:%m -- c/)
+        DAY=$(git log -1 --format=%cd --date=format:%d -- c/)
+        # Remove leading zeros to ensure valid integer format
+        MONTH=$(echo $MONTH | sed 's/^0*//')
+        DAY=$(echo $DAY | sed 's/^0*//')
         # Format as version string
-        COMMIT_DATE="${MAJOR}.${MINOR}.${THIRD}.${BUILD}"
-        
-        echo "Generated version: ${COMMIT_DATE}"
+        COMMIT_DATE="${YEAR}.${MONTH}.${DAY}"
         echo "commit_date=${COMMIT_DATE}" >> $GITHUB_OUTPUT
-        
         # Also get the commit SHA for the filename
-        COMMIT_SHA=$(git log -1 --format=%h -- c/)
-        echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
+        #COMMIT_SHA=$(git log -1 --format=%h -- c/)
+        #echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
 
     - name: Create WiX config
       shell: pwsh
