@@ -1163,6 +1163,35 @@ void loadGame() {
         return;
     }
 
+    QString fileName = QFileDialog::getOpenFileName(
+        this, 
+        tr("Load Game"), 
+        "",  // Current directory
+        tr("Wizard's Castle Save (*.wcs);;All Files (*)")
+    );
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    if (load_game(fileName.toStdString().c_str(), g_player, g_game)) {
+        QMessageBox::information(this, tr("Game Loaded"),
+                               tr("Your game has been loaded successfully."));
+        emit gameStateChanged();
+    } else {
+        QMessageBox::warning(this, tr("Load Failed"),
+                           tr("Failed to load the game."));
+    }
+}
+
+
+/*void loadGame() {
+    if (!g_player || !g_game) {
+        QMessageBox::warning(this, tr("Load Failed"),
+                           tr("Cannot load game at this time."));
+        return;
+    }
+
     // Get platform-specific application data location
     QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     if (dataPath.isEmpty()) {
@@ -1195,7 +1224,9 @@ void loadGame() {
                            tr("Failed to load the game. The file might be "
                               "corrupted or incompatible."));
     }
-}
+} */
+
+
   void qsaveGame() {
     if (g_game->game_over == 1) {
         QMessageBox::warning(this, tr("Save Failed"),
