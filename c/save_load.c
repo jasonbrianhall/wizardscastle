@@ -6,7 +6,7 @@
 
 bool save_game(const char *filename, const Player *player,
                const GameState *game) {
-  FILE *file = fopen(filename, "w");
+  FILE *file = fopen(filename, "wb");
   if (file == NULL) {
     return false;
   }
@@ -80,7 +80,7 @@ bool load_game(const char *filename, Player *player, GameState *game) {
   }
 
   fprintf(debug_file, "Attempting to load game from file: %s\n", filename);
-  FILE *file = fopen(filename, "r");
+  FILE *file = fopen(filename, "rb");
   if (file == NULL) {
     fprintf(debug_file, "Error: Unable to open file for reading.\n");
     fclose(debug_file);

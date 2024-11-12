@@ -717,16 +717,25 @@ signals:
   void inputReady();
 
 protected:
-  void closeEvent(QCloseEvent *event) override {
+
+void closeEvent(QCloseEvent *event) override {
     if (g_player && g_game) {
-      // Attempt to save the current game state
-      if (g_game->game_over == 0) {
-        save_game("lastcastle.wcs", g_player, g_game);
-      }
+        // Attempt to save the current game state
+        if (g_game->game_over == 0) {
+            QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+            if (!dataPath.isEmpty()) {
+                QDir dir(dataPath);
+                if (!dir.exists()) {
+                    dir.mkpath(".");
+                }
+                QString savePath = dir.filePath("lastcastle.wcs");
+                save_game(savePath.toStdString().c_str(), g_player, g_game);
+            }
+        }
     }
     event->accept();
     std::exit(0);
-  }
+}
 
   bool eventFilter(QObject *obj, QEvent *event) override {
     if (obj == outputText && event->type() == QEvent::Wheel) {
@@ -1156,7 +1165,7 @@ void saveGame() {
     }
 }
 
-void loadGame() {
+/*void loadGame() {
     if (!g_player || !g_game) {
         QMessageBox::warning(this, tr("Load Failed"),
                            tr("Cannot load game at this time."));
@@ -1182,10 +1191,10 @@ void loadGame() {
         QMessageBox::warning(this, tr("Load Failed"),
                            tr("Failed to load the game."));
     }
-}
+}*/
 
 
-/*void loadGame() {
+void loadGame() {
     if (!g_player || !g_game) {
         QMessageBox::warning(this, tr("Load Failed"),
                            tr("Cannot load game at this time."));
@@ -1224,7 +1233,7 @@ void loadGame() {
                            tr("Failed to load the game. The file might be "
                               "corrupted or incompatible."));
     }
-} */
+}
 
 
   void qsaveGame() {
