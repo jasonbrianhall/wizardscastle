@@ -406,27 +406,27 @@ jobs:
         echo       ^<Directory Id="ProgramFilesFolder"^> >> installer.wxs
         echo         ^<Directory Id="INSTALLFOLDER" Name="WizardsCastle"^> >> installer.wxs
         echo           ^<!-- Main application files --^> >> installer.wxs
-        echo           ^<Component Id="MainExecutable" Guid="*"^> >> installer.wxs
+        echo           ^<Component Id="MainExecutable" Guid="a28c0780-3d33-4021-9121-15d1f1ab4352"^> >> installer.wxs
         echo             ^<File Id="WizardsCastleEXE" Source="deploy\wizardscastle-qt.exe" KeyPath="yes"^> >> installer.wxs
         echo               ^<Shortcut Id="startmenuShortcut" Directory="ProgramMenuDir" Name="Wizard's Castle" WorkingDirectory="INSTALLFOLDER" Icon="icon.ico" IconIndex="0" Advertise="yes" /^> >> installer.wxs
         echo               ^<Shortcut Id="desktopShortcut" Directory="DesktopFolder" Name="Wizard's Castle" WorkingDirectory="INSTALLFOLDER" Icon="icon.ico" IconIndex="0" Advertise="yes" /^> >> installer.wxs
         echo             ^</File^> >> installer.wxs
         echo           ^</Component^> >> installer.wxs
         echo           ^<!-- Qt and dependency files --^> >> installer.wxs
-        echo           ^<Component Id="QtDependencies" Guid="*"^> >> installer.wxs
+        echo           ^<Component Id="QtDependencies" Guid="b9e45d1c-25a4-4c90-b82a-578c56a13a4c"^> >> installer.wxs
         echo             ^<File Id="Qt5Core" Source="deploy\Qt5Core.dll" /^> >> installer.wxs
         echo             ^<File Id="Qt5Gui" Source="deploy\Qt5Gui.dll" /^> >> installer.wxs
         echo             ^<File Id="Qt5Widgets" Source="deploy\Qt5Widgets.dll" /^> >> installer.wxs
         echo           ^</Component^> >> installer.wxs
         echo           ^<!-- Platform plugins --^> >> installer.wxs
         echo           ^<Directory Id="platforms" Name="platforms"^> >> installer.wxs
-        echo             ^<Component Id="QtPlatforms" Guid="*"^> >> installer.wxs
+        echo             ^<Component Id="QtPlatforms" Guid="c7d62fe3-7b7f-4582-a453-89d8c6376acf"^> >> installer.wxs
         echo               ^<File Id="qwindows" Source="deploy\platforms\qwindows.dll" /^> >> installer.wxs
         echo             ^</Component^> >> installer.wxs
         echo           ^</Directory^> >> installer.wxs
         echo           ^<!-- Styles plugins if used --^> >> installer.wxs
         echo           ^<Directory Id="styles" Name="styles"^> >> installer.wxs
-        echo             ^<Component Id="QtStyles" Guid="*"^> >> installer.wxs
+        echo             ^<Component Id="QtStyles" Guid="d5f91ae4-8b8a-4c73-9b12-123456789abc"^> >> installer.wxs
         echo               ^<File Id="qwindowsvistastyle" Source="deploy\styles\qwindowsvistastyle.dll" /^> >> installer.wxs
         echo             ^</Component^> >> installer.wxs
         echo           ^</Directory^> >> installer.wxs
@@ -434,7 +434,7 @@ jobs:
         echo       ^</Directory^> >> installer.wxs
         echo       ^<Directory Id="ProgramMenuFolder"^> >> installer.wxs
         echo         ^<Directory Id="ProgramMenuDir" Name="Wizard's Castle"^> >> installer.wxs
-        echo           ^<Component Id="ProgramMenuDir" Guid="*"^> >> installer.wxs
+        echo           ^<Component Id="ProgramMenuDir" Guid="e123cf45-6789-4abc-def0-123456789abc"^> >> installer.wxs
         echo             ^<RemoveFolder Id="ProgramMenuDir" On="uninstall" /^> >> installer.wxs
         echo             ^<RegistryValue Root="HKCU" Key="Software\WizardsCastle" Type="string" Value="" KeyPath="yes" /^> >> installer.wxs
         echo           ^</Component^> >> installer.wxs
