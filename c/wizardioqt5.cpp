@@ -753,7 +753,6 @@ protected:
 private slots:
 
   void showCheat() {
-    int fogOfWarChecked;
     if (!g_player) {
       QMessageBox::warning(this, tr("Error"), tr("No active game found."));
       return;
@@ -870,11 +869,11 @@ private slots:
 
     QCheckBox *stickyBookFlag = new QCheckBox(tr("Sticky Book"), &dialog);
     stickyBookFlag->setChecked(g_player->stickybook_flag);
-    flagsLayout->addWidget(stickyBookFlag, 1, 0);
+    flagsLayout->addWidget(stickyBookFlag, 0, 2);
 
     QCheckBox *orbFlag = new QCheckBox(tr("Orb of Zot"), &dialog);
     orbFlag->setChecked(g_player->orb_flag);
-    flagsLayout->addWidget(orbFlag, 1, 1);
+    flagsLayout->addWidget(orbFlag, 0, 3);
 
     QString orbLocation =
         QString("The Orb of Zot is located at (%1, %2) on level %3")
@@ -897,40 +896,61 @@ private slots:
     flagsLayout->addWidget(runestaffFlag, 2, 0);
 
     QCheckBox *fogOfWar =
-        new QCheckBox(tr("Display Entire Map (not reversable)"), &dialog);
+        new QCheckBox(tr("Display Entire Map"), &dialog);
     flagsLayout->addWidget(fogOfWar, 2, 1);
 
-    QCheckBox *rubyRed = new QCheckBox(tr("Ruby Red"), &dialog);
-    rubyRed->setChecked(g_game->treasure[0]);
-    flagsLayout->addWidget(rubyRed, 3, 0);
+    QCheckBox *fogOfWar2 =
+        new QCheckBox(tr("Hide Entire Map"), &dialog);
+    flagsLayout->addWidget(fogOfWar2, 2, 2);
 
-    QCheckBox *nornStone = new QCheckBox(tr("Norn Stone"), &dialog);
-    nornStone->setChecked(g_game->treasure[1]);
-    flagsLayout->addWidget(nornStone, 3, 1);
 
-    QCheckBox *palePearl = new QCheckBox(tr("Pale Pearl"), &dialog);
-    palePearl->setChecked(g_game->treasure[2]);
-    flagsLayout->addWidget(palePearl, 4, 0);
+    QSpinBox *rubyRed = new QSpinBox(&dialog);
+    rubyRed->setRange(0, 1048576);
+    rubyRed->setValue(g_game->treasure[0]);
+    flagsLayout->addWidget(new QLabel(tr("Ruby Red:")), 3, 0);
+    flagsLayout->addWidget(rubyRed, 3, 1);
 
-    QCheckBox *opalEye = new QCheckBox(tr("Opal Eye"), &dialog);
-    opalEye->setChecked(g_game->treasure[3]);
-    flagsLayout->addWidget(opalEye, 4, 1);
+    QSpinBox *nornStone = new QSpinBox(&dialog);
+    nornStone->setRange(0, 1048576);
+    nornStone->setValue(g_game->treasure[0]);
+    flagsLayout->addWidget(new QLabel(tr("Norn Stone:")), 3, 2);
+    flagsLayout->addWidget(nornStone, 3, 3);
 
-    QCheckBox *greenGem = new QCheckBox(tr("Green Gem"), &dialog);
-    greenGem->setChecked(g_game->treasure[4]);
-    flagsLayout->addWidget(greenGem, 5, 0);
+    QSpinBox *palePearl = new QSpinBox(&dialog);
+    palePearl->setRange(0, 1048576);
+    palePearl->setValue(g_game->treasure[2]);
+    flagsLayout->addWidget(new QLabel(tr("Pale Pearl:")), 4, 0);
+    flagsLayout->addWidget(palePearl, 4, 1);
 
-    QCheckBox *blueFlame = new QCheckBox(tr("Blue Flame"), &dialog);
-    blueFlame->setChecked(g_game->treasure[5]);
-    flagsLayout->addWidget(blueFlame, 5, 1);
+    QSpinBox *opalEye = new QSpinBox(&dialog);
+    opalEye->setRange(0, 1048576);
+    opalEye->setValue(g_game->treasure[3]);
+    flagsLayout->addWidget(new QLabel(tr("Opal Eye:")), 4, 2);
+    flagsLayout->addWidget(opalEye, 4, 3);
 
-    QCheckBox *palantir = new QCheckBox(tr("Palantir"), &dialog);
-    palantir->setChecked(g_game->treasure[6]);
-    flagsLayout->addWidget(palantir, 6, 0);
+    QSpinBox *greenGem = new QSpinBox(&dialog);
+    greenGem->setRange(0, 1048576);
+    greenGem->setValue(g_game->treasure[4]);
+    flagsLayout->addWidget(new QLabel(tr("Green Gem:")), 5, 0);
+    flagsLayout->addWidget(greenGem, 5, 1);
 
-    QCheckBox *silmaril = new QCheckBox(tr("Silmaril"), &dialog);
-    silmaril->setChecked(g_game->treasure[7]);
-    flagsLayout->addWidget(silmaril, 6, 1);
+    QSpinBox *blueFlame = new QSpinBox(&dialog);
+    blueFlame->setRange(0, 1048576);
+    blueFlame->setValue(g_game->treasure[5]);
+    flagsLayout->addWidget(new QLabel(tr("Blue Flame:")), 5, 2);
+    flagsLayout->addWidget(blueFlame, 5, 3);
+
+    QSpinBox *palantir = new QSpinBox(&dialog);
+    palantir->setRange(0, 1048576);
+    palantir->setValue(g_game->treasure[6]);
+    flagsLayout->addWidget(new QLabel(tr("Palantir:")), 6, 0);
+    flagsLayout->addWidget(palantir, 6, 1);
+
+    QSpinBox *silmaril = new QSpinBox(&dialog);
+    silmaril->setRange(0, 1048576);
+    silmaril->setValue(g_game->treasure[7]);
+    flagsLayout->addWidget(new QLabel(tr("Silmaril:")), 6, 2);
+    flagsLayout->addWidget(silmaril, 6, 3);
 
     mainLayout->addWidget(flagsGroup);
 
@@ -981,29 +1001,27 @@ private slots:
       g_player->x = ylocation->value();
       g_player->y = xlocation->value();
       g_player->level = zlocation->value();
+      g_game->treasure[0]=rubyRed->value();
+      g_game->treasure[1]=nornStone->value();
+      g_game->treasure[2]=palePearl->value();
+      g_game->treasure[3]=opalEye->value();
+      g_game->treasure[4]=greenGem->value();
+      g_game->treasure[5]=blueFlame->value();
+      g_game->treasure[6]=palantir->value();
+      g_game->treasure[7]=silmaril->value();
 
-      fogOfWarChecked = fogOfWar->isChecked();
-      if (!g_game->treasure[0] && rubyRed->isChecked())
-        g_game->treasure[0] = 1;
-      if (!g_game->treasure[1] && nornStone->isChecked())
-        g_game->treasure[1] = 1;
-      if (!g_game->treasure[2] && palePearl->isChecked())
-        g_game->treasure[2] = 1;
-      if (!g_game->treasure[3] && opalEye->isChecked())
-        g_game->treasure[3] = 1;
-      if (!g_game->treasure[4] && greenGem->isChecked())
-        g_game->treasure[4] = 1;
-      if (!g_game->treasure[5] && blueFlame->isChecked())
-        g_game->treasure[5] = 1;
-      if (!g_game->treasure[6] && palantir->isChecked())
-        g_game->treasure[6] = 1;
-      if (!g_game->treasure[7] && silmaril->isChecked())
-        g_game->treasure[7] = 1;
-      if (fogOfWarChecked) {
+      //fogOfWarChecked = fogOfWar->isChecked();
+
+      if (fogOfWar->isChecked()) {
         for (int q = 0; q < MAP_SIZE; q++) {
           g_game->discovered_rooms[q] = 1; // 0 means undiscovered
         }
-      }
+      } else if (fogOfWar2->isChecked()) {
+        for (int q = 0; q < MAP_SIZE; q++) {
+          g_game->discovered_rooms[q] = 0; // 0 means undiscovered including Entrance
+        }
+     }     
+
       // Update the display
       // updateMap();
     });

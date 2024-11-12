@@ -688,7 +688,12 @@ void gaze_into_orb(Player *player, GameState *game) {
     print_message("\n** It's hard to gate without an orb!\n");
     return;
   }
-
+  if (player->blindness_flag)
+  {
+        print_message("\nBlind ");
+        print_message_formatted("%s can not gaze.\n", get_race_name(player->race));
+        return;
+  }
   print_message("\nYou gaze into the crystal orb and see ");
 
   // Special rare effects (0.5% each)
