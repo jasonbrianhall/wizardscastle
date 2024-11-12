@@ -21,10 +21,10 @@ jobs:
       date: ${{ steps.date.outputs.date }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     
     - name: Set up Docker
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
     
     - name: Install dependencies
       run: |
@@ -390,7 +390,7 @@ jobs:
         #echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
 
     - name: Create WiX config
-      shell: pwsh
+      shell: cmd
       env:
         COMMIT_DATE: ${{ steps.version.outputs.commit_date }}
       run: |
