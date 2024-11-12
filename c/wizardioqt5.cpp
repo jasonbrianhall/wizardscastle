@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWheelEvent>
+#include <QStandardPaths>
 #include <QScreen>
 #include <cstdlib>
 #include <stdexcept>
@@ -1088,107 +1089,156 @@ private slots:
     }
   }
 
-  void saveGame() {
+void saveGame() {
     if (g_game->game_over == 1) {
-      QMessageBox::warning(this, tr("Save Failed"),
+        QMessageBox::warning(this, tr("Save Failed"),
                            tr("Dead adventurers can't save."));
-      return;
+        return;
     }
     if (!g_player || !g_game) {
-      QMessageBox::warning(this, tr("Save Failed"),
+        QMessageBox::warning(this, tr("Save Failed"),
                            tr("No active game to save."));
-      return;
+        return;
+    }
+
+    // Get platform-specific application data location
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (dataPath.isEmpty()) {
+        dataPath = QDir::homePath(); // Fallback to home directory
+    }
+
+    // Create the directory if it doesn't exist
+    QDir dir(dataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
     }
 
     QString fileName = QFileDialog::getSaveFileName(
-        this, tr("Save Game"), "", tr("Wizard's Castle Save (*.wcs)"));
+        this, 
+        tr("Save Game"), 
+        dir.filePath("save.wcs"),  // Default file in app data directory
+        tr("Wizard's Castle Save (*.wcs)")
+    );
+
     if (fileName.isEmpty()) {
-      return;
+        return;
     }
 
     // Ensure the file has a .wcs extension
     if (!fileName.endsWith(".wcs", Qt::CaseInsensitive)) {
-      fileName += ".wcs";
+        fileName += ".wcs";
     }
 
     if (save_game(fileName.toStdString().c_str(), g_player, g_game)) {
-      QMessageBox::information(this, tr("Game Saved"),
+        QMessageBox::information(this, tr("Game Saved"),
                                tr("Your game has been saved successfully."));
     } else {
-      QMessageBox::warning(this, tr("Save Failed"),
+        QMessageBox::warning(this, tr("Save Failed"),
                            tr("Failed to save the game. Please try again."));
     }
-  }
+}
 
-  void qsaveGame() {
-    if (g_game->game_over == 1) {
-      QMessageBox::warning(this, tr("Save Failed"),
-                           tr("Dead adventurers can't save."));
-      return;
-    }
+void loadGame() {
     if (!g_player || !g_game) {
-      QMessageBox::warning(this, tr("Save Failed"),
-                           tr("No active game to save."));
-      return;
-    }
-
-    if (save_game("quicksave.wcs", g_player, g_game)) {
-      /*QMessageBox::information(this, tr("Game Saved"),
-                               tr("Your game has been saved successfully.")); */  // Do nothing
-    } else {
-      QMessageBox::warning(this, tr("Save Failed"),
-                           tr("Failed to save the game. Please try again."));
-    }
-  }
-
-
-  void loadGame() {
-    if (!g_player || !g_game) {
-      QMessageBox::warning(this, tr("Load Failed"),
+        QMessageBox::warning(this, tr("Load Failed"),
                            tr("Cannot load game at this time."));
-      return;
+        return;
+    }
+
+    // Get platform-specific application data location
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (dataPath.isEmpty()) {
+        dataPath = QDir::homePath(); // Fallback to home directory
+    }
+
+    // Create the directory if it doesn't exist
+    QDir dir(dataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
     }
 
     QString fileName = QFileDialog::getOpenFileName(
-        this, tr("Load Game"), "",
-        tr("Wizard's Castle Save (*.wcs);;All Files (*)"));
+        this, 
+        tr("Load Game"), 
+        dataPath,  // Start in app data directory
+        tr("Wizard's Castle Save (*.wcs);;All Files (*)")
+    );
+
     if (fileName.isEmpty()) {
-      return;
+        return;
     }
 
     if (load_game(fileName.toStdString().c_str(), g_player, g_game)) {
         QMessageBox::information(this, tr("Game Loaded"),
                                tr("Your game has been loaded successfully."));
-      // You might want to trigger an update of the UI here
-      emit gameStateChanged();
+        emit gameStateChanged();
     } else {
-      QMessageBox::warning(this, tr("Load Failed"),
+        QMessageBox::warning(this, tr("Load Failed"),
                            tr("Failed to load the game. The file might be "
                               "corrupted or incompatible."));
     }
-  }
-
-  void qloadGame() {
+}
+  void qsaveGame() {
+    if (g_game->game_over == 1) {
+        QMessageBox::warning(this, tr("Save Failed"),
+                           tr("Dead adventurers can't save."));
+        return;
+    }
     if (!g_player || !g_game) {
-      QMessageBox::warning(this, tr("Load Failed"),
-                           tr("Cannot load game at this time."));
-      return;
+        QMessageBox::warning(this, tr("Save Failed"),
+                           tr("No active game to save."));
+        return;
     }
 
-    if (load_game("quicksave.wcs", g_player, g_game)) {
-      /* QMessageBox::information(this, tr("Game Loaded"),
-                               tr("Your game has been loaded successfully.")); */
-      // You might want to trigger an update of the UI here
-      emit gameStateChanged();
+    // Get platform-specific application data location
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (dataPath.isEmpty()) {
+        QMessageBox::warning(this, tr("Save Failed"),
+                           tr("Unable to determine save location."));
+        return;
+    }
+    
+    // Create the directory if it doesn't exist
+    QDir dir(dataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    // Full path for quicksave file
+    QString savePath = dir.filePath("quicksave.wcs");
+
+    if (save_game(savePath.toStdString().c_str(), g_player, g_game)) {
+        // Success - no message needed
     } else {
-      QMessageBox::warning(this, tr("Load Failed"),
+        QMessageBox::warning(this, tr("Save Failed"),
+                           tr("Failed to save the game. Please try again."));
+    }
+}
+
+void qloadGame() {
+    if (!g_player || !g_game) {
+        QMessageBox::warning(this, tr("Load Failed"),
+                           tr("Cannot load game at this time."));
+        return;
+    }
+
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (dataPath.isEmpty()) {
+        QMessageBox::warning(this, tr("Load Failed"),
+                           tr("Unable to determine save location."));
+        return;
+    }
+
+    QString loadPath = QDir(dataPath).filePath("quicksave.wcs");
+
+    if (load_game(loadPath.toStdString().c_str(), g_player, g_game)) {
+        emit gameStateChanged();
+    } else {
+        QMessageBox::warning(this, tr("Load Failed"),
                            tr("Failed to load the game. The file might be "
                               "corrupted or incompatible."));
     }
-  }
-
-
-
+}
 
   void newGame() {
     // Ask for confirmation before starting a new game
@@ -1349,22 +1399,23 @@ private:
             &WizardsCastleWindow::saveGame);
     fileMenu->addAction(saveAction);
 
-    QAction *qsaveAction = new QAction(tr("Quick save Game"), this);
+    QAction *loadAction = new QAction(tr("&Load Game"), this);
+    loadAction->setShortcut(QKeySequence::Open);
+    connect(loadAction, &QAction::triggered, this,
+        &WizardsCastleWindow::loadGame);
+    fileMenu->addAction(loadAction);
+
+    QAction *qsaveAction = new QAction(tr("Quick save Game (F5)"), this);
     qsaveAction->setShortcut(QKeySequence(Qt::Key_F5));
     connect(qsaveAction, &QAction::triggered, this,
             &WizardsCastleWindow::qsaveGame);
     fileMenu->addAction(qsaveAction);
 
-    QAction *qloadAction = new QAction(tr("Quick load Game"), this);
-    qloadAction->setShortcut(QKeySequence(Qt::SHIFT | Qt::Key_F5));
+
+    QAction *qloadAction = new QAction(tr("Quick Load Game (F6)"), this);
+    qloadAction->setShortcut(QKeySequence(Qt::Key_F6));
     connect(qloadAction, &QAction::triggered, this,
             &WizardsCastleWindow::qloadGame);
-    fileMenu->addAction(qloadAction);
-
-    QAction *loadAction = new QAction(tr("Quick Load Game"), this);
-    loadAction->setShortcut(QKeySequence::Open);
-    connect(loadAction, &QAction::triggered, this,
-            &WizardsCastleWindow::loadGame);
     fileMenu->addAction(qloadAction);
 
     fileMenu->addSeparator();
