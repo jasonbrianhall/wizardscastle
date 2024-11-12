@@ -392,7 +392,7 @@ jobs:
       run: |
         echo ^<?xml version="1.0" encoding="UTF-8"?^> > installer.wxs
         echo ^<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"^> >> installer.wxs
-        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="%COMMIT_DATE%.0" Manufacturer="Jason Hall" UpgradeCode="e27db2c8-b1b6-4cfa-a8f0-97e6dcf0a0e0"^> >> installer.wxs
+        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="%COMMIT_DATE%" Manufacturer="Jason Hall" UpgradeCode="e27db2c8-b1b6-4cfa-a8f0-97e6dcf0a0e0"^> >> installer.wxs
         echo     ^<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" /^> >> installer.wxs
         echo     ^<MajorUpgrade DowngradeErrorMessage="A newer version is already installed." /^> >> installer.wxs
         echo     ^<MediaTemplate EmbedCab="yes" /^> >> installer.wxs
