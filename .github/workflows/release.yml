@@ -145,17 +145,15 @@ jobs:
         asset_path: ./wizard.zip
         asset_name: wizardscastle-${{ steps.date.outputs.date }}-dos.zip
         asset_content_type: application/zip
-    
+  
     - name: Upload Linux Package
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v1    # <-- Using newer action
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./c/wizardscastle-linux.tar.gz
-        asset_name: wizardscastle-${{ steps.date.outputs.date }}-linux.tar.gz
-        asset_content_type: application/gzip
-
+        tag_name: v${{ steps.date.outputs.date }}-${{ steps.date.outputs.unique_id }}  # <-- Different syntax
+        files: ./c/wizardscastle-linux.tar.gz   # <-- Simpler way to specify files
+  
   build-qt-windows:
     runs-on: windows-latest
     needs: build-and-release
