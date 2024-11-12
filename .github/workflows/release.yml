@@ -369,12 +369,23 @@ jobs:
           windeployqt --release --no-translations --no-system-d3d-compiler deploy\wizardscastle-qt.exe
         )
 
+    - name: Get version info
+      id: version
+      shell: bash
+      run: |
+        # Get the date of the latest commit in the c directory in YY.MM.DD format
+        COMMIT_DATE=$(git log -1 --format=%cd --date=format:%y.%m.%d -- c/)
+        echo "commit_date=${COMMIT_DATE}" >> $GITHUB_OUTPUT
+        # Also get the commit SHA for the filename
+        COMMIT_SHA=$(git log -1 --format=%h -- c/)
+        echo "commit_sha=${COMMIT_SHA}" >> $GITHUB_OUTPUT
+
     - name: Create WiX config
       shell: cmd
       run: |
         echo ^<?xml version="1.0" encoding="UTF-8"?^> > installer.wxs
         echo ^<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"^> >> installer.wxs
-        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="%DATE:~10,4%.%DATE:~4,2%.%DATE:~7,2%.0" Manufacturer="Jason Hall" UpgradeCode="e27db2c8-b1b6-4cfa-a8f0-97e6dcf0a0e0"^> >> installer.wxs
+        echo   ^<Product Id="*" Name="Wizard's Castle" Language="1033" Version="%COMMIT_DATE%.0" Manufacturer="Jason Hall" UpgradeCode="e27db2c8-b1b6-4cfa-a8f0-97e6dcf0a0e0"^> >> installer.wxs
         echo     ^<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" /^> >> installer.wxs
         echo     ^<MajorUpgrade DowngradeErrorMessage="A newer version is already installed." /^> >> installer.wxs
         echo     ^<MediaTemplate EmbedCab="yes" /^> >> installer.wxs
@@ -407,7 +418,6 @@ jobs:
         echo     ^</Feature^> >> installer.wxs
         echo   ^</Product^> >> installer.wxs
         echo ^</Wix^> >> installer.wxs
-
 
     - name: Build MSI
       shell: cmd
