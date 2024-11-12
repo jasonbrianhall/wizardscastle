@@ -798,7 +798,7 @@ void open_book(Player *player, GameState *game) {
   int rare_book = random_number(200);
   if (rare_book == 1) {
     int rare_effect = random_number(5);
-    print_message("You open the book and discover ");
+    print_message("You open the book and ");
     switch (rare_effect) {
     case 1:
       print_message("find an ancient red leather-bound book with strange "
