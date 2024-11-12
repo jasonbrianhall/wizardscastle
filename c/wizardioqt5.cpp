@@ -1646,7 +1646,7 @@ const char* get_user_input_main() {
 }
 
 int get_user_input_number() {
-    //print_message("Enter a number: ");
+    print_message("Enter a number: ");
     g_window->clearInput();
     
     while (true) {
