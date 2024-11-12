@@ -42,6 +42,7 @@ extern "C" {
 
 Player *g_player = nullptr;
 GameState *g_game = nullptr;
+int cansave=0;
 
 class WizardsCastleWindow : public QMainWindow {
   Q_OBJECT
@@ -1122,7 +1123,7 @@ void saveGame() {
                            tr("Dead adventurers can't save."));
         return;
     }
-    if (!g_player || !g_game) {
+    if (!g_player || !g_game || cansave==0) {
         QMessageBox::warning(this, tr("Save Failed"),
                            tr("No active game to save."));
         return;
@@ -1165,37 +1166,8 @@ void saveGame() {
     }
 }
 
-/*void loadGame() {
-    if (!g_player || !g_game) {
-        QMessageBox::warning(this, tr("Load Failed"),
-                           tr("Cannot load game at this time."));
-        return;
-    }
-
-    QString fileName = QFileDialog::getOpenFileName(
-        this, 
-        tr("Load Game"), 
-        "",  // Current directory
-        tr("Wizard's Castle Save (*.wcs);;All Files (*)")
-    );
-
-    if (fileName.isEmpty()) {
-        return;
-    }
-
-    if (load_game(fileName.toStdString().c_str(), g_player, g_game)) {
-        QMessageBox::information(this, tr("Game Loaded"),
-                               tr("Your game has been loaded successfully."));
-        emit gameStateChanged();
-    } else {
-        QMessageBox::warning(this, tr("Load Failed"),
-                           tr("Failed to load the game."));
-    }
-}*/
-
-
 void loadGame() {
-    if (!g_player || !g_game) {
+    if (!g_player || !g_game || cansave==0) {
         QMessageBox::warning(this, tr("Load Failed"),
                            tr("Cannot load game at this time."));
         return;
@@ -1242,7 +1214,7 @@ void loadGame() {
                            tr("Dead adventurers can't save."));
         return;
     }
-    if (!g_player || !g_game) {
+    if (!g_player || !g_game || cansave==0) {
         QMessageBox::warning(this, tr("Save Failed"),
                            tr("No active game to save."));
         return;
@@ -1274,7 +1246,7 @@ void loadGame() {
 }
 
 void qloadGame() {
-    if (!g_player || !g_game) {
+    if (!g_player || !g_game || cansave==0) {
         QMessageBox::warning(this, tr("Load Failed"),
                            tr("Cannot load game at this time."));
         return;
@@ -1300,16 +1272,22 @@ void qloadGame() {
 
   void newGame() {
     // Ask for confirmation before starting a new game
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "New Game",
-                                  "Are you sure you want to start a new game? "
-                                  "Any unsaved progress will be lost.",
-                                  QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-      emit newGameRequested();
+      if (cansave==1)
+      {
+      QMessageBox::StandardButton reply;
+      reply = QMessageBox::question(this, "New Game",
+                                    "Are you sure you want to start a new game? "
+                                    "Any unsaved progress will be lost.",
+                                    QMessageBox::Yes | QMessageBox::No);
+      if (reply == QMessageBox::Yes) {
+        cansave=0;
+        emit newGameRequested();
+      }
+    } else {
+            QMessageBox::warning(this, tr("New Game Failed"),
+                           tr("Failed to start a new game; finish creating your character then try again."));
     }
   }
-
   void quit() { close(); }
 
 void processInput() {
@@ -1634,9 +1612,8 @@ void initialize_qt(int argc, char *argv[]) {
 
   while (playagain) {
     startNewGame();
+    cansave=1;
     playagain = main_game_loop(&player, &game);
-    if (playagain) {
-    }
   }
   // app->exec();
   delete g_window;
