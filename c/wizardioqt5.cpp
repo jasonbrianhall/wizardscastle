@@ -49,6 +49,14 @@ public:
   WizardsCastleWindow(QWidget *parent = nullptr)
       : QMainWindow(parent), waitingForSpecificInput(false), fontSize(10) {
     setWindowTitle("Wizard's Castle");
+
+   // Try to load and set the application icon
+    QFileInfo iconFile("icon.ico");
+    if (iconFile.exists()) {
+      QIcon icon("icon.ico");
+      setWindowIcon(icon);
+      QApplication::setWindowIcon(icon);  // Set icon for all windows
+    } 
     resize(1280, 768);
 
     QScreen *screen = QApplication::primaryScreen();
