@@ -389,6 +389,8 @@ jobs:
         
     - name: Create WiX config
       shell: cmd
+      env:
+        COMMIT_DATE: ${{ steps.version.outputs.commit_date }}
       run: |
         echo ^<?xml version="1.0" encoding="UTF-8"?^> > installer.wxs
         echo ^<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"^> >> installer.wxs
