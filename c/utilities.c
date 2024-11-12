@@ -548,8 +548,15 @@ void open_chest(Player *player, GameState *game) {
             player->intelligence = get_minimum(player->intelligence + 1, MAX_INTELLIGENCE);
             break;
         case 2:
-            print_message("you find a strange book. As you pick it up, it magically sticks to your hand!\n");
-            player->stickybook_flag = 1;
+            if(player->stickybook_flag==0)
+            {
+                 print_message("you find a strange book. As you pick it up, it magically sticks to your hand!\n");
+                 player->stickybook_flag = 1;
+            }
+            else
+            {
+                 print_message("you find a strange book. As you pick it up, it tries to stick to your hand but then falls to the ground!\n");
+            }
             break;
         case 3:
             print_message("you find a sinister-looking book. Reading it makes your head spin!\n");
@@ -858,9 +865,17 @@ void open_book(Player *player, GameState *game) {
                            : player->strength;
     break;
   case 6:
-    print_message("the book sticks to your hand -\n");
-    print_message("Now you are unable to draw your weapon!\n");
-    player->stickybook_flag = 1;
+    
+    if (player->stickybook_flag==0)
+    {
+         print_message("the book sticks to your hand -\n");
+         print_message("Now you are unable to draw your weapon!\n");
+         player->stickybook_flag = 1;
+    }
+    else
+    {
+             print_message("the book attempts to stick to your hand but falls to the ground instead.\n");
+    }
     break;
   case 7:
     print_message("it's a manual of intelligence!\n");
