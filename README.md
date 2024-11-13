@@ -1,6 +1,6 @@
 # 🏰 Wizard's Castle: A Perilous Quest for the Orb of Zot
 
-![Intro to Wizard's Castle](c/images/intro.png "Wizard's Castle Title")
+![Intro to Wizard's Castle](c/images/intro.jpg "Wizard's Castle Title")
 
 ## 🧙‍♂️ Embark on an Epic Text-Based Adventure!
 
