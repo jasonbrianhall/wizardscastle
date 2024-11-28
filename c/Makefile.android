@@ -1,0 +1,25 @@
+# Android configuration
+ANDROID_DOCKER_IMAGE = wizard-castle-android-builder
+APK_OUTPUT = wizard-castle.apk
+
+# Build the Android Docker image
+build-android-image:
+	docker build -t $(ANDROID_DOCKER_IMAGE) -f Dockerfile.android .
+
+# Build APK using Docker
+android: build-android-image
+	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(ANDROID_DOCKER_IMAGE) \
+		/bin/bash -c "cd /src && \
+		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/aapt package -f -m \
+		-J . -M AndroidManifest.xml -I $(ANDROID_SDK_ROOT)/platforms/android-33/android.jar && \
+		$(ANDROID_SDK_ROOT)/ndk/25.2.9519653/ndk-build && \
+		javac -d . -classpath $(ANDROID_SDK_ROOT)/platforms/android-33/android.jar *.java && \
+		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/d8 *.class && \
+		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/aapt package -f \
+		-M AndroidManifest.xml -I $(ANDROID_SDK_ROOT)/platforms/android-33/android.jar \
+		-F $(APK_OUTPUT).unsigned && \
+		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/zipalign -f 4 \
+		$(APK_OUTPUT).unsigned $(APK_OUTPUT)"
+
+.PHONY: build-android-image android
+
