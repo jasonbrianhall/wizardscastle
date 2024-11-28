@@ -66,7 +66,7 @@ android: build-android-image
 	@echo "Starting Android build..."
 	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(ANDROID_DOCKER_IMAGE) \
 		/bin/bash -c "set -x && cd /src && \
-		echo 'Creating initial APK...' && \
+		echo 'Creating initial APK and generating R.java...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f -m \
 		-J . -M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar -S res && \
 		echo 'Building native code...' && \
@@ -75,15 +75,16 @@ android: build-android-image
 		mkdir -p classes && \
 		javac -d classes \
 		    -bootclasspath $(ANDROID_SDK)/platforms/android-33/android.jar \
-		    -classpath $(ANDROID_SDK)/platforms/android-33/android.jar \
+		    -classpath $(ANDROID_SDK)/platforms/android-33/android.jar:. \
 		    -source 1.8 -target 1.8 \
-		    com/example/wizardscastle/MainActivity.java && \
+		    com/example/wizardscastle/MainActivity.java \
+		    com/example/wizardscastle/R.java && \
 		echo 'Converting to DEX...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/d8 \
 		    --lib $(ANDROID_SDK)/platforms/android-33/android.jar \
 		    --release \
 		    --output . \
-		    classes/com/example/wizardscastle/MainActivity.class && \
+		    classes/com/example/wizardscastle/*.class && \
 		echo 'Creating base APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
 		-M AndroidManifest.xml \

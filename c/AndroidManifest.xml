@@ -10,7 +10,7 @@
         
     <application
         android:debuggable="true"
-        android:label="Wizard's Castle"
+        android:label="Wizard\'s Castle"
         android:hasCode="true">
         <activity
             android:name=".MainActivity"
