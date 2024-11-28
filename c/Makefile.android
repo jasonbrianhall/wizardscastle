@@ -3,7 +3,7 @@ ANDROID_DOCKER_IMAGE = wizard-castle-android-builder
 APK_OUTPUT = wizard-castle.apk
 ANDROID_SDK = /opt/android-sdk
 
-# Get current user and group IDs for proper file ownership
+# Get current user and group IDs 
 USER_ID=$(shell id -u)
 GROUP_ID=$(shell id -g)
 
@@ -14,10 +14,16 @@ build-android-image:
 # Build APK using Docker
 android: build-android-image
 	@echo "Setting up NDK structure..."
-	rm -rf jni
-	mkdir -p jni
+	rm -rf jni res
+	mkdir -p jni res/values
 	cp *.c jni/
 	cp *.h jni/
+
+	@echo "Creating strings.xml"
+	@echo '<?xml version="1.0" encoding="utf-8"?>' > res/values/strings.xml
+	@echo '<resources>' >> res/values/strings.xml
+	@echo '    <string name="app_name">Wizard\&apos;s Castle</string>' >> res/values/strings.xml
+	@echo '</resources>' >> res/values/strings.xml
 
 	@echo "Creating Android.mk..."
 	@echo 'LOCAL_PATH := $$(call my-dir)' > jni/Android.mk
@@ -44,12 +50,14 @@ android: build-android-image
 	@echo '    static {' >> com/example/wizardscastle/MainActivity.java
 	@echo '        System.loadLibrary("wizardscastle");' >> com/example/wizardscastle/MainActivity.java
 	@echo '    }' >> com/example/wizardscastle/MainActivity.java
+	@echo '' >> com/example/wizardscastle/MainActivity.java
 	@echo '    private native void startGame();' >> com/example/wizardscastle/MainActivity.java
+	@echo '' >> com/example/wizardscastle/MainActivity.java
 	@echo '    @Override' >> com/example/wizardscastle/MainActivity.java
 	@echo '    protected void onCreate(Bundle savedInstanceState) {' >> com/example/wizardscastle/MainActivity.java
 	@echo '        super.onCreate(savedInstanceState);' >> com/example/wizardscastle/MainActivity.java
 	@echo '        TextView textView = new TextView(this);' >> com/example/wizardscastle/MainActivity.java
-	@echo '        textView.setText("Wizard'\''s Castle");' >> com/example/wizardscastle/MainActivity.java
+	@echo '        textView.setText(R.string.app_name);' >> com/example/wizardscastle/MainActivity.java
 	@echo '        setContentView(textView);' >> com/example/wizardscastle/MainActivity.java
 	@echo '        startGame();' >> com/example/wizardscastle/MainActivity.java
 	@echo '    }' >> com/example/wizardscastle/MainActivity.java
@@ -60,15 +68,22 @@ android: build-android-image
 		/bin/bash -c "set -x && cd /src && \
 		echo 'Creating initial APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f -m \
-		-J . -M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar && \
+		-J . -M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar -S res && \
 		echo 'Building native code...' && \
 		$(ANDROID_SDK)/ndk/25.2.9519653/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./jni/Android.mk && \
 		echo 'Compiling Java...' && \
 		mkdir -p classes && \
-		javac -d classes com/example/wizardscastle/MainActivity.java \
-		-classpath $(ANDROID_SDK)/platforms/android-33/android.jar && \
+		javac -d classes \
+		    -bootclasspath $(ANDROID_SDK)/platforms/android-33/android.jar \
+		    -classpath $(ANDROID_SDK)/platforms/android-33/android.jar \
+		    -source 1.8 -target 1.8 \
+		    com/example/wizardscastle/MainActivity.java && \
 		echo 'Converting to DEX...' && \
-		$(ANDROID_SDK)/build-tools/33.0.2/d8 --output . classes/com/example/wizardscastle/*.class && \
+		$(ANDROID_SDK)/build-tools/33.0.2/d8 \
+		    --lib $(ANDROID_SDK)/platforms/android-33/android.jar \
+		    --release \
+		    --output . \
+		    classes/com/example/wizardscastle/MainActivity.class && \
 		echo 'Creating base APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
 		-M AndroidManifest.xml \
@@ -84,8 +99,11 @@ android: build-android-image
 				if [ -d \"$$arch\" ]; then \
 					echo \"Adding libs for $$arch\" && \
 					cd \"$$arch\" && \
-					zip -u ../../$(APK_OUTPUT).unaligned lib/$$arch/*.so && \
-					cd ..; \
+					mkdir -p ../../lib/$$arch && \
+					cp *.so ../../lib/$$arch/ && \
+					cd ../..; \
+					zip -r $(APK_OUTPUT).unaligned lib/$$arch; \
+					cd libs; \
 				fi \
 			done && \
 			cd ..; \
@@ -96,7 +114,7 @@ android: build-android-image
 		unzip -l $(APK_OUTPUT)"
 
 android-clean:
-	chmod -R u+w jni obj libs classes com *.apk *.java || true
-	rm -rf jni obj libs classes com *.apk *.java *.dex
+	chmod -R u+w jni obj libs classes com res *.apk *.java || true
+	rm -rf jni obj libs classes com res *.apk *.java *.dex
 
 .PHONY: build-android-image android android-clean
