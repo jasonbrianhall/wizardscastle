@@ -1,6 +1,7 @@
 # Android configuration
 ANDROID_DOCKER_IMAGE = wizard-castle-android-builder
 APK_OUTPUT = wizard-castle.apk
+ANDROID_SDK = /opt/android-sdk
 
 # Build the Android Docker image
 build-android-image:
@@ -8,18 +9,47 @@ build-android-image:
 
 # Build APK using Docker
 android: build-android-image
+	@echo "Setting up NDK structure..."
+	rm -rf jni
+	mkdir -p jni
+	cp *.c jni/
+	cp *.h jni/
+
+	@echo "Creating Android.mk..."
+	@echo 'LOCAL_PATH := $$(call my-dir)' > jni/Android.mk
+	@echo 'include $$(CLEAR_VARS)' >> jni/Android.mk
+	@echo 'LOCAL_MODULE := wizardscastle' >> jni/Android.mk
+	@echo 'LOCAL_SRC_FILES := combat.c gamestate.c main.c player.c save_load.c utilities.c vendor.c wizardio.c wizards-castle.c' >> jni/Android.mk
+	@echo 'include $$(BUILD_SHARED_LIBRARY)' >> jni/Android.mk
+
+	@echo "Creating Application.mk..."
+	@echo 'APP_PLATFORM := android-24' > jni/Application.mk
+	@echo 'APP_ABI := all' >> jni/Application.mk
+
+	@echo "Starting Android build..."
 	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(ANDROID_DOCKER_IMAGE) \
-		/bin/bash -c "cd /src && \
-		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/aapt package -f -m \
-		-J . -M AndroidManifest.xml -I $(ANDROID_SDK_ROOT)/platforms/android-33/android.jar && \
-		$(ANDROID_SDK_ROOT)/ndk/25.2.9519653/ndk-build && \
-		javac -d . -classpath $(ANDROID_SDK_ROOT)/platforms/android-33/android.jar *.java && \
-		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/d8 *.class && \
-		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/aapt package -f \
-		-M AndroidManifest.xml -I $(ANDROID_SDK_ROOT)/platforms/android-33/android.jar \
+		/bin/bash -c "set -x && cd /src && \
+		echo 'Current directory contents:' && ls -la && \
+		echo 'Creating initial APK...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f -m \
+		-J . -M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar && \
+		echo 'Building native code...' && \
+		$(ANDROID_SDK)/ndk/25.2.9519653/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./jni/Android.mk && \
+		echo 'Compiling Java...' && \
+		javac -d . -classpath $(ANDROID_SDK)/platforms/android-33/android.jar *.java && \
+		echo 'Converting to DEX...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/d8 *.class && \
+		echo 'Packaging APK...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
+		-M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar \
 		-F $(APK_OUTPUT).unsigned && \
-		$(ANDROID_SDK_ROOT)/build-tools/33.0.2/zipalign -f 4 \
-		$(APK_OUTPUT).unsigned $(APK_OUTPUT)"
+		echo 'Aligning APK...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/zipalign -f 4 \
+		$(APK_OUTPUT).unsigned $(APK_OUTPUT) && \
+		echo 'Build complete. Contents of directory:' && \
+		ls -la"
 
-.PHONY: build-android-image android
+android-clean:
+	rm -rf jni obj libs *.apk *.java *.class
 
+.PHONY: build-android-image android android-clean
