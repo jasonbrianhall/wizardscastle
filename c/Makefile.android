@@ -26,6 +26,31 @@ android: build-android-image
 	@echo 'APP_PLATFORM := android-24' > jni/Application.mk
 	@echo 'APP_ABI := all' >> jni/Application.mk
 
+	@echo "Creating Java source directory..."
+	mkdir -p com/example/wizardscastle
+
+	@echo "Creating MainActivity.java..."
+	@echo 'package com.example.wizardscastle;' > com/example/wizardscastle/MainActivity.java
+	@echo '' >> com/example/wizardscastle/MainActivity.java
+	@echo 'import android.app.Activity;' >> com/example/wizardscastle/MainActivity.java
+	@echo 'import android.os.Bundle;' >> com/example/wizardscastle/MainActivity.java
+	@echo 'import android.widget.TextView;' >> com/example/wizardscastle/MainActivity.java
+	@echo '' >> com/example/wizardscastle/MainActivity.java
+	@echo 'public class MainActivity extends Activity {' >> com/example/wizardscastle/MainActivity.java
+	@echo '    static {' >> com/example/wizardscastle/MainActivity.java
+	@echo '        System.loadLibrary("wizardscastle");' >> com/example/wizardscastle/MainActivity.java
+	@echo '    }' >> com/example/wizardscastle/MainActivity.java
+	@echo '    private native void startGame();' >> com/example/wizardscastle/MainActivity.java
+	@echo '    @Override' >> com/example/wizardscastle/MainActivity.java
+	@echo '    protected void onCreate(Bundle savedInstanceState) {' >> com/example/wizardscastle/MainActivity.java
+	@echo '        super.onCreate(savedInstanceState);' >> com/example/wizardscastle/MainActivity.java
+	@echo '        TextView textView = new TextView(this);' >> com/example/wizardscastle/MainActivity.java
+	@echo '        textView.setText("Wizard'\''s Castle");' >> com/example/wizardscastle/MainActivity.java
+	@echo '        setContentView(textView);' >> com/example/wizardscastle/MainActivity.java
+	@echo '        startGame();' >> com/example/wizardscastle/MainActivity.java
+	@echo '    }' >> com/example/wizardscastle/MainActivity.java
+	@echo '}' >> com/example/wizardscastle/MainActivity.java
+
 	@echo "Starting Android build..."
 	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(ANDROID_DOCKER_IMAGE) \
 		/bin/bash -c "set -x && cd /src && \
@@ -36,9 +61,10 @@ android: build-android-image
 		echo 'Building native code...' && \
 		$(ANDROID_SDK)/ndk/25.2.9519653/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./jni/Android.mk && \
 		echo 'Compiling Java...' && \
-		javac -d . -classpath $(ANDROID_SDK)/platforms/android-33/android.jar *.java && \
+		javac -d . com/example/wizardscastle/MainActivity.java \
+		-classpath $(ANDROID_SDK)/platforms/android-33/android.jar && \
 		echo 'Converting to DEX...' && \
-		$(ANDROID_SDK)/build-tools/33.0.2/d8 *.class && \
+		$(ANDROID_SDK)/build-tools/33.0.2/d8 com/example/wizardscastle/MainActivity.class && \
 		echo 'Packaging APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
 		-M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar \
@@ -50,6 +76,6 @@ android: build-android-image
 		ls -la"
 
 android-clean:
-	rm -rf jni obj libs *.apk *.java *.class
+	rm -rf jni obj libs *.apk *.java *.class com
 
 .PHONY: build-android-image android android-clean
