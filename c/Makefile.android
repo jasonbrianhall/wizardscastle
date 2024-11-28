@@ -58,40 +58,45 @@ android: build-android-image
 	@echo "Starting Android build..."
 	docker run --rm -v $(PWD):/src:z -u $(USER_ID):$(GROUP_ID) $(ANDROID_DOCKER_IMAGE) \
 		/bin/bash -c "set -x && cd /src && \
-		echo 'Current directory contents:' && ls -la && \
 		echo 'Creating initial APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f -m \
 		-J . -M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar && \
 		echo 'Building native code...' && \
 		$(ANDROID_SDK)/ndk/25.2.9519653/ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./jni/Android.mk && \
 		echo 'Compiling Java...' && \
-		javac -d . com/example/wizardscastle/MainActivity.java \
+		mkdir -p classes && \
+		javac -d classes com/example/wizardscastle/MainActivity.java \
 		-classpath $(ANDROID_SDK)/platforms/android-33/android.jar && \
 		echo 'Converting to DEX...' && \
-		$(ANDROID_SDK)/build-tools/33.0.2/d8 --output . com/example/wizardscastle/MainActivity.class && \
+		$(ANDROID_SDK)/build-tools/33.0.2/d8 --output . classes/com/example/wizardscastle/*.class && \
 		echo 'Creating base APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
-		-M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar \
-		-F $(APK_OUTPUT).unsigned && \
-		echo 'Adding classes.dex...' && \
-		$(ANDROID_SDK)/build-tools/33.0.2/aapt add $(APK_OUTPUT).unsigned classes.dex && \
+		-M AndroidManifest.xml \
+		-S res \
+		-I $(ANDROID_SDK)/platforms/android-33/android.jar \
+		-F $(APK_OUTPUT).unaligned && \
+		echo 'Adding DEX...' && \
+		zip -uj $(APK_OUTPUT).unaligned classes.dex && \
 		echo 'Adding native libraries...' && \
-		for abi in $$(ls libs); do \
-			for lib in $$(ls libs/$$abi/*.so); do \
-				echo Adding $$lib; \
-				$(ANDROID_SDK)/build-tools/33.0.2/aapt add $(APK_OUTPUT).unsigned $$lib; \
-			done; \
-		done && \
-		echo 'Aligning APK...' && \
-		$(ANDROID_SDK)/build-tools/33.0.2/zipalign -f 4 \
-		$(APK_OUTPUT).unsigned $(APK_OUTPUT) && \
-		echo 'Build complete. Contents of directory:' && \
-		ls -la && \
-		echo 'APK contents:' && \
+		if [ -d libs ]; then \
+			cd libs && \
+			for arch in *; do \
+				if [ -d \"$$arch\" ]; then \
+					echo \"Adding libs for $$arch\" && \
+					cd \"$$arch\" && \
+					zip -u ../../$(APK_OUTPUT).unaligned lib/$$arch/*.so && \
+					cd ..; \
+				fi \
+			done && \
+			cd ..; \
+		fi && \
+		echo 'Aligning...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/zipalign -f 4 $(APK_OUTPUT).unaligned $(APK_OUTPUT) && \
+		echo 'Contents of APK:' && \
 		unzip -l $(APK_OUTPUT)"
 
 android-clean:
-	chmod -R u+w jni obj libs com *.apk *.java *.class || true
-	rm -rf jni obj libs *.apk *.java *.class com
+	chmod -R u+w jni obj libs classes com *.apk *.java || true
+	rm -rf jni obj libs classes com *.apk *.java *.dex
 
 .PHONY: build-android-image android android-clean
