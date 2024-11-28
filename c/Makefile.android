@@ -3,6 +3,10 @@ ANDROID_DOCKER_IMAGE = wizard-castle-android-builder
 APK_OUTPUT = wizard-castle.apk
 ANDROID_SDK = /opt/android-sdk
 
+# Get current user and group IDs for proper file ownership
+USER_ID=$(shell id -u)
+GROUP_ID=$(shell id -g)
+
 # Build the Android Docker image
 build-android-image:
 	docker build -t $(ANDROID_DOCKER_IMAGE) -f Dockerfile.android .
@@ -64,18 +68,30 @@ android: build-android-image
 		javac -d . com/example/wizardscastle/MainActivity.java \
 		-classpath $(ANDROID_SDK)/platforms/android-33/android.jar && \
 		echo 'Converting to DEX...' && \
-		$(ANDROID_SDK)/build-tools/33.0.2/d8 com/example/wizardscastle/MainActivity.class && \
-		echo 'Packaging APK...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/d8 --output . com/example/wizardscastle/MainActivity.class && \
+		echo 'Creating base APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
 		-M AndroidManifest.xml -I $(ANDROID_SDK)/platforms/android-33/android.jar \
 		-F $(APK_OUTPUT).unsigned && \
+		echo 'Adding classes.dex...' && \
+		$(ANDROID_SDK)/build-tools/33.0.2/aapt add $(APK_OUTPUT).unsigned classes.dex && \
+		echo 'Adding native libraries...' && \
+		for abi in $$(ls libs); do \
+			for lib in $$(ls libs/$$abi/*.so); do \
+				echo Adding $$lib; \
+				$(ANDROID_SDK)/build-tools/33.0.2/aapt add $(APK_OUTPUT).unsigned $$lib; \
+			done; \
+		done && \
 		echo 'Aligning APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/zipalign -f 4 \
 		$(APK_OUTPUT).unsigned $(APK_OUTPUT) && \
 		echo 'Build complete. Contents of directory:' && \
-		ls -la"
+		ls -la && \
+		echo 'APK contents:' && \
+		unzip -l $(APK_OUTPUT)"
 
 android-clean:
+	chmod -R u+w jni obj libs com *.apk *.java *.class || true
 	rm -rf jni obj libs *.apk *.java *.class com
 
 .PHONY: build-android-image android android-clean
