@@ -34,7 +34,7 @@ android: build-android-image
 
 	@echo "Creating Application.mk..."
 	@echo 'APP_PLATFORM := android-24' > jni/Application.mk
-	@echo 'APP_ABI := all' >> jni/Application.mk
+	@echo 'APP_ABI := arm64-v8a armeabi-v7a x86 x86_64' >> jni/Application.mk
 
 	@echo "Creating Java source directory..."
 	mkdir -p com/example/wizardscastle
@@ -85,37 +85,32 @@ android: build-android-image
 		    --release \
 		    --output . \
 		    classes/com/example/wizardscastle/*.class && \
-		echo 'Creating base APK...' && \
+		echo 'Creating initial unaligned APK...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/aapt package -f \
 		-M AndroidManifest.xml \
 		-S res \
 		-I $(ANDROID_SDK)/platforms/android-33/android.jar \
 		-F $(APK_OUTPUT).unaligned && \
-		echo 'Adding DEX...' && \
+		echo 'Adding classes.dex...' && \
 		zip -uj $(APK_OUTPUT).unaligned classes.dex && \
 		echo 'Adding native libraries...' && \
-		if [ -d libs ]; then \
-			cd libs && \
-			for arch in *; do \
-				if [ -d \"$$arch\" ]; then \
-					echo \"Adding libs for $$arch\" && \
-					cd \"$$arch\" && \
-					mkdir -p ../../lib/$$arch && \
-					cp *.so ../../lib/$$arch/ && \
-					cd ../..; \
-					zip -r $(APK_OUTPUT).unaligned lib/$$arch; \
-					cd libs; \
-				fi \
-			done && \
-			cd ..; \
-		fi && \
+		for arch in arm64-v8a armeabi-v7a x86 x86_64; do \
+			if [ -d libs/\$$arch ]; then \
+				echo \"Adding libs for \$$arch\" && \
+				mkdir -p lib/\$$arch && \
+				cp libs/\$$arch/*.so lib/\$$arch/ && \
+				cd lib && \
+				zip -r ../$(APK_OUTPUT).unaligned \$$arch && \
+				cd ..; \
+			fi \
+		done && \
 		echo 'Aligning...' && \
 		$(ANDROID_SDK)/build-tools/33.0.2/zipalign -f 4 $(APK_OUTPUT).unaligned $(APK_OUTPUT) && \
 		echo 'Contents of APK:' && \
 		unzip -l $(APK_OUTPUT)"
 
 android-clean:
-	chmod -R u+w jni obj libs classes com res *.apk *.java || true
-	rm -rf jni obj libs classes com res *.apk *.java *.dex
+	chmod -R u+w jni obj libs classes com res lib *.apk *.java || true
+	rm -rf jni obj libs classes com res lib *.apk *.java *.dex
 
 .PHONY: build-android-image android android-clean
