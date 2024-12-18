@@ -45,6 +45,7 @@ import android.view.View;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -52,15 +53,17 @@ public class TerminalView extends View {
     private Paint textPaint;
     private float charWidth;
     private float charHeight;
-    private int cols = 160;
-    private int rows = 40;
+    private int cols;
+    private int rows;
     private char[][] buffer;
     private int cursorX = 0;
     private int cursorY = 0;
     private OutputStream outputStream;
     private boolean cursorVisible = true;
     private float scaleFactor = 1.0f;
-    private float baseTextSize; 
+    private float baseTextSize;
+    private boolean keyboardVisible = false;
+    private InputMethodManager imm;
 
     public TerminalView(Context context) {
         super(context);
@@ -73,34 +76,106 @@ public class TerminalView extends View {
     }
     
     private void init() {
+        imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         textPaint = new Paint();
         textPaint.setColor(Color.GREEN);
         textPaint.setTypeface(Typeface.MONOSPACE);
-        calculateInitialTextSize();
-
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        charHeight = fm.bottom - fm.top;
-        charWidth = textPaint.measureText("M");
+        textPaint.setAntiAlias(true);
         
+        // Initialize with dummy values, will be updated in onSizeChanged
+        cols = 80;
+        rows = 48;
         buffer = new char[rows][cols];
+        
+        calculateInitialTextSize();
         clearScreen();
         
         setFocusable(true);
         setFocusableInTouchMode(true);
+        
+        // Show keyboard on start
+        post(() -> {
+            requestFocus();
+            showKeyboard();
+        });
+    }
+
+    public void setOutputStream(OutputStream os) {
+        this.outputStream = os;
+    }
+    
+    private void clearScreen() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                buffer[i][j] = ' ';
+            }
+        }
+        cursorX = 0;
+        cursorY = 0;
+        invalidate();
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        
+        // Recalculate dimensions based on new size
+        calculateDimensions(w, h);
+        
+        // Create new buffer with new dimensions
+        char[][] newBuffer = new char[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                newBuffer[i][j] = ' ';
+            }
+        }
+        
+        // Copy old buffer contents if they exist
+        if (buffer != null) {
+            int minRows = Math.min(rows, buffer.length);
+            int minCols = Math.min(cols, buffer[0].length);
+            for (int i = 0; i < minRows; i++) {
+                System.arraycopy(buffer[i], 0, newBuffer[i], 0, minCols);
+            }
+        }
+        
+        buffer = newBuffer;
+        invalidate();
+    }
+    
+    private void calculateDimensions(int width, int height) {
+        // Calculate text size that would fill the screen
+        float testTextSize = 100f;  // Start with a large size
+        textPaint.setTextSize(testTextSize);
+        
+        // Measure character dimensions at test size
+        Paint.FontMetrics fm = textPaint.getFontMetrics();
+        float testCharHeight = fm.bottom - fm.top;
+        float testCharWidth = textPaint.measureText("M");
+        
+        // Calculate scaling factors
+        float heightScale = height / testCharHeight;
+        float widthScale = width / testCharWidth;
+        
+        // Calculate final text size
+        baseTextSize = Math.min(testTextSize * heightScale / 48,  // Aim for at least 24 rows
+                               testTextSize * widthScale / 80);    // Aim for at least 80 columns
+        
+        updateTextSize();
+        
+        // Calculate final dimensions
+        fm = textPaint.getFontMetrics();
+        charHeight = fm.bottom - fm.top;
+        charWidth = textPaint.measureText("M");
+        
+        // Calculate rows and columns that will fit
+        rows = Math.max(48, (int)(height / charHeight));
+        cols = Math.max(80, (int)(width / charWidth));
     }
     
     private void calculateInitialTextSize() {
-        // Get display metrics
         android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
-        float screenWidth = metrics.widthPixels;
-        float screenHeight = metrics.heightPixels;
-        
-        // Calculate text size that would fit the screen
-        float widthBased = screenWidth / cols;
-        float heightBased = screenHeight / rows;
-        
-        // Use the smaller of the two to ensure everything fits
-        baseTextSize = Math.min(widthBased, heightBased) * 0.8f; // 80% of max size
+        baseTextSize = metrics.density * 12f;  // Start with 12dp
         updateTextSize();
     }
 
@@ -115,98 +190,44 @@ public class TerminalView extends View {
         invalidate();
     }
 
-    public void setOutputStream(OutputStream os) {
-        this.outputStream = os;
-    }
-    
-    private void clearScreen() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                buffer[i][j] = ' ';
-            }
-        }
-        invalidate();
-    }
-    
-    public void write(byte[] data) {
-        for (byte b : data) {
-            if (b == '\n') {
-                cursorY++;
-                cursorX = 0;
-            } else if (b == '\r') {
-                cursorX = 0;
-            } else if (b == '\b') {
-                if (cursorX > 0) cursorX--;
-            } else {
-                if (cursorX >= cols) {
-                    cursorX = 0;
-                    cursorY++;
-                }
-                if (cursorY >= rows) {
-                    scrollUp();
-                    cursorY = rows - 1;
-                }
-                buffer[cursorY][cursorX++] = (char)b;
-            }
-        }
-        invalidate();
-    }
-    
-    private void scrollUp() {
-        for (int i = 0; i < rows - 1; i++) {
-            System.arraycopy(buffer[i + 1], 0, buffer[i], 0, cols);
-        }
-        for (int j = 0; j < cols; j++) {
-            buffer[rows - 1][j] = ' ';
+    public void showKeyboard() {
+        if (!keyboardVisible) {
+            imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT);
+            keyboardVisible = true;
         }
     }
-    
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        
-        canvas.drawColor(Color.BLACK);
-        
-        float y = charHeight;
-        for (int i = 0; i < rows; i++) {
-            float x = 0;
-            for (int j = 0; j < cols; j++) {
-                canvas.drawText(String.valueOf(buffer[i][j]), x, y, textPaint);
-                x += charWidth;
-            }
-            y += charHeight;
-        }
-        
-        if (cursorVisible) {
-            Paint cursorPaint = new Paint();
-            cursorPaint.setColor(Color.GREEN);
-            canvas.drawRect(
-                cursorX * charWidth,
-                cursorY * charHeight,
-                (cursorX + 1) * charWidth,
-                (cursorY + 1) * charHeight,
-                cursorPaint
-            );
+
+    public void hideKeyboard() {
+        if (keyboardVisible) {
+            imm.hideSoftInputFromWindow(getWindowToken(), 0);
+            keyboardVisible = false;
         }
     }
-  
+
+    public void toggleKeyboard() {
+        if (keyboardVisible) {
+            hideKeyboard();
+        } else {
+            showKeyboard();
+        }
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (outputStream != null) {
             try {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    // Echo newline locally
-                    write("\n".getBytes());
-                    // Send to process
+                    outputStream.write('\r');
                     outputStream.write('\n');
+                    outputStream.flush();
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                    outputStream.write('\b');
                     outputStream.flush();
                     return true;
                 } else {
                     int unicode = event.getUnicodeChar();
                     if (unicode != 0) {
-                        // Echo character locally
-                        //write(String.valueOf((char)unicode).getBytes());
-                        // Send to process
                         outputStream.write(unicode);
                         outputStream.flush();
                         return true;
@@ -219,18 +240,95 @@ public class TerminalView extends View {
         return super.onKeyDown(keyCode, event);
     }
 
+    public void write(byte[] data) {
+        for (byte b : data) {
+            if (b == '\n') {
+                // Always move cursor down and to start of line on \n
+                cursorY++;
+                cursorX = 0;
+                
+                // Handle scrolling if needed
+                if (cursorY >= rows) {
+                    scrollUp();
+                    cursorY = rows - 1;
+                }
+            } else if (b == '\r') {
+                // Just move cursor to start of line
+                cursorX = 0;
+            } else if (b == '\b') {
+                if (cursorX > 0) {
+                    cursorX--;
+                    buffer[cursorY][cursorX] = ' ';
+                }
+            } else {
+                if (cursorX >= cols) {
+                    cursorX = 0;
+                    cursorY++;
+                    if (cursorY >= rows) {
+                        scrollUp();
+                        cursorY = rows - 1;
+                    }
+                }
+                buffer[cursorY][cursorX++] = (char)b;
+            }
+        }
+        invalidate();
+    }
+
+    private void scrollUp() {
+        // Move all lines up one position
+        for (int i = 0; i < rows - 1; i++) {
+            System.arraycopy(buffer[i + 1], 0, buffer[i], 0, cols);
+        }
+        
+        // Clear the last line
+        for (int j = 0; j < cols; j++) {
+            buffer[rows - 1][j] = ' ';
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        
+        canvas.drawColor(Color.BLACK);
+        
+        // Calculate baseline offset for proper text alignment
+        Paint.FontMetrics fm = textPaint.getFontMetrics();
+        float baselineOffset = -fm.top;
+        
+        for (int i = 0; i < rows; i++) {
+            float y = i * charHeight + baselineOffset;
+            for (int j = 0; j < cols; j++) {
+                float x = j * charWidth;
+                canvas.drawText(String.valueOf(buffer[i][j]), x, y, textPaint);
+            }
+        }
+        
+        // Draw cursor
+        if (cursorVisible) {
+            Paint cursorPaint = new Paint();
+            cursorPaint.setColor(Color.GREEN);
+            cursorPaint.setAlpha(160);  // Make cursor semi-transparent
+            canvas.drawRect(
+                cursorX * charWidth,
+                cursorY * charHeight,
+                (cursorX + 1) * charWidth,
+                (cursorY + 1) * charHeight,
+                cursorPaint
+            );
+        }
+    }
+
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT;
-        outAttrs.imeOptions = EditorInfo.IME_ACTION_NONE;
+        outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+        outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN;
         return new BaseInputConnection(this, true) {
             @Override
             public boolean commitText(CharSequence text, int newCursorPosition) {
                 if (outputStream != null) {
                     try {
-                        // Echo text locally
-                        write(text.toString().getBytes());
-                        // Send to process
                         outputStream.write(text.toString().getBytes());
                         outputStream.flush();
                     } catch (IOException e) {
@@ -240,13 +338,6 @@ public class TerminalView extends View {
                 return true;
             }
         };
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = (int)(cols * charWidth);
-        int height = (int)(rows * charHeight);
-        setMeasuredDimension(width, height);
     }
 }
 EOL
