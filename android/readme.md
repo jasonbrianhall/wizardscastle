@@ -74,7 +74,7 @@ export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/[version]  # Replace [version] with yo
      ```
    - For a release build:
      ```bash
-     gradle assemble
+     gradle assembleRelease or gradle assemble
      ```
 
 5. **Locate Your Treasure**
