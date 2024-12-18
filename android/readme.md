@@ -33,6 +33,7 @@ Before beginning your journey, you must obtain these mystical artifacts:
    - *Ubuntu/Debian:* Summon with `sudo apt-get install gradle`
    - *Mac:* Conjure using `brew install gradle`
    - *Windows:* Download from [Gradle's Realm](https://gradle.org/install/)
+   - *Other:* Download from the [internet](https://github.com/gradle/gradle-distributions/releases/download/v8.11.1/gradle-8.11.1-bin.zip), unzip and set the path appropriately to the bin directory
 
 ## 🗺️ The Path of Configuration
 
