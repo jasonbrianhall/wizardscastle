@@ -347,7 +347,7 @@ void print_message_formatted(const char *format, ...) {
 
   // Print the result
   printf("%s", buffer);
-
+  fflush(stdout);
   va_end(args);
 }
 
@@ -356,6 +356,7 @@ void print_message(const char *format, ...) {
   va_start(args, format);
   vprintf(format, args);
   va_end(args);
+  fflush(stdout);
 }
 
 #endif
