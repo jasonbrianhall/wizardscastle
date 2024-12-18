@@ -30,6 +30,7 @@ int getch() {
   int ch;
   enable_raw_mode();
   ch = getchar();
+  fflush(stdout);
   disable_raw_mode();
   return ch;
 }
@@ -87,13 +88,15 @@ char *get_command_with_history(const char *prompt) {
 
   while (1) {
     int ch = getch();
-
+    fflush(stdout);
 #ifdef __linux__
     if (ch == 27) { // ESC sequence
       ch = getch();
+      fflush(stdout);
       if (ch == '[') {
         ch = getch();
-        if (ch == 'A') {        // Up arrow
+        fflush(stdout);
+	if (ch == 'A') {        // Up arrow
           ch = -2;              // Custom code for up
         } else if (ch == 'B') { // Down arrow
           ch = -3;              // Custom code for down
@@ -103,6 +106,7 @@ char *get_command_with_history(const char *prompt) {
 #else
     if (ch == 0 || ch == 224) { // Extended key for DOS
       ch = getch();
+      fflush(stdout);
       if (ch == 72) { // Up arrow
         ch = -2;
       } else if (ch == 80) { // Down arrow
