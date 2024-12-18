@@ -200,8 +200,7 @@ jobs:
     - name: Build Debug APK
       run: |
         cd android/WizardsCastle
-        chmod +x gradlew
-        ./gradlew assembleDebug --stacktrace --info
+        gradle assembleDebug --stacktrace --info
 
     - name: List Build Directory Contents
       if: always()
