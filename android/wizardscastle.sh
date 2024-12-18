@@ -26,8 +26,6 @@ if ! command -v gradle &> /dev/null; then
     exit 1
 fi
 
-VERSION_CODE=$(date +%Y%m%d)
-VERSION_NAME=$(date +%Y.%m.%d)
 
 # Create project structure
 mkdir -p WizardsCastle/app/src/main/{assets,java/org/wizardscastle/terminalwizcastle,res}
@@ -746,10 +744,11 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
 EOL
 
 # Create build.gradle
-cat > app/build.gradle << EOL
+cat > app/build.gradle << 'EOL'
 plugins {
     id 'com.android.application'
 }
+
 android {
     namespace 'org.wizardscastle.terminalwizcastle'
     compileSdkVersion 33
@@ -758,8 +757,8 @@ android {
         applicationId "org.wizardscastle.terminalwizcastle"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode $VERSION_CODE
-        versionName $VERSION_NAME
+        versionCode CHANGEME1
+        versionName CHANGEME2
     }
     
     buildTypes {
@@ -776,6 +775,12 @@ android {
     }
 }
 EOL
+
+VERSION_CODE=$(date +%Y%m%d)
+VERSION_NAME=$(date +%Y.%m.%d)
+
+sed "s/CHANGEME1/$VERSION_CODE/g" app/build.gradle -i
+sed "s/CHANGEME2/\"$VERSION_NAME\"/g" app/build.gradle -i
 
 # Create settings.gradle
 cat > settings.gradle << 'EOL'
