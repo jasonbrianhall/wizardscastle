@@ -59,7 +59,9 @@ public class TerminalView extends View {
     private int cursorY = 0;
     private OutputStream outputStream;
     private boolean cursorVisible = true;
-    
+    private float scaleFactor = 1.0f;
+    private float baseTextSize; 
+
     public TerminalView(Context context) {
         super(context);
         init();
@@ -74,8 +76,8 @@ public class TerminalView extends View {
         textPaint = new Paint();
         textPaint.setColor(Color.GREEN);
         textPaint.setTypeface(Typeface.MONOSPACE);
-        textPaint.setTextSize(10);
-        
+        calculateInitialTextSize();
+
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         charHeight = fm.bottom - fm.top;
         charWidth = textPaint.measureText("M");
@@ -87,6 +89,32 @@ public class TerminalView extends View {
         setFocusableInTouchMode(true);
     }
     
+    private void calculateInitialTextSize() {
+        // Get display metrics
+        android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float screenWidth = metrics.widthPixels;
+        float screenHeight = metrics.heightPixels;
+        
+        // Calculate text size that would fit the screen
+        float widthBased = screenWidth / cols;
+        float heightBased = screenHeight / rows;
+        
+        // Use the smaller of the two to ensure everything fits
+        baseTextSize = Math.min(widthBased, heightBased) * 0.8f; // 80% of max size
+        updateTextSize();
+    }
+
+    private void updateTextSize() {
+        float newTextSize = baseTextSize * scaleFactor;
+        textPaint.setTextSize(newTextSize);
+        
+        Paint.FontMetrics fm = textPaint.getFontMetrics();
+        charHeight = fm.bottom - fm.top;
+        charWidth = textPaint.measureText("M");
+        
+        invalidate();
+    }
+
     public void setOutputStream(OutputStream os) {
         this.outputStream = os;
     }
