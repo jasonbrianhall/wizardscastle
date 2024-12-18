@@ -84,14 +84,26 @@ cp ../../c/*.h app/src/main/assets/
 for arch in arm64-v8a x86_64; do
     mkdir -p app/src/main/jniLibs/$arch
     case $arch in
-        "arm64-v8a") target="aarch64-linux-android21";;
-        "x86_64") target="x86_64-linux-android21";;
+        "arm64-v8a") 
+            target="aarch64-linux-android21"
+            ;;
+        "x86_64") 
+            target="x86_64-linux-android21"
+            ;;
     esac
     
     $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/clang \
         --target=$target \
         -fPIE \
-	-fPIC -static \
+        -fPIC \
+        -static \
+        -Wl,--icf=all \
+        -Wl,-z,max-page-size=4096 \
+        -Wl,-z,relro \
+        -Wl,--build-id \
+        -Wl,--no-undefined \
+        -Wl,-z,noexecstack \
+        -Wl,--gc-sections \
         -o app/src/main/jniLibs/$arch/libwizcastle.so \
         app/src/main/assets/*.c
 done
