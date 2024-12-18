@@ -88,14 +88,20 @@ char *get_command_with_history(const char *prompt) {
 
   while (1) {
     int ch = getch();
+#ifdef __ANDROID__
     fflush(stdout);
+#endif
 #ifdef __linux__
     if (ch == 27) { // ESC sequence
       ch = getch();
+#ifdef __ANDROID__
       fflush(stdout);
+#endif
       if (ch == '[') {
         ch = getch();
-        fflush(stdout);
+#ifdef __ANDROID__
+	fflush(stdout);
+#endif
 	if (ch == 'A') {        // Up arrow
           ch = -2;              // Custom code for up
         } else if (ch == 'B') { // Down arrow
@@ -106,7 +112,9 @@ char *get_command_with_history(const char *prompt) {
 #else
     if (ch == 0 || ch == 224) { // Extended key for DOS
       ch = getch();
+#ifdef __ANDROID__
       fflush(stdout);
+#endif
       if (ch == 72) { // Up arrow
         ch = -2;
       } else if (ch == 80) { // Down arrow
@@ -351,7 +359,9 @@ void print_message_formatted(const char *format, ...) {
 
   // Print the result
   printf("%s", buffer);
+#ifdef __ANDROID__
   fflush(stdout);
+#endif
   va_end(args);
 }
 
@@ -360,7 +370,9 @@ void print_message(const char *format, ...) {
   va_start(args, format);
   vprintf(format, args);
   va_end(args);
+#ifdef __ANDROID__
   fflush(stdout);
+#endif
 }
 
 #endif

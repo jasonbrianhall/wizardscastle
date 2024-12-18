@@ -313,7 +313,7 @@ bool main_game_loop(Player *player, GameState *game) {
   }
 #else
   // Infinite loop if Android
-  print_message("Please be patient while the castle is restocked.\n\n");
+  print_message("\n\nPlease be patient while the castle is restocked.\n\n");
   return 1;
 #endif
 }
