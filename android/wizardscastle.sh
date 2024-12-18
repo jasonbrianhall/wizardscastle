@@ -551,20 +551,19 @@ public class TerminalView extends View {
 EOL
 
 # Create MainActivity.java
-# Create MainActivity.java
 cat > app/src/main/java/org/wizardscastle/terminalwizcastle/MainActivity.java << 'EOL'
 package org.wizardscastle.terminalwizcastle;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.view.View;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 public class MainActivity extends Activity {
     private static final String TAG = "WizardsCastle";
@@ -576,12 +575,41 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        // Create main layout
         FrameLayout layout = new FrameLayout(this);
+        
+        // Create terminal view
         terminalView = new TerminalView(this);
         layout.addView(terminalView);
+        
+        // Create keyboard toggle button
+        ImageButton keyboardButton = new ImageButton(this);
+        keyboardButton.setImageResource(R.drawable.ic_keyboard);
+        keyboardButton.setBackgroundColor(0x80000000);  // Semi-transparent black
+        keyboardButton.setPadding(20, 20, 20, 20);
+        
+        // Set button layout parameters
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.BOTTOM | Gravity.END
+        );
+        params.setMargins(20, 20, 20, 20);
+        keyboardButton.setLayoutParams(params);
+        
+        // Add button click listener
+        keyboardButton.setOnClickListener(v -> terminalView.toggleKeyboard());
+        
+        // Add button to layout
+        layout.addView(keyboardButton);
+        
         setContentView(layout);
         
-        //terminalView.write("Initializing...\n".getBytes());
+        // Initialize terminal
+        terminalView.post(() -> {
+            terminalView.requestFocus();
+            terminalView.showKeyboard();
+        });
         
         startProcess();
     }
@@ -591,14 +619,12 @@ public class MainActivity extends Activity {
             String abi = getabi();
             Log.d(TAG, "Using ABI: " + abi);
             
-            // Use native library directory instead of private files directory
             File nativeLibDir = new File(getApplicationInfo().nativeLibraryDir);
             File binFile = new File(nativeLibDir, "libwizcastle.so");
             Log.d(TAG, "Binary path: " + binFile.getAbsolutePath());
             
-            // Start process
             ProcessBuilder pb = new ProcessBuilder(binFile.getAbsolutePath());
-            pb.directory(getFilesDir()); // Keep working directory in app's files dir
+            pb.directory(getFilesDir());
             pb.environment().put("TERM", "dumb");
             pb.environment().put("HOME", getFilesDir().getAbsolutePath());
             pb.environment().put("TMPDIR", getCacheDir().getAbsolutePath());
@@ -606,16 +632,12 @@ public class MainActivity extends Activity {
             
             Log.d(TAG, "Starting process...");
             process = pb.start();
-            //terminalView.write("Process started\n".getBytes());
             
-            // Get streams
             final OutputStream processInput = process.getOutputStream();
             final InputStream processOutput = process.getInputStream();
             
-            // Set up process input
             terminalView.setOutputStream(processInput);
             
-            // Read process output
             outputThread = new Thread(() -> {
                 byte[] buffer = new byte[4096];
                 try {
@@ -630,15 +652,12 @@ public class MainActivity extends Activity {
                             }
                         }
                         
-                        // Check if process is still running
                         try {
                             int exitCode = process.exitValue();
-                            // If we get here, process has ended
                             runOnUiThread(() -> terminalView.write(
                                 ("\nProcess exited with code " + exitCode + "\n").getBytes()));
                             break;
                         } catch (IllegalThreadStateException e) {
-                            // Process is still running
                         }
                         
                         Thread.sleep(10);
@@ -685,6 +704,19 @@ public class MainActivity extends Activity {
 }
 EOL
 
+cat > app/src/main/res/drawable/ic_keyboard.xml << 'EOL'
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,5L4,5c-1.1,0 -1.99,0.9 -1.99,2L2,17c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2L22,7c0,-1.1 -0.9,-2 -2,-2zM11,8h2v2h-2L11,8zM11,11h2v2h-2v-2zM8,8h2v2L8,10L8,8zM8,11h2v2L8,13v-2zM7,13L5,13v-2h2v2zM7,10L5,10L5,8h2v2zM16,17L8,17v-2h8v2zM16,13h-2v-2h2v2zM16,10h-2L14,8h2v2zM19,13h-2v-2h2v2zM19,10h-2L17,8h2v2z"/>
+</vector>
+EOL
+
 # Create empty proguard-rules.pro
 touch app/proguard-rules.pro
 
@@ -701,7 +733,7 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
             android:name=".MainActivity" 
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
