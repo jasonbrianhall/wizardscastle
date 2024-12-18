@@ -162,7 +162,7 @@ public class TerminalView extends View {
         }
     }
    
-@Override
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (outputStream != null) {
             try {
@@ -219,9 +219,9 @@ public class TerminalView extends View {
             }
         }
         return super.onKeyDown(keyCode, event);
-    }   
+    }
 
- 
+
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT;
