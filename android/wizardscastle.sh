@@ -616,10 +616,10 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug  // Use debug signing for testing
         }
-    }
-    
+    }   
+ 
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "wizards-castle.apk"
@@ -674,5 +674,5 @@ EOL
 echo "Project created. To build:"
 echo "1. Make sure ANDROID_NDK_HOME and ANDROID_HOME is set and correct"
 echo "2. cd WizardsCastle"
-echo "3. gradle assembleDebug"
+echo "3. gradle assembleDebug (Debug) or gradle assemble
 echo "The APK will be in app/build/outputs/apk/debug/wizards-castle.apk"
