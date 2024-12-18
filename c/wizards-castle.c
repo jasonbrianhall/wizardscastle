@@ -300,6 +300,7 @@ bool main_game_loop(Player *player, GameState *game) {
 
   end_game(player, game);
   // Ask if the player wants to play again
+#ifndef __ANDROID__
   print_message("\nAre you foolish enough to want to play again? ");
   char play_again = get_user_input_yn();
   if (play_again == 'Y') {
@@ -310,6 +311,11 @@ bool main_game_loop(Player *player, GameState *game) {
     print_message("\nGood bye, and good luck in your travels!\n");
     return 0;
   }
+#else
+  // Infinite loop if Android
+  print_message("Please be patient while the castle is restocked.\n\n");
+  return 1;
+#endif
 }
 
 void print_help() {
