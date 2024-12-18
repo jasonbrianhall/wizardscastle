@@ -52,8 +52,8 @@ public class TerminalView extends View {
     private Paint textPaint;
     private float charWidth;
     private float charHeight;
-    private int cols = 80;
-    private int rows = 24;
+    private int cols = 160;
+    private int rows = 40;
     private char[][] buffer;
     private int cursorX = 0;
     private int cursorY = 0;
@@ -205,7 +205,7 @@ public class TerminalView extends View {
                     int unicode = event.getUnicodeChar();
                     if (unicode != 0) {
                         // Echo character locally
-                        write(String.valueOf((char)unicode).getBytes());
+                        //write(String.valueOf((char)unicode).getBytes());
                         // Send to process
                         outputStream.write(unicode);
                         outputStream.flush();
