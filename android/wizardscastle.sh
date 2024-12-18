@@ -28,7 +28,7 @@ fi
 
 
 # Create project structure
-mkdir -p WizardsCastle/app/src/main/{assets,java/com/example/terminalwizcastle,res}
+mkdir -p WizardsCastle/app/src/main/{assets,java/org/wizardscastle/terminalwizcastle,res}
 cd WizardsCastle
 
 # Create resource directories
@@ -97,8 +97,8 @@ for arch in arm64-v8a x86_64; do
 done
 
 # Create TerminalView.java
-cat > app/src/main/java/com/example/terminalwizcastle/TerminalView.java << 'EOL'
-package com.example.terminalwizcastle;
+cat > app/src/main/java/org/wizardscastle/terminalwizcastle/TerminalView.java << 'EOL'
+package org.wizardscastle.terminalwizcastle;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -540,8 +540,8 @@ EOL
 
 # Create MainActivity.java
 # Create MainActivity.java
-cat > app/src/main/java/com/example/terminalwizcastle/MainActivity.java << 'EOL'
-package com.example.terminalwizcastle;
+cat > app/src/main/java/org/wizardscastle/terminalwizcastle/MainActivity.java << 'EOL'
+package org.wizardscastle.terminalwizcastle;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -706,11 +706,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.terminalwizcastle'
+    namespace 'org.wizardscastle.terminalwizcastle'
     compileSdkVersion 33
     
     defaultConfig {
-        applicationId "com.example.terminalwizcastle"
+        applicationId "org.wizardscastle.terminalwizcastle"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
