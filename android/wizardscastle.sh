@@ -82,7 +82,7 @@ cp ../../c/*.h app/src/main/assets/
 #cp ../*.c app/src/main/assets/
 
 for arch in arm64-v8a x86_64; do
-    mkdir -p app/src/main/assets/$arch
+    mkdir -p app/src/main/jniLibs/$arch
     case $arch in
         "arm64-v8a") target="aarch64-linux-android21";;
         "x86_64") target="x86_64-linux-android21";;
@@ -90,8 +90,9 @@ for arch in arm64-v8a x86_64; do
     
     $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/clang \
         --target=$target \
-        -static \
-        -o app/src/main/assets/$arch/wizcastle \
+        -fPIE -pie \
+	-fPIC -static \
+        -o app/src/main/jniLibs/$arch/libwizcastle.so \
         app/src/main/assets/*.c
 done
 
@@ -418,6 +419,7 @@ public class TerminalView extends View {
 EOL
 
 # Create MainActivity.java
+# Create MainActivity.java
 cat > app/src/main/java/com/example/terminalwizcastle/MainActivity.java << 'EOL'
 package com.example.terminalwizcastle;
 
@@ -447,28 +449,24 @@ public class MainActivity extends Activity {
         layout.addView(terminalView);
         setContentView(layout);
         
-        // Test write to terminal
         terminalView.write("Initializing...\n".getBytes());
         
         startProcess();
     }
     
-private void startProcess() {
+    private void startProcess() {
         try {
             String abi = getabi();
             Log.d(TAG, "Using ABI: " + abi);
             
-            File binFile = new File(getFilesDir(), "wizcastle");
+            // Use native library directory instead of private files directory
+            File nativeLibDir = new File(getApplicationInfo().nativeLibraryDir);
+            File binFile = new File(nativeLibDir, "libwizcastle.so");
             Log.d(TAG, "Binary path: " + binFile.getAbsolutePath());
-            
-            // Copy binary
-            copyAsset(abi + "/wizcastle", binFile);
-            binFile.setExecutable(true);
-            Log.d(TAG, "Binary copied and made executable, size: " + binFile.length());
             
             // Start process
             ProcessBuilder pb = new ProcessBuilder(binFile.getAbsolutePath());
-            pb.directory(getFilesDir());
+            pb.directory(getFilesDir()); // Keep working directory in app's files dir
             pb.environment().put("TERM", "dumb");
             pb.environment().put("HOME", getFilesDir().getAbsolutePath());
             pb.environment().put("TMPDIR", getCacheDir().getAbsolutePath());
@@ -511,7 +509,7 @@ private void startProcess() {
                             // Process is still running
                         }
                         
-                        Thread.sleep(10); // Small delay to prevent busy waiting
+                        Thread.sleep(10);
                     }
                 } catch (Exception e) {
                     final String error = "Error reading output: " + e.getMessage() + "\n";
@@ -524,20 +522,6 @@ private void startProcess() {
             Log.e(TAG, "Error in startProcess", e);
             String error = "Error: " + e.getMessage() + "\n";
             terminalView.write(error.getBytes());
-        }
-    }   
- 
-    private void copyAsset(String assetPath, File destFile) throws Exception {
-        try (InputStream in = getAssets().open(assetPath);
-             OutputStream out = new FileOutputStream(destFile)) {
-            byte[] buffer = new byte[1024];
-            int read;
-            long total = 0;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-                total += read;
-            }
-            Log.d(TAG, "Copied " + total + " bytes from " + assetPath);
         }
     }
     
