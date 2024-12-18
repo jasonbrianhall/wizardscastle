@@ -90,7 +90,7 @@ for arch in arm64-v8a x86_64; do
     
     $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/clang \
         --target=$target \
-        -fPIE -pie \
+        -fPIE \
 	-fPIC -static \
         -o app/src/main/jniLibs/$arch/libwizcastle.so \
         app/src/main/assets/*.c
@@ -106,6 +106,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -114,6 +115,7 @@ import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Scroller;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -135,6 +137,12 @@ public class TerminalView extends View {
     private ScaleGestureDetector scaleDetector;
     private static final float MIN_SCALE = 0.5f;
     private static final float MAX_SCALE = 3.0f;
+    private GestureDetector gestureDetector;
+    private Scroller scroller;
+    private float scrollX = 0;
+    private float scrollY = 0;
+    private float maxScrollX = 0;
+    private float maxScrollY = 0;
 
     public TerminalView(Context context) {
         super(context);
@@ -153,7 +161,6 @@ public class TerminalView extends View {
         textPaint.setTypeface(Typeface.MONOSPACE);
         textPaint.setAntiAlias(true);
         
-        // Initialize with dummy values, will be updated in onSizeChanged
         cols = 80;
         rows = 48;
         buffer = new char[rows][cols];
@@ -163,18 +170,41 @@ public class TerminalView extends View {
         
         setFocusable(true);
         setFocusableInTouchMode(true);
+
+        scroller = new Scroller(getContext());
+        gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                if (!scaleDetector.isInProgress()) {
+                    scrollBy(distanceX, distanceY);
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                if (!scaleDetector.isInProgress()) {
+                    scroller.fling(
+                        (int)scrollX, (int)scrollY,
+                        -(int)velocityX, -(int)velocityY,
+                        0, (int)maxScrollX,
+                        0, (int)maxScrollY
+                    );
+                    postInvalidateOnAnimation();
+                    return true;
+                }
+                return false;
+            }
+        });
         
-        // Initialize scale detector
         scaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
                 float oldScale = scaleFactor;
                 scaleFactor *= detector.getScaleFactor();
-                
-                // Constrain scale
                 scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
                 
-                // Only update if scale actually changed
                 if (oldScale != scaleFactor) {
                     updateTextSize();
                 }
@@ -182,7 +212,6 @@ public class TerminalView extends View {
             }
         });
         
-        // Show keyboard on start
         post(() -> {
             requestFocus();
             showKeyboard();
@@ -202,6 +231,20 @@ public class TerminalView extends View {
         cursorX = 0;
         cursorY = 0;
         invalidate();
+    }
+
+    private void scrollBy(float distanceX, float distanceY) {
+        scrollX = Math.max(0, Math.min(scrollX + distanceX, maxScrollX));
+        scrollY = Math.max(0, Math.min(scrollY + distanceY, maxScrollY));
+        updateScrollLimits();
+        invalidate();
+    }
+
+    private void updateScrollLimits() {
+        maxScrollX = Math.max(0, cols * charWidth - getWidth());
+        maxScrollY = Math.max(0, rows * charHeight - getHeight());
+        scrollX = Math.max(0, Math.min(scrollX, maxScrollX));
+        scrollY = Math.max(0, Math.min(scrollY, maxScrollY));
     }
 
     public void write(byte[] data) {
@@ -247,11 +290,24 @@ public class TerminalView extends View {
     }
 
     @Override
+    public void computeScroll() {
+        if (scroller.computeScrollOffset()) {
+            scrollX = scroller.getCurrX();
+            scrollY = scroller.getCurrY();
+            updateScrollLimits();
+            postInvalidateOnAnimation();
+        }
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean handled = scaleDetector.onTouchEvent(event);
+        handled |= gestureDetector.onTouchEvent(event);
         
-        if (scaleDetector.isInProgress()) {
-            return true;
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (!scroller.isFinished()) {
+                scroller.abortAnimation();
+            }
         }
         
         return handled || super.onTouchEvent(event);
@@ -259,23 +315,24 @@ public class TerminalView extends View {
     
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-        // Use InputDevice.SOURCE_MOUSE (constant value 8194) directly for compatibility
         if ((event.getSource() & 8194) != 0) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_SCROLL:
                     float scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
-                    if (scrollDelta != 0 && (event.getMetaState() & KeyEvent.META_CTRL_ON) != 0) {
-                        // Only zoom when Ctrl is pressed
-                        float oldScale = scaleFactor;
-                        scaleFactor *= (1.0f + (scrollDelta * 0.1f));
-                        
-                        scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
-                        
-                        if (oldScale != scaleFactor) {
-                            updateTextSize();
+                    if (scrollDelta != 0) {
+                        if ((event.getMetaState() & KeyEvent.META_CTRL_ON) != 0) {
+                            float oldScale = scaleFactor;
+                            scaleFactor *= (1.0f + (scrollDelta * 0.1f));
+                            scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
+                            if (oldScale != scaleFactor) {
+                                updateTextSize();
+                            }
+                        } else {
+                            scrollBy(0, scrollDelta * 50);
                         }
                         return true;
                     }
+                    break;
             }
         }
         return super.onGenericMotionEvent(event);
@@ -283,7 +340,7 @@ public class TerminalView extends View {
 
     private void calculateInitialTextSize() {
         android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
-        baseTextSize = metrics.density * 12f;  // Start with 12dp
+        baseTextSize = metrics.density * 12f;
         updateTextSize();
     }
 
@@ -296,6 +353,7 @@ public class TerminalView extends View {
         charWidth = textPaint.measureText("M");
         
         calculateDimensionsPreserveBuffer(getWidth(), getHeight());
+        updateScrollLimits();
         
         invalidate();
     }
@@ -386,18 +444,28 @@ public class TerminalView extends View {
         
         canvas.drawColor(Color.BLACK);
         
+        canvas.save();
+        canvas.translate(-scrollX, -scrollY);
+        
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float baselineOffset = -fm.top;
         
-        for (int i = 0; i < rows; i++) {
+        int startRow = Math.max(0, (int)(scrollY / charHeight));
+        int endRow = Math.min(rows, (int)((scrollY + getHeight()) / charHeight) + 1);
+        int startCol = Math.max(0, (int)(scrollX / charWidth));
+        int endCol = Math.min(cols, (int)((scrollX + getWidth()) / charWidth) + 1);
+        
+        for (int i = startRow; i < endRow; i++) {
             float y = i * charHeight + baselineOffset;
-            for (int j = 0; j < cols; j++) {
+            for (int j = startCol; j < endCol; j++) {
                 float x = j * charWidth;
                 canvas.drawText(String.valueOf(buffer[i][j]), x, y, textPaint);
             }
         }
         
-        if (cursorVisible) {
+        if (cursorVisible &&
+            cursorX >= startCol && cursorX < endCol &&
+            cursorY >= startRow && cursorY < endRow) {
             Paint cursorPaint = new Paint();
             cursorPaint.setColor(Color.GREEN);
             cursorPaint.setAlpha(160);
@@ -409,6 +477,8 @@ public class TerminalView extends View {
                 cursorPaint
             );
         }
+        
+        canvas.restore();
     }
 
     @Override
