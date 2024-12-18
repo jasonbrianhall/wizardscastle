@@ -188,15 +188,6 @@ jobs:
         chmod +x wizardscastle.sh
         ./wizardscastle.sh
 
-    - name: Setup Gradle
-      run: |
-        cd android/WizardsCastle
-        mkdir -p ~/.gradle
-        echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
-        echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxPermSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> ~/.gradle/gradle.properties
-        echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
-        echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties
-
     - name: Build Debug APK
       run: |
         cd android/WizardsCastle
