@@ -7,9 +7,60 @@ if [ -z "$ANDROID_NDK_HOME" ]; then
     exit 1
 fi
 
+# Check for ImageMagick
+if ! command -v convert &> /dev/null; then
+    echo "Error: ImageMagick not found (needed for icon conversion)"
+    exit 1
+fi
+
 # Create project structure
-mkdir -p WizardsCastle/app/src/main/{assets,java/com/example/terminalwizcastle}
+mkdir -p WizardsCastle/app/src/main/{assets,java/com/example/terminalwizcastle,res}
 cd WizardsCastle
+
+# Create resource directories
+mkdir -p app/src/main/res/mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}
+mkdir -p app/src/main/res/mipmap-anydpi-v26
+mkdir -p app/src/main/res/drawable
+
+# Convert main icon for each density
+convert ../../c/icon.ico -resize 48x48 app/src/main/res/mipmap-mdpi/ic_launcher.png
+convert ../../c/icon.ico -resize 72x72 app/src/main/res/mipmap-hdpi/ic_launcher.png
+convert ../../c/icon.ico -resize 96x96 app/src/main/res/mipmap-xhdpi/ic_launcher.png
+convert ../../c/icon.ico -resize 144x144 app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+convert ../../c/icon.ico -resize 192x192 app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+# Create foreground layer icons (slightly smaller to account for padding)
+convert ../../c/icon.ico -resize 36x36 app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
+convert ../../c/icon.ico -resize 54x54 app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
+convert ../../c/icon.ico -resize 72x72 app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
+convert ../../c/icon.ico -resize 108x108 app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
+convert ../../c/icon.ico -resize 144x144 app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+
+# Create background resource
+cat > app/src/main/res/drawable/ic_launcher_background.xml << 'EOL'
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF"/>
+</shape>
+EOL
+
+# Create adaptive icon config
+cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml << 'EOL'
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+</adaptive-icon>
+EOL
+
+# Create round adaptive icon config
+cat > app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml << 'EOL'
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+</adaptive-icon>
+EOL
 
 # Copy and compile the C program for each architecture
 cp ../../c/*.c app/src/main/assets/
@@ -504,11 +555,18 @@ private void startProcess() {
 }
 EOL
 
-# Create AndroidManifest.xml
+# Create empty proguard-rules.pro
+touch app/proguard-rules.pro
+
+# Update AndroidManifest.xml
 cat > app/src/main/AndroidManifest.xml << 'EOL'
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:label="Wizards Castle">
+    <application 
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="Wizards Castle">
         <activity 
             android:name=".MainActivity" 
             android:exported="true"
@@ -539,6 +597,19 @@ android {
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
+    }
+    
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "wizards-castle.apk"
+        }
     }
 }
 EOL
