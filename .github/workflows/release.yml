@@ -161,11 +161,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up JDK
+    - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
+    
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: 8.5
     
     - name: Install Android SDK
       uses: android-actions/setup-android@v3
@@ -178,20 +183,18 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y imagemagick gradle
+        sudo apt-get install -y imagemagick
 
     - name: Generate Project
       run: |
-        pwd
-        ls -la
         cd android
         chmod +x wizardscastle.sh
         ./wizardscastle.sh
 
-    - name: Build Debug APK
+    - name: Build APK
       run: |
         cd android/WizardsCastle
-        gradle assembleDebug --stacktrace --info
+        gradle assemble --info
 
     - name: List Build Directory Contents
       if: always()
@@ -203,7 +206,7 @@ jobs:
         echo "App directory contents:"
         ls -la android/WizardsCastle/app/
         echo "Build outputs:"
-        ls -la android/WizardsCastle/app/build/outputs/apk/debug/ || echo "Debug directory not found"
+        ls -la android/WizardsCastle/app/build/outputs/apk/release/ || echo "Release directory not found"
 
     - name: Upload Android APK
       uses: actions/upload-release-asset@v1
@@ -212,9 +215,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.build-and-release.outputs.upload_url }}
-        asset_path: ./android/WizardsCastle/app/build/outputs/apk/debug/wizards-castle.apk
+        asset_path: ./android/WizardsCastle/app/build/outputs/apk/release/wizards-castle.apk
         asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-android.apk
         asset_content_type: application/vnd.android.package-archive
+
 
  
   build-qt-windows:
