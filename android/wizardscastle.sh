@@ -569,7 +569,7 @@ public class MainActivity extends Activity {
         layout.addView(terminalView);
         setContentView(layout);
         
-        terminalView.write("Initializing...\n".getBytes());
+        //terminalView.write("Initializing...\n".getBytes());
         
         startProcess();
     }
@@ -594,7 +594,7 @@ public class MainActivity extends Activity {
             
             Log.d(TAG, "Starting process...");
             process = pb.start();
-            terminalView.write("Process started\n".getBytes());
+            //terminalView.write("Process started\n".getBytes());
             
             // Get streams
             final OutputStream processInput = process.getOutputStream();
