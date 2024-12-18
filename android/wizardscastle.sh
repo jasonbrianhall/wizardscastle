@@ -12,9 +12,9 @@ mkdir -p WizardsCastle/app/src/main/{assets,java/com/example/terminalwizcastle}
 cd WizardsCastle
 
 # Copy and compile the C program for each architecture
-#cp ../../c/*.c app/src/main/assets/
-#cp ../../c/*.h app/src/main/assets/
-cp ../*.c app/src/main/assets/
+cp ../../c/*.c app/src/main/assets/
+cp ../../c/*.h app/src/main/assets/
+#cp ../*.c app/src/main/assets/
 
 for arch in arm64-v8a x86_64; do
     mkdir -p app/src/main/assets/$arch
@@ -161,66 +161,35 @@ public class TerminalView extends View {
             );
         }
     }
-   
+  
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (outputStream != null) {
             try {
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_DEL:
-                        // Send ASCII backspace (0x08) followed by space and another backspace
-                        // This sequence ensures proper character erasure
-                        outputStream.write(new byte[]{0x08, ' ', 0x08});
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    // Echo newline locally
+                    write("\n".getBytes());
+                    // Send to process
+                    outputStream.write('\n');
+                    outputStream.flush();
+                    return true;
+                } else {
+                    int unicode = event.getUnicodeChar();
+                    if (unicode != 0) {
+                        // Echo character locally
+                        write(String.valueOf((char)unicode).getBytes());
+                        // Send to process
+                        outputStream.write(unicode);
                         outputStream.flush();
                         return true;
-
-                    case KeyEvent.KEYCODE_ENTER:
-                        write("\n".getBytes());
-                        outputStream.write('\n');
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DPAD_UP:
-                        // Send VT100 up arrow sequence
-                        outputStream.write(new byte[]{0x1B, '[', 'A'});
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DPAD_DOWN:
-                        // Send VT100 down arrow sequence
-                        outputStream.write(new byte[]{0x1B, '[', 'B'});
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DPAD_LEFT:
-                        // Send VT100 left arrow sequence
-                        outputStream.write(new byte[]{0x1B, '[', 'D'});
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DPAD_RIGHT:
-                        // Send VT100 right arrow sequence
-                        outputStream.write(new byte[]{0x1B, '[', 'C'});
-                        outputStream.flush();
-                        return true;
-
-                    default:
-                        int unicode = event.getUnicodeChar();
-                        if (unicode != 0) {
-                            write(String.valueOf((char)unicode).getBytes());
-                            outputStream.write(unicode);
-                            outputStream.flush();
-                            return true;
-                        }
-                        break;
+                    }
                 }
             } catch (IOException e) {
-                Log.e(TAG, "Error handling key input", e);
+                e.printStackTrace();
             }
         }
         return super.onKeyDown(keyCode, event);
     }
-
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
