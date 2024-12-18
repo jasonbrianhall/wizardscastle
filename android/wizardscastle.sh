@@ -328,7 +328,7 @@ public class TerminalView extends View {
                                 updateTextSize();
                             }
                         } else {
-                            scrollBy(0, scrollDelta * 50);
+                            scrollBy(0, -scrollDelta * 50);
                         }
                         return true;
                     }
