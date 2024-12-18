@@ -107,6 +107,8 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
@@ -130,6 +132,9 @@ public class TerminalView extends View {
     private float baseTextSize;
     private boolean keyboardVisible = false;
     private InputMethodManager imm;
+    private ScaleGestureDetector scaleDetector;
+    private static final float MIN_SCALE = 0.5f;
+    private static final float MAX_SCALE = 3.0f;
 
     public TerminalView(Context context) {
         super(context);
@@ -159,6 +164,24 @@ public class TerminalView extends View {
         setFocusable(true);
         setFocusableInTouchMode(true);
         
+        // Initialize scale detector
+        scaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                float oldScale = scaleFactor;
+                scaleFactor *= detector.getScaleFactor();
+                
+                // Constrain scale
+                scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
+                
+                // Only update if scale actually changed
+                if (oldScale != scaleFactor) {
+                    updateTextSize();
+                }
+                return true;
+            }
+        });
+        
         // Show keyboard on start
         post(() -> {
             requestFocus();
@@ -181,64 +204,83 @@ public class TerminalView extends View {
         invalidate();
     }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        
-        // Recalculate dimensions based on new size
-        calculateDimensions(w, h);
-        
-        // Create new buffer with new dimensions
-        char[][] newBuffer = new char[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                newBuffer[i][j] = ' ';
+    public void write(byte[] data) {
+        for (byte b : data) {
+            if (b == '\n') {
+                cursorY++;
+                cursorX = 0;
+                
+                if (cursorY >= rows) {
+                    scrollUp();
+                    cursorY = rows - 1;
+                }
+            } else if (b == '\r') {
+                cursorX = 0;
+            } else if (b == '\b') {
+                if (cursorX > 0) {
+                    cursorX--;
+                    buffer[cursorY][cursorX] = ' ';
+                }
+            } else {
+                if (cursorX >= cols) {
+                    cursorX = 0;
+                    cursorY++;
+                    if (cursorY >= rows) {
+                        scrollUp();
+                        cursorY = rows - 1;
+                    }
+                }
+                buffer[cursorY][cursorX++] = (char)b;
             }
         }
-        
-        // Copy old buffer contents if they exist
-        if (buffer != null) {
-            int minRows = Math.min(rows, buffer.length);
-            int minCols = Math.min(cols, buffer[0].length);
-            for (int i = 0; i < minRows; i++) {
-                System.arraycopy(buffer[i], 0, newBuffer[i], 0, minCols);
-            }
-        }
-        
-        buffer = newBuffer;
         invalidate();
     }
-    
-    private void calculateDimensions(int width, int height) {
-        // Calculate text size that would fill the screen
-        float testTextSize = 100f;  // Start with a large size
-        textPaint.setTextSize(testTextSize);
+
+    private void scrollUp() {
+        for (int i = 0; i < rows - 1; i++) {
+            System.arraycopy(buffer[i + 1], 0, buffer[i], 0, cols);
+        }
         
-        // Measure character dimensions at test size
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        float testCharHeight = fm.bottom - fm.top;
-        float testCharWidth = textPaint.measureText("M");
+        for (int j = 0; j < cols; j++) {
+            buffer[rows - 1][j] = ' ';
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean handled = scaleDetector.onTouchEvent(event);
         
-        // Calculate scaling factors
-        float heightScale = height / testCharHeight;
-        float widthScale = width / testCharWidth;
+        if (scaleDetector.isInProgress()) {
+            return true;
+        }
         
-        // Calculate final text size
-        baseTextSize = Math.min(testTextSize * heightScale / 48,  // Aim for at least 24 rows
-                               testTextSize * widthScale / 80);    // Aim for at least 80 columns
-        
-        updateTextSize();
-        
-        // Calculate final dimensions
-        fm = textPaint.getFontMetrics();
-        charHeight = fm.bottom - fm.top;
-        charWidth = textPaint.measureText("M");
-        
-        // Calculate rows and columns that will fit
-        rows = Math.max(48, (int)(height / charHeight));
-        cols = Math.max(80, (int)(width / charWidth));
+        return handled || super.onTouchEvent(event);
     }
     
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        // Use InputDevice.SOURCE_MOUSE (constant value 8194) directly for compatibility
+        if ((event.getSource() & 8194) != 0) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_SCROLL:
+                    float scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                    if (scrollDelta != 0 && (event.getMetaState() & KeyEvent.META_CTRL_ON) != 0) {
+                        // Only zoom when Ctrl is pressed
+                        float oldScale = scaleFactor;
+                        scaleFactor *= (1.0f + (scrollDelta * 0.1f));
+                        
+                        scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
+                        
+                        if (oldScale != scaleFactor) {
+                            updateTextSize();
+                        }
+                        return true;
+                    }
+            }
+        }
+        return super.onGenericMotionEvent(event);
+    }
+
     private void calculateInitialTextSize() {
         android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
         baseTextSize = metrics.density * 12f;  // Start with 12dp
@@ -253,7 +295,67 @@ public class TerminalView extends View {
         charHeight = fm.bottom - fm.top;
         charWidth = textPaint.measureText("M");
         
+        calculateDimensionsPreserveBuffer(getWidth(), getHeight());
+        
         invalidate();
+    }
+    
+    private void calculateDimensionsPreserveBuffer(int width, int height) {
+        Paint.FontMetrics fm = textPaint.getFontMetrics();
+        charHeight = fm.bottom - fm.top;
+        charWidth = textPaint.measureText("M");
+        
+        rows = Math.max(48, (int)(height / charHeight));
+        cols = Math.max(80, (int)(width / charWidth));
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        
+        calculateDimensions(w, h);
+        
+        char[][] newBuffer = new char[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                newBuffer[i][j] = ' ';
+            }
+        }
+        
+        if (buffer != null) {
+            int minRows = Math.min(rows, buffer.length);
+            int minCols = Math.min(cols, buffer[0].length);
+            for (int i = 0; i < minRows; i++) {
+                System.arraycopy(buffer[i], 0, newBuffer[i], 0, minCols);
+            }
+        }
+        
+        buffer = newBuffer;
+        invalidate();
+    }
+    
+    private void calculateDimensions(int width, int height) {
+        float testTextSize = 100f;
+        textPaint.setTextSize(testTextSize);
+        
+        Paint.FontMetrics fm = textPaint.getFontMetrics();
+        float testCharHeight = fm.bottom - fm.top;
+        float testCharWidth = textPaint.measureText("M");
+        
+        float heightScale = height / testCharHeight;
+        float widthScale = width / testCharWidth;
+        
+        baseTextSize = Math.min(testTextSize * heightScale / 48,
+                               testTextSize * widthScale / 80);
+        
+        updateTextSize();
+        
+        fm = textPaint.getFontMetrics();
+        charHeight = fm.bottom - fm.top;
+        charWidth = textPaint.measureText("M");
+        
+        rows = Math.max(48, (int)(height / charHeight));
+        cols = Math.max(80, (int)(width / charWidth));
     }
 
     public void showKeyboard() {
@@ -279,97 +381,11 @@ public class TerminalView extends View {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (outputStream != null) {
-            try {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    outputStream.write('\n');
-                    outputStream.flush();
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    outputStream.write('\b');
-                    outputStream.flush();
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                    // Send escape sequence for up arrow
-                    outputStream.write(new byte[] {27, '[', 'A'});
-                    outputStream.flush();
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    // Send escape sequence for down arrow
-                    outputStream.write(new byte[] {27, '[', 'B'});
-                    outputStream.flush();
-                    return true;
-                } else {
-                    int unicode = event.getUnicodeChar();
-                    if (unicode != 0) {
-                        outputStream.write(unicode);
-                        outputStream.flush();
-                        return true;
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-
-    public void write(byte[] data) {
-        for (byte b : data) {
-            if (b == '\n') {
-                // Always move cursor down and to start of line on \n
-                cursorY++;
-                cursorX = 0;
-                
-                // Handle scrolling if needed
-                if (cursorY >= rows) {
-                    scrollUp();
-                    cursorY = rows - 1;
-                }
-            } else if (b == '\r') {
-                // Just move cursor to start of line
-                cursorX = 0;
-            } else if (b == '\b') {
-                if (cursorX > 0) {
-                    cursorX--;
-                    buffer[cursorY][cursorX] = ' ';
-                }
-            } else {
-                if (cursorX >= cols) {
-                    cursorX = 0;
-                    cursorY++;
-                    if (cursorY >= rows) {
-                        scrollUp();
-                        cursorY = rows - 1;
-                    }
-                }
-                buffer[cursorY][cursorX++] = (char)b;
-            }
-        }
-        invalidate();
-    }
-
-    private void scrollUp() {
-        // Move all lines up one position
-        for (int i = 0; i < rows - 1; i++) {
-            System.arraycopy(buffer[i + 1], 0, buffer[i], 0, cols);
-        }
-        
-        // Clear the last line
-        for (int j = 0; j < cols; j++) {
-            buffer[rows - 1][j] = ' ';
-        }
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         
         canvas.drawColor(Color.BLACK);
         
-        // Calculate baseline offset for proper text alignment
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float baselineOffset = -fm.top;
         
@@ -381,11 +397,10 @@ public class TerminalView extends View {
             }
         }
         
-        // Draw cursor
         if (cursorVisible) {
             Paint cursorPaint = new Paint();
             cursorPaint.setColor(Color.GREEN);
-            cursorPaint.setAlpha(160);  // Make cursor semi-transparent
+            cursorPaint.setAlpha(160);
             canvas.drawRect(
                 cursorX * charWidth,
                 cursorY * charHeight,
@@ -414,6 +429,41 @@ public class TerminalView extends View {
                 return true;
             }
         };
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (outputStream != null) {
+            try {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    outputStream.write('\n');
+                    outputStream.flush();
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                    outputStream.write('\b');
+                    outputStream.flush();
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    outputStream.write(new byte[] {27, '[', 'A'});
+                    outputStream.flush();
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    outputStream.write(new byte[] {27, '[', 'B'});
+                    outputStream.flush();
+                    return true;
+                } else {
+                    int unicode = event.getUnicodeChar();
+                    if (unicode != 0) {
+                        outputStream.write(unicode);
+                        outputStream.flush();
+                        return true;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
 EOL
