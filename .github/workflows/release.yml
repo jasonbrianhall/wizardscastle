@@ -166,6 +166,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: gradle
     
     - name: Install Android SDK
       uses: android-actions/setup-android@v3
@@ -180,13 +181,36 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y imagemagick gradle
 
-    - name: Build APK
+    - name: Setup Gradle
+      run: |
+        cd android
+        mkdir -p ~/.gradle
+        echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
+        echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxPermSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> ~/.gradle/gradle.properties
+        echo "org.gradle.parallel=true" >> ~/.gradle/gradle.properties
+        echo "org.gradle.configureondemand=true" >> ~/.gradle/gradle.properties
+
+    - name: Generate Project
       run: |
         cd android
         chmod +x wizardscastle.sh
         ./wizardscastle.sh
-        cd WizardsCastle
-        gradle assemble
+        
+    - name: Build APK with Debug Output
+      run: |
+        cd android/WizardsCastle
+        ./gradlew assembleRelease --stacktrace --info
+        
+    - name: List Build Directory Contents
+      if: always()
+      run: |
+        cd android/WizardsCastle
+        echo "Project root contents:"
+        ls -la
+        echo "App directory contents:"
+        ls -la app/
+        echo "Build outputs:"
+        ls -la app/build/outputs/apk/release/ || echo "Release directory not found"
 
     - name: Upload Android APK
       uses: actions/upload-release-asset@v1
