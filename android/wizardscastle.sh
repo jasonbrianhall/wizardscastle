@@ -74,7 +74,7 @@ public class TerminalView extends View {
         textPaint = new Paint();
         textPaint.setColor(Color.GREEN);
         textPaint.setTypeface(Typeface.MONOSPACE);
-        textPaint.setTextSize(40);
+        textPaint.setTextSize(10);
         
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         charHeight = fm.bottom - fm.top;
