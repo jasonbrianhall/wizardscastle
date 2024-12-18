@@ -153,7 +153,52 @@ jobs:
       with:
         tag_name: v${{ steps.date.outputs.date }}-${{ steps.date.outputs.unique_id }}  # <-- Different syntax
         files: ./c/wizardscastle-linux.tar.gz   # <-- Simpler way to specify files
-  
+ 
+  build-android:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Install Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Install Android NDK
+      run: |
+        ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.2.9519653"
+        echo "ANDROID_NDK_HOME=${ANDROID_SDK_ROOT}/ndk/25.2.9519653" >> $GITHUB_ENV
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y imagemagick gradle
+
+    - name: Build APK
+      run: |
+        cd android
+        chmod +x wizardscastle.sh
+        ./wizardscastle.sh
+        cd WizardsCastle
+        gradle assemble
+
+    - name: Upload Android APK
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.build-and-release.outputs.upload_url }}
+        asset_path: ./android/WizardsCastle/app/build/outputs/apk/release/wizards-castle.apk
+        asset_name: wizardscastle-${{ needs.build-and-release.outputs.date }}-android.apk
+        asset_content_type: application/vnd.android.package-archive
+
+ 
   build-qt-windows:
     runs-on: windows-latest
     needs: build-and-release
