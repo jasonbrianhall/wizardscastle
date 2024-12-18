@@ -217,7 +217,7 @@ public class TerminalView extends View {
         if (outputStream != null) {
             try {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    outputStream.write('\r');
+                    //outputStream.write('\r');
                     outputStream.write('\n');
                     outputStream.flush();
                     return true;
