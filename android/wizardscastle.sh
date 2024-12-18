@@ -728,12 +728,55 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="Wizards Castle">
+        android:label="Wizards Castle"
+        android:description="@string/app_description">
+        
+        <!-- Developer Information -->
+        <meta-data
+            android:name="developer_email"
+            android:value="jasonbrianhall@gmail.com" />
+            
+        <meta-data
+            android:name="website_url"
+            android:value="https://github.com/jasonbrianhall/wizardscastle" />
+        
+        <meta-data
+            android:name="source_license"
+            android:value="MIT License" />
+            
+        <!-- Game Information -->
+        <meta-data
+            android:name="game_description"
+            android:value="Wizards Castle is a classic text adventure game where you explore a mysterious castle filled with treasures and dangers. Navigate through rooms, battle monsters, and collect treasures as you try to survive this perilous dungeon crawl in order to collect the Orb of Zot." />
+            
+        <meta-data
+            android:name="game_features"
+            android:value="Randomly generated 512-room castles, Multiple character races (Human, Elf, Hobbit, Dwarf, Dark Elf), Strategic combat system, Magic spells, Vendor interactions, ASCII map display" />
+            
+        <meta-data
+            android:name="game_version"
+            android:value="C Implementation" />
+            
+        <meta-data
+            android:name="original_author"
+            android:value="Joseph R. Power (1980)" />
+            
+        <!-- Support Information -->
+        <meta-data
+            android:name="support_url"
+            android:value="https://github.com/jasonbrianhall/wizardscastle/issues" />
+            
+        <meta-data
+            android:name="contributing_url"
+            android:value="https://github.com/jasonbrianhall/wizardscastle/blob/main/CONTRIBUTING.md" />
+            
         <activity 
             android:name=".MainActivity" 
             android:exported="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
