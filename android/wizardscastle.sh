@@ -217,12 +217,21 @@ public class TerminalView extends View {
         if (outputStream != null) {
             try {
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    //outputStream.write('\r');
                     outputStream.write('\n');
                     outputStream.flush();
                     return true;
                 } else if (keyCode == KeyEvent.KEYCODE_DEL) {
                     outputStream.write('\b');
+                    outputStream.flush();
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    // Send escape sequence for up arrow
+                    outputStream.write(new byte[] {27, '[', 'A'});
+                    outputStream.flush();
+                    return true;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    // Send escape sequence for down arrow
+                    outputStream.write(new byte[] {27, '[', 'B'});
                     outputStream.flush();
                     return true;
                 } else {
@@ -239,6 +248,7 @@ public class TerminalView extends View {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 
     public void write(byte[] data) {
         for (byte b : data) {
