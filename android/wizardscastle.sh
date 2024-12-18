@@ -3,15 +3,29 @@ set -e
 
 # Check for NDK
 if [ -z "$ANDROID_NDK_HOME" ]; then
-    echo "Error: ANDROID_NDK_HOME not set"
+	echo "Error: ANDROID_NDK_HOME not set (download the Android NDK, extract it and set this variable)"
     exit 1
 fi
+
+# Check for NDK
+if [ -z "$ANDROID_HOME" ]; then
+    echo "Error: ANDROID_HOME not set (e.g. /home/user/Android/Sdk is using Android Studio)"
+    exit 1
+fi
+
 
 # Check for ImageMagick
 if ! command -v convert &> /dev/null; then
     echo "Error: ImageMagick not found (needed for icon conversion)"
     exit 1
 fi
+
+# Check for ImageMagick
+if ! command -v gradle &> /dev/null; then
+    echo "Error: Command gradle not found (used to compile the embedded Java)"
+    exit 1
+fi
+
 
 # Create project structure
 mkdir -p WizardsCastle/app/src/main/{assets,java/com/example/terminalwizcastle,res}
@@ -658,6 +672,7 @@ android.suppressUnsupportedCompileSdk=34
 EOL
 
 echo "Project created. To build:"
-echo "1. Make sure ANDROID_NDK_HOME is set"
-echo "2. ./gradlew assembleDebug"
-echo "The APK will be in app/build/outputs/apk/debug/app-debug.apk"
+echo "1. Make sure ANDROID_NDK_HOME and ANDROID_HOME is set and correct"
+echo "2. cd WizardsCastle"
+echo "3. gradle assembleDebug"
+echo "The APK will be in app/build/outputs/apk/debug/wizards-castle.apk"
