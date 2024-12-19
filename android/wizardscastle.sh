@@ -875,8 +875,9 @@ android {
     
     buildTypes {
         release {
-            minifyEnabled false
-            signingConfig signingConfigs.debug  // Use debug signing for testing
+            minifyEnabled true
+            shrinkResources true
+	    signingConfig signingConfigs.debug  // Use debug signing for testing
         }
     }   
  
