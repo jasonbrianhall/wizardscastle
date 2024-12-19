@@ -564,40 +564,53 @@ public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
     };
 }
 
-@Override
-public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (outputStream != null) {
-        try {
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                write("\n".getBytes());  // Show newline
-                // Send the complete buffered line
-                outputStream.write((inputBuffer.toString() + "\n").getBytes());
-                inputBuffer.setLength(0);  // Clear buffer
-                outputStream.flush();
-                return true;
-            } else if (keyCode == KeyEvent.KEYCODE_DEL) {
-                if (inputBuffer.length() > 0) {
-                    inputBuffer.setLength(inputBuffer.length() - 1);  // Remove last char from buffer
-                    write("\b".getBytes());  // Show backspace effect
-                }
-                outputStream.flush();
-                return true;
-            } else {
-                int unicode = event.getUnicodeChar();
-                if (unicode != 0) {
-                    inputBuffer.append((char)unicode);  // Add to buffer
-                    write(new byte[]{(byte)unicode});  // Show the character
-                    outputStream.flush();
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    return super.onKeyDown(keyCode, event);
-}
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (outputStream != null) {
+            try {
+                switch (keyCode) {
+                    case KeyEvent.KEYCODE_ENTER:
+                        write("\n".getBytes());  // Show newline
+                        outputStream.write((inputBuffer.toString() + "\n").getBytes());
+                        inputBuffer.setLength(0);  // Clear buffer
+                        outputStream.flush();
+                        return true;
 
+                    case KeyEvent.KEYCODE_DEL:
+                        if (inputBuffer.length() > 0) {
+                            inputBuffer.setLength(inputBuffer.length() - 1);
+                            write("\b".getBytes());
+                        }
+                        outputStream.flush();
+                        return true;
+
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                        // Send escape sequence for up arrow
+                        outputStream.write("\033[A".getBytes());
+                        outputStream.flush();
+                        return true;
+
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                        // Send escape sequence for down arrow
+                        outputStream.write("\033[B".getBytes());
+                        outputStream.flush();
+                        return true;
+
+                    default:
+                        int unicode = event.getUnicodeChar();
+                        if (unicode != 0) {
+                            inputBuffer.append((char)unicode);
+                            write(new byte[]{(byte)unicode});
+                            outputStream.flush();
+                            return true;
+                        }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 }
 EOL
