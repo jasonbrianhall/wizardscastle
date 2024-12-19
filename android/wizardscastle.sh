@@ -36,19 +36,30 @@ mkdir -p app/src/main/res/mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}
 mkdir -p app/src/main/res/mipmap-anydpi-v26
 mkdir -p app/src/main/res/drawable
 
-# Convert main icon for each density
-convert ../icon.png -resize 48x48 app/src/main/res/mipmap-mdpi/ic_launcher.png
-convert ../icon.png -resize 72x72 app/src/main/res/mipmap-hdpi/ic_launcher.png
-convert ../icon.png -resize 96x96 app/src/main/res/mipmap-xhdpi/ic_launcher.png
-convert ../icon.png -resize 144x144 app/src/main/res/mipmap-xxhdpi/ic_launcher.png
-convert ../icon.png -resize 192x192 app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+# Set up ImageMagick quality settings
+CONVERT_OPTS="-strip -quality 100 -define png:compression-level=9"
 
-# Create foreground layer icons (slightly smaller to account for padding)
-convert ../icon.png -resize 36x36 app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
-convert ../icon.png -resize 54x54 app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
-convert ../icon.png -resize 72x72 app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
-convert ../icon.png -resize 108x108 app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
-convert ../icon.png -resize 144x144 app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+# Convert main icon for each density with high quality settings
+convert $CONVERT_OPTS ../icon.png -resize 192x192 app/src/main/res/mipmap-mdpi/ic_launcher.png
+convert $CONVERT_OPTS ../icon.png -resize 288x288 app/src/main/res/mipmap-hdpi/ic_launcher.png
+convert $CONVERT_OPTS ../icon.png -resize 384x384 app/src/main/res/mipmap-xhdpi/ic_launcher.png
+convert $CONVERT_OPTS ../icon.png -resize 576x576 app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+convert $CONVERT_OPTS ../icon.png -resize 768x768 app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+
+# Create foreground layer icons (75% of main icon size for padding)
+convert $CONVERT_OPTS ../icon.png -resize 144x144 app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
+convert $CONVERT_OPTS ../icon.png -resize 216x216 app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
+convert $CONVERT_OPTS ../icon.png -resize 288x288 app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
+convert $CONVERT_OPTS ../icon.png -resize 432x432 app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
+convert $CONVERT_OPTS ../icon.png -resize 576x576 app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+
+# Create round icons (same dimensions as regular icons)
+convert $CONVERT_OPTS ../icon.png -resize 192x192 app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+convert $CONVERT_OPTS ../icon.png -resize 288x288 app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+convert $CONVERT_OPTS ../icon.png -resize 384x384 app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+convert $CONVERT_OPTS ../icon.png -resize 576x576 app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+convert $CONVERT_OPTS ../icon.png -resize 768x768 app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+
 
 # Create background resource
 cat > app/src/main/res/drawable/ic_launcher_background.xml << 'EOL'
