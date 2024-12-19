@@ -119,6 +119,9 @@ for arch in arm64-v8a x86_64; do
         app/src/main/assets/*.c
 done
 
+rm app/src/main/assets/*.c
+rm app/src/main/assets/*.h
+
 # Create TerminalView.java
 cat > app/src/main/java/org/wizardscastle/terminalwizcastle/TerminalView.java << 'EOL'
 package org.wizardscastle.terminalwizcastle;
