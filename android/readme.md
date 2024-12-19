@@ -81,7 +81,7 @@ export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/[version]  # Replace [version] with yo
 5. **Locate Your Treasure**
    The mythical APK will materialize in:
    ```
-   app/build/outputs/apk/debug/wizards-castle.apk
+   app/build/outputs/apk/debug/wizards-castle.apk (or release directory if using release)
    ```
 
 ## 🎮 Installing the Enchanted APK
