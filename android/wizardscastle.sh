@@ -161,8 +161,8 @@ public class TerminalView extends View {
     private boolean keyboardVisible = false;
     private InputMethodManager imm;
     private ScaleGestureDetector scaleDetector;
-    private static final float MIN_SCALE = 0.5f;
-    private static final float MAX_SCALE = 3.0f;
+    private static final float MIN_SCALE = 1.0f;
+    private static final float MAX_SCALE = 4.0f;
     private GestureDetector gestureDetector;
     private Scroller scroller;
     private float scrollX = 0;
