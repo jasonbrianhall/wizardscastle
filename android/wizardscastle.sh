@@ -111,7 +111,6 @@ done
 # Create TerminalView.java
 cat > app/src/main/java/org/wizardscastle/terminalwizcastle/TerminalView.java << 'EOL'
 package org.wizardscastle.terminalwizcastle;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -130,6 +129,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Scroller;
 import java.io.IOException;
 import java.io.OutputStream;
+import android.util.Log;
 
 public class TerminalView extends View {
     private Paint textPaint;
@@ -155,6 +155,27 @@ public class TerminalView extends View {
     private float scrollY = 0;
     private float maxScrollX = 0;
     private float maxScrollY = 0;
+
+    // First, define the ColorScheme inner class
+    private static class ColorScheme {
+        final int textColor;
+        final int backgroundColor;
+
+        ColorScheme(int textColor, int backgroundColor) {
+            this.textColor = textColor;
+            this.backgroundColor = backgroundColor;
+        }
+    }
+
+    private static final ColorScheme[] COLOR_SCHEMES = {
+        new ColorScheme(Color.GREEN, Color.BLACK),      // Classic green on black
+        new ColorScheme(Color.WHITE, Color.BLACK),      // White on black
+        new ColorScheme(Color.BLACK, Color.WHITE),      // Black on white
+        new ColorScheme(Color.CYAN, Color.BLACK),       // Cyan on black
+        new ColorScheme(Color.rgb(255, 165, 0), Color.BLACK), // Orange on black
+        new ColorScheme(Color.rgb(170, 170, 170), Color.rgb(0, 0, 85)), // Grey on navy
+    };
+    private int currentColorScheme = 0;
 
     public TerminalView(Context context) {
         super(context);
@@ -208,6 +229,12 @@ public class TerminalView extends View {
                 }
                 return false;
             }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                cycleColorScheme();
+                return true;
+            }
         });
         
         scaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
@@ -228,6 +255,13 @@ public class TerminalView extends View {
             requestFocus();
             showKeyboard();
         });
+    }
+
+    private void cycleColorScheme() {
+        currentColorScheme = (currentColorScheme + 1) % COLOR_SCHEMES.length;
+        ColorScheme scheme = COLOR_SCHEMES[currentColorScheme];
+        textPaint.setColor(scheme.textColor);
+        invalidate();
     }
 
     public void setOutputStream(OutputStream os) {
@@ -454,8 +488,9 @@ public class TerminalView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         
-        canvas.drawColor(Color.BLACK);
-        
+        //canvas.drawColor(Color.BLACK);
+        canvas.drawColor(COLOR_SCHEMES[currentColorScheme].backgroundColor);
+
         canvas.save();
         canvas.translate(-scrollX, -scrollY);
         
@@ -493,60 +528,66 @@ public class TerminalView extends View {
         canvas.restore();
     }
 
-    @Override
-    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
-        outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN;
-        return new BaseInputConnection(this, true) {
-            @Override
-            public boolean commitText(CharSequence text, int newCursorPosition) {
-                if (outputStream != null) {
-                    try {
-                        outputStream.write(text.toString().getBytes());
-                        outputStream.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return true;
-            }
-        };
-    }
+// Add at class level
+private StringBuilder inputBuffer = new StringBuilder();
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (outputStream != null) {
-            try {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    outputStream.write('\n');
+@Override
+public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+    outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+    outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN;
+    return new BaseInputConnection(this, true) {
+        @Override
+        public boolean commitText(CharSequence text, int newCursorPosition) {
+            if (outputStream != null) {
+                try {
+                    String str = text.toString();
+                    inputBuffer.append(str);
+                    write(str.getBytes());  // Show the character
                     outputStream.flush();
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    outputStream.write('\b');
-                    outputStream.flush();
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                    outputStream.write(new byte[] {27, '[', 'A'});
-                    outputStream.flush();
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    outputStream.write(new byte[] {27, '[', 'B'});
-                    outputStream.flush();
-                    return true;
-                } else {
-                    int unicode = event.getUnicodeChar();
-                    if (unicode != 0) {
-                        outputStream.write(unicode);
-                        outputStream.flush();
-                        return true;
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            return true;
         }
-        return super.onKeyDown(keyCode, event);
+    };
+}
+
+@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (outputStream != null) {
+        try {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                write("\n".getBytes());  // Show newline
+                // Send the complete buffered line
+                outputStream.write((inputBuffer.toString() + "\n").getBytes());
+                inputBuffer.setLength(0);  // Clear buffer
+                outputStream.flush();
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_DEL) {
+                if (inputBuffer.length() > 0) {
+                    inputBuffer.setLength(inputBuffer.length() - 1);  // Remove last char from buffer
+                    write("\b".getBytes());  // Show backspace effect
+                }
+                outputStream.flush();
+                return true;
+            } else {
+                int unicode = event.getUnicodeChar();
+                if (unicode != 0) {
+                    inputBuffer.append((char)unicode);  // Add to buffer
+                    write(new byte[]{(byte)unicode});  // Show the character
+                    outputStream.flush();
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+    return super.onKeyDown(keyCode, event);
+}
+
+
 }
 EOL
 
