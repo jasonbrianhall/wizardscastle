@@ -179,7 +179,9 @@ char *get_command_with_history(const char *prompt) {
     // Handle regular character
     if (isprint(ch) && pos < MAX_COMMAND_LEN - 1) {
       buffer[pos++] = ch;
+#ifndef __ANDROID__
       print_message("%c", ch);
+#endif
     }
   }
 }

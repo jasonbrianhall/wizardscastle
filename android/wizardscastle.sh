@@ -790,7 +790,7 @@ mkdir -p app/src/main/res/values
 cat > app/src/main/res/values/strings.xml << 'EOL'
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Wizards Castle</string>
+    <string name="app_name">Wizard\'s Castle</string>
     <string name="app_description">Wizards Castle is a classic text adventure game where you explore a mysterious castle filled with treasures and dangers. Navigate through rooms, battle monsters, and collect treasures as you try to survive this perilous dungeon crawl in order to collect the Orb of Zot.  Based on the 1980 BASIC game of the same name with creative differences.</string>
     <string name="developer">Jason Hall</string>
     <string name="developer_email">jasonbrianhall@gmail.com</string>
