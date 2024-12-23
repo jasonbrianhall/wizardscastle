@@ -80,7 +80,6 @@ const char* themesBasic[] = {
         "\033[32;40m",      // Green on black
         "\033[33;40m",      // Yellow on black
         "\033[36;40m",      // Cyan on black
-        "\033[37;40m",      // White on black
 };
 
 #ifdef __linux__
@@ -210,9 +209,25 @@ char *get_command_with_history(const char *prompt) {
 #ifdef __ANDROID__
                 fflush(stdout);
 #endif
-                if (ch == '1') {
+		/*if (ch == 91)
+		{
                     ch = getch();
-                    if (ch == '5' && getch() == '~') {  // F5
+		    if (ch == 69)
+	            {
+   			  cycle_theme(1);
+		    }
+		}
+		if (ch == 49)
+                {
+                    ch = getch();
+		    if (ch == 55)
+                    {
+                          cycle_theme(-1);
+                    }
+                }*/
+		if (ch == '1') {
+                    ch = getch();
+		    if (ch == '5' && getch() == '~') {  // F5
                         cycle_theme(1);
                         continue;
                     } else if (ch == '7' && getch() == '~') {  // F6
