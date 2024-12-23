@@ -209,24 +209,16 @@ char *get_command_with_history(const char *prompt) {
 #ifdef __ANDROID__
                 fflush(stdout);
 #endif
-		/*if (ch == 91)
+		if (ch == 91)
 		{
                     ch = getch();
-		    if (ch == 69)
+		    if (ch == 69 && getch()=='e')
 	            {
-   			  cycle_theme(1);
+  			cycle_theme(1);
 		    }
 		}
-		if (ch == 49)
-                {
-                    ch = getch();
-		    if (ch == 55)
-                    {
-                          cycle_theme(-1);
-                    }
-                }*/
-		if (ch == '1') {
-                    ch = getch();
+		else if (ch == '1') {
+    			ch = getch();
 		    if (ch == '5' && getch() == '~') {  // F5
                         cycle_theme(1);
                         continue;
