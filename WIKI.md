@@ -151,6 +151,10 @@ The castle is randomly generated at the start of each game, ensuring a unique ex
 
 Use the 'M' command to view a map of the current level. Unexplored rooms are hidden until discovered.
 
+### Color changing
+
+On Linux, hitting F5 and F6 will change the color scheme but doesn't work on every terminal (uses ANSI escape codes which are handled differently depending on the terminal).  The equivalent of that is page up/page down on Windows
+
 ## Development Guide
 
 ### Project Structure
@@ -160,6 +164,7 @@ The project contains multiple implementations:
 - Python implementation (incomplete)
 - Original BASIC source
 - Refactored BASIC source
+- Android Port
 
 ### Building and Compiling
 

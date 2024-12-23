@@ -102,7 +102,7 @@ So grab your staff (or keyboard), and may the RPM gods smile upon your endeavor!
 make qt
 ```
 
-🎨 Behold! The Wizard's Castle now appears in glorious technicolor! (Well, at least more colors than just white-on-black; also supports green on black.)
+🎨 Behold! The Wizard's Castle now appears in glorious technicolor! (Well, at least more colors than just white-on-black; also supports green on black among other color combinations.)
 
 ⚠️ Warning: This enchantment currently only works in the realm of Linux. We're still deciphering the arcane scrolls needed to make it appear in the Windows dimension. Stay tuned, Windows wizards.
 
