@@ -117,7 +117,7 @@ char *get_command_with_history(const char *prompt) {
                 ch = -3;
             }
         }
-#elif !defined(__ANDROID__)
+#else
         if (ch == 27) {
             ch = getch();
 #ifdef __ANDROID__
