@@ -14,6 +14,36 @@
 #include <termios.h>
 #include <unistd.h>
 
+#define NUM_THEMES 9
+
+const char* themes[] = {
+     // Normal Theme 
+    "\033]10;#CCCCCC\007\033]11;#000000\007",
+
+     // Standard black on white
+    "\033]10;#000000\007\033]11;#FFFFFF\007",
+    // White on blue (classic IBM look)
+    "\033]10;#FFFFFF\007\033]11;#0000AA\007",
+
+    // Commodore 64 (light blue on dark blue)
+    "\033]10;#6C9CF9\007\033]11;#0B0B79\007",
+    // Matrix (bright green on black)
+    "\033]10;#00FF00\007\033]11;#000000\007",
+
+    // Amber monochrome
+    "\033]10;#FFB000\007\033]11;#000000\007",
+
+    // Solarized Dark
+    "\033]10;#839496\007\033]11;#002B36\007",
+
+    // Dracula
+    "\033]10;#F8F8F2\007\033]11;#282A36\007",
+
+    // Nord
+    "\033]10;#D8DEE9\007\033]11;#2E3440\007"
+};
+
+
 // Terminal control for Linux
 static struct termios orig_termios;
 
