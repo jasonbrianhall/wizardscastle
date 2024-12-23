@@ -22,9 +22,12 @@ void capitalize_sentences(char *str);
 
 char get_user_input_custom_prompt(char *prompt);
 
-#define NUM_THEMES 8
+#define NUM_THEMES 9
 static const char* themes[] = {
-    // Standard black on white
+     // Normal Theme 
+    "\033]10;#CCCCCC\007\033]11;#000000\007",
+
+     // Standard black on white
     "\033]10;#000000\007\033]11;#FFFFFF\007",
     // White on blue (classic IBM look)
     "\033]10;#FFFFFF\007\033]11;#0000AA\007",
