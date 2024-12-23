@@ -9,7 +9,7 @@
 #define HISTORY_SIZE 100
 #define MAX_COMMAND_LEN 64
 
-#define NUM_THEMES 9
+#define NUM_THEMES (sizeof(themes) / sizeof(themes[0]))
 
 const char* themes[] = {
      // Normal Theme 
@@ -35,9 +35,8 @@ const char* themes[] = {
     "\033]10;#F8F8F2\007\033]11;#282A36\007",
 
     // Nord
-    "\033]10;#D8DEE9\007\033]11;#2E3440\007"
+    "\033]10;#D8DEE9\007\033]11;#2E3440\007",
 };
-
 
 #ifdef __linux__
 #include <stdio.h>
