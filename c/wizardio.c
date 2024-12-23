@@ -39,6 +39,16 @@ int getch() {
 #include <conio.h>
 #endif
 
+int current_theme=0;
+
+void cycle_theme(int direction) {
+#if !defined(__ANDROID__) && !defined(__MSDOS__)
+    current_theme = (current_theme + direction + NUM_THEMES) % NUM_THEMES;
+    printf("%s", themes[current_theme]);
+    fflush(stdout);
+#endif
+}
+
 typedef struct {
   char commands[HISTORY_SIZE][MAX_COMMAND_LEN];
   int current;
@@ -79,111 +89,124 @@ void clear_line(int pos) {
 }
 
 char *get_command_with_history(const char *prompt) {
-  static char buffer[MAX_COMMAND_LEN];
-  int pos = 0;
+    static char buffer[MAX_COMMAND_LEN];
+    int pos = 0;
 
-  print_message("%s", prompt);
-  memset(buffer, 0, sizeof(buffer));
-  history.browsing = 0;
+    print_message("%s", prompt);
+    memset(buffer, 0, sizeof(buffer));
+    history.browsing = 0;
 
-  while (1) {
-    int ch = getch();
+    while (1) {
+        int ch = getch();
 #ifdef __ANDROID__
-    fflush(stdout);
+        fflush(stdout);
 #endif
-#ifdef __linux__
-    if (ch == 27) { // ESC sequence
-      ch = getch();
-#ifdef __ANDROID__
-      fflush(stdout);
-#endif
-      if (ch == '[') {
-        ch = getch();
-#ifdef __ANDROID__
-	fflush(stdout);
-#endif
-	if (ch == 'A') {        // Up arrow
-          ch = -2;              // Custom code for up
-        } else if (ch == 'B') { // Down arrow
-          ch = -3;              // Custom code for down
+
+#if defined(__MSDOS__) || defined(_WIN32)
+        if (ch == 0 || ch == 224) {
+            ch = getch();
+            if (ch == 63) {         // F5
+                cycle_theme(1);
+                continue;
+            } else if (ch == 64) {  // F6
+                change_theme(-1);
+                continue;
+            } else if (ch == 72) {  // Up arrow
+                ch = -2;
+            } else if (ch == 80) {  // Down arrow
+                ch = -3;
+            }
         }
-      }
-    }
-#else
-    if (ch == 0 || ch == 224) { // Extended key for DOS
-      ch = getch();
+#elif !defined(__ANDROID__)
+        if (ch == 27) {
+            ch = getch();
 #ifdef __ANDROID__
-      fflush(stdout);
+            fflush(stdout);
 #endif
-      if (ch == 72) { // Up arrow
-        ch = -2;
-      } else if (ch == 80) { // Down arrow
-        ch = -3;
-      }
-    }
+            if (ch == '[') {
+                ch = getch();
+#ifdef __ANDROID__
+                fflush(stdout);
 #endif
-
-    // Handle up arrow
-    if (ch == -2) {
-      if (!history.browsing) {
-        history.current = history.count - 1;
-      } else if (history.current > 0) {
-        history.current--;
-      }
-
-      if (history.count > 0) {
-        clear_line(pos);
-        strcpy(buffer, history.commands[history.current]);
-        pos = strlen(buffer);
-        print_message("%s", buffer);
-        history.browsing = 1;
-      }
-      continue;
-    }
-
-    // Handle down arrow
-    if (ch == -3) {
-      if (history.browsing) {
-        if (history.current < history.count - 1) {
-          history.current++;
-          clear_line(pos);
-          strcpy(buffer, history.commands[history.current]);
-          pos = strlen(buffer);
-          print_message("%s", buffer);
-        } else {
-          clear_line(pos);
-          buffer[0] = '\0';
-          pos = 0;
-          history.browsing = 0;
+                if (ch == '1') {
+                    ch = getch();
+                    if (ch == '5' && getch() == '~') {  // F5
+                        cycle_theme(1);
+                        continue;
+                    } else if (ch == '7' && getch() == '~') {  // F6
+                        cycle_theme(-1);
+                        continue;
+                    }
+                } else if (ch == 'A') {  // Up arrow
+                    ch = -2;
+                } else if (ch == 'B') {  // Down arrow
+                    ch = -3;
+                }
+            }
         }
-      }
-      continue;
-    }
+#endif
 
-    // Handle enter
-    if (ch == '\r' || ch == '\n') {
-      buffer[pos] = '\0';
-      print_message("\n");
-      add_to_history(buffer);
-      return buffer;
-    }
+        // Handle up arrow
+        if (ch == -2) {
+            if (!history.browsing) {
+                history.current = history.count - 1;
+            } else if (history.current > 0) {
+                history.current--;
+            }
 
-    // Handle backspace
-    if ((ch == 127 || ch == 8) && pos > 0) {
-      print_message("\b \b");
-      pos--;
-      buffer[pos] = '\0';
-      continue;
-    }
+            if (history.count > 0) {
+                clear_line(pos);
+                strcpy(buffer, history.commands[history.current]);
+                pos = strlen(buffer);
+                print_message("%s", buffer);
+                history.browsing = 1;
+            }
+            continue;
+        }
 
-    // Handle regular character
-    if (isprint(ch) && pos < MAX_COMMAND_LEN - 1) {
-      buffer[pos++] = ch;
+        // Handle down arrow
+        if (ch == -3) {
+            if (history.browsing) {
+                if (history.current < history.count - 1) {
+                    history.current++;
+                    clear_line(pos);
+                    strcpy(buffer, history.commands[history.current]);
+                    pos = strlen(buffer);
+                    print_message("%s", buffer);
+                } else {
+                    clear_line(pos);
+                    buffer[0] = '\0';
+                    pos = 0;
+                    history.browsing = 0;
+                }
+            }
+            continue;
+        }
+
+        // Handle enter
+        if (ch == '\r' || ch == '\n') {
+            buffer[pos] = '\0';
+            print_message("\n");
+            add_to_history(buffer);
+            return buffer;
+        }
+
+        // Handle backspace
+        if ((ch == 127 || ch == 8) && pos > 0) {
+            print_message("\b \b");
+            pos--;
+            buffer[pos] = '\0';
+            continue;
+        }
+
+        // Handle regular character
+        if (isprint(ch) && pos < MAX_COMMAND_LEN - 1) {
+            buffer[pos++] = ch;
 #ifndef __ANDROID__
-      print_message("%c", ch);
+            print_message("%c", ch);
 #endif
+        }
     }
-  }
 }
 
 const char *get_user_input_main() {
