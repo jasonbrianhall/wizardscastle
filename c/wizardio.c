@@ -9,11 +9,6 @@
 #define HISTORY_SIZE 100
 #define MAX_COMMAND_LEN 64
 
-#ifdef __linux__
-#include <stdio.h>
-#include <termios.h>
-#include <unistd.h>
-
 #define NUM_THEMES 9
 
 const char* themes[] = {
@@ -43,6 +38,11 @@ const char* themes[] = {
     "\033]10;#D8DEE9\007\033]11;#2E3440\007"
 };
 
+
+#ifdef __linux__
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
 
 // Terminal control for Linux
 static struct termios orig_termios;
