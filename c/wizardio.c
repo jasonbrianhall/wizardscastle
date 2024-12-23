@@ -10,6 +10,38 @@
 #define MAX_COMMAND_LEN 64
 
 #define NUM_THEMES (sizeof(themes) / sizeof(themes[0]))
+#define NUM_THEMES_BASIC (sizeof(themesBasic) / sizeof(themesBasic[0]))
+
+int detect_terminal_capability(void);
+
+#define TERM_CAP_MODERN  2
+#define TERM_CAP_BASIC   1
+#define TERM_CAP_SIMPLE  0
+
+int detect_terminal_capability(void) {
+    const char* term = getenv("TERM");
+    const char* colorterm = getenv("COLORTERM");
+    
+    // Check for modern terminal support
+    if (colorterm && (
+        strcmp(colorterm, "truecolor") == 0 ||
+        strcmp(colorterm, "24bit") == 0)) {
+        return TERM_CAP_MODERN;
+    }
+    
+    // Check for basic color support
+    if (term && (
+        strstr(term, "256color") ||
+        strstr(term, "color") ||
+        strcmp(term, "xterm") == 0 ||
+        strcmp(term, "rxvt") == 0)) {
+        return TERM_CAP_BASIC;
+    }
+    
+    // Default to simple
+    return TERM_CAP_SIMPLE;
+}
+
 
 const char* themes[] = {
      // Normal Theme 
@@ -17,11 +49,13 @@ const char* themes[] = {
 
      // Standard black on white
     "\033]10;#000000\007\033]11;#FFFFFF\007",
+
     // White on blue (classic IBM look)
     "\033]10;#FFFFFF\007\033]11;#0000AA\007",
 
     // Commodore 64 (light blue on dark blue)
     "\033]10;#6C9CF9\007\033]11;#0B0B79\007",
+
     // Matrix (bright green on black)
     "\033]10;#00FF00\007\033]11;#000000\007",
 
@@ -36,6 +70,17 @@ const char* themes[] = {
 
     // Nord
     "\033]10;#D8DEE9\007\033]11;#2E3440\007",
+};
+
+const char* themesBasic[] = {
+        "\033[37;40m",      // White on black
+        "\033[30;47m",      // Black on white
+        "\033[37;44m",      // White on blue
+        "\033[36;44m",      // Cyan on blue
+        "\033[32;40m",      // Green on black
+        "\033[33;40m",      // Yellow on black
+        "\033[36;40m",      // Cyan on black
+        "\033[37;40m",      // White on black
 };
 
 #ifdef __linux__
@@ -72,8 +117,16 @@ int current_theme=0;
 
 void cycle_theme(int direction) {
 #if !defined(__ANDROID__) && !defined(__MSDOS__)
-    current_theme = (current_theme + direction + NUM_THEMES) % NUM_THEMES;
-    printf("%s", themes[current_theme]);
+    int terminaltype = detect_terminal_capability();
+    if (terminaltype == TERM_CAP_MODERN) {
+        current_theme = (current_theme + direction + NUM_THEMES) % NUM_THEMES;
+        printf("%s", themes[current_theme]);
+    }
+    else {
+        current_theme = (current_theme + direction + NUM_THEMES_BASIC) % NUM_THEMES_BASIC;
+        printf("%s", themesBasic[current_theme]);
+     }
+    
     fflush(stdout);
 #endif
 }
