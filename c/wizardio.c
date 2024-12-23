@@ -42,7 +42,7 @@ int getch() {
 int current_theme=0;
 
 void cycle_theme(int direction) {
-#if !defined(__ANDROID__) && !defined(__MSDOS__)
+#if !defined(__ANDROID__) || defined(__MSDOS__)
     current_theme = (current_theme + direction + NUM_THEMES) % NUM_THEMES;
     printf("%s", themes[current_theme]);
     fflush(stdout);
