@@ -106,10 +106,10 @@ char *get_command_with_history(const char *prompt) {
         if (ch == 0 || ch == 224) {
             ch = getch();
             if (ch == 63) {         // F5
-                cycle_theme(1);
+                //cycle_theme(1);
                 continue;
             } else if (ch == 64) {  // F6
-                change_theme(-1);
+                //change_theme(-1);
                 continue;
             } else if (ch == 72) {  // Up arrow
                 ch = -2;
