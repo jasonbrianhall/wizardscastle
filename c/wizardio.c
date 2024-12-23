@@ -103,12 +103,12 @@ char *get_command_with_history(const char *prompt) {
 #endif
 
 #if defined(__MSDOS__) || defined(_WIN32)
-        if (ch == 0 || ch == 224) {
-            ch = getch();
-            if (ch == 63) {         // F5
+	if (ch == 0 || ch == 224) {
+        ch = getch();
+            if (ch == 73) {         // Page Up
 		cycle_theme(1);
                 continue;
-            } else if (ch == 64) {  // F6
+            } else if (ch == 81) {  // Page Down
                 cycle_theme(-1);
                 continue;
             } else if (ch == 72) {  // Up arrow
