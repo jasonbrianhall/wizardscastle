@@ -42,7 +42,7 @@ int getch() {
 int current_theme=0;
 
 void cycle_theme(int direction) {
-#if !defined(__ANDROID__) || defined(__MSDOS__)
+#if !defined(__ANDROID__) && !defined(__MSDOS__)
     current_theme = (current_theme + direction + NUM_THEMES) % NUM_THEMES;
     printf("%s", themes[current_theme]);
     fflush(stdout);
@@ -106,7 +106,7 @@ char *get_command_with_history(const char *prompt) {
         if (ch == 0 || ch == 224) {
             ch = getch();
             if (ch == 63) {         // F5
-                cycle_theme(1);
+		cycle_theme(1);
                 continue;
             } else if (ch == 64) {  // F6
                 cycle_theme(-1);
