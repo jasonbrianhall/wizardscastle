@@ -433,17 +433,18 @@ public class TerminalView extends View {
         if ((event.getSource() & 8194) != 0) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_SCROLL:
-                    float scrollDelta = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
-                    if (scrollDelta != 0) {
+                    float vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+                    float hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+                    if (vScroll != 0 || hScroll != 0) {
                         if ((event.getMetaState() & KeyEvent.META_CTRL_ON) != 0) {
                             float oldScale = scaleFactor;
-                            scaleFactor *= (1.0f + (scrollDelta * 0.1f));
+                            scaleFactor *= (1.0f + (vScroll * 0.1f));
                             scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
                             if (oldScale != scaleFactor) {
                                 updateTextSize();
                             }
                         } else {
-                            scrollBy(0, -scrollDelta * 50);
+                            scrollBy(-hScroll * 50, -vScroll * 50);
                         }
                         return true;
                     }
@@ -452,6 +453,7 @@ public class TerminalView extends View {
         }
         return super.onGenericMotionEvent(event);
     }
+
 
     private void calculateInitialTextSize() {
         android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -1011,4 +1013,4 @@ echo "1. Make sure ANDROID_NDK_HOME and ANDROID_HOME is set and correct"
 echo "2. cd WizardsCastle"
 echo "3. gradle assembleDebug (Debug) or gradle assemble"
 echo "The APK will be in app/build/outputs/apk/debug/wizards-castle.apk"
-echo -en "\n\nFor bundleRelease for the Google Playstore, run the command ./gradlew bundleRelease -PKEYSTORE_PASSWORD=xxx -PKEY_ALIAS=googleplay -PKEY_PASSWORD=xxx" and place the release-key.jks in that directory\n\n"
+echo -en "\n\nFor bundleRelease for the Google Playstore, run the command ./gradlew bundleRelease -PKEYSTORE_PASSWORD=xxx -PKEY_ALIAS=googleplay -PKEY_PASSWORD=xxx and place the release-key.jks in that directory\n\n"
