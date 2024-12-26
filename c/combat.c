@@ -1297,7 +1297,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength,
         }
         return 0;
       } else {
-        print_message("FIREBALL . . . INVALID CHOICE\n");
+        print_message("Fireball . . . Invalid choice\n");
       }
       break;
     case 'D':
@@ -1329,7 +1329,7 @@ int handle_spell(Player *player, GameState *game, int *enemy_strength,
         cast_heal_spell(player);
         return 0;
       }
-      print_message("\n** TRY ONE OF THE OPTIONS GIVEN.\n");
+      print_message("\n** Try one of the options given.\n");
       break;
     case 'S':
       if ((player->race == ELF || player->race == DROW ||

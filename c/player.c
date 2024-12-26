@@ -349,7 +349,7 @@ void buy_lamp_and_flares(Player *player) {
         print_message("You chose not to buy any flares.\n");
         return;
       } else if (flares_to_buy < 0) {
-        print_message("** %s, PLEASE ENTER A POSITIVE NUMBER.\n",
+        print_message("** %s, please enter a positive number.\n",
                       player->sex == MALE ? "Sir" : "Ma'am");
       } else if (flares_to_buy > player->gold) {
         print_message(
