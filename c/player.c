@@ -143,11 +143,11 @@ void allocate_attributes(Player *player) {
   }
 
   print_message("Ok, ");
-  print_message("%s, YOU HAVE THE FOLLOWING ATTRIBUTES:\n",
+  print_message("%s, you have the following attributes::\n",
                           race_names[player->race - 1]);
   print_message("Strength = %d    Intelligence = %d    Dexterity = %d\n",
                 player->strength, player->intelligence, player->dexterity);
-  print_message("AND %d OTHER POINTS TO ALLOCATE AS YOU WISH.\n\n",
+  print_message("And %d other points to allocate as you wish.\n\n",
                           other_points);
 
   // Allocate points to Strength
