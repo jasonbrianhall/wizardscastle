@@ -22,8 +22,7 @@ fi
 
 # Check for ImageMagick
 if ! command -v gradle &> /dev/null; then
-    echo "Error: Command gradle not found (used to compile the embedded Java)"
-    exit 1
+    echo -en "Warning: Command gradle not found (used to compile the embedded Java)\n\n"
 fi
 
 
@@ -59,6 +58,10 @@ convert $CONVERT_OPTS ../icon.png -resize 288x288 app/src/main/res/mipmap-hdpi/i
 convert $CONVERT_OPTS ../icon.png -resize 384x384 app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
 convert $CONVERT_OPTS ../icon.png -resize 576x576 app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
 convert $CONVERT_OPTS ../icon.png -resize 768x768 app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+
+# Create splash icon drawable from the main icon
+convert $CONVERT_OPTS ../icon.png -resize 512x512 app/src/main/res/drawable/splash_icon.png
+
 
 
 # Create background resource
@@ -121,6 +124,58 @@ done
 
 rm app/src/main/assets/*.c
 rm app/src/main/assets/*.h
+
+# Create SplashActivity.java
+cat > app/src/main/java/org/wizardscastle/terminalwizcastle/SplashActivity.java << 'EOL'
+package org.wizardscastle.terminalwizcastle;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
+
+public class SplashActivity extends Activity {
+    private static final int SPLASH_DURATION = 2000; // 2 seconds
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        // Remove title bar
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                           WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        setContentView(R.layout.activity_splash);
+
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }, SPLASH_DURATION);
+    }
+}
+EOL
+
+# Create splash screen layout
+mkdir -p app/src/main/res/layout
+cat > app/src/main/res/layout/activity_splash.xml << 'EOL'
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/splash_icon"
+        android:contentDescription="@string/app_name"/>
+</RelativeLayout>
+EOL
 
 # Create TerminalView.java
 cat > app/src/main/java/org/wizardscastle/terminalwizcastle/TerminalView.java << 'EOL'
@@ -801,6 +856,7 @@ cat > app/src/main/res/values/strings.xml << 'EOL'
     <string name="source_license">MIT License</string>
     <string name="game_features">Randomly generated 512-room castles, Multiple character races (Human, Elf, Hobbit, Dwarf, Dark Elf), Strategic combat system, Magic spells, Vendor interactions, ASCII map display</string>
     <string name="original_concept">Joseph R. Power (1980)</string> 
+    <string name="app_icon">App Icon</string>
 </resources>
 EOL
 
@@ -843,6 +899,15 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
             android:name="original_concept"
             android:value="@string/original_concept" />
 
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:exported="true">
+           <intent-filter>
+               <action android:name="android.intent.action.MAIN" />
+               <category android:name="android.intent.category.LAUNCHER" />
+               </intent-filter>
+        </activity>
 
         <activity 
             android:name=".MainActivity" 
