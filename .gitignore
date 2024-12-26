@@ -7,7 +7,7 @@
 *.dylib
 *.app
 *.dmg
-*.jdk
+*.jks
 
 # Qt specific
 *.pro.user
