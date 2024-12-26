@@ -938,7 +938,7 @@ android {
     defaultConfig {
         applicationId "org.wizardscastle.terminalwizcastle"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode CHANGEME1
         versionName CHANGEME2
     }
@@ -973,8 +973,8 @@ android {
 }
 EOL
 
-VERSION_CODE=$(date +%Y%m%d)
-VERSION_NAME=$(date +%Y.%m.%d)
+VERSION_CODE=$(date +%Y%m%d%H%M)  # YYYYMMDDhhmm format
+VERSION_NAME=$(date +%Y.%m.%d.%H%M)  # YYYY.MM.DD.hhmm format
 
 sed "s/CHANGEME1/$VERSION_CODE/g" app/build.gradle -i
 sed "s/CHANGEME2/\"$VERSION_NAME\"/g" app/build.gradle -i
