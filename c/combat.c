@@ -2607,7 +2607,7 @@ void bear_maul_attack(Player *player, GameState *game, int enemy_strength,
   }
 
   if (player->strength <= 0) {
-    print_message("\nTHE BEAR HAS MAULED YOU TO DEATH!\n");
+    print_message("\nThe bear has mauled you to death!\n");
     game->game_over = 1;
   }
 }
@@ -2644,7 +2644,7 @@ void ogre_rage_attack(Player *player, GameState *game, int enemy_strength,
       player->armor_points = 0;
       player->armor_type = 0;
       print_message(
-          "YOUR ARMOR IS SMASHED BY THE OGRE'S TREMENDOUS STRENGTH!\n");
+          "Your armor is smashed by the Orge's tremendoous strength!\n");
     }
   }
 
@@ -2714,7 +2714,7 @@ void orc_battle_fury_attack(Player *player, GameState *game, int enemy_strength,
     if (player->armor_points <= 0) {
       player->armor_points = 0;
       player->armor_type = 0;
-      print_message("YOUR ARMOR IS BROKEN BY THE ORC'S FURY!\n");
+      print_message("Your armor is broken by the Orc's fury!\n");
     }
   }
 
@@ -2878,7 +2878,7 @@ void goblin_dirty_tricks_attack(Player *player, GameState *game,
   }
 
   if (player->strength <= 0) {
-    print_message("\nTHE GOBLIN'S DIRTY FIGHTING HAS ENDED YOUR ADVENTURE!\n");
+    print_message("\nThe Goblin's dirty fighting has ended your adventure!\n");
     game->game_over = 1;
   }
 }
