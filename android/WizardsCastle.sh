@@ -60,7 +60,7 @@ convert $CONVERT_OPTS ../icon.png -resize 576x576 app/src/main/res/mipmap-xxhdpi
 convert $CONVERT_OPTS ../icon.png -resize 768x768 app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
 
 # Create splash icon drawable from the main icon
-convert $CONVERT_OPTS ../icon.png -resize 512x512 app/src/main/res/drawable/splash_icon.png
+convert $CONVERT_OPTS ../icon_splash.png -resize 512x512 app/src/main/res/drawable/splash_icon.png
 
 
 
