@@ -2677,7 +2677,7 @@ void ogre_rage_attack(Player *player, GameState *game, int enemy_strength,
   }
 
   if (player->strength <= 0) {
-    print_message("\nTHE OGRE HAS BEATEN YOU TO DEATH IN ITS RAGE!\n");
+    print_message("\nThe ogre has beaten you to deatin in its rage!\n");
     game->game_over = 1;
   }
 }
@@ -2747,7 +2747,7 @@ void orc_battle_fury_attack(Player *player, GameState *game, int enemy_strength,
   }
 
   if (player->strength <= 0) {
-    print_message("\nTHE ORC'S BATTLE FURY HAS OVERWHELMED YOU!\n");
+    print_message("\nThe Orc's battle fury has overwhelmed you!\n");
     game->game_over = 1;
   }
 }
