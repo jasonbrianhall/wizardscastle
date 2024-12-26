@@ -947,7 +947,11 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-	    signingConfig signingConfigs.debug  // Use debug signing for testing
+	    signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            debuggable true
         }
     }   
  
