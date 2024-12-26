@@ -943,11 +943,21 @@ android {
         versionName CHANGEME2
     }
     
+    signingConfigs {
+        release {
+            storeFile file("release-key.jks")
+            storePassword project.findProperty('KEYSTORE_PASSWORD') ?: ''
+            keyAlias project.findProperty('KEY_ALIAS') ?: ''
+            keyPassword project.findProperty('KEY_PASSWORD') ?: ''
+        }
+    }
+    
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-	    signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             signingConfig signingConfigs.debug
@@ -1017,4 +1027,4 @@ echo "1. Make sure ANDROID_NDK_HOME and ANDROID_HOME is set and correct"
 echo "2. cd WizardsCastle"
 echo "3. gradle assembleDebug (Debug) or gradle assemble"
 echo "The APK will be in app/build/outputs/apk/debug/wizards-castle.apk"
-echo -en "\n\nFor bundleRelease for the Google Playstore, run the command ./gradlew bundleRelease -PKEYSTORE_PASSWORD=xxx -PKEY_ALIAS=googleplay -PKEY_PASSWORD=xxx and place the release-key.jks in that directory\n\n"
+echo -en "\n\nFor bundleRelease for the Google Playstore, run the command ./gradlew bundleRelease -PKEYSTORE_PASSWORD=xxx -PKEY_ALIAS=googleplay -PKEY_PASSWORD=xxx and place the release-key.jks in the app directory\n\n"
