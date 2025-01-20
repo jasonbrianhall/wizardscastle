@@ -194,7 +194,7 @@ jobs:
     - name: Build APK
       run: |
         cd android/WizardsCastle
-        ./gradle assemble
+        gradle assemble
 
     - name: List Build Directory Contents
       if: always()
