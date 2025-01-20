@@ -188,8 +188,8 @@ jobs:
     - name: Generate Project
       run: |
         cd android
-        chmod +x wizardscastle.sh
-        ./wizardscastle.sh
+        chmod +x WizardsCastle.sh
+        ./WizardsCastle.sh
 
     - name: Build APK
       run: |
