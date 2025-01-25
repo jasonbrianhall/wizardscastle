@@ -3,7 +3,8 @@ name: Build and Release
 on:
   push:
     branches:
-      - [main,dev]  # or your default branch name
+      - main
+      - dev
   schedule:
     - cron: '0 0 1 */1 *'  # Runs at 00:00 on the 1st of every month
 
