@@ -178,6 +178,10 @@ See the [LICENSE](LICENSE.md) scroll for details.
 
 Brave soul, the Wizard's Castle awaits! Will you emerge victorious with the Orb of Zot, or fall to the castle's many perils? Your legend begins now!
 
+### 📚 Find us on sourceforge
+
+https://sourceforge.net/projects/wizards-castle
+
 ---
 
 🏷️ Keywords: text-based game, roguelike, dungeon crawler, C programming, BASIC, retro gaming, ASCII graphics, RPG, fantasy adventure, open-source game
