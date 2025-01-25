@@ -118,7 +118,7 @@ jobs:
         prerelease: false
 
     - name: Upload RPM Package
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -129,7 +129,7 @@ jobs:
         asset_content_type: application/x-rpm
     
     - name: Upload Windows Binary
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -140,7 +140,7 @@ jobs:
         asset_content_type: application/octet-stream
     
     - name: Upload DOS Package
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -151,7 +151,7 @@ jobs:
         asset_content_type: application/zip
   
     - name: Upload Linux Package
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1    # <-- Using newer action
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -212,7 +212,7 @@ jobs:
         ls -la android/WizardsCastle/app/build/outputs/apk/debug/ || echo "Debug directory not found"
 
     - name: Upload Android APK
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: success() && github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -276,7 +276,7 @@ jobs:
         powershell Compress-Archive -Path win_package\* -DestinationPath wizards_castle_qt_windows.zip
 
     - name: Upload Qt Windows Release Asset
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -390,7 +390,7 @@ jobs:
         macdeployqt WizardsCastle.app -dmg -verbose=2 
 
     - name: Upload macOS Release Asset
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -544,7 +544,7 @@ jobs:
         light -ext WixUIExtension installer.wixobj
 
     - name: Upload MSI Release Asset
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
