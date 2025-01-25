@@ -938,30 +938,16 @@ android {
     defaultConfig {
         applicationId "org.wizardscastle.terminalwizcastle"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 33
         versionCode CHANGEME1
         versionName CHANGEME2
-    }
-    
-    signingConfigs {
-        release {
-            storeFile file("release-key.jks")
-            storePassword project.findProperty('KEYSTORE_PASSWORD') ?: ''
-            keyAlias project.findProperty('KEY_ALIAS') ?: ''
-            keyPassword project.findProperty('KEY_PASSWORD') ?: ''
-        }
     }
     
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            signingConfig signingConfigs.debug
-            debuggable true
+	    signingConfig signingConfigs.debug  // Use debug signing for testing
         }
     }   
  
@@ -973,8 +959,8 @@ android {
 }
 EOL
 
-VERSION_CODE=$(date +%Y%m%d%H%M)  # YYYYMMDDhhmm format
-VERSION_NAME=$(date +%Y.%m.%d.%H%M)  # YYYY.MM.DD.hhmm format
+VERSION_CODE=$(date +%Y%m%d)
+VERSION_NAME=$(date +%Y.%m.%d)
 
 sed "s/CHANGEME1/$VERSION_CODE/g" app/build.gradle -i
 sed "s/CHANGEME2/\"$VERSION_NAME\"/g" app/build.gradle -i
