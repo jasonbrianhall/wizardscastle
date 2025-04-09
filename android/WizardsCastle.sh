@@ -605,13 +605,13 @@ public class TerminalView extends View {
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        // Disable predictive text completely
         outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT 
-                         | EditorInfo.TYPE_TEXT_FLAG_AUTO_CORRECT 
-                         | EditorInfo.TYPE_TEXT_FLAG_AUTO_COMPLETE;
+                           | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
         outAttrs.imeOptions = EditorInfo.IME_ACTION_NONE 
-                          | EditorInfo.IME_FLAG_NO_EXTRACT_UI 
-                          | EditorInfo.IME_FLAG_NO_FULLSCREEN;
-        
+                            | EditorInfo.IME_FLAG_NO_EXTRACT_UI 
+                            | EditorInfo.IME_FLAG_NO_FULLSCREEN;
+    
         return new BaseInputConnection(this, true) {
             @Override
             public boolean commitText(CharSequence text, int newCursorPosition) {
@@ -619,32 +619,14 @@ public class TerminalView extends View {
                     try {
                         String str = text.toString();
                         inputBuffer.append(str);
-                        write(str.getBytes());  // Show the character
-                        outputStream.flush();
-                    } catch (IOException e) {
+                    write(str.getBytes());  // Show the character    
+                    outputStream.flush();    
+                    } catch (IOException e) {    
                         e.printStackTrace();
                     }
                 }
                 return true;
-            }
-            
-            @Override
-            public boolean setComposingText(CharSequence text, int newCursorPosition) {
-                // For predictive text support
-                return commitText(text, newCursorPosition);
-            }
-            
-            @Override
-            public boolean setComposingRegion(int start, int end) {
-                // Required for predictive text
-                return true;
-            }
-            
-            @Override
-            public boolean finishComposingText() {
-                // Required for predictive text
-                return true;
-            }
+            }    
         };
     }
 
@@ -959,10 +941,10 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
             android:name=".SplashActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:exported="true">
-           <intent-filter>
-               <action android:name="android.intent.action.MAIN" />
-               <category android:name="android.intent.category.LAUNCHER" />
-               </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity 
@@ -971,10 +953,7 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- No intent-filter here -->
         </activity>
     </application>
 </manifest>
