@@ -605,28 +605,91 @@ public class TerminalView extends View {
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        // Disable predictive text completely
+        // Allow text input but disable suggestions
         outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT 
+                           | EditorInfo.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                            | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
-        outAttrs.imeOptions = EditorInfo.IME_ACTION_NONE 
+    
+        outAttrs.imeOptions = EditorInfo.IME_ACTION_SEND 
                             | EditorInfo.IME_FLAG_NO_EXTRACT_UI 
                             | EditorInfo.IME_FLAG_NO_FULLSCREEN;
     
         return new BaseInputConnection(this, true) {
+            private StringBuilder composingText = new StringBuilder();
+        
             @Override
             public boolean commitText(CharSequence text, int newCursorPosition) {
                 if (outputStream != null) {
                     try {
+                        // Only process one character at a time from the input
                         String str = text.toString();
-                        inputBuffer.append(str);
-                    write(str.getBytes());  // Show the character    
-                    outputStream.flush();    
-                    } catch (IOException e) {    
+                        if (str.length() > 0) {
+                            // Just take the first character if multiple characters are committed            
+                            char ch = str.charAt(0);
+                            String charStr = String.valueOf(ch);
+                        
+                            // Add to input buffer
+                            inputBuffer.append(charStr);
+                        
+                            // Display on screen
+                            write(charStr.getBytes());
+                        
+                            outputStream.flush();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }    
+                }
+                return true;
+            }
+        
+            @Override
+            public boolean setComposingText(CharSequence text, int newCursorPosition) {
+                // We don't need to handle composing text for this implementation
+                // Just treat it as a direct commit
+                return commitText(text, newCursorPosition);
+            }
+        
+            @Override
+            public boolean deleteSurroundingText(int beforeLength, int afterLength) {
+                // Handle backspace
+                if (outputStream != null && beforeLength > 0) {
+                    try {
+                        if (inputBuffer.length() > 0) {
+                            inputBuffer.setLength(inputBuffer.length() - 1);
+                            write("\b".getBytes());    
+                            outputStream.flush();    
+                        }
+                        } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
                 return true;
-            }    
+            }
+        
+            @Override
+            public boolean sendKeyEvent(KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                        try {
+                            // Show newline
+                            write("\n".getBytes());
+                        
+                            // Send the complete line to the process    
+                            outputStream.write((inputBuffer.toString() + "\n").getBytes());
+                        
+                            // Clear buffer
+                            inputBuffer.setLength(0);
+                        
+                            outputStream.flush();
+                            return true;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return super.sendKeyEvent(event);
+            }
         };
     }
 
