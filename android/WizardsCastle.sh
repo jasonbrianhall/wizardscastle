@@ -179,433 +179,15 @@ EOL
 
 # Create TerminalView.java
 cat > app/src/main/java/org/wizardscastle/terminalwizcastle/TerminalView.java << 'EOL'
-package org.wizardscastle.terminalwizcastle;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.view.inputmethod.BaseInputConnection;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Scroller;
-import java.io.IOException;
-import java.io.OutputStream;
-import android.util.Log;
-
-public class TerminalView extends View {
-    private Paint textPaint;
-    private float charWidth;
-    private float charHeight;
-    private int cols;
-    private int rows;
-    private char[][] buffer;
-    private int cursorX = 0;
-    private int cursorY = 0;
-    private OutputStream outputStream;
-    private boolean cursorVisible = true;
-    private float scaleFactor = 1.0f;
-    private float baseTextSize;
-    private boolean keyboardVisible = false;
-    private InputMethodManager imm;
-    private ScaleGestureDetector scaleDetector;
-    private static final float MIN_SCALE = 1.0f;
-    private static final float MAX_SCALE = 4.0f;
-    private GestureDetector gestureDetector;
-    private Scroller scroller;
-    private float scrollX = 0;
-    private float scrollY = 0;
-    private float maxScrollX = 0;
-    private float maxScrollY = 0;
-
-    // First, define the ColorScheme inner class
-    private static class ColorScheme {
-        final int textColor;
-        final int backgroundColor;
-
-        ColorScheme(int textColor, int backgroundColor) {
-            this.textColor = textColor;
-            this.backgroundColor = backgroundColor;
-        }
-    }
-
-    private static final ColorScheme[] COLOR_SCHEMES = {
-        new ColorScheme(Color.GREEN, Color.BLACK),      // Classic green on black
-        new ColorScheme(Color.WHITE, Color.BLACK),      // White on black
-        new ColorScheme(Color.BLACK, Color.WHITE),      // Black on white
-        new ColorScheme(Color.CYAN, Color.BLACK),       // Cyan on black
-        new ColorScheme(Color.rgb(255, 165, 0), Color.BLACK), // Orange on black
-        new ColorScheme(Color.rgb(170, 170, 170), Color.rgb(0, 0, 85)), // Grey on navy
-    };
-    private int currentColorScheme = 0;
-
-    public TerminalView(Context context) {
-        super(context);
-        init();
-    }
-    
-    public TerminalView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-    
-    private void init() {
-        imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        textPaint = new Paint();
-        textPaint.setColor(Color.GREEN);
-        textPaint.setTypeface(Typeface.MONOSPACE);
-        textPaint.setAntiAlias(true);
-        
-        cols = 80;
-        rows = 48;
-        buffer = new char[rows][cols];
-        
-        calculateInitialTextSize();
-        clearScreen();
-        
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-
-        scroller = new Scroller(getContext());
-        gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                if (!scaleDetector.isInProgress()) {
-                    scrollBy(distanceX, distanceY);
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (!scaleDetector.isInProgress()) {
-                    scroller.fling(
-                        (int)scrollX, (int)scrollY,
-                        -(int)velocityX, -(int)velocityY,
-                        0, (int)maxScrollX,
-                        0, (int)maxScrollY
-                    );
-                    postInvalidateOnAnimation();
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                cycleColorScheme();
-                return true;
-            }
-        });
-        
-        scaleDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            @Override
-            public boolean onScale(ScaleGestureDetector detector) {
-                float oldScale = scaleFactor;
-                scaleFactor *= detector.getScaleFactor();
-                scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
-                
-                if (oldScale != scaleFactor) {
-                    updateTextSize();
-                }
-                return true;
-            }
-        });
-        
-        post(() -> {
-            requestFocus();
-            showKeyboard();
-        });
-    }
-
-    private void cycleColorScheme() {
-        currentColorScheme = (currentColorScheme + 1) % COLOR_SCHEMES.length;
-        ColorScheme scheme = COLOR_SCHEMES[currentColorScheme];
-        textPaint.setColor(scheme.textColor);
-        invalidate();
-    }
-
-    public void setOutputStream(OutputStream os) {
-        this.outputStream = os;
-    }
-    
-    private void clearScreen() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                buffer[i][j] = ' ';
-            }
-        }
-        cursorX = 0;
-        cursorY = 0;
-        invalidate();
-    }
-
-    private void scrollBy(float distanceX, float distanceY) {
-        scrollX = Math.max(0, Math.min(scrollX + distanceX, maxScrollX));
-        scrollY = Math.max(0, Math.min(scrollY + distanceY, maxScrollY));
-        updateScrollLimits();
-        invalidate();
-    }
-
-    private void updateScrollLimits() {
-        maxScrollX = Math.max(0, cols * charWidth - getWidth());
-        maxScrollY = Math.max(0, rows * charHeight - getHeight());
-        scrollX = Math.max(0, Math.min(scrollX, maxScrollX));
-        scrollY = Math.max(0, Math.min(scrollY, maxScrollY));
-    }
-
-    public void write(byte[] data) {
-        for (byte b : data) {
-            if (b == '\n') {
-                cursorY++;
-                cursorX = 0;
-                
-                if (cursorY >= rows) {
-                    scrollUp();
-                    cursorY = rows - 1;
-                }
-            } else if (b == '\r') {
-                cursorX = 0;
-            } else if (b == '\b') {
-                if (cursorX > 0) {
-                    cursorX--;
-                    buffer[cursorY][cursorX] = ' ';
-                }
-            } else {
-                if (cursorX >= cols) {
-                    cursorX = 0;
-                    cursorY++;
-                    if (cursorY >= rows) {
-                        scrollUp();
-                        cursorY = rows - 1;
-                    }
-                }
-                buffer[cursorY][cursorX++] = (char)b;
-            }
-        }
-        invalidate();
-    }
-
-    private void scrollUp() {
-        for (int i = 0; i < rows - 1; i++) {
-            System.arraycopy(buffer[i + 1], 0, buffer[i], 0, cols);
-        }
-        
-        for (int j = 0; j < cols; j++) {
-            buffer[rows - 1][j] = ' ';
-        }
-    }
-
-    @Override
-    public void computeScroll() {
-        if (scroller.computeScrollOffset()) {
-            scrollX = scroller.getCurrX();
-            scrollY = scroller.getCurrY();
-            updateScrollLimits();
-            postInvalidateOnAnimation();
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean handled = scaleDetector.onTouchEvent(event);
-        handled |= gestureDetector.onTouchEvent(event);
-        
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (!scroller.isFinished()) {
-                scroller.abortAnimation();
-            }
-        }
-        
-        return handled || super.onTouchEvent(event);
-    }
-    
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        if ((event.getSource() & 8194) != 0) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_SCROLL:
-                    float vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
-                    float hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
-                    if (vScroll != 0 || hScroll != 0) {
-                        if ((event.getMetaState() & KeyEvent.META_CTRL_ON) != 0) {
-                            float oldScale = scaleFactor;
-                            scaleFactor *= (1.0f + (vScroll * 0.1f));
-                            scaleFactor = Math.max(MIN_SCALE, Math.min(scaleFactor, MAX_SCALE));
-                            if (oldScale != scaleFactor) {
-                                updateTextSize();
-                            }
-                        } else {
-                            scrollBy(-hScroll * 50, -vScroll * 50);
-                        }
-                        return true;
-                    }
-                    break;
-            }
-        }
-        return super.onGenericMotionEvent(event);
-    }
-
-
-    private void calculateInitialTextSize() {
-        android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
-        baseTextSize = metrics.density * 12f;
-        updateTextSize();
-    }
-
-    private void updateTextSize() {
-        float newTextSize = baseTextSize * scaleFactor;
-        textPaint.setTextSize(newTextSize);
-        
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        charHeight = fm.bottom - fm.top;
-        charWidth = textPaint.measureText("M");
-        
-        calculateDimensionsPreserveBuffer(getWidth(), getHeight());
-        updateScrollLimits();
-        
-        invalidate();
-    }
-    
-    private void calculateDimensionsPreserveBuffer(int width, int height) {
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        charHeight = fm.bottom - fm.top;
-        charWidth = textPaint.measureText("M");
-        
-        rows = Math.max(48, (int)(height / charHeight));
-        cols = Math.max(80, (int)(width / charWidth));
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        
-        calculateDimensions(w, h);
-        
-        char[][] newBuffer = new char[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                newBuffer[i][j] = ' ';
-            }
-        }
-        
-        if (buffer != null) {
-            int minRows = Math.min(rows, buffer.length);
-            int minCols = Math.min(cols, buffer[0].length);
-            for (int i = 0; i < minRows; i++) {
-                System.arraycopy(buffer[i], 0, newBuffer[i], 0, minCols);
-            }
-        }
-        
-        buffer = newBuffer;
-        invalidate();
-    }
-    
-    private void calculateDimensions(int width, int height) {
-        float testTextSize = 100f;
-        textPaint.setTextSize(testTextSize);
-        
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        float testCharHeight = fm.bottom - fm.top;
-        float testCharWidth = textPaint.measureText("M");
-        
-        float heightScale = height / testCharHeight;
-        float widthScale = width / testCharWidth;
-        
-        baseTextSize = Math.min(testTextSize * heightScale / 48,
-                               testTextSize * widthScale / 80);
-        
-        updateTextSize();
-        
-        fm = textPaint.getFontMetrics();
-        charHeight = fm.bottom - fm.top;
-        charWidth = textPaint.measureText("M");
-        
-        rows = Math.max(48, (int)(height / charHeight));
-        cols = Math.max(80, (int)(width / charWidth));
-    }
-
-    public void showKeyboard() {
-        if (!keyboardVisible) {
-            imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT);
-            keyboardVisible = true;
-        }
-    }
-
-    public void hideKeyboard() {
-        if (keyboardVisible) {
-            imm.hideSoftInputFromWindow(getWindowToken(), 0);
-            keyboardVisible = false;
-        }
-    }
-
-    public void toggleKeyboard() {
-        if (keyboardVisible) {
-            hideKeyboard();
-        } else {
-            showKeyboard();
-        }
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        
-        //canvas.drawColor(Color.BLACK);
-        canvas.drawColor(COLOR_SCHEMES[currentColorScheme].backgroundColor);
-
-        canvas.save();
-        canvas.translate(-scrollX, -scrollY);
-        
-        Paint.FontMetrics fm = textPaint.getFontMetrics();
-        float baselineOffset = -fm.top;
-        
-        int startRow = Math.max(0, (int)(scrollY / charHeight));
-        int endRow = Math.min(rows, (int)((scrollY + getHeight()) / charHeight) + 1);
-        int startCol = Math.max(0, (int)(scrollX / charWidth));
-        int endCol = Math.min(cols, (int)((scrollX + getWidth()) / charWidth) + 1);
-        
-        for (int i = startRow; i < endRow; i++) {
-            float y = i * charHeight + baselineOffset;
-            for (int j = startCol; j < endCol; j++) {
-                float x = j * charWidth;
-                canvas.drawText(String.valueOf(buffer[i][j]), x, y, textPaint);
-            }
-        }
-        
-        if (cursorVisible &&
-            cursorX >= startCol && cursorX < endCol &&
-            cursorY >= startRow && cursorY < endRow) {
-            Paint cursorPaint = new Paint();
-            cursorPaint.setColor(Color.GREEN);
-            cursorPaint.setAlpha(160);
-            canvas.drawRect(
-                cursorX * charWidth,
-                cursorY * charHeight,
-                (cursorX + 1) * charWidth,
-                (cursorY + 1) * charHeight,
-                cursorPaint
-            );
-        }
-        
-        canvas.restore();
-    }
-
-// Add at class level
-private StringBuilder inputBuffer = new StringBuilder();
-
 @Override
 public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-    outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
-    outAttrs.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN;
+    outAttrs.inputType = EditorInfo.TYPE_CLASS_TEXT 
+                       | EditorInfo.TYPE_TEXT_FLAG_AUTO_CORRECT 
+                       | EditorInfo.TYPE_TEXT_FLAG_AUTO_COMPLETE;
+    outAttrs.imeOptions = EditorInfo.IME_ACTION_NONE 
+                        | EditorInfo.IME_FLAG_NO_EXTRACT_UI 
+                        | EditorInfo.IME_FLAG_NO_FULLSCREEN;
+    
     return new BaseInputConnection(this, true) {
         @Override
         public boolean commitText(CharSequence text, int newCursorPosition) {
@@ -621,57 +203,25 @@ public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
             }
             return true;
         }
-    };
-}
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (outputStream != null) {
-            try {
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_ENTER:
-                        write("\n".getBytes());  // Show newline
-                        outputStream.write((inputBuffer.toString() + "\n").getBytes());
-                        inputBuffer.setLength(0);  // Clear buffer
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DEL:
-                        if (inputBuffer.length() > 0) {
-                            inputBuffer.setLength(inputBuffer.length() - 1);
-                            write("\b".getBytes());
-                        }
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DPAD_UP:
-                        // Send escape sequence for up arrow
-                        outputStream.write("\033[A".getBytes());
-                        outputStream.flush();
-                        return true;
-
-                    case KeyEvent.KEYCODE_DPAD_DOWN:
-                        // Send escape sequence for down arrow
-                        outputStream.write("\033[B".getBytes());
-                        outputStream.flush();
-                        return true;
-
-                    default:
-                        int unicode = event.getUnicodeChar();
-                        if (unicode != 0) {
-                            inputBuffer.append((char)unicode);
-                            write(new byte[]{(byte)unicode});
-                            outputStream.flush();
-                            return true;
-                        }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        
+        @Override
+        public boolean setComposingText(CharSequence text, int newCursorPosition) {
+            // For predictive text support
+            return commitText(text, newCursorPosition);
         }
-        return super.onKeyDown(keyCode, event);
-    }
-
+        
+        @Override
+        public boolean setComposingRegion(int start, int end) {
+            // Required for predictive text
+            return true;
+        }
+        
+        @Override
+        public boolean finishComposingText() {
+            // Required for predictive text
+            return true;
+        }
+    };
 }
 EOL
 
@@ -737,6 +287,37 @@ public class MainActivity extends Activity {
         });
         
         startProcess();
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // We won't actually save any state here since the terminal buffers are managed separately
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Don't destroy the process when paused
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // If process died, restart it
+        if (process == null || !isProcessAlive()) {
+            startProcess();
+        }
+    }
+
+    private boolean isProcessAlive() {
+        if (process == null) return false;
+        try {
+            process.exitValue();
+            return false; // If we get here, the process has exited
+        } catch (IllegalThreadStateException e) {
+            return true; // Process is still running
+        }
     }
     
     private void startProcess() {
@@ -877,7 +458,7 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
             android:name="developer"
             android:value="@string/developer" />
 
-	<meta-data
+        <meta-data
             android:name="developer_email"
             android:value="@string/developer_email" />
             
@@ -889,7 +470,7 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
             android:name="game_description"
             android:value="@string/app_description" />
 
-	<meta-data
+        <meta-data
             android:name="source_license"
             android:value="@string/source_license" />
 
@@ -914,6 +495,7 @@ cat > app/src/main/AndroidManifest.xml << 'EOL'
         <activity 
             android:name=".MainActivity" 
             android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
